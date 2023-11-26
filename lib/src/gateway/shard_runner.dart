@@ -58,7 +58,7 @@ class ShardRunner {
     final controller = StreamController<ShardMessage>();
 
     // The subscription to the control messages stream.
-    // This subscription is paused whenever the shard is not successfully connected,.
+    // This subscription is paused whenever the shard is not successfully connected.
     final controlSubscription = messages.listen((message) {
       if (message is Send) {
         connection!.add(message);
@@ -87,6 +87,7 @@ class ShardRunner {
 
           // Open the websocket connection.
           connection = await ShardConnection.connect(gatewayUri.toString(), this);
+          connection!.onSent.listen(controller.add);
 
           // Obtain the heartbeat interval from the HELLO event and start heartbeating.
           final hello = await connection!.first;
@@ -105,7 +106,7 @@ class ShardRunner {
             sendIdentify();
           }
 
-          canResume = false;
+          canResume = true;
 
           // We are connected, start handling control messages.
           controlSubscription.resume();
@@ -127,7 +128,7 @@ class ShardRunner {
               }
             } else if (event is ReconnectEvent) {
               canResume = true;
-              connection!.close();
+              connection!.close(4000);
             } else if (event is InvalidSessionEvent) {
               if (event.isResumable) {
                 canResume = true;
@@ -136,7 +137,8 @@ class ShardRunner {
                 gatewayUri = originalGatewayUri;
               }
 
-              connection!.close();
+              // Don't use 4000 as it will always try to resume
+              connection!.close(4999);
             } else if (event is HeartbeatAckEvent) {
               lastHeartbeatAcked = true;
               heartbeatStopwatch = null;
@@ -159,8 +161,7 @@ class ShardRunner {
           // Check if we can resume based on close code.
           // A manual close where we set closeCode earlier would have a close code of 1000, so this
           // doesn't change closeCode if we set it manually.
-          // 1001 is the close code used for a ping failure, so include it in the resumable codes.
-          const resumableCodes = [null, 1001, 4000, 4001, 4002, 4003, 4007, 4008, 4009];
+          const resumableCodes = [null, 4000, 4001, 4002, 4003, 4007, 4008, 4009];
           final closeCode = connection!.websocket.closeCode;
           canResume = canResume || resumableCodes.contains(closeCode);
 
@@ -171,9 +172,11 @@ class ShardRunner {
           }
         } catch (error, stackTrace) {
           controller.add(ErrorReceived(error: error, stackTrace: stackTrace));
+          // Prevents the while-true loop from looping too often when no internet is available.
+          await Future.delayed(Duration(milliseconds: 100));
         } finally {
           // Reset connection properties.
-          connection?.close();
+          connection?.close(4000);
           connection = null;
           heartbeatTimer?.cancel();
           heartbeatTimer = null;
@@ -246,11 +249,13 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   final Stream<GatewayEvent> events;
   final ShardRunner runner;
 
+  final StreamController<Sent> _sentController = StreamController();
+  Stream<Sent> get onSent => _sentController.stream;
+
   ShardConnection(this.websocket, this.events, this.runner);
 
   static Future<ShardConnection> connect(String gatewayUri, ShardRunner runner) async {
     final connection = await WebSocket.connect(gatewayUri);
-    connection.pingInterval = const Duration(seconds: 20);
 
     final uncompressedStream = switch (runner.data.apiOptions.compression) {
       GatewayCompression.transport => decompressTransport(connection.cast<List<int>>()),
@@ -293,6 +298,7 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
     };
 
     websocket.add(encoded);
+    _sentController.add(Sent(payload: event));
   }
 
   @override
@@ -302,10 +308,13 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   Future<void> addStream(Stream<Send> stream) => stream.forEach(add);
 
   @override
-  Future<void> close([int? code]) => websocket.close(code ?? 1000);
+  Future<void> close([int? code]) async {
+    await websocket.close(code ?? 1000);
+    await _sentController.close();
+  }
 
   @override
-  Future<void> get done => websocket.done;
+  Future<void> get done => websocket.done.then((_) => _sentController.done);
 }
 
 Stream<dynamic> decompressTransport(Stream<List<int>> raw) {

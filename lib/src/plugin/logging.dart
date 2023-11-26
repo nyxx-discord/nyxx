@@ -108,7 +108,7 @@ class Logging extends NyxxPlugin {
         }
       }
 
-      final outSink = rec.level > stderrLevel ? stderr : stdout;
+      final outSink = rec.level >= stderrLevel ? stderr : stdout;
       outSink.write(messageString);
     });
   }

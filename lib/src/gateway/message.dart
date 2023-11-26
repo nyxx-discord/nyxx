@@ -61,6 +61,15 @@ class Disconnecting extends ShardMessage {
   Disconnecting({required this.reason});
 }
 
+/// A shard message sent when the shard adds a payload to the connection.
+class Sent extends ShardMessage {
+  /// The payload that was sent.
+  final Send payload;
+
+  /// Create a new [Sent].
+  Sent({required this.payload});
+}
+
 /// The base class for all control messages sent from the client to the shard.
 abstract class GatewayMessage with ToStringHelper {}
 
