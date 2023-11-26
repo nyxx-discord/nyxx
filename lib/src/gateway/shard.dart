@@ -61,7 +61,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
               if (isResumable) {
                 logger.info('Reconnecting: invalid session');
               } else {
-                logger.severe('Unresumable invalid session, disconnecting');
+                logger.warning('Reconnecting: unresumable invalid session');
               }
             case HelloEvent(:final heartbeatInterval):
               logger.finest('Heartbeat Interval: $heartbeatInterval');
