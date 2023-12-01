@@ -7,7 +7,7 @@ void main() {
 
     expect(
       builder.build(),
-      equals({'type': 1}),
+      equals({'id': '0', 'type': 1}),
     );
 
     final builder2 = PermissionOverwriteBuilder(
@@ -20,6 +20,7 @@ void main() {
     expect(
       builder2.build(),
       equals({
+        'id': '0',
         'type': 0,
         'allow': '1048640',
         'deny': '8',
