@@ -147,6 +147,6 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
         if (features != null) 'features': GuildManager.serializeGuildFeatures(features!),
         if (!identical(description, sentinelString)) 'description': description,
         if (premiumProgressBarEnabled != null) 'premium_progress_bar_enabled': premiumProgressBarEnabled,
-        if (safetyAlertsChannelId != null) 'safety_alerts_channel_id': safetyAlertsChannelId! == Snowflake.zero ? null : safefyAlertsChannel!.toString(),
+        if (safetyAlertsChannelId != null) 'safety_alerts_channel_id': safetyAlertsChannelId! == Snowflake.zero ? null : safefyAlertsChannelId!.toString(),
       };
 }
