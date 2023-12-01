@@ -223,7 +223,7 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
         if (description != null) 'description': description,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id.value,
+            'id': emoji!.id.toString(),
             'name': emoji!.name,
             'animated': emoji is GuildEmoji && (emoji as GuildEmoji).isAnimated == true,
           },
