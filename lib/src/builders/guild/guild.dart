@@ -139,14 +139,14 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
         if (!identical(splash, sentinelImageBuilder)) 'splash': splash?.buildDataString(),
         if (!identical(discoverySplash, sentinelImageBuilder)) 'discovery_splash': discoverySplash?.buildDataString(),
         if (!identical(banner, sentinelImageBuilder)) 'banner': banner?.buildDataString(),
-        if (systemChannelId != null) 'system_channel_id': systemChannelId == Snowflake.zero ? null : systemChannelId!.toString(),
+        if (!identical(systemChannelId, sentinelSnowflake)) 'system_channel_id': systemChannelId?.toString(),
         if (systemChannelFlags != null) 'system_channel_flags': systemChannelFlags!.value,
-        if (rulesChannelId != null) 'rules_channel_id': rulesChannelId!.toString(),
-        if (publicUpdatesChannelId != null) 'public_updates_channel_id': publicUpdatesChannelId == Snowflake.zero ? null : publicUpdatesChannelId.toString(),
+        if (!identical(rulesChannelId, sentinelSnowflake)) 'rules_channel_id': rulesChannelId?.toString(),
+        if (!identical(publicUpdatesChannelId, sentinelSnowflake)) 'public_updates_channel_id': publicUpdatesChannelId?.toString(),
         if (preferredLocale != null) 'preferred_locale': preferredLocale!.identifier,
         if (features != null) 'features': GuildManager.serializeGuildFeatures(features!),
         if (!identical(description, sentinelString)) 'description': description,
         if (premiumProgressBarEnabled != null) 'premium_progress_bar_enabled': premiumProgressBarEnabled,
-        if (safetyAlertsChannelId != null) 'safety_alerts_channel_id': safetyAlertsChannelId == Snowflake.zero ? null : safetyAlertsChannelId!.toString(),
+        if (!identical(safetyAlertsChannelId, sentinelSnowflake)) 'safety_alerts_channel_id': safetyAlertsChannelId?.toString(),
       };
 }
