@@ -137,7 +137,7 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
         if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
         if (newOwnerId != null) 'owner_id': newOwnerId!.toString(),
         if (!identical(splash, sentinelImageBuilder)) 'splash': splash?.buildDataString(),
-        if (!identical(discoverySplash, sentinelImageBuilder)) 'discoverySplash': discoverySplash?.buildDataString(),
+        if (!identical(discoverySplash, sentinelImageBuilder)) 'discovery_splash': discoverySplash?.buildDataString(),
         if (!identical(banner, sentinelImageBuilder)) 'banner': banner?.buildDataString(),
         if (systemChannelId != null) 'system_channel_id': systemChannelId!.toString(),
         if (systemChannelFlags != null) 'system_channel_flags': systemChannelFlags!.value,
