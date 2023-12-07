@@ -295,7 +295,7 @@ export 'src/models/interaction.dart'
         ModalSubmitInteraction,
         PingInteraction;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
-export 'src/models/sku.dart' show Sku, SkuType;
+export 'src/models/sku.dart' show Sku, SkuType, SkuFlags;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
