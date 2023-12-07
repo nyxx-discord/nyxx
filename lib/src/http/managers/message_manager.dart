@@ -274,6 +274,7 @@ class MessageManager extends Manager<Message> {
           options: maybeParseMany(raw['options'], parseSelectMenuOption),
           channelTypes: maybeParseMany(raw['channel_types'], ChannelType.parse),
           placeholder: raw['placeholder'] as String?,
+          defaultValues: maybeParseMany(raw['default_values'], parseSelectMenuDefaultValue),
           minValues: raw['min_values'] as int?,
           maxValues: raw['max_values'] as int?,
           isDisabled: raw['disabled'] as bool?,
@@ -288,6 +289,13 @@ class MessageManager extends Manager<Message> {
       description: raw['description'] as String?,
       emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
       isDefault: raw['default'] as bool?,
+    );
+  }
+
+  SelectMenuDefaultValue parseSelectMenuDefaultValue(Map<String, Object?> raw) {
+    return SelectMenuDefaultValue(
+      id: Snowflake.parse(raw['id']!),
+      type: SelectMenuDefaultValueType.parse(raw['type'] as String),
     );
   }
 

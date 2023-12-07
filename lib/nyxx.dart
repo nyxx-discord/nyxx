@@ -151,6 +151,8 @@ export 'src/models/message/component.dart'
         MessageComponent,
         SelectMenuComponent,
         SelectMenuOption,
+        SelectMenuDefaultValue,
+        SelectMenuDefaultValueType,
         TextInputComponent,
         ButtonStyle,
         MessageComponentType,
