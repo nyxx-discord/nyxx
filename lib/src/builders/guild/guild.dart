@@ -115,15 +115,15 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
     this.splash = sentinelImageBuilder,
     this.discoverySplash = sentinelImageBuilder,
     this.banner = sentinelImageBuilder,
-    this.systemChannelId,
+    this.systemChannelId = sentinelSnowflake,
     this.systemChannelFlags,
-    this.rulesChannelId,
-    this.publicUpdatesChannelId,
+    this.rulesChannelId = sentinelSnowflake,
+    this.publicUpdatesChannelId = sentinelSnowflake,
     this.preferredLocale,
     this.features,
     this.description = sentinelString,
     this.premiumProgressBarEnabled,
-    this.safetyAlertsChannelId,
+    this.safetyAlertsChannelId = sentinelSnowflake,
   });
 
   @override
