@@ -825,4 +825,27 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     stageInstanceCache.remove(channelId);
   }
+
+  Future<void> addRecipient(Snowflake channelId, Snowflake userId, {required String accessToken, required String nick}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..recipients(id: userId.toString());
+    final request = BasicRequest(route,
+        method: 'PUT',
+        body: jsonEncode({
+          'access_token': accessToken,
+          'nick': nick,
+        }));
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> removeRecipient(Snowflake channelId, Snowflake userId) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..recipients(id: userId.toString());
+    final request = BasicRequest(route, method: 'DELETE');
+
+    await client.httpHandler.executeSafe(request);
+  }
 }
