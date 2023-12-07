@@ -30,8 +30,9 @@ class EntitlementUpdateEvent extends DispatchEvent {
 /// Emitted when an entitlement is deleted.
 /// {@endtemplate}
 class EntitlementDeleteEvent extends DispatchEvent {
-  // TODO: What is the payload here?
+  /// The entitlement that was deleted.
+  final Entitlement entitlement;
 
   /// {@macro entitlement_delete_event}
-  EntitlementDeleteEvent({required super.gateway});
+  EntitlementDeleteEvent({required super.gateway, required this.entitlement});
 }

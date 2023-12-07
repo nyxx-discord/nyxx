@@ -278,8 +278,7 @@ extension CacheUpdates on NyxxRest {
         StageInstanceDeleteEvent(:final instance) => instance.manager.cache.remove(instance.id),
         EntitlementCreateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementUpdateEvent(:final entitlement) => updateCacheWith(entitlement),
-        // TODO: Remove entitlement from cache
-        EntitlementDeleteEvent() => null,
+        EntitlementDeleteEvent(:final entitlement) => entitlement.manager.cache.remove(entitlement.id),
 
         // null and unhandled entity types
         WebhookAuthor() => null,
