@@ -1011,7 +1011,12 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Parse an [EntitlementDeleteEvent] from [raw].
   EntitlementDeleteEvent parseEntitlementDelete(Map<String, Object?> raw) {
-    return EntitlementDeleteEvent(gateway: this);
+    final applicationId = Snowflake.parse(raw['application_id']!);
+
+    return EntitlementDeleteEvent(
+      gateway: this,
+      entitlement: client.applications[applicationId].entitlements.parse(raw),
+    );
   }
 
   /// Stream all members in a guild that match [query] or [userIds].
