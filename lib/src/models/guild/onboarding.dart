@@ -9,7 +9,7 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// The configuration for a [Guild]'s onboarding process.
 /// {@endtemplate}
 class Onboarding with ToStringHelper {
-  /// The manager for this [onboarding].
+  /// The manager for this [Onboarding].
   final GuildManager manager;
 
   /// The ID of the guild this onboarding is for.

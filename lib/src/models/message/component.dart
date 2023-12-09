@@ -42,7 +42,7 @@ class ActionRowComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.actionRow;
 
-  /// The children of this [ActionRow].
+  /// The children of this [ActionRowComponent].
   final List<MessageComponent> components;
 
   /// Create a new [ActionRowComponent].
@@ -175,7 +175,7 @@ enum SelectMenuDefaultValueType {
       );
 }
 
-/// A default value in a [SelectMenu].
+/// A default value in a [SelectMenuComponent].
 class SelectMenuDefaultValue {
   /// The ID of this entity.
   final Snowflake id;
@@ -187,7 +187,7 @@ class SelectMenuDefaultValue {
   SelectMenuDefaultValue({required this.id, required this.type});
 }
 
-/// An option in a [SelectMenu].
+/// An option in a [SelectMenuComponent].
 class SelectMenuOption with ToStringHelper {
   /// The label shown to the user.
   final String label;

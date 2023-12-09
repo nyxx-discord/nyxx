@@ -67,7 +67,7 @@ class HttpRoutePart {
 
 /// A parameter in a [HttpRoutePart].
 ///
-/// {@template http_route_part}
+/// {@template http_route_param}
 /// This is not a query parameter, it is a parameter encoded in the path of the request itself, such
 /// as the id of a guild in `/guilds/0123456789`.
 /// {@endtemplate}
