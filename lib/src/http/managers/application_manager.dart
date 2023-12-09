@@ -117,6 +117,7 @@ class ApplicationManager {
       applicationId: Snowflake.parse(raw['application_id']!),
       name: raw['name'] as String,
       slug: raw['slug'] as String,
+      flags: SkuFlags(raw['flags'] as int),
     );
   }
 
