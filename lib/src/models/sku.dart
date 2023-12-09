@@ -1,6 +1,7 @@
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template sku}
@@ -25,6 +26,9 @@ class Sku with ToStringHelper {
   /// The URL slug for this SKU.
   final String slug;
 
+  /// This SKU's flags.
+  final SkuFlags flags;
+
   /// {@macro sku}
   Sku({
     required this.manager,
@@ -33,6 +37,7 @@ class Sku with ToStringHelper {
     required this.applicationId,
     required this.name,
     required this.slug,
+    required this.flags,
   });
 
   /// The application this SKU belongs to.
@@ -58,4 +63,22 @@ enum SkuType {
 
   @override
   String toString() => 'SkuType($value)';
+}
+
+/// Flags applied to an [Sku].
+class SkuFlags extends Flags<SkuFlags> {
+  /// The SKU is a guild subscription.
+  static const guildSubscription = Flag<SkuFlags>.fromOffset(7);
+
+  /// The SKU is a user subscription.
+  static const userSubscription = Flag<SkuFlags>.fromOffset(8);
+
+  /// Create a new [SkuFlags].
+  SkuFlags(super.value);
+
+  /// Whether this set of flags has the [guildSubscription] flag set.
+  bool get isGuildSubscription => has(guildSubscription);
+
+  /// Whether this set of flags has the [userSubscription] flag set.
+  bool get isUserSubscription => has(userSubscription);
 }

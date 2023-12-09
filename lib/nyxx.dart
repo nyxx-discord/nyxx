@@ -297,7 +297,7 @@ export 'src/models/interaction.dart'
         ModalSubmitInteraction,
         PingInteraction;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
-export 'src/models/sku.dart' show Sku, SkuType;
+export 'src/models/sku.dart' show Sku, SkuType, SkuFlags;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
@@ -318,3 +318,4 @@ export 'package:http/http.dart'
         StreamedResponse;
 export 'package:logging/logging.dart' show Logger, Level;
 export 'package:runtime_type/runtime_type.dart' show RuntimeType;
+export 'package:oauth2/oauth2.dart' show Credentials;

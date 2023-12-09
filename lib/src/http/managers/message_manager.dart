@@ -79,7 +79,7 @@ class MessageManager extends Manager<Message> {
       referencedMessage: maybeParse(raw['referenced_message'], parse),
       interaction: maybeParse(
         raw['interaction'],
-        (Map<String, Object?> raw) => parseMessageInteraction(raw),
+        (Map<String, Object?> raw) => parseMessageInteraction(raw, guildId: guildId),
       ),
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
       components: maybeParseMany(raw['components'], parseMessageComponent),
@@ -299,7 +299,7 @@ class MessageManager extends Manager<Message> {
     );
   }
 
-  MessageInteraction parseMessageInteraction(Map<String, Object?> raw) {
+  MessageInteraction parseMessageInteraction(Map<String, Object?> raw, {Snowflake? guildId}) {
     final user = client.users.parse(raw['user'] as Map<String, Object?>);
 
     return MessageInteraction(
@@ -307,10 +307,9 @@ class MessageManager extends Manager<Message> {
       type: InteractionType.parse(raw['type'] as int),
       name: raw['name'] as String,
       user: user,
-      // TODO: Find a way to get the guild ID.
       member: maybeParse(
         raw['member'],
-        (Map<String, Object?> raw) => client.guilds[Snowflake.zero].members[user.id],
+        (Map<String, Object?> raw) => client.guilds[guildId ?? Snowflake.zero].members[user.id],
       ),
     );
   }
