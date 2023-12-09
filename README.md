@@ -31,9 +31,8 @@ void main() async {
 ## Other nyxx packages
 
 - [nyxx_commands](https://pub.dev/packages/nyxx_commands): A command framework for handling both simple & complex commands.
-- [nyxx_pagination](https://pub.dev/packages/nyxx_pagination): Pagination support for nyxx.
+- [nyxx_extensions](https://pub.dev/packages/nyxx_extensions): Pagination, emoji utilities and other miscellaneous helpers for developing bots using nyxx.
 - [nyxx_lavalink](https://pub.dev/packages/nyxx_lavalink): Lavalink support for playing audio in voice channels.
-- [nyxx_extensions](https://pub.dev/packages/nyxx_extensions): Miscellaneous helpers for common situations when developing bots.
 
 ## More examples
 
