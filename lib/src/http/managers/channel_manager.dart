@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/channel/group_dm.dart';
 import 'package:nyxx/src/builders/channel/stage_instance.dart';
 import 'package:nyxx/src/builders/channel/thread.dart';
 import 'package:nyxx/src/builders/invite.dart';
@@ -607,7 +608,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
       request = MultipartRequest(
         route,
-        method: 'PATCH',
+        method: 'POST',
         jsonPayload: jsonEncode(payload),
         files: files,
       );
@@ -826,16 +827,11 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     stageInstanceCache.remove(channelId);
   }
 
-  Future<void> addRecipient(Snowflake channelId, Snowflake userId, {required String accessToken, required String nick}) async {
+  Future<void> addRecipient(Snowflake channelId, Snowflake userId, DmRecipientBuilder builder) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..recipients(id: userId.toString());
-    final request = BasicRequest(route,
-        method: 'PUT',
-        body: jsonEncode({
-          'access_token': accessToken,
-          'nick': nick,
-        }));
+    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()));
 
     await client.httpHandler.executeSafe(request);
   }
