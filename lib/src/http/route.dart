@@ -311,4 +311,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`avatar-decorations`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
   void avatarDecorations({String? id}) => add(HttpRoutePart('avatar-decorations', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`recipients`](https://discord.com/developers/docs/resources/channel#group-dm-add-recipient) part to this [HttpRoute].
+  void recipients({String? id}) => add(HttpRoutePart('recipients', [if (id != null) HttpRouteParam(id)]));
 }
