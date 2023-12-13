@@ -151,7 +151,8 @@ class WebhookManager extends Manager<Webhook> {
   }
 
   /// Execute a webhook.
-  Future<Message?> execute(Snowflake id, MessageBuilder builder, {required String token, bool? wait, Snowflake? threadId}) async {
+  Future<Message?> execute(Snowflake id, MessageBuilder builder,
+      {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags}) async {
     final route = HttpRoute()
       ..webhooks(id: id.toString())
       ..add(HttpRoutePart(token));
@@ -160,7 +161,11 @@ class WebhookManager extends Manager<Webhook> {
     final HttpRequest request;
     if (!identical(builder.attachments, sentinelList) && builder.attachments?.isNotEmpty == true) {
       final attachments = builder.attachments!;
-      final payload = builder.build();
+      final payload = {
+        ...builder.build(),
+        if (threadName != null) 'thread_name': threadName,
+        if (appliedTags != null) 'applied_tags': appliedTags.map((e) => e.toString()),
+      };
 
       final files = <MultipartFile>[];
       for (int i = 0; i < attachments.length; i++) {
@@ -185,7 +190,11 @@ class WebhookManager extends Manager<Webhook> {
       request = BasicRequest(
         route,
         method: 'POST',
-        body: jsonEncode(builder.build()),
+        body: jsonEncode({
+          ...builder.build(),
+          if (threadName != null) 'thread_name': threadName,
+          if (appliedTags != null) 'applied_tags': appliedTags.map((e) => e.toString()),
+        }),
         queryParameters: queryParameters,
         authenticated: false,
       );

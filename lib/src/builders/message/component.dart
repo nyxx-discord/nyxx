@@ -98,7 +98,7 @@ class ButtonBuilder extends MessageComponentBuilder {
         if (label != null) 'label': label,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id == Snowflake.zero ? null : emoji!.id,
+            'id': emoji!.id == Snowflake.zero ? null : emoji!.id.toString(),
             'name': emoji!.name,
             if (emoji is GuildEmoji) 'animated': (emoji as GuildEmoji).isAnimated == true,
           },
@@ -223,7 +223,7 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
         if (description != null) 'description': description,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id.value,
+            'id': emoji!.id.toString(),
             'name': emoji!.name,
             'animated': emoji is GuildEmoji && (emoji as GuildEmoji).isAnimated == true,
           },

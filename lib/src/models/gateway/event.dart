@@ -66,7 +66,7 @@ class HeartbeatEvent extends GatewayEvent {
 /// Emitted when the client receives a request to reconnect.
 /// {@endtemplate}
 class ReconnectEvent extends GatewayEvent {
-  /// {@macro reconnect_events}
+  /// {@macro reconnect_event}
   ReconnectEvent() : super(opcode: Opcode.reconnect);
 }
 

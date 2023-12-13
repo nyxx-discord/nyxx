@@ -423,7 +423,11 @@ class GuildManager extends Manager<Guild> {
     final route = HttpRoute()
       ..guilds(id: id.toString())
       ..bans();
-    final request = BasicRequest(route);
+    final request = BasicRequest(route, queryParameters: {
+      if (limit != null) 'limit': limit.toString(),
+      if (after != null) 'after': after.toString(),
+      if (before != null) 'before': before.toString(),
+    });
 
     final response = await client.httpHandler.executeSafe(request);
     final bans = parseMany(response.jsonBody as List, parseBan);

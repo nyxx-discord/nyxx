@@ -261,7 +261,11 @@ enum MessageType {
   stageEnd._(28),
   stageSpeaker._(29),
   stageTopic._(31),
-  guildApplicationPremiumSubscription._(32);
+  guildApplicationPremiumSubscription._(32),
+  guildIncidentAlertModeEnabled._(36),
+  guildIncidentAlertModeDisabled._(37),
+  guildIncidentReportRaid._(38),
+  guildIncidentReportFalseAlarm._(39);
 
   /// The value of this [MessageType].
   final int value;

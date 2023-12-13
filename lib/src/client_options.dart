@@ -122,7 +122,7 @@ class RestClientOptions extends ClientOptions {
   });
 }
 
-/// Options for controlling the behavior of a [NyxxWebsocket] client.
+/// Options for controlling the behavior of a [NyxxGateway] client.
 class GatewayClientOptions extends RestClientOptions {
   /// The minimum number of session starts this client needs to connect.
   ///

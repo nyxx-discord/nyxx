@@ -17,6 +17,7 @@ class PermissionOverwriteBuilder extends CreateBuilder<PermissionOverwrite> {
 
   @override
   Map<String, Object?> build() => {
+        'id': id.toString(),
         'type': type.value,
         if (allow != null) 'allow': allow!.value.toString(),
         if (deny != null) 'deny': deny!.value.toString(),

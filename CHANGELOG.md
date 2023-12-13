@@ -1,14 +1,30 @@
+## 6.1.0
+__09.21.2023__
+
+- feat: Add payload to `EntitlementDeleteEvent`.
+- feat: Add `flags` field to `Sku`.
+- feat: Add support for select menu default values.
+- feat: Add `GuildUpdateBuilder.safetyAlertsChannelId`.
+- docs: Enable link to source in package documentation.
+- feat: Add AutoMod message types.
+- bug: Fix `ButtonBuilder` serialization.
+- bug: Fix `GuildUpdateBuilder` not being able to unset certain settings.
+- bug: Fix incorrect `PermissionOverwriteBuilder` serialization when creating/updating channels.
+- bug: Fix `GuildManager.listBans` ignoring the provided parameters.
+- bug: Correctly export `Credentials` from `package:oauth2` for OAuth2 support.
+- bug: Fix members in message interactions not having their guild set.
+
 ## 6.0.3
 __26.11.2023__
 
-- bug: Fix incorrect serialization of autocompletion interaction responses (again)
-- bug: Try to fix invalid sessions triggered by Gateway reconnects
+- bug: Fix incorrect serialization of autocompletion interaction responses (again).
+- bug: Try to fix invalid sessions triggered by Gateway reconnects.
 
 ## 6.0.2
 __16.11.2023__
 
-- bug: Fix incorrect assertions in interaction.respond
-- bug: Fix incorrect serialization of autocompletion interaction responses
+- bug: Fix incorrect assertions in interaction.respond.
+- bug: Fix incorrect serialization of autocompletion interaction responses.
 
 ## 6.0.1
 __01.11.2023__
