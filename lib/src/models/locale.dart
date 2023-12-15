@@ -9,6 +9,7 @@ enum Locale {
   enGb._('en-GB', 'English, UK', 'English, UK'),
   enUs._('en-US', 'English, US', 'English, US'),
   esEs._('es-ES', 'Spanish', 'Español'),
+  es419._('es-419', 'Spanish, LATAM', 'Español, LATAM'),
   fr._('fr', 'French', 'Français'),
   hr._('hr', 'Croatian', 'Hrvatski'),
   it._('it', 'Italian', 'Italiano'),
