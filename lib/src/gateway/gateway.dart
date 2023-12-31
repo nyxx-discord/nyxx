@@ -42,7 +42,6 @@ import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
-import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
@@ -63,23 +62,29 @@ class Gateway extends GatewayManager with EventParser {
   final List<Shard> shards;
 
   /// A stream of messages received from all shards.
-  Stream<ShardMessage> get messages => _messagesController.stream;
+  // Adapting _messagesController.stream to a broadcast stream instead of
+  // simply making _messagesController a broadcast controller means events will
+  // be buffered until this field is initialized, which prevents events from
+  // being dropped during the connection process.
+  late final Stream<ShardMessage> messages = _messagesController.stream.asBroadcastStream();
 
-  final StreamController<ShardMessage> _messagesController = StreamController.broadcast();
+  final StreamController<ShardMessage> _messagesController = StreamController();
 
   /// A stream of dispatch events received from all shards.
-  Stream<DispatchEvent> get events => messages.map((message) {
-        if (message is! EventReceived) {
-          return null;
-        }
+  // Make this late instead of a getter so only a single subscription is made, which prevents events from being parsed multiple times.
+  late final Stream<DispatchEvent> events = messages.transform(StreamTransformer.fromBind((messages) async* {
+    await for (final message in messages) {
+      if (message is! EventReceived) continue;
 
-        final event = message.event;
-        if (event is! RawDispatchEvent) {
-          return null;
-        }
+      final event = message.event;
+      if (event is! RawDispatchEvent) continue;
 
-        return parseDispatchEvent(event);
-      }).whereType<DispatchEvent>();
+      final parsedEvent = parseDispatchEvent(event);
+      // Update the cache as needed.
+      client.updateCacheWith(parsedEvent);
+      yield parsedEvent;
+    }
+  }));
 
   bool _closing = false;
 
@@ -90,9 +95,6 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
-    // Handle all events which should update cache.
-    events.listen(client.updateCacheWith);
-
     const identifyDelay = Duration(seconds: 5);
     final maxConcurrency = gatewayBot.sessionStartLimit.maxConcurrency;
 
