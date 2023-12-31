@@ -78,7 +78,7 @@ class ShardRunner {
         identifyController.add(message);
       } else if (message is Dispose) {
         disposing = true;
-        connection!.close();
+        connection?.close();
 
         // We might get a dispose request while we are waiting to identify.
         // Add an error to the identify stream so we break out of the wait.
@@ -158,18 +158,14 @@ class ShardRunner {
                 sessionId = event.payload['session_id'] as String;
               }
             } else if (event is ReconnectEvent) {
-              canResume = true;
               connection!.close(4000);
             } else if (event is InvalidSessionEvent) {
-              if (event.isResumable) {
-                canResume = true;
-              } else {
+              if (!event.isResumable) {
                 canResume = false;
                 gatewayUri = originalGatewayUri;
               }
 
-              // Don't use 4000 as it will always try to resume
-              connection!.close(4999);
+              connection!.close(4000);
             } else if (event is HeartbeatAckEvent) {
               lastHeartbeatAcked = true;
               heartbeatStopwatch = null;
@@ -183,17 +179,23 @@ class ShardRunner {
           // Wait for the current connection to end, either due to a remote close or due to us disconnecting.
           await subscription.asFuture();
 
-          // Check if we can resume based on close code.
-          // A manual close where we set closeCode earlier would have a close code of 1000, so this
-          // doesn't change closeCode if we set it manually.
-          const resumableCodes = [null, 4000, 4001, 4002, 4003, 4007, 4008, 4009];
-          final closeCode = connection!.websocket.closeCode;
-          canResume = canResume || resumableCodes.contains(closeCode);
+          // Check if we can resume based on close code if the connection was closed by Discord.
+          if (connection!.localCloseCode == null) {
+            // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
+            const resumableCodes = [null, 4000, 4001, 4002, 4003, 4005, 4008];
+            const errorCodes = [4004, 4010, 4011, 4012, 4013, 4014];
 
-          // If we encounter a fatal error, exit the shard.
-          if (!canResume && (closeCode ?? 0) >= 4000) {
-            controller.add(Disconnecting(reason: 'Received error close code: $closeCode'));
-            return;
+            if (errorCodes.contains(connection!.remoteCloseCode)) {
+              controller.add(Disconnecting(reason: 'Received error close code: ${connection!.remoteCloseCode}'));
+              return;
+            }
+
+            canResume = resumableCodes.contains(connection!.remoteCloseCode);
+
+            controller.add(ErrorReceived(
+              error: 'Connection was closed with cde ${connection!.remoteCloseCode}',
+              stackTrace: StackTrace.current,
+            ));
           }
         } catch (error, stackTrace) {
           controller.add(ErrorReceived(error: error, stackTrace: stackTrace));
@@ -283,6 +285,9 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   final Stream<GatewayEvent> events;
   final ShardRunner runner;
 
+  int? localCloseCode;
+  int? get remoteCloseCode => localCloseCode == null ? websocket.closeCode : null;
+
   final StreamController<Sent> _sentController = StreamController();
   Stream<Sent> get onSent => _sentController.stream;
 
@@ -342,8 +347,9 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   Future<void> addStream(Stream<Send> stream) => stream.forEach(add);
 
   @override
-  Future<void> close([int? code]) async {
-    await websocket.close(code ?? 1000);
+  Future<void> close([int code = 1000]) async {
+    localCloseCode = code;
+    await websocket.close(code);
     await _sentController.close();
   }
 
