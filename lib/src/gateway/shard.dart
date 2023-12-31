@@ -149,6 +149,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
         ..finer('Opcode: ${event.opcode.value}, Data: ${event.data}');
     } else if (event is Dispose) {
       logger.info('Disposing');
+    } else if (event is Identify) {
+      logger.info('Connecting to Gateway');
     }
     sendPort.send(event);
   }
