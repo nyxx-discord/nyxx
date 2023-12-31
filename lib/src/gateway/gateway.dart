@@ -84,7 +84,7 @@ class Gateway extends GatewayManager with EventParser {
       client.updateCacheWith(parsedEvent);
       yield parsedEvent;
     }
-  }));
+  })).asBroadcastStream();
 
   bool _closing = false;
 
