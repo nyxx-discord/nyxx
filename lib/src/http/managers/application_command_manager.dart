@@ -4,6 +4,7 @@ import 'package:nyxx/src/builders/application_command.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/response.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
@@ -259,11 +260,21 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
       ..permissions();
     final request = BasicRequest(route);
 
-    final response = await client.httpHandler.executeSafe(request);
-    final permissions = parseCommandPermissions(response.jsonBody as Map<String, Object?>);
+    try {
+      final response = await client.httpHandler.executeSafe(request);
+      final permissions = parseCommandPermissions(response.jsonBody as Map<String, Object?>);
 
-    client.updateCacheWith(permissions);
-    return permissions;
+      client.updateCacheWith(permissions);
+      return permissions;
+    } on HttpResponseError catch (e) {
+      // 10066 = Unknown application command permissions
+      // Means there are no overrides for this command... why is this an error, Discord?
+      if (e.errorCode == 10066) {
+        return CommandPermissions(manager: this, id: id, applicationId: applicationId, guildId: guildId, permissions: []);
+      }
+
+      rethrow;
+    }
   }
 
   // TODO: Do we add the command permission endpoints?
