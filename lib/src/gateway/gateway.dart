@@ -95,8 +95,11 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
+    final logger = Logger('${client.options.loggerName}.Gateway');
+
     const identifyDelay = Duration(seconds: 5);
     final maxConcurrency = gatewayBot.sessionStartLimit.maxConcurrency;
+    var remainingIdentifyRequests = gatewayBot.sessionStartLimit.remaining;
 
     // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
     final identifyLocks = <int, Future<void>>{};
@@ -114,11 +117,21 @@ class Gateway extends GatewayManager with EventParser {
 
           if (event is RequestingIdentify) {
             final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
-            identifyLocks[rateLimitKey] = currentLock.then((_) {
-              if (_closing) return null;
+            identifyLocks[rateLimitKey] = currentLock.then((_) async {
+              if (_closing) return;
 
+              if (remainingIdentifyRequests < client.options.minimumSessionStarts * 5) {
+                logger.warning('$remainingIdentifyRequests session starts remaining');
+              }
+
+              if (remainingIdentifyRequests < client.options.minimumSessionStarts) {
+                await client.close();
+                throw OutOfRemainingSessionsError(gatewayBot);
+              }
+
+              remainingIdentifyRequests--;
               shard.add(Identify());
-              return Future.delayed(identifyDelay);
+              return await Future.delayed(identifyDelay);
             });
           }
         },
@@ -151,14 +164,6 @@ class Gateway extends GatewayManager with EventParser {
         'Gateway URL: ${gatewayBot.url}, Recommended Shards: ${gatewayBot.shards}, Max Concurrency: ${gatewayBot.sessionStartLimit.maxConcurrency},'
         ' Remaining Session Starts: ${gatewayBot.sessionStartLimit.remaining}, Reset After: ${gatewayBot.sessionStartLimit.resetAfter}',
       );
-
-    if (gatewayBot.sessionStartLimit.remaining < client.options.minimumSessionStarts * 5) {
-      logger.warning('${gatewayBot.sessionStartLimit.remaining} session starts remaining');
-    }
-
-    if (gatewayBot.sessionStartLimit.remaining < client.options.minimumSessionStarts) {
-      throw OutOfRemainingSessionsError(gatewayBot);
-    }
 
     assert(
       shardIds.every((element) => element < totalShards),

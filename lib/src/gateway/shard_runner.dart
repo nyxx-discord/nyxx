@@ -79,6 +79,13 @@ class ShardRunner {
       } else if (message is Dispose) {
         disposing = true;
         connection!.close();
+
+        // We might get a dispose request while we are waiting to identify.
+        // Add an error to the identify stream so we break out of the wait.
+        identifyController.addError(
+          Exception('Out of remaining session starts'),
+          StackTrace.current,
+        );
       } else if (message is StartShard) {
         if (startCompleter.isCompleted) {
           controller.add(ErrorReceived(
