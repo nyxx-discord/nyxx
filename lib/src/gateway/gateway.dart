@@ -90,9 +90,34 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
+    // Handle all events which should update cache.
+    events.listen(client.updateCacheWith);
+
+    const identifyDelay = Duration(seconds: 5);
+    final maxConcurrency = gatewayBot.sessionStartLimit.maxConcurrency;
+
+    // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
+    final identifyLocks = <int, Future<void>>{};
+
+    // Handle messages from the shards and start them according to their rate limit key.
     for (final shard in shards) {
+      final rateLimitKey = shard.id % maxConcurrency;
+
+      // Delay the shard starting until it is (approximately) also ready to identify.
+      Timer(identifyDelay * rateLimitKey, () => shard.add(StartShard()));
+
       shard.listen(
-        _messagesController.add,
+        (event) {
+          _messagesController.add(event);
+
+          if (event is RequestingIdentify) {
+            final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
+            identifyLocks[rateLimitKey] = currentLock.then((_) {
+              shard.add(Identify());
+              return Future.delayed(identifyDelay);
+            });
+          }
+        },
         onError: _messagesController.addError,
         onDone: () async {
           if (_closing) {
@@ -106,9 +131,6 @@ class Gateway extends GatewayManager with EventParser {
         cancelOnError: false,
       );
     }
-
-    // Handle all events which should update cache.
-    events.listen(client.updateCacheWith);
   }
 
   /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.
@@ -126,7 +148,7 @@ class Gateway extends GatewayManager with EventParser {
         ' Remaining Session Starts: ${gatewayBot.sessionStartLimit.remaining}, Reset After: ${gatewayBot.sessionStartLimit.resetAfter}',
       );
 
-    if (gatewayBot.sessionStartLimit.remaining < 50) {
+    if (gatewayBot.sessionStartLimit.remaining < client.options.minimumSessionStarts * 5) {
       logger.warning('${gatewayBot.sessionStartLimit.remaining} session starts remaining');
     }
 
@@ -154,17 +176,7 @@ class Gateway extends GatewayManager with EventParser {
       'Cannot enable payload compression when using the ETF payload format',
     );
 
-    const identifyDelay = Duration(seconds: 5);
-
-    final shards = shardIds.indexed.map(((int, int) info) {
-      final (index, id) = info;
-
-      return Future.delayed(
-        identifyDelay * (index ~/ gatewayBot.sessionStartLimit.maxConcurrency),
-        () => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client),
-      );
-    });
-
+    final shards = shardIds.map((id) => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client));
     return Gateway(client, gatewayBot, await Future.wait(shards), totalShards, shardIds);
   }
 

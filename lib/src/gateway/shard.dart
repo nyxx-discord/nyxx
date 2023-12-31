@@ -87,6 +87,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
             logger.info('Reconnected to Gateway');
           }
         }
+      } else if (message is RequestingIdentify) {
+        logger.fine('Ready to identify');
       }
     });
 
@@ -102,8 +104,6 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// Connect to the Gateway using the provided parameters.
   static Future<Shard> connect(int id, int totalShards, GatewayApiOptions apiOptions, Uri connectionUri, NyxxGateway client) async {
     final logger = Logger('${client.options.loggerName}.Shards[$id]');
-
-    logger.info('Connecting to Gateway');
 
     final receivePort = ReceivePort('Shard #$id message stream (main)');
     final receiveStream = receivePort.asBroadcastStream();

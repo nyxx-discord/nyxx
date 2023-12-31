@@ -100,7 +100,8 @@ export 'src/http/managers/interaction_manager.dart' show InteractionManager;
 export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
-export 'src/gateway/message.dart' show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, Sent, ShardData, ShardMessage;
+export 'src/gateway/message.dart'
+    show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, Sent, ShardData, ShardMessage, Identify, RequestingIdentify, StartShard;
 export 'src/gateway/shard.dart' show Shard;
 
 export 'src/models/discord_color.dart' show DiscordColor;
