@@ -334,5 +334,33 @@ void main() {
         }
       }
     });
+
+    test('commands', () async {
+      late ApplicationCommand command;
+
+      await expectLater(
+        () async => command = await client.commands.create(ApplicationCommandBuilder.chatInput(name: 'test', description: 'A test command', options: [])),
+        completes,
+      );
+
+      await expectLater(command.fetch(), completes);
+      await expectLater(command.update(ApplicationCommandUpdateBuilder.chatInput(name: 'new_name')), completes);
+      await expectLater(client.commands.list(), completion(isNotEmpty));
+      await expectLater(
+        () async => command =
+            (await client.commands.bulkOverride([ApplicationCommandBuilder.chatInput(name: 'test_2', description: 'A test command', options: [])])).single,
+        completes,
+      );
+
+      if (testGuild != null) {
+        final testGuildId = Snowflake.parse(testGuild);
+        final guild = client.guilds[testGuildId];
+
+        await expectLater(guild.commands.listPermissions(), completes);
+        await expectLater(guild.commands.fetchPermissions(command.id), completes);
+      }
+
+      await expectLater(command.delete(), completes);
+    });
   });
 }
