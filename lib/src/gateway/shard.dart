@@ -108,6 +108,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     final receivePort = ReceivePort('Shard #$id message stream (main)');
     final receiveStream = receivePort.asBroadcastStream();
 
+    logger.fine('Spawning shard runner');
+
     final isolate = await Isolate.spawn(
       _isolateMain,
       _IsolateSpawnData(
@@ -129,6 +131,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     });
 
     final sendPort = await receiveStream.first as SendPort;
+
+    logger.fine('Shard runner ready');
 
     return Shard(id, isolate, receiveStream, sendPort, client);
   }

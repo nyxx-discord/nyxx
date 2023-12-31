@@ -109,7 +109,10 @@ class Gateway extends GatewayManager with EventParser {
       final rateLimitKey = shard.id % maxConcurrency;
 
       // Delay the shard starting until it is (approximately) also ready to identify.
-      Timer(identifyDelay * rateLimitKey, () => shard.add(StartShard()));
+      Timer(identifyDelay * rateLimitKey, () {
+        logger.fine('Starting shard ${shard.id}');
+        shard.add(StartShard());
+      });
 
       shard.listen(
         (event) {
