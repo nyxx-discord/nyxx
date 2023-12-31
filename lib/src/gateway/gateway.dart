@@ -42,7 +42,6 @@ import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
-import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
@@ -63,23 +62,29 @@ class Gateway extends GatewayManager with EventParser {
   final List<Shard> shards;
 
   /// A stream of messages received from all shards.
-  Stream<ShardMessage> get messages => _messagesController.stream;
+  // Adapting _messagesController.stream to a broadcast stream instead of
+  // simply making _messagesController a broadcast controller means events will
+  // be buffered until this field is initialized, which prevents events from
+  // being dropped during the connection process.
+  late final Stream<ShardMessage> messages = _messagesController.stream.asBroadcastStream();
 
-  final StreamController<ShardMessage> _messagesController = StreamController.broadcast();
+  final StreamController<ShardMessage> _messagesController = StreamController();
 
   /// A stream of dispatch events received from all shards.
-  Stream<DispatchEvent> get events => messages.map((message) {
-        if (message is! EventReceived) {
-          return null;
-        }
+  // Make this late instead of a getter so only a single subscription is made, which prevents events from being parsed multiple times.
+  late final Stream<DispatchEvent> events = messages.transform(StreamTransformer.fromBind((messages) async* {
+    await for (final message in messages) {
+      if (message is! EventReceived) continue;
 
-        final event = message.event;
-        if (event is! RawDispatchEvent) {
-          return null;
-        }
+      final event = message.event;
+      if (event is! RawDispatchEvent) continue;
 
-        return parseDispatchEvent(event);
-      }).whereType<DispatchEvent>();
+      final parsedEvent = parseDispatchEvent(event);
+      // Update the cache as needed.
+      client.updateCacheWith(parsedEvent);
+      yield parsedEvent;
+    }
+  })).asBroadcastStream();
 
   bool _closing = false;
 
@@ -90,9 +95,49 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
+    final logger = Logger('${client.options.loggerName}.Gateway');
+
+    const identifyDelay = Duration(seconds: 5);
+    final maxConcurrency = gatewayBot.sessionStartLimit.maxConcurrency;
+    var remainingIdentifyRequests = gatewayBot.sessionStartLimit.remaining;
+
+    // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
+    final identifyLocks = <int, Future<void>>{};
+
+    // Handle messages from the shards and start them according to their rate limit key.
     for (final shard in shards) {
+      final rateLimitKey = shard.id % maxConcurrency;
+
+      // Delay the shard starting until it is (approximately) also ready to identify.
+      Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
+        logger.fine('Starting shard ${shard.id}');
+        shard.add(StartShard());
+      });
+
       shard.listen(
-        _messagesController.add,
+        (event) {
+          _messagesController.add(event);
+
+          if (event is RequestingIdentify) {
+            final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
+            identifyLocks[rateLimitKey] = currentLock.then((_) async {
+              if (_closing) return;
+
+              if (remainingIdentifyRequests < client.options.minimumSessionStarts * 5) {
+                logger.warning('$remainingIdentifyRequests session starts remaining');
+              }
+
+              if (remainingIdentifyRequests < client.options.minimumSessionStarts) {
+                await client.close();
+                throw OutOfRemainingSessionsError(gatewayBot);
+              }
+
+              remainingIdentifyRequests--;
+              shard.add(Identify());
+              return await Future.delayed(identifyDelay);
+            });
+          }
+        },
         onError: _messagesController.addError,
         onDone: () async {
           if (_closing) {
@@ -106,9 +151,6 @@ class Gateway extends GatewayManager with EventParser {
         cancelOnError: false,
       );
     }
-
-    // Handle all events which should update cache.
-    events.listen(client.updateCacheWith);
   }
 
   /// Connect to the gateway using the provided [client] and [gatewayBot] configuration.
@@ -125,14 +167,6 @@ class Gateway extends GatewayManager with EventParser {
         'Gateway URL: ${gatewayBot.url}, Recommended Shards: ${gatewayBot.shards}, Max Concurrency: ${gatewayBot.sessionStartLimit.maxConcurrency},'
         ' Remaining Session Starts: ${gatewayBot.sessionStartLimit.remaining}, Reset After: ${gatewayBot.sessionStartLimit.resetAfter}',
       );
-
-    if (gatewayBot.sessionStartLimit.remaining < 50) {
-      logger.warning('${gatewayBot.sessionStartLimit.remaining} session starts remaining');
-    }
-
-    if (gatewayBot.sessionStartLimit.remaining < client.options.minimumSessionStarts) {
-      throw OutOfRemainingSessionsError(gatewayBot);
-    }
 
     assert(
       shardIds.every((element) => element < totalShards),
@@ -154,17 +188,7 @@ class Gateway extends GatewayManager with EventParser {
       'Cannot enable payload compression when using the ETF payload format',
     );
 
-    const identifyDelay = Duration(seconds: 5);
-
-    final shards = shardIds.indexed.map(((int, int) info) {
-      final (index, id) = info;
-
-      return Future.delayed(
-        identifyDelay * (index ~/ gatewayBot.sessionStartLimit.maxConcurrency),
-        () => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client),
-      );
-    });
-
+    final shards = shardIds.map((id) => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client));
     return Gateway(client, gatewayBot, await Future.wait(shards), totalShards, shardIds);
   }
 

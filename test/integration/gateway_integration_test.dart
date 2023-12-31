@@ -68,6 +68,28 @@ void main() {
         payloadFormat: GatewayPayloadFormat.etf,
       )),
     );
+
+    test('Multiple shards', () async {
+      const shardCount = 5;
+
+      late NyxxGateway client;
+
+      await expectLater(
+        () async => client = await Nyxx.connectGatewayWithOptions(
+          GatewayApiOptions(
+            token: testToken!,
+            intents: GatewayIntents.none,
+            totalShards: shardCount,
+          ),
+        ),
+        completes,
+      );
+      expect(client.gateway.messages.where((event) => event is ErrorReceived), emitsDone);
+      for (int i = 0; i < shardCount; i++) {
+        await expectLater(client.onEvent, emits(isA<ReadyEvent>()));
+      }
+      await expectLater(client.close(), completes);
+    });
   });
 
   group('NyxxGateway', skip: testToken != null ? false : 'No test token provided', () {

@@ -87,6 +87,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
             logger.info('Reconnected to Gateway');
           }
         }
+      } else if (message is RequestingIdentify) {
+        logger.fine('Ready to identify');
       }
     });
 
@@ -103,10 +105,10 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   static Future<Shard> connect(int id, int totalShards, GatewayApiOptions apiOptions, Uri connectionUri, NyxxGateway client) async {
     final logger = Logger('${client.options.loggerName}.Shards[$id]');
 
-    logger.info('Connecting to Gateway');
-
     final receivePort = ReceivePort('Shard #$id message stream (main)');
     final receiveStream = receivePort.asBroadcastStream();
+
+    logger.fine('Spawning shard runner');
 
     final isolate = await Isolate.spawn(
       _isolateMain,
@@ -130,6 +132,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
     final sendPort = await receiveStream.first as SendPort;
 
+    logger.fine('Shard runner ready');
+
     return Shard(id, isolate, receiveStream, sendPort, client);
   }
 
@@ -149,6 +153,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
         ..finer('Opcode: ${event.opcode.value}, Data: ${event.data}');
     } else if (event is Dispose) {
       logger.info('Disposing');
+    } else if (event is Identify) {
+      logger.info('Connecting to Gateway');
     }
     sendPort.send(event);
   }
@@ -172,12 +178,10 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     Future<void> doClose() async {
       add(Dispose());
 
-      // Wait for disconnection confirmation
-      await firstWhere((message) => message is Disconnecting);
-
       // Give the isolate time to shut down cleanly, but kill it if it takes too long.
       try {
-        await drain().timeout(const Duration(seconds: 5));
+        // Wait for disconnection confirmation
+        await firstWhere((message) => message is Disconnecting).then(drain).timeout(const Duration(seconds: 5));
       } on TimeoutException {
         logger.warning('Isolate took too long to shut down, killing it');
         isolate.kill(priority: Isolate.immediate);
