@@ -115,6 +115,8 @@ class Gateway extends GatewayManager with EventParser {
           if (event is RequestingIdentify) {
             final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
             identifyLocks[rateLimitKey] = currentLock.then((_) {
+              if (_closing) return null;
+
               shard.add(Identify());
               return Future.delayed(identifyDelay);
             });
