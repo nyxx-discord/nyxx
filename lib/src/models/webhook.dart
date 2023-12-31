@@ -45,8 +45,10 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   /// External references:
   /// * [WebhookManager.execute]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#execute-webhook
-  Future<Message?> execute(MessageBuilder builder, {required String token, bool? wait, Snowflake? threadId}) =>
-      manager.execute(id, builder, token: token, wait: wait, threadId: threadId);
+  Future<Message?> execute(MessageBuilder builder,
+          {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags, String? username, String? avatarUrl}) =>
+      manager.execute(id, builder,
+          token: token, wait: wait, threadId: threadId, threadName: threadName, appliedTags: appliedTags, username: username, avatarUrl: avatarUrl);
 
   /// Fetch a message sent by this webhook using its [token].
   ///
