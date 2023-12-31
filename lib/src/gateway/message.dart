@@ -70,6 +70,9 @@ class Sent extends ShardMessage {
   Sent({required this.payload});
 }
 
+/// A shard message sent when the shard is waiting to identify on the Gateway.
+class RequestingIdentify extends ShardMessage {}
+
 /// The base class for all control messages sent from the client to the shard.
 abstract class GatewayMessage with ToStringHelper {}
 
@@ -84,6 +87,12 @@ class Send extends GatewayMessage {
   /// Create a new [Send].
   Send({required this.opcode, required this.data});
 }
+
+/// A gateway message sent when the [Gateway] instance is ready for the shard to start.
+class StartShard extends GatewayMessage {}
+
+/// A gateway message sent as a response to [RequestingIdentify] to allow the shard to identify.
+class Identify extends GatewayMessage {}
 
 /// A gateway message sent to instruct the shard to disconnect & stop handling any further messages.
 ///
