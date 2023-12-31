@@ -152,7 +152,7 @@ class WebhookManager extends Manager<Webhook> {
 
   /// Execute a webhook.
   Future<Message?> execute(Snowflake id, MessageBuilder builder,
-      {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags}) async {
+      {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags, String? username, String? avatarUrl}) async {
     final route = HttpRoute()
       ..webhooks(id: id.toString())
       ..add(HttpRoutePart(token));
@@ -165,6 +165,8 @@ class WebhookManager extends Manager<Webhook> {
         ...builder.build(),
         if (threadName != null) 'thread_name': threadName,
         if (appliedTags != null) 'applied_tags': appliedTags.map((e) => e.toString()),
+        if (username != null) 'username': username,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
       };
 
       final files = <MultipartFile>[];
