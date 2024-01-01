@@ -193,7 +193,7 @@ class ShardRunner {
             canResume = resumableCodes.contains(connection!.remoteCloseCode);
 
             controller.add(ErrorReceived(
-              error: 'Connection was closed with cde ${connection!.remoteCloseCode}',
+              error: 'Connection was closed with code ${connection!.remoteCloseCode}',
               stackTrace: StackTrace.current,
             ));
           }
@@ -237,7 +237,6 @@ class ShardRunner {
 
     connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
     lastHeartbeatAcked = false;
-    heartbeatStopwatch = Stopwatch()..start();
   }
 
   void startHeartbeat(Duration heartbeatInterval) {
@@ -335,6 +334,10 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
       GatewayPayloadFormat.json => jsonEncode(payload),
       GatewayPayloadFormat.etf => eterl.pack(payload),
     };
+
+    if (event.opcode == Opcode.heartbeat) {
+      runner.heartbeatStopwatch = Stopwatch()..start();
+    }
 
     websocket.add(encoded);
     _sentController.add(Sent(payload: event));
