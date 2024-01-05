@@ -5,6 +5,9 @@ import 'package:meta/meta.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
+import 'package:nyxx/src/http/handler.dart';
+import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/response.dart';
 import 'package:runtime_type/runtime_type.dart';
 
 /// Provides access to the connection and closing process for implementing plugins.
@@ -38,6 +41,7 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
   /// Perform the close operation.
   ///
   /// People overriding this method should call it to obtain the client instance.
+  @mustCallSuper
   Future<void> doClose(ClientType client, Future<void> Function() close) async {
     final state = _states[client];
     await state?.beforeClose(client);
@@ -65,6 +69,15 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
 
   /// Called after each client this plugin is added to closes.
   FutureOr<void> afterClose() {}
+
+  /// Called whenever a request is made using a client's [HttpHandler].
+  ///
+  /// Plugins that implement this method are not required to call the [next] method.
+  @mustCallSuper
+  Future<HttpResponse> interceptRequest(ClientType client, HttpRequest request, Future<HttpResponse> Function(HttpRequest) next) {
+    final state = _states[client];
+    return state?.interceptRequest(client, request, next) ?? next(request);
+  }
 }
 
 /// Holds the state of a plugin added to a client.
@@ -93,4 +106,9 @@ class NyxxPluginState<ClientType extends Nyxx, PluginType extends NyxxPlugin<Cli
   /// Called after each client this plugin is added to closes.
   @mustCallSuper
   FutureOr<void> afterClose() => plugin.afterClose();
+
+  /// Called whenever a request is made using a client's [HttpHandler].
+  ///
+  /// Plugins that implement this method are not required to call the [next] method.
+  Future<HttpResponse> interceptRequest(ClientType client, HttpRequest request, Future<HttpResponse> Function(HttpRequest) next) => next(request);
 }
