@@ -13,7 +13,8 @@ export 'src/errors.dart'
         OutOfRemainingSessionsError,
         IntegrationNotFoundException,
         AlreadyAcknowledgedError,
-        AlreadyRespondedError;
+        AlreadyRespondedError,
+        PluginError;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -21,7 +22,7 @@ export 'src/builders/user.dart' show UserUpdateBuilder;
 export 'src/builders/permission_overwrite.dart' show PermissionOverwriteBuilder;
 export 'src/builders/channel/channel_position.dart' show ChannelPositionBuilder;
 export 'src/builders/channel/forum_tag.dart' show ForumTagBuilder;
-export 'src/builders/channel/group_dm.dart' show GroupDmUpdateBuilder;
+export 'src/builders/channel/group_dm.dart' show GroupDmUpdateBuilder, DmRecipientBuilder;
 export 'src/builders/channel/guild_channel.dart'
     show
         ForumChannelUpdateBuilder,
@@ -45,7 +46,7 @@ export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
 export 'src/builders/message/component.dart'
-    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder;
+    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
