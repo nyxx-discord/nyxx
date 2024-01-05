@@ -112,6 +112,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
     final isolate = await Isolate.spawn(
       _isolateMain,
+      debugName: 'Shard #$id runner',
       _IsolateSpawnData(
         totalShards: totalShards,
         id: id,
