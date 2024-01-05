@@ -46,7 +46,7 @@ class RoleBuilder extends CreateBuilder<Role> {
 class RoleUpdateBuilder extends UpdateBuilder<Role> {
   String? name;
 
-  Permissions? permissions;
+  Flags<Permissions>? permissions;
 
   DiscordColor? color;
 
