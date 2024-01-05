@@ -24,8 +24,13 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// The stream on which events from the runner are received.
   final Stream<dynamic> receiveStream;
 
+  final StreamController<ShardMessage> _rawReceiveController = StreamController();
+  final StreamController<ShardMessage> _transformedReceiveController = StreamController.broadcast();
+
   /// The port on which events are sent to the runner.
   final SendPort sendPort;
+
+  final StreamController<GatewayMessage> _sendController = StreamController();
 
   /// The client this [Shard] is for.
   final NyxxGateway client;
@@ -44,6 +49,22 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
   /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
+    client.initialized.then((_) {
+      final sendStream = client.options.plugins.fold(
+        _sendController.stream,
+        (previousValue, plugin) => plugin.interceptGatewayMessages(this, previousValue),
+      );
+      sendStream.listen(sendPort.send, cancelOnError: false, onDone: close);
+
+      final transformedReceiveStream = client.options.plugins.fold(
+        _rawReceiveController.stream,
+        (previousValue, plugin) => plugin.interceptShardMessages(this, previousValue),
+      );
+      transformedReceiveStream.pipe(_transformedReceiveController);
+    });
+
+    receiveStream.cast<ShardMessage>().pipe(_rawReceiveController);
+
     final subscription = listen((message) {
       if (message is Sent) {
         logger
@@ -157,7 +178,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     } else if (event is Identify) {
       logger.info('Connecting to Gateway');
     }
-    sendPort.send(event);
+
+    _sendController.add(event);
   }
 
   @override
@@ -167,7 +189,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return receiveStream.cast<ShardMessage>().listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    return _transformedReceiveController.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   @override
@@ -178,6 +200,10 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
     Future<void> doClose() async {
       add(Dispose());
+
+      _sendController.close();
+      // _rawReceiveController and _transformedReceiveController are closed by the piped
+      // receive port stream being closed.
 
       // Give the isolate time to shut down cleanly, but kill it if it takes too long.
       try {

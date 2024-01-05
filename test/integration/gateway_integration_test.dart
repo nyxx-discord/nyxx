@@ -14,7 +14,7 @@ void main() {
       late NyxxGateway client;
 
       await expectLater(() async => client = await Nyxx.connectGatewayWithOptions(options), completes);
-      expect(client.gateway.messages.where((event) => event is ErrorReceived), emitsDone);
+      expect(client.gateway.messages, neverEmits(isA<ErrorReceived>()));
       await expectLater(client.onEvent, emits(isA<ReadyEvent>()));
       await expectLater(client.close(), completes);
     }
