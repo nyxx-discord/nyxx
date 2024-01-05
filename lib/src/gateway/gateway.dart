@@ -93,10 +93,13 @@ class Gateway extends GatewayManager with EventParser {
   /// See [Shard.latency] for details on how the latency is calculated.
   Duration get latency => shards.fold(Duration.zero, (previousValue, element) => previousValue + (element.latency ~/ shards.length));
 
+  final List<Timer> _startTimers = [];
+
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
     final logger = Logger('${client.options.loggerName}.Gateway');
 
+    // https://discord.com/developers/docs/topics/gateway#rate-limiting
     const identifyDelay = Duration(seconds: 5);
     final maxConcurrency = gatewayBot.sessionStartLimit.maxConcurrency;
     var remainingIdentifyRequests = gatewayBot.sessionStartLimit.remaining;
@@ -109,10 +112,10 @@ class Gateway extends GatewayManager with EventParser {
       final rateLimitKey = shard.id % maxConcurrency;
 
       // Delay the shard starting until it is (approximately) also ready to identify.
-      Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
+      _startTimers.add(Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
         logger.fine('Starting shard ${shard.id}');
         shard.add(StartShard());
-      });
+      }));
 
       shard.listen(
         (event) {
@@ -195,6 +198,10 @@ class Gateway extends GatewayManager with EventParser {
   /// Close this [Gateway] instance, disconnecting all shards and closing the event streams.
   Future<void> close() async {
     _closing = true;
+    // Make sure we don't start any shards after we have closed.
+    for (final timer in _startTimers) {
+      timer.cancel();
+    }
     await Future.wait(shards.map((shard) => shard.close()));
     _messagesController.close();
   }

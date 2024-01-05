@@ -36,6 +36,9 @@ class ShardRunner {
   /// The stopwatch timing the interval between a heartbeat being sent and a heartbeat ACK being received.
   Stopwatch? heartbeatStopwatch;
 
+  /// The interval between two heartbeats.
+  Duration? heartbeatInterval;
+
   /// Whether the current connection can be resumed.
   bool canResume = false;
 
@@ -61,8 +64,16 @@ class ShardRunner {
     // sendHandler is responsible for handling requests for this shard to send messages to the Gateway.
     // It is paused whenever this shard isn't ready to send messages.
     final sendController = StreamController<Send>();
-    // Don't use a tearoff - `connection!` needs to be evaluated every time.
-    final sendHandler = sendController.stream.listen((e) => connection!.add(e))..pause();
+    final sendHandler = sendController.stream.listen((e) async {
+      try {
+        await connection!.add(e);
+      } catch (error, s) {
+        controller.add(ErrorReceived(error: error, stackTrace: s));
+        // Try to send the event again.
+        sendController.add(e);
+      }
+    })
+      ..pause();
 
     // identifyController serves as a notification system for Identify messages.
     // Any Identify messages received are added to this stream.
@@ -86,12 +97,18 @@ class ShardRunner {
           Exception('Out of remaining session starts'),
           StackTrace.current,
         );
+
+        // We need to start the shard to jump ahead to the check for exiting the shard.
+        if (!startCompleter.isCompleted) {
+          startCompleter.complete(StartShard());
+        }
       } else if (message is StartShard) {
         if (startCompleter.isCompleted) {
           controller.add(ErrorReceived(
             error: StateError('Received StartShard when shard was already started'),
             stackTrace: StackTrace.current,
           ));
+          return;
         }
 
         startCompleter.complete(message);
@@ -104,6 +121,12 @@ class ShardRunner {
     Future<void> asyncRun() async {
       while (true) {
         try {
+          // Check for dispose requests. If we should be disposing, exit the loop.
+          if (disposing) {
+            controller.add(Disconnecting(reason: 'Dispose requested'));
+            return;
+          }
+
           // Initialize lastHeartbeatAcked to `true` so we don't immediately disconnect in heartbeat().
           lastHeartbeatAcked = true;
 
@@ -123,27 +146,25 @@ class ShardRunner {
           }
           controller.add(EventReceived(event: hello));
 
-          startHeartbeat(hello.heartbeatInterval);
+          heartbeatInterval = hello.heartbeatInterval;
+          startHeartbeat();
 
           // If we can resume (the connection loop was restarted) and we have the information needed, try to resume.
           // Otherwise, identify.
           if (canResume && seq != null && sessionId != null) {
-            sendResume();
+            await sendResume();
           } else {
             // Request to identify and wait for the confirmation.
             controller.add(RequestingIdentify());
             await identifyController.stream.first;
 
-            sendIdentify();
+            await sendIdentify();
           }
 
           canResume = true;
 
-          // We are connected, start handling send requests.
-          sendHandler.resume();
-
           // Handle events from the connection & forward them to the result controller.
-          final subscription = connection!.listen((event) {
+          final subscription = connection!.listen((event) async {
             if (event is RawDispatchEvent) {
               seq = event.seq;
 
@@ -156,6 +177,11 @@ class ShardRunner {
                 });
 
                 sessionId = event.payload['session_id'] as String;
+
+                // We are connected, start handling send requests.
+                sendHandler.resume();
+              } else if (event.name == 'RESUMED') {
+                sendHandler.resume();
               }
             } else if (event is ReconnectEvent) {
               connection!.close(4000);
@@ -170,7 +196,11 @@ class ShardRunner {
               lastHeartbeatAcked = true;
               heartbeatStopwatch = null;
             } else if (event is HeartbeatEvent) {
-              connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
+              try {
+                await connection!.add(Send(opcode: Opcode.heartbeat, data: seq));
+              } on StateError {
+                // ignore: Connection closed while adding event.
+              }
             }
 
             controller.add(EventReceived(event: event));
@@ -208,12 +238,7 @@ class ShardRunner {
           heartbeatTimer?.cancel();
           heartbeatTimer = null;
           heartbeatStopwatch = null;
-        }
-
-        // Check for dispose requests. If we should be disposing, exit the loop.
-        if (disposing) {
-          controller.add(Disconnecting(reason: 'Dispose requested'));
-          return;
+          heartbeatInterval = null;
         }
       }
     }
@@ -239,16 +264,16 @@ class ShardRunner {
     lastHeartbeatAcked = false;
   }
 
-  void startHeartbeat(Duration heartbeatInterval) {
-    heartbeatTimer = Timer(heartbeatInterval * Random().nextDouble(), () {
+  void startHeartbeat() {
+    heartbeatTimer = Timer(heartbeatInterval! * Random().nextDouble(), () {
       heartbeat();
 
-      heartbeatTimer = Timer.periodic(heartbeatInterval, (_) => heartbeat());
+      heartbeatTimer = Timer.periodic(heartbeatInterval!, (_) => heartbeat());
     });
   }
 
-  void sendIdentify() {
-    connection!.add(Send(
+  Future<void> sendIdentify() async {
+    await connection!.add(Send(
       opcode: Opcode.identify,
       data: {
         'token': data.apiOptions.token,
@@ -266,9 +291,9 @@ class ShardRunner {
     ));
   }
 
-  void sendResume() {
+  Future<void> sendResume() async {
     assert(sessionId != null && seq != null);
-    connection!.add(Send(
+    await connection!.add(Send(
       opcode: Opcode.resume,
       data: {
         'token': data.apiOptions.token,
@@ -279,18 +304,56 @@ class ShardRunner {
   }
 }
 
+/// Handles parsing/encoding & compression/decompression of events on a [WebSocket] connection to the Gateway.
 class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
+  /// The number of messages that can be sent per [rateLimitDuration].
+  // https://discord.com/developers/docs/topics/gateway#rate-limiting
+  static const rateLimitCount = 120;
+
+  /// The duration after which the rate limit resets.
+  static const rateLimitDuration = Duration(seconds: 60);
+
+  /// The connection to the Gateway.
   final WebSocket websocket;
+
+  /// A stream of parsed events received from the Gateway.
   final Stream<GatewayEvent> events;
+
+  /// The [ShardRunner] that created this connection.
   final ShardRunner runner;
 
+  /// The code used to close this connection, or `null` if this connection is open or was closed by the remote server.
   int? localCloseCode;
+
+  /// The code used to close this connection by the remote server, or `null` if this connection is open or was closed by calling [close].
   int? get remoteCloseCode => localCloseCode == null ? websocket.closeCode : null;
 
-  final StreamController<Sent> _sentController = StreamController();
+  /// A stream on which [Sent] events are added.
   Stream<Sent> get onSent => _sentController.stream;
+  final StreamController<Sent> _sentController = StreamController();
 
-  ShardConnection(this.websocket, this.events, this.runner);
+  /// The predicted number of heartbeats per [rateLimitDuration].
+  ///
+  /// The [rateLimitCount] is reduced by this value for any non heartbeat event so heartbeats can always be sent immediately.
+  int get rateLimitHeartbeatReservation => (rateLimitDuration.inMicroseconds / runner.heartbeatInterval!.inMicroseconds).ceil();
+
+  /// The number of events sent in the current [rateLimitDuration].
+  int _currentRateLimitCount = 0;
+
+  /// A completer that completes once the current [rateLimitDuration] has passed.
+  Completer<void> _currentRateLimitEnd = Completer<void>();
+
+  /// Handles resetting [_currentRateLimitCount] and [_currentRateLimitEnd].
+  late final Timer _rateLimitResetTimer;
+
+  ShardConnection(this.websocket, this.events, this.runner) {
+    _rateLimitResetTimer = Timer.periodic(rateLimitDuration, (timer) {
+      _currentRateLimitCount = 0;
+      _currentRateLimitEnd.complete();
+      _currentRateLimitEnd = Completer<void>();
+    });
+    websocket.done.then((_) => close());
+  }
 
   static Future<ShardConnection> connect(String gatewayUri, ShardRunner runner) async {
     final connection = await WebSocket.connect(gatewayUri);
@@ -324,7 +387,7 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   }
 
   @override
-  void add(Send event) {
+  Future<void> add(Send event) async {
     final payload = {
       'op': event.opcode.value,
       'd': event.data,
@@ -335,10 +398,16 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
       GatewayPayloadFormat.etf => eterl.pack(payload),
     };
 
+    final rateLimitLimit = event.opcode == Opcode.heartbeat ? 0 : rateLimitHeartbeatReservation;
+    while (rateLimitCount - _currentRateLimitCount <= rateLimitLimit) {
+      await _currentRateLimitEnd.future;
+    }
+
     if (event.opcode == Opcode.heartbeat) {
       runner.heartbeatStopwatch = Stopwatch()..start();
     }
 
+    _currentRateLimitCount++;
     websocket.add(encoded);
     _sentController.add(Sent(payload: event));
   }
@@ -351,7 +420,15 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
 
   @override
   Future<void> close([int code = 1000]) async {
-    localCloseCode = code;
+    localCloseCode ??= code;
+
+    _rateLimitResetTimer.cancel();
+    if (!_currentRateLimitEnd.isCompleted) {
+      _currentRateLimitEnd
+        // Install an error handler so the error is not counted as uncaught.
+        ..future.catchError((e) {})
+        ..completeError(StateError('Connection is closed'), StackTrace.current);
+    }
     await websocket.close(code);
     await _sentController.close();
   }
