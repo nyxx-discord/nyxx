@@ -8,6 +8,7 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/bucket.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/response.dart';
+import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 
 extension on HttpRequest {
@@ -111,7 +112,17 @@ class HttpHandler {
   /// that of the second request.
   ///
   /// Otherwise, this method returns a [HttpResponseError].
+  ///
+  /// This method calls [NyxxPlugin.interceptRequest] on all plugins registered to the [client] which may intercept the [request].
   Future<HttpResponse> execute(HttpRequest request) async {
+    final executeFn = client.options.plugins.fold(
+      _execute,
+      (previousValue, plugin) => (request) => plugin.interceptRequest(client, request, previousValue),
+    );
+    return await executeFn(request);
+  }
+
+  Future<HttpResponse> _execute(HttpRequest request) async {
     logger
       ..fine(request.loggingId)
       ..finer(
@@ -279,11 +290,11 @@ class Oauth2HttpHandler extends HttpHandler {
   Oauth2HttpHandler(NyxxOAuth2 super.client) : apiOptions = client.apiOptions;
 
   @override
-  Future<HttpResponse> execute(HttpRequest request) async {
+  Future<HttpResponse> _execute(HttpRequest request) async {
     if (apiOptions.credentials.isExpired && request.authenticated) {
       apiOptions.credentials = await apiOptions.credentials.refresh();
     }
 
-    return await super.execute(request);
+    return await super._execute(request);
   }
 }
