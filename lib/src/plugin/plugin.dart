@@ -58,21 +58,31 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
   /// instances of the plugin attached to other clients.
   FutureOr<NyxxPluginState<ClientType, NyxxPlugin<ClientType>>> createState() => NyxxPluginState(this);
 
+  /// {@template before_connect}
   /// Called before each client this plugin is added to connects.
+  /// {@endtemplate}
   FutureOr<void> beforeConnect(ApiOptions apiOptions, ClientOptions clientOptions) {}
 
+  /// {@template after_connect}
   /// Called after each client this plugin is added to connects.
+  /// {@endtemplate}
   FutureOr<void> afterConnect(ClientType client) {}
 
+  /// {@template before_close}
   /// Called before each client this plugin is added to closes.
+  /// {@endtemplate}
   FutureOr<void> beforeClose(ClientType client) {}
 
+  /// {@template after_close}
   /// Called after each client this plugin is added to closes.
+  /// {@endtemplate}
   FutureOr<void> afterClose() {}
 
+  /// {@template intercept_request}
   /// Called whenever a request is made using a client's [HttpHandler].
   ///
   /// Plugins that implement this method are not required to call the [next] method.
+  /// {@endtemplate}
   @mustCallSuper
   Future<HttpResponse> interceptRequest(ClientType client, HttpRequest request, Future<HttpResponse> Function(HttpRequest) next) {
     final state = _states[client];
@@ -91,24 +101,22 @@ class NyxxPluginState<ClientType extends Nyxx, PluginType extends NyxxPlugin<Cli
   /// Create a new plugin state.
   NyxxPluginState(this.plugin);
 
-  /// Called before each client this plugin is added to connects.
+  /// {@macro before_connect}
   @mustCallSuper
   FutureOr<void> beforeConnect(ApiOptions apiOptions, ClientOptions clientOptions) => plugin.beforeConnect(apiOptions, clientOptions);
 
-  /// Called after each client this plugin is added to connects.
+  /// {@macro after_connect}
   @mustCallSuper
   FutureOr<void> afterConnect(ClientType client) => plugin.afterConnect(client);
 
-  /// Called before each client this plugin is added to closes.
+  /// {@macro before_close}
   @mustCallSuper
   FutureOr<void> beforeClose(ClientType client) => plugin.beforeClose(client);
 
-  /// Called after each client this plugin is added to closes.
+  /// {@macro after_close}
   @mustCallSuper
   FutureOr<void> afterClose() => plugin.afterClose();
 
-  /// Called whenever a request is made using a client's [HttpHandler].
-  ///
-  /// Plugins that implement this method are not required to call the [next] method.
+  /// {@macro intercept_request}
   Future<HttpResponse> interceptRequest(ClientType client, HttpRequest request, Future<HttpResponse> Function(HttpRequest) next) => next(request);
 }
