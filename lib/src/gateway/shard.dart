@@ -112,6 +112,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
     final isolate = await Isolate.spawn(
       _isolateMain,
+      debugName: 'Shard #$id runner',
       _IsolateSpawnData(
         totalShards: totalShards,
         id: id,
@@ -180,7 +181,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
       // Give the isolate time to shut down cleanly, but kill it if it takes too long.
       try {
-        // Wait for disconnection confirmation
+        // Wait for disconnection confirmation.
         await firstWhere((message) => message is Disconnecting).then(drain).timeout(const Duration(seconds: 5));
       } on TimeoutException {
         logger.warning('Isolate took too long to shut down, killing it');
