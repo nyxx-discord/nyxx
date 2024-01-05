@@ -5,6 +5,8 @@ import 'package:meta/meta.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
+import 'package:nyxx/src/gateway/message.dart';
+import 'package:nyxx/src/gateway/shard.dart';
 import 'package:nyxx/src/http/handler.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/response.dart';
@@ -88,6 +90,20 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
     final state = _states[client];
     return state?.interceptRequest(client, request, next) ?? next(request);
   }
+
+  /// {@template intercept_shard_messages}
+  /// Intercept [ShardMessage]s by transforming the [messages] stream.
+  /// {@endtemplate}
+  @mustCallSuper
+  Stream<ShardMessage> interceptShardMessages(Shard shard, Stream<ShardMessage> messages) =>
+      _states[shard.client]?.interceptShardMessages(shard, messages) ?? messages;
+
+  /// {@template intercept_gateway_messages}
+  /// Intercept [GatewayMessage]s by transforming the [messages] stream.
+  /// {@endtemplate}
+  @mustCallSuper
+  Stream<GatewayMessage> interceptGatewayMessages(Shard shard, Stream<GatewayMessage> messages) =>
+      _states[shard.client]?.interceptGatewayMessages(shard, messages) ?? messages;
 }
 
 /// Holds the state of a plugin added to a client.
@@ -119,4 +135,10 @@ class NyxxPluginState<ClientType extends Nyxx, PluginType extends NyxxPlugin<Cli
 
   /// {@macro intercept_request}
   Future<HttpResponse> interceptRequest(ClientType client, HttpRequest request, Future<HttpResponse> Function(HttpRequest) next) => next(request);
+
+  /// {@macro intercept_shard_messages}
+  Stream<ShardMessage> interceptShardMessages(Shard shard, Stream<ShardMessage> messages) => messages;
+
+  /// {@macro intercept_gateway_messages}
+  Stream<GatewayMessage> interceptGatewayMessages(Shard shard, Stream<GatewayMessage> messages) => messages;
 }
