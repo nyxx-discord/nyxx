@@ -463,7 +463,7 @@ class MessageManager extends Manager<Message> {
       ..channels(id: channelId.toString())
       ..messages()
       ..bulkDelete();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(ids.map((e) => e.toString()).toList()));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'messages': ids.map((e) => e.toString()).toList()}));
 
     await client.httpHandler.executeSafe(request);
   }
