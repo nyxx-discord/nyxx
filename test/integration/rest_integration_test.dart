@@ -130,7 +130,18 @@ void main() {
       await expectLater(message.attachments.first.fetch(), completes);
       await expectLater(message.attachments.first.fetchStreamed().drain(), completes);
 
-      await expectLater(message.delete(), completes);
+      late Message message2;
+      await expectLater(
+        () async => message2 = await channel.sendMessage(MessageBuilder(
+          attachments: [
+            await AttachmentBuilder.fromFile(File('test/files/2.png')),
+            await AttachmentBuilder.fromFile(File('test/files/3.png')),
+          ],
+        )),
+        completes,
+      );
+
+      await expectLater(channel.messages.bulkDelete([message.id, message2.id]), completes);
 
       await expectLater(
         () async => message = await channel.sendMessage(

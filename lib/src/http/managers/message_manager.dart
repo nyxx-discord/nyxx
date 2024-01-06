@@ -458,12 +458,17 @@ class MessageManager extends Manager<Message> {
   /// Bulk delete many messages at once
   ///
   /// This will throw an error if any of [ids] is not a valid message ID or if any of the messages are from before [Snowflake.bulkDeleteLimit].
-  Future<void> bulkDelete(Iterable<Snowflake> ids) async {
+  Future<void> bulkDelete(Iterable<Snowflake> ids, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages()
       ..bulkDelete();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(ids.map((e) => e.toString()).toList()));
+    final request = BasicRequest(
+      route,
+      method: 'POST',
+      body: jsonEncode({'messages': ids.map((e) => e.toString()).toList()}),
+      auditLogReason: auditLogReason,
+    );
 
     await client.httpHandler.executeSafe(request);
   }
