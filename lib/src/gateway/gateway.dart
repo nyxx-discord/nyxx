@@ -529,7 +529,7 @@ class Gateway extends GatewayManager with EventParser {
     return GuildDeleteEvent(
       gateway: this,
       guild: PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
-      isUnavailable: raw['unavailable'] as bool,
+      isUnavailable: raw['unavailable'] as bool? ?? false,
     );
   }
 
