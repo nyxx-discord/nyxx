@@ -6,7 +6,7 @@
 
 A complete, robust and efficient wrapper around Discord's API for bots & applications.
 
-To get started using nyxx, follow our [getting started guide](https://nyxx.l7ssha.xyz/docs/guides/writing_your_first_bot) to write your first bot.
+To get started using nyxx, follow our [getting started guide](https://nyxx.l7ssha.xyz/docs/tutorials/writing_your_first_bot) to write your first bot.
 
 If you're already familiar with Discord's API, here's a quick example to get you started:
 ```dart
