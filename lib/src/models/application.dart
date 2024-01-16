@@ -26,6 +26,7 @@ class PartialApplication with ToStringHelper {
   EntitlementManager get entitlements => EntitlementManager(manager.client.options.entitlementConfig, manager.client, applicationId: id);
 
   /// Create a new [PartialApplication].
+  /// @nodoc
   PartialApplication({required this.id, required this.manager});
 
   /// Fetch this application's role connection metadata.
@@ -120,6 +121,7 @@ class Application extends PartialApplication {
   final Uri? roleConnectionsVerificationUrl;
 
   /// {@macro application}
+  /// @nodoc
   Application({
     required super.id,
     required super.manager,
@@ -246,6 +248,7 @@ class InstallationParameters with ToStringHelper {
   final Permissions permissions;
 
   /// {@macro installation_parameters}
+  /// @nodoc
   InstallationParameters({
     required this.scopes,
     required this.permissions,
@@ -275,6 +278,7 @@ class ApplicationRoleConnectionMetadata with ToStringHelper {
   final Map<Locale, String>? localizedDescriptions;
 
   /// {@macro application_role_connection_metadata}
+  /// @nodoc
   ApplicationRoleConnectionMetadata({
     required this.type,
     required this.key,

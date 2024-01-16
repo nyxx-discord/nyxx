@@ -10,6 +10,7 @@ abstract class GatewayEvent with ToStringHelper {
   final Opcode opcode;
 
   /// {@macro gateway_event}
+  /// @nodoc
   GatewayEvent({required this.opcode});
 }
 
@@ -27,6 +28,7 @@ class RawDispatchEvent extends GatewayEvent {
   final Map<String, Object?> payload;
 
   /// {@macro raw_dispatch_event}
+  /// @nodoc
   RawDispatchEvent({required this.seq, required this.name, required this.payload}) : super(opcode: Opcode.dispatch);
 }
 
@@ -38,6 +40,7 @@ abstract class DispatchEvent extends GatewayEvent {
   final Gateway gateway;
 
   /// {@macro dispatch_event}
+  /// @nodoc
   DispatchEvent({required this.gateway}) : super(opcode: Opcode.dispatch);
 }
 
@@ -51,6 +54,7 @@ class UnknownDispatchEvent extends DispatchEvent {
   final RawDispatchEvent raw;
 
   /// {@macro unknown_dispatch_event}
+  /// @nodoc
   UnknownDispatchEvent({required super.gateway, required this.raw});
 }
 
@@ -78,6 +82,7 @@ class InvalidSessionEvent extends GatewayEvent {
   final bool isResumable;
 
   /// {@macro invalid_session_event}
+  /// @nodoc
   InvalidSessionEvent({required this.isResumable}) : super(opcode: Opcode.invalidSession);
 }
 
@@ -89,6 +94,7 @@ class HelloEvent extends GatewayEvent {
   final Duration heartbeatInterval;
 
   /// {@macro hello_event}
+  /// @nodoc
   HelloEvent({required this.heartbeatInterval}) : super(opcode: Opcode.hello);
 }
 
@@ -100,5 +106,6 @@ class HeartbeatAckEvent extends GatewayEvent {
   final Duration latency;
 
   /// {@macro heartbeat_ack_event}
+  /// @nodoc
   HeartbeatAckEvent({required this.latency}) : super(opcode: Opcode.heartbeatAck);
 }

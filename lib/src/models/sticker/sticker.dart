@@ -86,6 +86,7 @@ class StickerItem extends SnowflakeEntity<StickerItem> {
   final StickerFormatType formatType;
 
   /// {@macro sticker_item}
+  /// @nodoc
   StickerItem({required super.id, required this.name, required this.formatType});
 
   @override

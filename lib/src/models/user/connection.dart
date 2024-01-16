@@ -37,6 +37,7 @@ class Connection with ToStringHelper {
   final ConnectionVisibility visibility;
 
   /// Create a new [Connection].
+  /// @nodoc
   Connection({
     required this.id,
     required this.name,

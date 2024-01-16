@@ -81,6 +81,7 @@ class PublicThread extends TextChannel implements Thread {
   ChannelType get type => ChannelType.publicThread;
 
   /// {@macro public_thread}
+  /// @nodoc
   PublicThread({
     required super.id,
     required super.manager,

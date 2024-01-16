@@ -77,6 +77,7 @@ abstract class Interaction<T> with ToStringHelper {
   final List<Entitlement> entitlements;
 
   /// {@macro interaction}
+  /// @nodoc
   Interaction({
     required this.manager,
     required this.id,
@@ -181,6 +182,7 @@ mixin ModalResponse<T> on Interaction<T> {
 /// {@endtemplate}
 class PingInteraction extends Interaction<void> {
   /// {@macro ping_interaction}
+  /// @nodoc
   PingInteraction({
     required super.manager,
     required super.id,
@@ -210,6 +212,7 @@ class PingInteraction extends Interaction<void> {
 class ApplicationCommandInteraction extends Interaction<ApplicationCommandInteractionData>
     with MessageResponse<ApplicationCommandInteractionData>, ModalResponse<ApplicationCommandInteractionData> {
   /// {@macro application_command_interaction}
+  /// @nodoc
   ApplicationCommandInteraction({
     required super.manager,
     required super.id,
@@ -237,6 +240,7 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
 class MessageComponentInteraction extends Interaction<MessageComponentInteractionData>
     with MessageResponse<MessageComponentInteractionData>, ModalResponse<MessageComponentInteractionData> {
   /// {@macro message_component_interaction}
+  /// @nodoc
   MessageComponentInteraction({
     required super.manager,
     required super.id,
@@ -319,6 +323,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 /// {@endtemplate}
 class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> with MessageResponse<ModalSubmitInteractionData> {
   /// {@macro modal_submit_interaction}
+  /// @nodoc
   ModalSubmitInteraction({
     required super.manager,
     required super.id,
@@ -345,6 +350,7 @@ class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> wit
 /// {@endtemplate}
 class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationCommandInteractionData> {
   /// {@macro application_command_autocomplete_interaction}
+  /// @nodoc
   ApplicationCommandAutocompleteInteraction({
     required super.manager,
     required super.id,
@@ -421,6 +427,7 @@ class ApplicationCommandInteractionData with ToStringHelper {
   final Snowflake? targetId;
 
   /// {@macro application_command_interaction_data}
+  /// @nodoc
   ApplicationCommandInteractionData({
     required this.id,
     required this.name,
@@ -455,6 +462,7 @@ class ResolvedData with ToStringHelper {
   final Map<Snowflake, Attachment>? attachments;
 
   /// {@macro resolved_data}
+  /// @nodoc
   ResolvedData({
     required this.users,
     required this.members,
@@ -485,6 +493,7 @@ class InteractionOption with ToStringHelper {
   final bool? isFocused;
 
   /// {@macro interaction_option}
+  /// @nodoc
   InteractionOption({
     required this.name,
     required this.type,
@@ -511,6 +520,7 @@ class MessageComponentInteractionData with ToStringHelper {
   final ResolvedData? resolved;
 
   /// {@macro message_component_interaction_data}
+  /// @nodoc
   MessageComponentInteractionData({required this.customId, required this.type, required this.values, required this.resolved});
 }
 
@@ -525,5 +535,6 @@ class ModalSubmitInteractionData with ToStringHelper {
   final List<MessageComponent> components;
 
   /// {@macro modal_submit_interaction_data}
+  /// @nodoc
   ModalSubmitInteractionData({required this.customId, required this.components});
 }

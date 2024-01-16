@@ -8,6 +8,7 @@ class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
   @override
   final GuildStickerManager manager;
 
+  /// @nodoc
   PartialGuildSticker({required super.id, required this.manager});
 }
 
@@ -51,6 +52,7 @@ class GuildSticker extends PartialGuildSticker with Sticker {
   final int? sortValue;
 
   /// {@macro guild_sticker}
+  /// @nodoc
   GuildSticker({
     required super.id,
     required super.manager,

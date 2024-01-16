@@ -56,6 +56,7 @@ class VoiceState with ToStringHelper {
   final DateTime? requestedToSpeakAt;
 
   /// {@macro voice_state}
+  /// @nodoc
   VoiceState({
     required this.manager,
     required this.guildId,

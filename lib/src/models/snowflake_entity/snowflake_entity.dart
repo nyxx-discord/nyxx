@@ -11,6 +11,7 @@ abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper
   final Snowflake id;
 
   /// Create a new [SnowflakeEntity].
+  /// @nodoc
   SnowflakeEntity({required this.id});
 
   /// If this entity exists in the manager's cache, return the cached instance. Otherwise, [fetch]
@@ -36,6 +37,7 @@ abstract class ManagedSnowflakeEntity<T extends ManagedSnowflakeEntity<T>> exten
   ReadOnlyManager<T> get manager;
 
   /// Create a new [ManagedSnowflakeEntity];
+  /// @nodoc
   ManagedSnowflakeEntity({required super.id});
 
   @override
@@ -51,6 +53,7 @@ abstract class WritableSnowflakeEntity<T extends WritableSnowflakeEntity<T>> ext
   Manager<T> get manager;
 
   /// Create a new [WritableSnowflakeEntity].
+  /// @nodoc
   WritableSnowflakeEntity({required super.id});
 
   /// Update this entity using the provided builder and return the updated entity.

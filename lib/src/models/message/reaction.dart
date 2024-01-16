@@ -28,6 +28,7 @@ class Reaction with ToStringHelper {
   final List<DiscordColor> burstColors;
 
   /// {@macro reaction}
+  /// @nodoc
   Reaction({
     required this.count,
     required this.countDetails,
@@ -49,5 +50,6 @@ class ReactionCountDetails with ToStringHelper {
   final int normal;
 
   /// {@macro reaction_count_details}
+  /// @nodoc
   ReactionCountDetails({required this.burst, required this.normal});
 }

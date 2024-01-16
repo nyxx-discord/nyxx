@@ -58,6 +58,7 @@ class MessageReference with ToStringHelper {
   final Snowflake? guildId;
 
   /// {@macro message_reference}
+  /// @nodoc
   MessageReference({
     required this.manager,
     required this.messageId,

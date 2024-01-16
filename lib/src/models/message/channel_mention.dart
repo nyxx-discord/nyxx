@@ -19,6 +19,7 @@ class ChannelMention extends PartialChannel {
   final String name;
 
   /// {@macro channel_mention}
+  /// @nodoc
   ChannelMention({
     required super.id,
     required super.manager,

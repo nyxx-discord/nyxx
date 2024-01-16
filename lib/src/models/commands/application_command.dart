@@ -14,6 +14,7 @@ class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationComma
   final ApplicationCommandManager manager;
 
   /// Create a new [PartialApplicationCommand].
+  /// @nodoc
   PartialApplicationCommand({required super.id, required this.manager});
 
   /// Fetch the permissions for this command in a given guild.
@@ -63,6 +64,7 @@ class ApplicationCommand extends PartialApplicationCommand {
   final Snowflake version;
 
   /// {@macro application_command}
+  /// @nodoc
   ApplicationCommand({
     required super.id,
     required super.manager,

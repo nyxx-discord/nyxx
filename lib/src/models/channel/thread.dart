@@ -92,6 +92,7 @@ class PartialThreadMember {
   final Flags<Never> flags;
 
   /// {@macro partial_thread_member}
+  /// @nodoc
   PartialThreadMember({required this.joinTimestamp, required this.flags});
 }
 
@@ -111,6 +112,7 @@ class ThreadMember extends PartialThreadMember {
   final Member? member;
 
   /// {@macro thread_member}
+  /// @nodoc
   ThreadMember({
     required super.joinTimestamp,
     required super.flags,

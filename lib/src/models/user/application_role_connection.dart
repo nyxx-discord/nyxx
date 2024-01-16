@@ -17,6 +17,7 @@ class ApplicationRoleConnection with ToStringHelper {
   final Map<String, String> metadata;
 
   /// {@macro application_role_connection}
+  /// @nodoc
   ApplicationRoleConnection({
     required this.platformName,
     required this.platformUsername,

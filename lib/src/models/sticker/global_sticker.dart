@@ -8,6 +8,7 @@ class PartialGlobalSticker extends ManagedSnowflakeEntity<GlobalSticker> {
   @override
   final GlobalStickerManager manager;
 
+  /// @nodoc
   PartialGlobalSticker({required super.id, required this.manager});
 }
 
@@ -51,6 +52,7 @@ class GlobalSticker extends PartialGlobalSticker with Sticker {
   final Snowflake packId;
 
   /// {@macro global_sticker}
+  /// @nodoc
   GlobalSticker({
     required super.id,
     required super.manager,

@@ -9,6 +9,7 @@ class EntitlementCreateEvent extends DispatchEvent {
   final Entitlement entitlement;
 
   /// {@macro entitlement_create_event}
+  /// @nodoc
   EntitlementCreateEvent({required super.gateway, required this.entitlement});
 }
 
@@ -23,6 +24,7 @@ class EntitlementUpdateEvent extends DispatchEvent {
   final Entitlement? oldEntitlement;
 
   /// {@macro entitlement_update_event}
+  /// @nodoc
   EntitlementUpdateEvent({required super.gateway, required this.entitlement, required this.oldEntitlement});
 }
 
@@ -34,5 +36,6 @@ class EntitlementDeleteEvent extends DispatchEvent {
   final Entitlement entitlement;
 
   /// {@macro entitlement_delete_event}
+  /// @nodoc
   EntitlementDeleteEvent({required super.gateway, required this.entitlement});
 }

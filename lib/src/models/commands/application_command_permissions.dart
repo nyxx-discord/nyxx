@@ -23,6 +23,7 @@ class CommandPermissions extends SnowflakeEntity<CommandPermissions> {
   final List<CommandPermission> permissions;
 
   /// {@macro command_permissions}
+  /// @nodoc
   CommandPermissions({
     required this.manager,
     required super.id,
@@ -68,6 +69,7 @@ class CommandPermission with ToStringHelper {
   final bool hasPermission;
 
   /// {@macro command_permission}
+  /// @nodoc
   CommandPermission({required this.id, required this.type, required this.hasPermission});
 }
 

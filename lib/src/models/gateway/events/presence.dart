@@ -26,6 +26,7 @@ class PresenceUpdateEvent extends DispatchEvent {
   final ClientStatus? clientStatus;
 
   /// {@macro presence_update_event}
+  /// @nodoc
   PresenceUpdateEvent({
     required super.gateway,
     required this.user,
@@ -59,6 +60,7 @@ class TypingStartEvent extends DispatchEvent {
   final Member? member;
 
   /// {@macro typing_start_event}
+  /// @nodoc
   TypingStartEvent({
     required super.gateway,
     required this.channelId,
@@ -89,5 +91,6 @@ class UserUpdateEvent extends DispatchEvent {
   final User user;
 
   /// {@macro user_update_event}
+  /// @nodoc
   UserUpdateEvent({required super.gateway, required this.oldUser, required this.user});
 }

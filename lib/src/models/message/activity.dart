@@ -14,6 +14,7 @@ class MessageActivity with ToStringHelper {
   final String? partyId;
 
   /// {@macro message_activity}
+  /// @nodoc
   MessageActivity({
     required this.type,
     required this.partyId,

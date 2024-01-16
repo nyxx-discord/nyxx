@@ -16,6 +16,7 @@ class PartialScheduledEvent extends WritableSnowflakeEntity<ScheduledEvent> {
   final ScheduledEventManager manager;
 
   /// Create a new [PartialScheduledEvent].
+  /// @nodoc
   PartialScheduledEvent({required super.id, required this.manager});
 
   /// List the users that have followed this event.
@@ -75,6 +76,7 @@ class ScheduledEvent extends PartialScheduledEvent {
   final String? coverImageHash;
 
   /// {@macro scheduled_event}
+  /// @nodoc
   ScheduledEvent({
     required super.id,
     required super.manager,
@@ -169,6 +171,7 @@ class EntityMetadata with ToStringHelper {
   final String? location;
 
   /// {@macro entity_metadata}
+  /// @nodoc
   EntityMetadata({required this.location});
 }
 
@@ -188,6 +191,7 @@ class ScheduledEventUser with ToStringHelper {
   final Member? member;
 
   /// {@macro scheduled_event_user}
+  /// @nodoc
   ScheduledEventUser({
     required this.manager,
     required this.scheduledEventId,

@@ -32,6 +32,7 @@ class PermissionOverwrite with ToStringHelper {
   final Permissions deny;
 
   /// {@macro permission_overwrite}
+  /// @nodoc
   PermissionOverwrite({
     required this.id,
     required this.type,

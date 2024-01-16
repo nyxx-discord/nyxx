@@ -25,6 +25,7 @@ class Onboarding with ToStringHelper {
   final bool isEnabled;
 
   /// {@macro onboarding}
+  /// @nodoc
   Onboarding({
     required this.manager,
     required this.guildId,
@@ -68,6 +69,7 @@ class OnboardingPrompt with ToStringHelper {
   final bool isInOnboarding;
 
   /// {@macro onboarding_prompt}
+  /// @nodoc
   OnboardingPrompt({
     required this.id,
     required this.type,
@@ -127,6 +129,7 @@ class OnboardingPromptOption with ToStringHelper {
   final String? description;
 
   /// {@macro onboarding_prompt_option}
+  /// @nodoc
   OnboardingPromptOption({
     required this.manager,
     required this.id,
