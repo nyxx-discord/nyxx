@@ -52,6 +52,7 @@ class Invite with ToStringHelper {
   final ScheduledEvent? guildScheduledEvent;
 
   /// {@macro invite}
+  /// @nodoc
   Invite({
     required this.code,
     required this.guild,

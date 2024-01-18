@@ -15,6 +15,7 @@ class ThreadList with ToStringHelper {
   final bool hasMore;
 
   /// {@macro thread_list}
+  /// @nodoc
   ThreadList({
     required this.threads,
     required this.members,

@@ -59,6 +59,7 @@ class GuildTextChannel extends TextChannel implements GuildChannel, HasThreadsCh
   ChannelType get type => ChannelType.guildText;
 
   /// {@macro guild_text_channel}
+  /// @nodoc
   GuildTextChannel({
     required super.id,
     required super.manager,

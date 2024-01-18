@@ -30,6 +30,7 @@ class Sku with ToStringHelper {
   final SkuFlags flags;
 
   /// {@macro sku}
+  /// @nodoc
   Sku({
     required this.manager,
     required this.id,

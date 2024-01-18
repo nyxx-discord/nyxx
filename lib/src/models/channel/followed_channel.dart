@@ -18,6 +18,7 @@ class FollowedChannel with ToStringHelper {
   final Snowflake webhookId;
 
   /// {@macro followed_channel}
+  /// @nodoc
   FollowedChannel({required this.manager, required this.channelId, required this.webhookId});
 
   /// The followed channel.

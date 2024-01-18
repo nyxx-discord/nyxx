@@ -18,6 +18,7 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   final WebhookManager manager;
 
   /// Create a new [PartialWebhook].
+  /// @nodoc
   PartialWebhook({required super.id, required this.manager});
 
   /// Update this webhook, returning the updated webhook.
@@ -90,6 +91,7 @@ class WebhookAuthor extends PartialWebhook implements MessageAuthor {
   final String username;
 
   /// Create a new [WebhookAuthor].
+  /// @nodoc
   WebhookAuthor({required super.id, required super.manager, required this.avatarHash, required this.username});
 
   @override
@@ -142,6 +144,7 @@ class Webhook extends PartialWebhook {
   final Uri? url;
 
   /// {@macro webhook}
+  /// @nodoc
   Webhook({
     required super.id,
     required super.manager,

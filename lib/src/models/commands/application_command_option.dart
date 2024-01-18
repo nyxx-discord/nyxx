@@ -50,6 +50,7 @@ class CommandOption with ToStringHelper {
   final bool? hasAutocomplete;
 
   /// {@macro command_option}
+  /// @nodoc
   CommandOption({
     required this.type,
     required this.name,
@@ -113,6 +114,7 @@ class CommandOptionChoice {
   final dynamic value;
 
   /// {@macro command_option_choice}
+  /// @nodoc
   CommandOptionChoice({required this.name, required this.nameLocalizations, required this.value});
 }
 

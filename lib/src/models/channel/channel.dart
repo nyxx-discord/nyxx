@@ -10,6 +10,7 @@ class PartialChannel extends ManagedSnowflakeEntity<Channel> {
   final ChannelManager manager;
 
   /// Create a new [PartialChannel].
+  /// @nodoc
   PartialChannel({required super.id, required this.manager});
 
   /// Update this channel.
@@ -42,6 +43,7 @@ abstract class Channel extends PartialChannel {
   ChannelType get type;
 
   /// {@macro channel}
+  /// @nodoc
   Channel({required super.id, required super.manager});
 }
 

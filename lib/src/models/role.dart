@@ -15,6 +15,7 @@ class PartialRole extends WritableSnowflakeEntity<Role> {
   final RoleManager manager;
 
   /// Create a new [PartialRole].
+  /// @nodoc
   PartialRole({required super.id, required this.manager});
 }
 
@@ -58,6 +59,7 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
   final RoleFlags flags;
 
   /// {@macro role}
+  /// @nodoc
   Role({
     required super.id,
     required super.manager,
@@ -97,6 +99,7 @@ class RoleTags with ToStringHelper {
   final Snowflake? subscriptionListingId;
 
   /// {@macro role_tags}
+  /// @nodoc
   RoleTags({
     required this.botId,
     required this.integrationId,

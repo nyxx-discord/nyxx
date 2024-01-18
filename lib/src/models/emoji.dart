@@ -12,6 +12,7 @@ class PartialEmoji extends WritableSnowflakeEntity<Emoji> {
   final EmojiManager manager;
 
   /// Create a new [PartialEmoji].
+  /// @nodoc
   PartialEmoji({required super.id, required this.manager});
 }
 
@@ -20,6 +21,7 @@ abstract class Emoji extends PartialEmoji {
   /// The emoji's name. Can be `dartlang` for a custom emoji, or `❤️` for a text emoji.
   String? get name;
 
+  /// @nodoc
   Emoji({
     required super.id,
     required super.manager,
@@ -31,6 +33,7 @@ class TextEmoji extends Emoji {
   @override
   final String name;
 
+  /// @nodoc
   TextEmoji({
     required super.id,
     required super.manager,
@@ -65,6 +68,7 @@ class GuildEmoji extends Emoji {
   /// Whether this emoji can be used, may be false due to loss of Server Boosts.
   final bool? isAvailable;
 
+  /// @nodoc
   GuildEmoji({
     required super.id,
     required super.manager,

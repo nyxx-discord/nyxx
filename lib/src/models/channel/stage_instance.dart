@@ -30,6 +30,7 @@ class StageInstance extends SnowflakeEntity<StageInstance> {
   final Snowflake? scheduledEventId;
 
   /// {@macro stage_instance}
+  /// @nodoc
   StageInstance({
     required super.id,
     required this.manager,

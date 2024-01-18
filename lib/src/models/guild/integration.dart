@@ -11,6 +11,7 @@ class PartialIntegration extends ManagedSnowflakeEntity<Integration> {
   final IntegrationManager manager;
 
   /// Create a new [PartialIntegration].
+  /// @nodoc
   PartialIntegration({required super.id, required this.manager});
 
   /// Delete this integration.
@@ -67,6 +68,7 @@ class Integration extends PartialIntegration {
   final List<String>? scopes;
 
   /// {@macro integration}
+  /// @nodoc
   Integration({
     required super.id,
     required super.manager,
@@ -124,6 +126,7 @@ class IntegrationAccount with ToStringHelper {
   final String name;
 
   /// {@macro integration_account}
+  /// @nodoc
   IntegrationAccount({required this.id, required this.name});
 }
 
@@ -147,6 +150,7 @@ class IntegrationApplication with ToStringHelper {
   final User? bot;
 
   /// {@macro integration_application}
+  /// @nodoc
   IntegrationApplication({
     required this.id,
     required this.name,

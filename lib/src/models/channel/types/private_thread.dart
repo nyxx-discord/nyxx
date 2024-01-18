@@ -83,6 +83,7 @@ class PrivateThread extends TextChannel implements Thread {
   ChannelType get type => ChannelType.privateThread;
 
   /// {@macro private_thread}
+  /// @nodoc
   PrivateThread({
     required super.id,
     required super.manager,

@@ -17,6 +17,7 @@ class ClientStatus with ToStringHelper {
   final UserStatus? web;
 
   /// {@macro client_status}
+  /// @nodoc
   ClientStatus({required this.desktop, required this.mobile, required this.web});
 }
 
@@ -94,6 +95,7 @@ class Activity with ToStringHelper {
   final List<ActivityButton>? buttons;
 
   /// {@macro activity}
+  /// @nodoc
   Activity({
     required this.name,
     required this.type,
@@ -150,6 +152,7 @@ class ActivityTimestamps with ToStringHelper {
   final DateTime? end;
 
   /// {@macro activity_timestamps}
+  /// @nodoc
   ActivityTimestamps({required this.start, required this.end});
 }
 
@@ -167,6 +170,7 @@ class ActivityParty with ToStringHelper {
   final int? maxSize;
 
   /// {@macro activity_party}
+  /// @nodoc
   ActivityParty({required this.id, required this.currentSize, required this.maxSize});
 }
 
@@ -189,6 +193,7 @@ class ActivityAssets with ToStringHelper {
   final String? smallText;
 
   /// {@macro activity_assets}
+  /// @nodoc
   ActivityAssets({
     required this.largeImage,
     required this.largeText,
@@ -211,6 +216,7 @@ class ActivitySecrets with ToStringHelper {
   final String? match;
 
   /// {@macro activity_secrets}
+  /// @nodoc
   ActivitySecrets({required this.join, required this.spectate, required this.match});
 }
 
@@ -275,5 +281,6 @@ class ActivityButton with ToStringHelper {
   final Uri url;
 
   /// {@macro activity_button}
+  /// @nodoc
   ActivityButton({required this.label, required this.url});
 }

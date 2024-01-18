@@ -14,6 +14,7 @@ class PartialMember extends WritableSnowflakeEntity<Member> {
   final MemberManager manager;
 
   /// Create a new [PartialMember].
+  /// @nodoc
   PartialMember({required super.id, required this.manager});
 
   /// Add a role to this member.
@@ -70,6 +71,7 @@ class Member extends PartialMember {
   final DateTime? communicationDisabledUntil;
 
   /// {@macro member}
+  /// @nodoc
   Member({
     required super.id,
     required super.manager,

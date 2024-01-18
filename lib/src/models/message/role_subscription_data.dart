@@ -20,6 +20,7 @@ class RoleSubscriptionData {
   final bool isRenewal;
 
   /// {@macro role_subscription_data}
+  /// @nodoc
   RoleSubscriptionData({
     required this.listingId,
     required this.tierName,

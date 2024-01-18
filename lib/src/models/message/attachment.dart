@@ -77,6 +77,7 @@ class Attachment with ToStringHelper implements CdnAsset {
   bool get isAnimated => false;
 
   /// {@macro attachment}
+  /// @nodoc
   Attachment({
     required this.id,
     required this.manager,

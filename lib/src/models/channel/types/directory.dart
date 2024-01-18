@@ -8,5 +8,6 @@ class DirectoryChannel extends Channel {
   ChannelType get type => ChannelType.guildDirectory;
 
   /// {@macro directory_channel}
+  /// @nodoc
   DirectoryChannel({required super.id, required super.manager});
 }

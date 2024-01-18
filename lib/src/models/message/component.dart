@@ -46,6 +46,7 @@ class ActionRowComponent extends MessageComponent {
   final List<MessageComponent> components;
 
   /// Create a new [ActionRowComponent].
+  /// @nodoc
   ActionRowComponent({required this.components});
 }
 
@@ -73,6 +74,7 @@ class ButtonComponent extends MessageComponent {
   final bool? isDisabled;
 
   /// Create a new [ButtonComponent].
+  /// @nodoc
   ButtonComponent({
     required this.style,
     required this.label,
@@ -142,6 +144,7 @@ class SelectMenuComponent extends MessageComponent {
   final bool? isDisabled;
 
   /// Create a new [SelectMenuComponent].
+  /// @nodoc
   SelectMenuComponent({
     required this.type,
     required this.customId,
@@ -184,6 +187,7 @@ class SelectMenuDefaultValue {
   final SelectMenuDefaultValueType type;
 
   /// Create a new [SelectMenuDefaultValue].
+  /// @nodoc
   SelectMenuDefaultValue({required this.id, required this.type});
 }
 
@@ -205,6 +209,7 @@ class SelectMenuOption with ToStringHelper {
   final bool? isDefault;
 
   /// Create a new [SelectMenuOption].
+  /// @nodoc
   SelectMenuOption({
     required this.label,
     required this.value,
@@ -244,6 +249,7 @@ class TextInputComponent extends MessageComponent {
   final String? placeholder;
 
   /// Create a new [TextInputComponent].
+  /// @nodoc
   TextInputComponent({
     required this.customId,
     required this.style,

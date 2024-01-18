@@ -86,6 +86,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
       );
 
   /// Create a new [PartialGuild].
+  /// @nodoc
   PartialGuild({required super.id, required this.manager});
 
   @override
@@ -338,6 +339,7 @@ class Guild extends PartialGuild {
   final Snowflake? safetyAlertsChannelId;
 
   /// {@macro guild}
+  /// @nodoc
   Guild({
     required super.id,
     required super.manager,

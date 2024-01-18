@@ -6,10 +6,12 @@ class PartialMockSnowflakeEntity extends WritableSnowflakeEntity<MockSnowflakeEn
   @override
   final MockSnowflakeEntityManager manager = MockSnowflakeEntityManager();
 
+  /// @nodoc
   PartialMockSnowflakeEntity({required super.id});
 }
 
 class MockSnowflakeEntity extends PartialMockSnowflakeEntity {
+  /// @nodoc
   MockSnowflakeEntity({required super.id});
 }
 

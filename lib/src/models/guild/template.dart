@@ -47,6 +47,7 @@ class GuildTemplate with ToStringHelper {
   final bool? isDirty;
 
   /// {@macro guild_template}
+  /// @nodoc
   GuildTemplate({
     required this.code,
     required this.manager,

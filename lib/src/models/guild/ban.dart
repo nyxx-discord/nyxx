@@ -12,5 +12,6 @@ class Ban with ToStringHelper {
   final User user;
 
   /// {@macro ban}
+  /// @nodoc
   Ban({required this.reason, required this.user});
 }

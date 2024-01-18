@@ -24,6 +24,7 @@ class DmChannel extends TextChannel {
   ChannelType get type => ChannelType.dm;
 
   /// {@macro dm_channel}
+  /// @nodoc
   DmChannel({
     required super.id,
     required super.manager,
