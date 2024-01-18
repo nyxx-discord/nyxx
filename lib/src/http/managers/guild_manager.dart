@@ -298,6 +298,7 @@ class GuildManager extends Manager<Guild> {
           for (final role in ((raw['serialized_source_guild'] as Map<String, Object?>)['roles'] as List).cast<Map<String, Object?>>())
             {
               'position': 0,
+              'flags': 0,
               ...role,
             },
         ],
