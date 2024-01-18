@@ -54,12 +54,12 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// Creates a reaction on this message.
   /// ```dart
-  /// await message.react('👍');
+  /// await message.react(ReactionBuilder(name: '👍', id: null));
   /// ```
   /// or
   /// ```dart
   /// final emoji = await client.emoji.fetch(Snowflake(123456789012345678));
-  /// await message.react(emoji.toString());
+  /// await message.react(ReactionBuilder.fromEmoji(emoji));
   /// ```
   Future<void> react(ReactionBuilder emoji) => manager.addReaction(id, emoji);
 
