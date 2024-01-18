@@ -15,6 +15,7 @@ class PartialAutoModerationRule extends WritableSnowflakeEntity<AutoModerationRu
   final AutoModerationManager manager;
 
   /// Create a new [PartialAutoModerationRule].
+  /// @nodoc
   PartialAutoModerationRule({required super.id, required this.manager});
 }
 
@@ -53,6 +54,7 @@ class AutoModerationRule extends PartialAutoModerationRule {
   final List<Snowflake> exemptChannelIds;
 
   /// {@macro auto_moderation_rule}
+  /// @nodoc
   AutoModerationRule({
     required super.id,
     required super.manager,
@@ -148,6 +150,7 @@ class TriggerMetadata with ToStringHelper {
   final bool? isMentionRaidProtectionEnabled;
 
   /// {@macro trigger_metadata}
+  /// @nodoc
   TriggerMetadata({
     required this.keywordFilter,
     required this.regexPatterns,
@@ -192,6 +195,7 @@ class AutoModerationAction with ToStringHelper {
   final ActionMetadata? metadata;
 
   /// {@macro auto_moderation_action}
+  /// @nodoc
   AutoModerationAction({
     required this.type,
     required this.metadata,
@@ -237,6 +241,7 @@ class ActionMetadata with ToStringHelper {
   final String? customMessage;
 
   /// {@macro action_metadata}
+  /// @nodoc
   ActionMetadata({
     required this.manager,
     required this.channelId,

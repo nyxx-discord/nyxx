@@ -8,6 +8,7 @@ class GatewayConfiguration with ToStringHelper {
   final Uri url;
 
   /// {@macro gateway_configuration}
+  /// @nodoc
   GatewayConfiguration({required this.url});
 }
 
@@ -22,6 +23,7 @@ class GatewayBot extends GatewayConfiguration {
   final SessionStartLimit sessionStartLimit;
 
   /// {@macro gateway_bot}
+  /// @nodoc
   GatewayBot({
     required super.url,
     required this.shards,
@@ -46,6 +48,7 @@ class SessionStartLimit with ToStringHelper {
   final int maxConcurrency;
 
   /// {@macro session_start_limit}
+  /// @nodoc
   SessionStartLimit({
     required this.total,
     required this.remaining,

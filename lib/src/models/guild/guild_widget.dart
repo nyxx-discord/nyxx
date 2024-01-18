@@ -31,6 +31,7 @@ class GuildWidget with ToStringHelper {
   final int presenceCount;
 
   /// {@macro guild_widget}
+  /// @nodoc
   GuildWidget({
     required this.manager,
     required this.guildId,
@@ -59,6 +60,7 @@ class WidgetSettings with ToStringHelper {
   final Snowflake? channelId;
 
   /// {@macro widget_settings}
+  /// @nodoc
   WidgetSettings({
     required this.manager,
     required this.isEnabled,

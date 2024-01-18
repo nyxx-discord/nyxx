@@ -45,6 +45,7 @@ class Embed {
   final List<EmbedField>? fields;
 
   /// {@macro embed}
+  /// @nodoc
   Embed({
     required this.title,
     required this.description,
@@ -78,6 +79,7 @@ class EmbedFooter with ToStringHelper {
   final Uri? proxiedIconUrl;
 
   /// {@macro embed_footer}
+  /// @nodoc
   EmbedFooter({
     required this.text,
     required this.iconUrl,
@@ -105,6 +107,7 @@ class EmbedImage with ToStringHelper {
   final int? width;
 
   /// {@macro embed_image}
+  /// @nodoc
   EmbedImage({
     required this.url,
     required this.proxiedUrl,
@@ -133,6 +136,7 @@ class EmbedThumbnail with ToStringHelper {
   final int? width;
 
   /// {@macro embed_thumbnail}
+  /// @nodoc
   EmbedThumbnail({
     required this.url,
     required this.proxiedUrl,
@@ -161,6 +165,7 @@ class EmbedVideo with ToStringHelper {
   final int? width;
 
   /// {@macro embed_video}
+  /// @nodoc
   EmbedVideo({
     required this.url,
     required this.proxiedUrl,
@@ -183,6 +188,7 @@ class EmbedProvider with ToStringHelper {
   final Uri? url;
 
   /// {@macro embed_provider}
+  /// @nodoc
   EmbedProvider({
     required this.name,
     required this.url,
@@ -209,6 +215,7 @@ class EmbedAuthor with ToStringHelper {
   final Uri? proxyIconUrl;
 
   /// {@macro embed_author}
+  /// @nodoc
   EmbedAuthor({
     required this.name,
     required this.url,
@@ -234,6 +241,7 @@ class EmbedField with ToStringHelper {
   final bool inline;
 
   /// {@macro embed_field}
+  /// @nodoc
   EmbedField({
     required this.name,
     required this.value,

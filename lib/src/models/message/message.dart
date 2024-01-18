@@ -34,6 +34,7 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
   Snowflake get channelId => manager.channelId;
 
   /// {@macro partial_message}
+  /// @nodoc
   PartialMessage({required super.id, required this.manager});
 
   /// The channel this message was sent in.
@@ -186,6 +187,7 @@ class Message extends PartialMessage {
   final ResolvedData? resolved;
 
   /// {@macro message}
+  /// @nodoc
   Message({
     required super.id,
     required super.manager,
@@ -379,6 +381,7 @@ class MessageInteraction with ToStringHelper {
   final PartialMember? member;
 
   /// {@macro message_interaction}
+  /// @nodoc
   MessageInteraction({
     required this.id,
     required this.type,

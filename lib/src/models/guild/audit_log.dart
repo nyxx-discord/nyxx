@@ -15,6 +15,7 @@ class PartialAuditLogEntry extends ManagedSnowflakeEntity<AuditLogEntry> {
   final AuditLogManager manager;
 
   /// Create a new [PartialAuditLogEntry].
+  /// @nodoc
   PartialAuditLogEntry({required super.id, required this.manager});
 }
 
@@ -41,6 +42,7 @@ class AuditLogEntry extends PartialAuditLogEntry {
   final String? reason;
 
   /// {@macro audit_log_entry}
+  /// @nodoc
   AuditLogEntry({
     required super.id,
     required super.manager,
@@ -70,6 +72,7 @@ class AuditLogChange with ToStringHelper {
   final String key;
 
   /// {@macro audit_log_change}
+  /// @nodoc
   AuditLogChange({
     required this.oldValue,
     required this.newValue,
@@ -197,6 +200,7 @@ class AuditLogEntryInfo with ToStringHelper {
   final String? integrationType;
 
   /// {@macro audit_log_entry_info}
+  /// @nodoc
   AuditLogEntryInfo({
     required this.manager,
     required this.applicationId,

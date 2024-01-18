@@ -24,6 +24,7 @@ class MessageCreateEvent extends DispatchEvent {
   final Message message;
 
   /// {@macro message_create_event}
+  /// @nodoc
   MessageCreateEvent({required super.gateway, required this.guildId, required this.member, required this.mentions, required this.message});
 
   /// The guild the message was sent in.
@@ -50,6 +51,7 @@ class MessageUpdateEvent extends DispatchEvent {
   final Message? oldMessage;
 
   /// {@macro message_update_event}
+  /// @nodoc
   MessageUpdateEvent({
     required super.gateway,
     required this.guildId,
@@ -77,6 +79,7 @@ class MessageDeleteEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// {@macro message_delete_event}
+  /// @nodoc
   MessageDeleteEvent({required super.gateway, required this.id, required this.channelId, required this.guildId});
 
   /// The guild the message was deleted in.
@@ -100,6 +103,7 @@ class MessageBulkDeleteEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// {@macro message_bulk_delete_event}
+  /// @nodoc
   MessageBulkDeleteEvent({required super.gateway, required this.ids, required this.channelId, required this.guildId});
 
   /// The guild the messages were deleted in.
@@ -135,6 +139,7 @@ class MessageReactionAddEvent extends DispatchEvent {
   final Snowflake? messageAuthorId;
 
   /// {@macro message_reaction_add_event}
+  /// @nodoc
   MessageReactionAddEvent({
     required super.gateway,
     required this.userId,
@@ -182,6 +187,7 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   final Emoji emoji;
 
   /// {@macro message_reaction_remove_event}
+  /// @nodoc
   MessageReactionRemoveEvent({
     required super.gateway,
     required this.userId,
@@ -218,6 +224,7 @@ class MessageReactionRemoveAllEvent extends DispatchEvent {
   final Snowflake? guildId;
 
   /// {@macro message_reaction_remove_all_event}
+  /// @nodoc
   MessageReactionRemoveAllEvent({
     required super.gateway,
     required this.channelId,
@@ -251,6 +258,7 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
   final PartialEmoji emoji;
 
   /// {@macro message_reaction_remove_emoji_event}
+  /// @nodoc
   MessageReactionRemoveEmojiEvent({
     required super.gateway,
     required this.channelId,

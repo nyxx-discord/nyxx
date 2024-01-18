@@ -59,6 +59,7 @@ class GuildStageChannel extends TextChannel implements VoiceChannel, GuildChanne
   ChannelType get type => ChannelType.guildStageVoice;
 
   /// {@macro guild_stage_channel}
+  /// @nodoc
   GuildStageChannel({
     required super.id,
     required super.manager,

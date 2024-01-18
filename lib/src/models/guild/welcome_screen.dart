@@ -14,6 +14,7 @@ class WelcomeScreen with ToStringHelper {
   final List<WelcomeScreenChannel> channels;
 
   /// {@macro welcome_screen}
+  /// @nodoc
   WelcomeScreen({required this.description, required this.channels});
 }
 
@@ -37,6 +38,7 @@ class WelcomeScreenChannel with ToStringHelper {
   final String? emojiName;
 
   /// {@macro welcome_screen_channel}
+  /// @nodoc
   WelcomeScreenChannel({
     required this.manager,
     required this.channelId,

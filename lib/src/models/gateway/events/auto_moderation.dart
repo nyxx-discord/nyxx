@@ -16,6 +16,7 @@ class AutoModerationRuleCreateEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_create_event}
+  /// @nodoc
   AutoModerationRuleCreateEvent({required super.gateway, required this.rule});
 }
 
@@ -30,6 +31,7 @@ class AutoModerationRuleUpdateEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_update_event}
+  /// @nodoc
   AutoModerationRuleUpdateEvent({required super.gateway, required this.oldRule, required this.rule});
 }
 
@@ -41,6 +43,7 @@ class AutoModerationRuleDeleteEvent extends DispatchEvent {
   final AutoModerationRule rule;
 
   /// {@macro auto_moderation_rule_delete_event}
+  /// @nodoc
   AutoModerationRuleDeleteEvent({required super.gateway, required this.rule});
 }
 
@@ -82,6 +85,7 @@ class AutoModerationActionExecutionEvent extends DispatchEvent {
   final String? matchedContent;
 
   /// {@macro auto_moderation_action_execution_event}
+  /// @nodoc
   AutoModerationActionExecutionEvent({
     required super.gateway,
     required this.guildId,

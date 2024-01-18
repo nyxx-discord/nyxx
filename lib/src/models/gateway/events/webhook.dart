@@ -14,6 +14,7 @@ class WebhooksUpdateEvent extends DispatchEvent {
   final Snowflake channelId;
 
   /// {@macro webhooks_update_event}
+  /// @nodoc
   WebhooksUpdateEvent({required super.gateway, required this.guildId, required this.channelId});
 
   /// The guild the webhook was updated in.

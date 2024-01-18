@@ -73,6 +73,7 @@ class ForumChannel extends Channel implements GuildChannel, ThreadsOnlyChannel {
   ChannelType get type => ChannelType.guildForum;
 
   /// {@macro forum_channel}
+  /// @nodoc
   ForumChannel({
     required super.id,
     required super.manager,
@@ -157,6 +158,7 @@ class ForumTag with ToStringHelper {
   final String? emojiName;
 
   /// {@macro forum_tag}
+  /// @nodoc
   ForumTag({
     required this.id,
     required this.name,
@@ -177,6 +179,7 @@ class DefaultReaction with ToStringHelper {
   final String? emojiName;
 
   /// {@macro default_reaction}
+  /// @nodoc
   DefaultReaction({required this.emojiId, required this.emojiName});
 }
 

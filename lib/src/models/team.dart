@@ -31,6 +31,7 @@ class Team with ToStringHelper {
   final Snowflake ownerId;
 
   /// {@macro team}
+  /// @nodoc
   Team({
     required this.manager,
     required this.iconHash,
@@ -70,6 +71,7 @@ class TeamMember with ToStringHelper {
   final TeamMemberRole role;
 
   /// {@macro team_member}
+  /// @nodoc
   TeamMember({
     required this.membershipState,
     required this.teamId,

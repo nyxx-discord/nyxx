@@ -15,6 +15,7 @@ class IntegrationCreateEvent extends DispatchEvent {
   final Integration integration;
 
   /// {@macro integration_create_event}
+  /// @nodoc
   IntegrationCreateEvent({required super.gateway, required this.guildId, required this.integration});
 
   /// The guild the integration was created in.
@@ -35,6 +36,7 @@ class IntegrationUpdateEvent extends DispatchEvent {
   final Integration integration;
 
   /// {@macro integration_update_event}
+  /// @nodoc
   IntegrationUpdateEvent({required super.gateway, required this.guildId, required this.oldIntegration, required this.integration});
 
   /// The guild the integration was updated in.
@@ -55,6 +57,7 @@ class IntegrationDeleteEvent extends DispatchEvent {
   final Snowflake? applicationId;
 
   /// {@macro integration_delete_event}
+  /// @nodoc
   IntegrationDeleteEvent({required super.gateway, required this.id, required this.guildId, required this.applicationId});
 
   /// The guild the integration was deleted from.

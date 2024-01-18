@@ -14,6 +14,7 @@ class VoiceStateUpdateEvent extends DispatchEvent {
   final VoiceState? oldState;
 
   /// {@macro voice_state_update_event}
+  /// @nodoc
   VoiceStateUpdateEvent({required super.gateway, required this.oldState, required this.state});
 }
 
@@ -31,6 +32,7 @@ class VoiceServerUpdateEvent extends DispatchEvent {
   final String? endpoint;
 
   /// {@macro voice_server_update_event}
+  /// @nodoc
   VoiceServerUpdateEvent({required super.gateway, required this.token, required this.guildId, required this.endpoint});
 
   /// The guild.

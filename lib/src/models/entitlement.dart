@@ -11,6 +11,7 @@ class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
   final EntitlementManager manager;
 
   /// Create a new [PartialEntitlement].
+  /// @nodoc
   PartialEntitlement({required this.manager, required super.id});
 }
 
@@ -43,6 +44,7 @@ class Entitlement extends PartialEntitlement {
   final DateTime? endsAt;
 
   /// {@macro entitlement}
+  /// @nodoc
   Entitlement({
     required super.manager,
     required super.id,

@@ -14,6 +14,7 @@ class PartialUser extends ManagedSnowflakeEntity<User> {
   final UserManager manager;
 
   /// Create a new [PartialUser].
+  /// @nodoc
   PartialUser({required super.id, required this.manager});
 }
 
@@ -72,6 +73,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
   final String? avatarDecorationHash;
 
   /// {@macro user}
+  /// @nodoc
   User({
     required super.manager,
     required super.id,
