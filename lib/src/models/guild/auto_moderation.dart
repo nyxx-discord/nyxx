@@ -103,7 +103,7 @@ enum AutoModerationEventType {
 /// The type of a trigger for an [AutoModerationRule]
 enum TriggerType {
   keyword._(1),
-  spam._(2),
+  spam._(3),
   keywordPreset._(4),
   mentionSpam._(5);
 
