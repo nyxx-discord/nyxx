@@ -36,7 +36,7 @@ class RoleBuilder extends CreateBuilder<Role> {
         if (name != null) 'name': name,
         if (permissions != null) 'permissions': permissions!.value.toString(),
         if (color != null) 'color': color!.value,
-        if (isHoisted != null) 'hoisted': isHoisted,
+        if (isHoisted != null) 'hoist': isHoisted,
         if (icon != null) 'icon': icon!.buildDataString(),
         if (unicodeEmoji != null) 'unicode_emoji': unicodeEmoji,
         if (isMentionable != null) 'mentionable': isMentionable,
