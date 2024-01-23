@@ -314,6 +314,7 @@ class MessageManager extends Manager<Message> {
     );
   }
 
+  // Send a message.
   @override
   Future<Message> create(MessageBuilder builder) async {
     final route = HttpRoute()
@@ -367,6 +368,7 @@ class MessageManager extends Manager<Message> {
     return message;
   }
 
+  /// Update a message using the provided [builder].
   @override
   Future<Message> update(Snowflake id, MessageUpdateBuilder builder) async {
     final route = HttpRoute()
@@ -406,6 +408,7 @@ class MessageManager extends Manager<Message> {
     return message;
   }
 
+  /// Delete a message.
   @override
   Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()

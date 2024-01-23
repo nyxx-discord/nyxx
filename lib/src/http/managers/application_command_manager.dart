@@ -150,6 +150,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     return command;
   }
 
+  /// Update an application command using the provided [builder].
   @override
   Future<ApplicationCommand> update(Snowflake id, ApplicationCommandUpdateBuilder builder) async {
     final route = HttpRoute()..applications(id: applicationId.toString());
@@ -165,6 +166,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     return command;
   }
 
+  /// Delete an application command.
   @override
   Future<void> delete(Snowflake id) async {
     final route = HttpRoute()..applications(id: applicationId.toString());

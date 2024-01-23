@@ -44,6 +44,7 @@ class InviteManager {
     );
   }
 
+  /// Parse an [InviteWithMetadata] from [raw].
   InviteWithMetadata parseWithMetadata(Map<String, Object?> raw) {
     final invite = parse(raw);
 

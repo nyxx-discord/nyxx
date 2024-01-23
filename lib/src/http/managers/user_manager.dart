@@ -28,6 +28,7 @@ class UserManager extends ReadOnlyManager<User> {
   @override
   PartialUser operator [](Snowflake id) => PartialUser(id: id, manager: this);
 
+  /// Parse a [User] from [raw].
   @override
   User parse(Map<String, Object?> raw) {
     final hasAccentColor = raw['accent_color'] != null;
@@ -56,6 +57,7 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
+  /// Parse a [Connection] from [raw].
   Connection parseConnection(Map<String, Object?> raw) {
     return Connection(
       id: raw['id'] as String,
@@ -78,6 +80,7 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
+  /// Parse a [ApplicationRoleConnection] from [raw].
   ApplicationRoleConnection parseApplicationRoleConnection(Map<String, Object?> raw) {
     return ApplicationRoleConnection(
       platformName: raw['platform_name'] as String?,
@@ -86,6 +89,7 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
+  /// Fetch a user.
   @override
   Future<User> fetch(Snowflake id) async {
     final route = HttpRoute()..users(id: id.toString());

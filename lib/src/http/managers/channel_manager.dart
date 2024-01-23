@@ -428,6 +428,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
+  /// Parse a [StageInstance] from [raw].
   StageInstance parseStageInstance(Map<String, Object?> raw) {
     return StageInstance(
       id: Snowflake.parse(raw['id']!),
@@ -440,6 +441,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
+  /// Fetch a channel.
   @override
   Future<Channel> fetch(Snowflake id) async {
     final route = HttpRoute()..channels(id: id.toString());

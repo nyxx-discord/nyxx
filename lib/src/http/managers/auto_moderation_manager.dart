@@ -17,6 +17,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
   @override
   PartialAutoModerationRule operator [](Snowflake id) => PartialAutoModerationRule(id: id, manager: this);
 
+  /// Parse a [AutoModerationRule] from [raw].
   @override
   AutoModerationRule parse(Map<String, Object?> raw) {
     return AutoModerationRule(
@@ -35,6 +36,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [TriggerMetadata] from [raw].
   TriggerMetadata parseTriggerMetadata(Map<String, Object?> raw) {
     return TriggerMetadata(
       keywordFilter: maybeParseMany(raw['keyword_filter']),
@@ -46,6 +48,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [AutoModerationAction] from [raw].
   AutoModerationAction parseAutoModerationAction(Map<String, Object?> raw) {
     return AutoModerationAction(
       type: ActionType.parse(raw['type'] as int),
@@ -53,6 +56,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [ActionMetadata] from [raw].
   ActionMetadata parseActionMetadata(Map<String, Object?> raw) {
     return ActionMetadata(
       manager: this,
@@ -62,6 +66,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Fetch an auto moderation rule.
   @override
   Future<AutoModerationRule> fetch(Snowflake id) async {
     final route = HttpRoute()
@@ -77,6 +82,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     return rule;
   }
 
+  /// List the auto moderation rules in the guild.
   Future<List<AutoModerationRule>> list() async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -91,6 +97,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     return rules;
   }
 
+  /// Create an auto moderation rule.
   @override
   Future<AutoModerationRule> create(AutoModerationRuleBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
@@ -106,6 +113,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     return rule;
   }
 
+  /// Update an auto moderation rule using the provided [builder].
   @override
   Future<AutoModerationRule> update(Snowflake id, AutoModerationRuleUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
@@ -121,6 +129,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     return rule;
   }
 
+  /// Delete an auto moderation rule.
   @override
   Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()

@@ -90,6 +90,7 @@ class RoleManager extends Manager<Role> {
     return role;
   }
 
+  /// Update a role using the provided [builder].
   @override
   Future<Role> update(Snowflake id, RoleUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
@@ -104,6 +105,7 @@ class RoleManager extends Manager<Role> {
     return role;
   }
 
+  /// Delete a role.
   @override
   Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()

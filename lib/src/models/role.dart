@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/role.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -17,6 +18,22 @@ class PartialRole extends WritableSnowflakeEntity<Role> {
   /// Create a new [PartialRole].
   /// @nodoc
   PartialRole({required super.id, required this.manager});
+
+  /// Update this role, returning the updated role.
+  ///
+  /// External references:
+  /// * [RoleManager.update]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/guild#modify-guild-role
+  @override
+  Future<Role> update(RoleUpdateBuilder builder, {String? auditLogReason}) => manager.update(id, builder, auditLogReason: auditLogReason);
+
+  /// Delete this role.
+  ///
+  /// External references:
+  /// * [RoleManager.delete]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/guild#delete-guild-role
+  @override
+  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
 }
 
 /// {@template role}

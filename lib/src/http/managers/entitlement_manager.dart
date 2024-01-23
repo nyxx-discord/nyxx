@@ -21,6 +21,7 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
   @override
   PartialEntitlement operator [](Snowflake id) => PartialEntitlement(manager: this, id: id);
 
+  /// Parse a [Entitlement] from [raw].
   @override
   Entitlement parse(Map<String, Object?> raw) {
     return Entitlement(
@@ -67,6 +68,7 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
     return entitlements;
   }
 
+  /// Fetch a entitlement.
   @override
   Future<Entitlement> fetch(Snowflake id) async {
     final entitlements = await list(before: Snowflake(id.value + 1));
