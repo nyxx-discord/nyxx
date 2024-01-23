@@ -26,7 +26,6 @@ class ApplicationManager {
   /// Return a partial application with the given [id].
   PartialApplication operator [](Snowflake id) => PartialApplication(id: id, manager: this);
 
-  /// Parse an [Application] from [raw].
   Application parse(Map<String, Object?> raw) {
     return Application(
       id: Snowflake.parse(raw['id']!),

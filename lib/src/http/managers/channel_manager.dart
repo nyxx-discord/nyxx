@@ -441,7 +441,6 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
   }
 
-  /// Fetch a channel.
   @override
   Future<Channel> fetch(Snowflake id) async {
     final route = HttpRoute()..channels(id: id.toString());

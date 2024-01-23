@@ -41,7 +41,6 @@ class GuildManager extends Manager<Guild> {
   @override
   PartialGuild operator [](Snowflake id) => PartialGuild(id: id, manager: this);
 
-  /// Parse a [Guild] from [raw].
   @override
   Guild parse(Map<String, Object?> raw) {
     final id = Snowflake.parse(raw['id']!);
@@ -309,7 +308,6 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
-  /// Fetch a guild.
   @override
   Future<Guild> fetch(Snowflake id, {bool? withCounts}) async {
     final route = HttpRoute()..guilds(id: id.toString());
@@ -334,7 +332,6 @@ class GuildManager extends Manager<Guild> {
     return guild;
   }
 
-  /// Update a guild using the provided [builder].
   @override
   Future<Guild> update(Snowflake id, GuildUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()..guilds(id: id.toString());
@@ -347,7 +344,6 @@ class GuildManager extends Manager<Guild> {
     return guild;
   }
 
-  /// Delete a guild.
   @override
   Future<void> delete(Snowflake id) async {
     final route = HttpRoute()..guilds(id: id.toString());

@@ -18,7 +18,6 @@ class IntegrationManager extends ReadOnlyManager<Integration> {
   @override
   PartialIntegration operator [](Snowflake id) => PartialIntegration(id: id, manager: this);
 
-  /// Parse an [Integration] from [raw].
   @override
   Integration parse(Map<String, Object?> raw) {
     return Integration(
@@ -61,7 +60,6 @@ class IntegrationManager extends ReadOnlyManager<Integration> {
     );
   }
 
-  /// Fetch an integration.
   @override
   Future<Integration> fetch(Snowflake id) async {
     final integrations = await list();

@@ -57,7 +57,6 @@ class EmojiManager extends Manager<Emoji> {
   @override
   Future<GuildEmoji> get(Snowflake id) async => await super.get(id) as GuildEmoji;
 
-  /// Fetch a emoji.
   @override
   Future<GuildEmoji> fetch(Snowflake id) async {
     _checkIsConcrete(id);
@@ -106,7 +105,6 @@ class EmojiManager extends Manager<Emoji> {
     return emoji;
   }
 
-  /// Update a emoji using the provided [builder].
   @override
   Future<GuildEmoji> update(Snowflake id, EmojiUpdateBuilder builder, {String? auditLogReason}) async {
     _checkIsConcrete(id);
@@ -123,7 +121,6 @@ class EmojiManager extends Manager<Emoji> {
     return emoji;
   }
 
-  /// Delete a emoji.
   @override
   Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     _checkIsConcrete(id);

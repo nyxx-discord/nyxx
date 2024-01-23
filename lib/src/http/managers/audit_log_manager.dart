@@ -30,6 +30,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  /// Parse a [AuditLogChange] from [raw].
   AuditLogChange parseAuditLogChange(Map<String, Object?> raw) {
     return AuditLogChange(
       oldValue: raw['old_value'],
@@ -38,6 +39,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  /// Parse a [AuditLogEntryInfo] from [raw].
   AuditLogEntryInfo parseAuditLogEntryInfo(Map<String, Object?> raw) {
     return AuditLogEntryInfo(
       manager: this,
@@ -56,7 +58,6 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
-  // Fetch an audit log entry.
   @override
   Future<AuditLogEntry> fetch(Snowflake id) async {
     // Add one because before and after are exclusive.

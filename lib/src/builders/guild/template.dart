@@ -11,8 +11,8 @@ class GuildTemplateBuilder extends CreateBuilder<GuildTemplate> {
 
   @override
   Map<String, Object?> build() => {
-        if (!identical(description, sentinelString)) 'name': name,
-        if (description != null) 'description': description,
+        'name': name,
+        if (!identical(description, sentinelString)) 'description': description,
       };
 }
 
