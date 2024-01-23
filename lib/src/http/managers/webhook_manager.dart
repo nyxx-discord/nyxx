@@ -81,11 +81,11 @@ class WebhookManager extends Manager<Webhook> {
   }
 
   @override
-  Future<Webhook> create(WebhookBuilder builder) async {
+  Future<Webhook> create(WebhookBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: builder.channelId.toString())
       ..webhooks();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
@@ -95,12 +95,12 @@ class WebhookManager extends Manager<Webhook> {
   }
 
   @override
-  Future<Webhook> update(Snowflake id, WebhookUpdateBuilder builder, {String? token}) async {
+  Future<Webhook> update(Snowflake id, WebhookUpdateBuilder builder, {String? token, String? auditLogReason}) async {
     final route = HttpRoute()..webhooks(id: id.toString());
     if (token != null) {
       route.add(HttpRoutePart(token));
     }
-    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()), authenticated: token == null);
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()), authenticated: token == null, auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);

@@ -394,7 +394,7 @@ class GuildManager extends Manager<Guild> {
     return channel;
   }
 
-  ///Update the positions of channels in a guild.
+  /// Update the positions of channels in a guild.
   Future<void> updateChannelPositions(Snowflake id, List<ChannelPositionBuilder> positions) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())

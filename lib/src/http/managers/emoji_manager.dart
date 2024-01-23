@@ -89,13 +89,13 @@ class EmojiManager extends Manager<Emoji> {
   }
 
   @override
-  Future<GuildEmoji> create(EmojiBuilder builder, {String? audiReason}) async {
+  Future<GuildEmoji> create(EmojiBuilder builder, {String? auditLogReason}) async {
     _checkIsConcrete();
 
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..emojis();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final emoji = parse(response.jsonBody as Map<String, Object?>) as GuildEmoji;
@@ -105,13 +105,13 @@ class EmojiManager extends Manager<Emoji> {
   }
 
   @override
-  Future<GuildEmoji> update(Snowflake id, EmojiUpdateBuilder builder, {String? auditReason}) async {
+  Future<GuildEmoji> update(Snowflake id, EmojiUpdateBuilder builder, {String? auditLogReason}) async {
     _checkIsConcrete(id);
 
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..emojis(id: id.toString());
-    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final emoji = parse(response.jsonBody as Map<String, Object?>) as GuildEmoji;
@@ -121,13 +121,13 @@ class EmojiManager extends Manager<Emoji> {
   }
 
   @override
-  Future<void> delete(Snowflake id, {String? auditReason}) async {
+  Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     _checkIsConcrete(id);
 
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..emojis(id: id.toString());
-    final request = BasicRequest(route, method: 'DELETE');
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);
     cache.remove(id);

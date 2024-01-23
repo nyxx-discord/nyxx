@@ -490,7 +490,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..permissions(id: builder.id.toString());
-    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build(includeId: false)));
 
     await client.httpHandler.executeSafe(request);
   }

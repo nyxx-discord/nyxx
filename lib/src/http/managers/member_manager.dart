@@ -131,11 +131,11 @@ class MemberManager extends Manager<Member> {
   }
 
   /// Update the current member in the guild.
-  Future<Member> updateCurrentMember(CurrentMemberUpdateBuilder builder) async {
+  Future<Member> updateCurrentMember(CurrentMemberUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..members(id: '@me');
-    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final member = parse(response.jsonBody as Map<String, Object?>, userId: client.user.id);
