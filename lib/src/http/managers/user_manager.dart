@@ -28,7 +28,6 @@ class UserManager extends ReadOnlyManager<User> {
   @override
   PartialUser operator [](Snowflake id) => PartialUser(id: id, manager: this);
 
-  /// Parse a [User] from [raw].
   @override
   User parse(Map<String, Object?> raw) {
     final hasAccentColor = raw['accent_color'] != null;

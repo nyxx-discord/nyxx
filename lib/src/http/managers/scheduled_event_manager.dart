@@ -102,7 +102,6 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     return event;
   }
 
-  /// Update a scheduled event using the provided [builder].
   @override
   Future<ScheduledEvent> update(Snowflake id, ScheduledEventUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
@@ -117,7 +116,6 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     return event;
   }
 
-  /// Delete a scheduled event.
   @override
   Future<void> delete(Snowflake id) async {
     final route = HttpRoute()

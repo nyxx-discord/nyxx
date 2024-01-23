@@ -90,7 +90,6 @@ class MemberManager extends Manager<Member> {
     return member;
   }
 
-  /// Update a member using the provided [builder].
   @override
   Future<Member> update(Snowflake id, MemberUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()

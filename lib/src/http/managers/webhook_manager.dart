@@ -25,7 +25,6 @@ class WebhookManager extends Manager<Webhook> {
   @override
   PartialWebhook operator [](Snowflake id) => PartialWebhook(id: id, manager: this);
 
-  /// Parse a [Webhook] from [raw].
   @override
   Webhook parse(Map<String, Object?> raw) {
     return Webhook(

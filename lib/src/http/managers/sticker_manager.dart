@@ -69,7 +69,6 @@ class GuildStickerManager extends Manager<GuildSticker> {
     return stickers;
   }
 
-  /// Delete a sticker.
   @override
   Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
@@ -96,7 +95,6 @@ class GuildStickerManager extends Manager<GuildSticker> {
     return sticker;
   }
 
-  /// Update a sticker using the provided [builder].
   @override
   Future<GuildSticker> update(Snowflake id, StickerUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
