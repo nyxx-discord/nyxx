@@ -88,7 +88,6 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
-  /// Fetch a user.
   @override
   Future<User> fetch(Snowflake id) async {
     final route = HttpRoute()..users(id: id.toString());

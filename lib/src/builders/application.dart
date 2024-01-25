@@ -39,7 +39,7 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
   Map<String, Object?> build() => {
         if (customInstallUrl != null) 'custom_install_url': customInstallUrl!.toString(),
         if (description != null) 'description': description,
-        if (roleConnectionsVerificationUrl != null) 'role_connections_verification_url': roleConnectionsVerificationUrl?.toString(),
+        if (roleConnectionsVerificationUrl != null) 'role_connections_verification_url': roleConnectionsVerificationUrl!.toString(),
         if (installationParameters != null)
           'install_params': {
             'scopes': installationParameters!.scopes,

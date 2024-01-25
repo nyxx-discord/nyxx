@@ -66,7 +66,6 @@ class WebhookManager extends Manager<Webhook> {
     );
   }
 
-  /// Fetch a webhook.
   @override
   Future<Webhook> fetch(Snowflake id, {String? token}) async {
     final route = HttpRoute()..webhooks(id: id.toString());
@@ -96,7 +95,6 @@ class WebhookManager extends Manager<Webhook> {
     return webhook;
   }
 
-  /// Update a webhook using the provided [builder].
   @override
   Future<Webhook> update(Snowflake id, WebhookUpdateBuilder builder, {String? token, String? auditLogReason}) async {
     final route = HttpRoute()..webhooks(id: id.toString());
@@ -112,7 +110,6 @@ class WebhookManager extends Manager<Webhook> {
     return webhook;
   }
 
-  /// Delete a webhook.
   @override
   Future<void> delete(Snowflake id, {String? token, String? auditLogReason}) async {
     final route = HttpRoute()..webhooks(id: id.toString());

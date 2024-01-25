@@ -18,6 +18,7 @@ class InviteManager {
   /// Create a new [InviteManager].
   InviteManager(this.client);
 
+  /// Parse an [Invite] from [raw].
   Invite parse(Map<String, Object?> raw) {
     final guild = maybeParse(
       raw['guild'],
