@@ -492,7 +492,7 @@ class GuildManager extends Manager<Guild> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return MfaLevel.parse(response.jsonBody as int);
+    return MfaLevel.parse((response.jsonBody as Map<String, Object?>)['level'] as int);
   }
 
   /// Fetch the prune count in a guild.
