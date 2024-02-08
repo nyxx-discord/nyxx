@@ -32,6 +32,8 @@ class MessageBuilder extends CreateBuilder<Message> {
 
   bool? suppressNotifications;
 
+  bool? enforceNonce;
+
   MessageBuilder({
     this.content,
     this.nonce,
@@ -45,6 +47,7 @@ class MessageBuilder extends CreateBuilder<Message> {
     this.attachments,
     this.suppressEmbeds,
     this.suppressNotifications,
+    this.enforceNonce,
   });
 
   @override
@@ -65,6 +68,7 @@ class MessageBuilder extends CreateBuilder<Message> {
         if (suppressEmbeds != null || suppressNotifications != null)
           'flags':
               (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) | (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0),
+        if (enforceNonce != null) 'enforce_nonce': enforceNonce,
       };
 }
 
