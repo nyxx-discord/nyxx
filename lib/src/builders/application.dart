@@ -26,12 +26,12 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
   ApplicationUpdateBuilder({
     this.customInstallUrl,
     this.description,
-    this.roleConnectionsVerificationUrl,
+    this.roleConnectionsVerificationUrl = sentinelUri,
     this.installationParameters,
     this.flags,
     this.icon = sentinelImageBuilder,
     this.coverImage = sentinelImageBuilder,
-    this.interactionsEndpointUrl,
+    this.interactionsEndpointUrl = sentinelUri,
     this.tags,
   });
 
@@ -39,7 +39,7 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
   Map<String, Object?> build() => {
         if (customInstallUrl != null) 'custom_install_url': customInstallUrl!.toString(),
         if (description != null) 'description': description,
-        if (roleConnectionsVerificationUrl != null) 'role_connections_verification_url': roleConnectionsVerificationUrl!.toString(),
+        if (!identical(roleConnectionsVerificationUrl, sentinelUri)) 'role_connections_verification_url': roleConnectionsVerificationUrl?.toString(),
         if (installationParameters != null)
           'install_params': {
             'scopes': installationParameters!.scopes,
@@ -48,7 +48,7 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
         if (flags != null) 'flags': flags!.value,
         if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
         if (!identical(coverImage, sentinelImageBuilder)) 'cover_image': coverImage?.buildDataString(),
-        if (!identical(interactionsEndpointUrl, sentinelString)) 'interactions_endpoint_url ': interactionsEndpointUrl?.toString(),
+        if (!identical(interactionsEndpointUrl, sentinelUri)) 'interactions_endpoint_url': interactionsEndpointUrl?.toString(),
         if (tags != null) 'tags': tags,
       };
 }

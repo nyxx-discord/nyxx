@@ -90,3 +90,12 @@ class _SentinelFlags implements Flags<Never> {
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+const sentinelUri = _SentinelUri();
+
+class _SentinelUri implements Uri {
+  const _SentinelUri();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
