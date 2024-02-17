@@ -567,12 +567,18 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Get a list of users that reacted with a given emoji on a message.
-  Future<List<User>> fetchReactions(Snowflake id, ReactionBuilder emoji) async {
+  Future<List<User>> fetchReactions(Snowflake id, ReactionBuilder emoji, {Snowflake? after, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages(id: id.toString())
       ..reactions(emoji: emoji.build());
-    final request = BasicRequest(route);
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (after != null) 'after': after.toString(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
 
     final response = await client.httpHandler.executeSafe(request);
     final users = parseMany(response.jsonBody as List, client.users.parse);

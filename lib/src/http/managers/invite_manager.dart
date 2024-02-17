@@ -44,6 +44,7 @@ class InviteManager {
     );
   }
 
+  /// Parse an [InviteWithMetadata] from [raw].
   InviteWithMetadata parseWithMetadata(Map<String, Object?> raw) {
     final invite = parse(raw);
 
@@ -67,7 +68,6 @@ class InviteManager {
     );
   }
 
-  /// Fetch an invite.
   Future<Invite> fetch(String code, {bool? withCounts, bool? withExpiration, Snowflake? scheduledEventId}) async {
     final route = HttpRoute()..invites(id: code);
     final request = BasicRequest(route, queryParameters: {
@@ -84,9 +84,9 @@ class InviteManager {
   }
 
   /// Delete an invite.
-  Future<Invite> delete(String code) async {
+  Future<Invite> delete(String code, {String? auditLogReason}) async {
     final route = HttpRoute()..invites(id: code);
-    final request = BasicRequest(route, method: 'DELETE');
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final invite = parse(response.jsonBody as Map<String, Object?>);

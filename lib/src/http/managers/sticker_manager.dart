@@ -39,12 +39,15 @@ class GuildStickerManager extends Manager<GuildSticker> {
   }
 
   @override
-  Future<GuildSticker> create(StickerBuilder builder) async {
+  Future<GuildSticker> create(StickerBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..stickers();
     final request = FormDataRequest(route,
-        method: 'POST', formParams: builder.build().cast<String, String>(), files: [MultipartFile.fromBytes('file', builder.file.buildRawData())]);
+        method: 'POST',
+        formParams: builder.build().cast<String, String>(),
+        files: [MultipartFile.fromBytes('file', builder.file.buildRawData())],
+        auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final sticker = parse(response.jsonBody as Map<String, Object?>);
@@ -67,11 +70,11 @@ class GuildStickerManager extends Manager<GuildSticker> {
   }
 
   @override
-  Future<void> delete(Snowflake id) async {
+  Future<void> delete(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..stickers(id: id.toString());
-    final request = BasicRequest(route, method: 'DELETE');
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);
     cache.remove(id);
@@ -93,12 +96,12 @@ class GuildStickerManager extends Manager<GuildSticker> {
   }
 
   @override
-  Future<GuildSticker> update(Snowflake id, StickerUpdateBuilder builder) async {
+  Future<GuildSticker> update(Snowflake id, StickerUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..stickers(id: id.toString());
 
-    final request = BasicRequest(route, body: jsonEncode(builder.build()), method: 'PATCH');
+    final request = BasicRequest(route, body: jsonEncode(builder.build()), method: 'PATCH', auditLogReason: auditLogReason);
     final response = await client.httpHandler.executeSafe(request);
 
     final sticker = parse(response.jsonBody as Map<String, Object?>);

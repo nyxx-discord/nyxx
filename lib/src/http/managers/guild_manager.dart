@@ -269,6 +269,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [GuildTemplate] from [raw].
   GuildTemplate parseGuildTemplate(Map<String, Object?> raw) {
     final sourceGuildId = Snowflake.parse(raw['source_guild_id']!);
 
@@ -394,7 +395,7 @@ class GuildManager extends Manager<Guild> {
     return channel;
   }
 
-  ///Update the positions of channels in a guild.
+  /// Update the positions of channels in a guild.
   Future<void> updateChannelPositions(Snowflake id, List<ChannelPositionBuilder> positions) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -491,7 +492,7 @@ class GuildManager extends Manager<Guild> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return MfaLevel.parse(response.jsonBody as int);
+    return MfaLevel.parse((response.jsonBody as Map<String, Object?>)['level'] as int);
   }
 
   /// Fetch the prune count in a guild.
@@ -713,7 +714,7 @@ class GuildManager extends Manager<Guild> {
     return templates;
   }
 
-  /// Create a guild template from a guild.
+  /// Create a guild template.
   Future<GuildTemplate> createGuildTemplate(Snowflake id, GuildTemplateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())

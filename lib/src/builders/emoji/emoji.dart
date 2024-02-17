@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/image.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -36,12 +37,12 @@ class EmojiUpdateBuilder implements UpdateBuilder<GuildEmoji> {
 
   EmojiUpdateBuilder({
     this.name,
-    this.roles,
+    this.roles = sentinelList,
   });
 
   @override
   Map<String, Object?> build() => {
         if (name != null) 'name': name,
-        if (roles != null) 'roles': roles!.map((s) => s.toString()).toList(),
+        if (!identical(roles, sentinelList)) 'roles': roles?.map((s) => s.toString()).toList(),
       };
 }

@@ -27,7 +27,8 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   /// * [WebhookManager.update]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#modify-webhook
   @override
-  Future<Webhook> update(WebhookUpdateBuilder builder, {String? token}) => manager.update(id, builder, token: token);
+  Future<Webhook> update(WebhookUpdateBuilder builder, {String? token, String? auditLogReason}) =>
+      manager.update(id, builder, token: token, auditLogReason: auditLogReason);
 
   /// Delete this webhook.
   ///

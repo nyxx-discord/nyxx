@@ -56,6 +56,7 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
+  /// Parse a [Connection] from [raw].
   Connection parseConnection(Map<String, Object?> raw) {
     return Connection(
       id: raw['id'] as String,
@@ -78,6 +79,7 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
+  /// Parse a [ApplicationRoleConnection] from [raw].
   ApplicationRoleConnection parseApplicationRoleConnection(Map<String, Object?> raw) {
     return ApplicationRoleConnection(
       platformName: raw['platform_name'] as String?,

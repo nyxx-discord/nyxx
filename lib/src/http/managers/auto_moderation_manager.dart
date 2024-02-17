@@ -35,6 +35,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [TriggerMetadata] from [raw].
   TriggerMetadata parseTriggerMetadata(Map<String, Object?> raw) {
     return TriggerMetadata(
       keywordFilter: maybeParseMany(raw['keyword_filter']),
@@ -46,6 +47,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [AutoModerationAction] from [raw].
   AutoModerationAction parseAutoModerationAction(Map<String, Object?> raw) {
     return AutoModerationAction(
       type: ActionType.parse(raw['type'] as int),
@@ -53,6 +55,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [ActionMetadata] from [raw].
   ActionMetadata parseActionMetadata(Map<String, Object?> raw) {
     return ActionMetadata(
       manager: this,

@@ -30,6 +30,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  /// Parse a [AuditLogChange] from [raw].
   AuditLogChange parseAuditLogChange(Map<String, Object?> raw) {
     return AuditLogChange(
       oldValue: raw['old_value'],
@@ -38,6 +39,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  /// Parse a [AuditLogEntryInfo] from [raw].
   AuditLogEntryInfo parseAuditLogEntryInfo(Map<String, Object?> raw) {
     return AuditLogEntryInfo(
       manager: this,
@@ -67,6 +69,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  // List the audit log in the guild.
   Future<List<AuditLogEntry>> list({Snowflake? userId, AuditLogEvent? type, Snowflake? before, Snowflake? after, int? limit}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())

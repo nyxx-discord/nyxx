@@ -118,8 +118,8 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// Unban a member in this guild.
   Future<void> deleteBan(Snowflake userId, {String? auditLogReason}) => manager.deleteBan(id, userId, auditLogReason: auditLogReason);
 
-  /// Fetch the MFA level for this guild.
-  Future<void> updateMfaLevel(MfaLevel level, {String? auditLogReason}) => manager.updateMfaLevel(id, level, auditLogReason: auditLogReason);
+  /// Update a guild's MFA level.
+  Future<MfaLevel> updateMfaLevel(MfaLevel level, {String? auditLogReason}) => manager.updateMfaLevel(id, level, auditLogReason: auditLogReason);
 
   /// Fetch the member prune count for the given [days] and [roleIds].
   Future<int> fetchPruneCount({int? days, List<Snowflake>? roleIds}) => manager.fetchPruneCount(id, days: days, roleIds: roleIds);
