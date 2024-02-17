@@ -112,15 +112,27 @@ class RoleTags with ToStringHelper {
   /// The ID of the integration this role belongs to.
   final Snowflake? integrationId;
 
+  /// Whether this is the guild's Booster role.
+  final bool isPremiumSubscriber;
+
   /// The ID of this role's subscription sku and listing.
   final Snowflake? subscriptionListingId;
+
+  /// Whether this role is available for purchase.
+  final bool isAvailableForPurchase;
+
+  /// Whether this role is a guild's linked role
+  final bool isLinkedRole;
 
   /// {@macro role_tags}
   /// @nodoc
   RoleTags({
     required this.botId,
     required this.integrationId,
+    required this.isPremiumSubscriber,
     required this.subscriptionListingId,
+    required this.isAvailableForPurchase,
+    required this.isLinkedRole,
   });
 }
 

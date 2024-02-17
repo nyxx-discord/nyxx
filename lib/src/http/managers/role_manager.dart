@@ -46,7 +46,10 @@ class RoleManager extends Manager<Role> {
     return RoleTags(
       botId: maybeParse(raw['bot_id'], Snowflake.parse),
       integrationId: maybeParse(raw['integration_id'], Snowflake.parse),
+      isPremiumSubscriber: raw.containsKey('premium_subscriber'),
       subscriptionListingId: maybeParse(raw['subscription_listing_id'], Snowflake.parse),
+      isAvailableForPurchase: raw.containsKey('available_for_purchase'),
+      isLinkedRole: raw.containsKey('guild_connections'),
     );
   }
 
