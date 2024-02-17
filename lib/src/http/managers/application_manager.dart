@@ -65,6 +65,7 @@ class ApplicationManager {
     );
   }
 
+  /// Parse a [Team] from [raw].
   Team parseTeam(Map<String, Object?> raw) {
     return Team(
       manager: this,
@@ -76,6 +77,7 @@ class ApplicationManager {
     );
   }
 
+  /// Parse a [TeamMember] from [raw].
   TeamMember parseTeamMember(Map<String, Object?> raw) {
     return TeamMember(
       membershipState: TeamMembershipState.parse(raw['membership_state'] as int),
@@ -85,6 +87,7 @@ class ApplicationManager {
     );
   }
 
+  /// Parse a [InstallationParameters] from [raw].
   InstallationParameters parseInstallationParameters(Map<String, Object?> raw) {
     return InstallationParameters(
       scopes: parseMany(raw['scopes'] as List),
@@ -92,6 +95,7 @@ class ApplicationManager {
     );
   }
 
+  /// Parse a [ApplicationRoleConnectionMetadata] from [raw].
   ApplicationRoleConnectionMetadata parseApplicationRoleConnectionMetadata(Map<String, Object?> raw) {
     return ApplicationRoleConnectionMetadata(
       type: ConnectionMetadataType.parse(raw['type'] as int),
@@ -109,6 +113,7 @@ class ApplicationManager {
     );
   }
 
+  /// Parse a [Sku] from [raw].
   Sku parseSku(Map<String, Object?> raw) {
     return Sku(
       manager: this,
@@ -145,6 +150,7 @@ class ApplicationManager {
     return parseMany(response.jsonBody as List<Object?>, parseApplicationRoleConnectionMetadata);
   }
 
+  /// Fetch the current application.
   Future<Application> fetchCurrentApplication() async {
     final route = HttpRoute()..applications(id: '@me');
     final request = BasicRequest(route);
@@ -153,6 +159,7 @@ class ApplicationManager {
     return parse(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Update the current application.
   Future<Application> updateCurrentApplication(ApplicationUpdateBuilder builder) async {
     final route = HttpRoute()..applications(id: '@me');
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
@@ -161,6 +168,7 @@ class ApplicationManager {
     return parse(response.jsonBody as Map<String, Object?>);
   }
 
+  /// List this application's SKUs.
   Future<List<Sku>> listSkus(Snowflake id) async {
     final route = HttpRoute()
       ..applications(id: id.toString())

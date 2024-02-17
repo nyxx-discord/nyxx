@@ -74,6 +74,9 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// Deletes reaction the current user has made on this message.
   Future<void> deleteOwnReaction(ReactionBuilder emoji) => manager.deleteOwnReaction(id, emoji);
+
+  /// Get a list of users that reacted with a given emoji on a message.
+  Future<List<User>> fetchReactions(ReactionBuilder emoji, {Snowflake? after, int? limit}) => manager.fetchReactions(id, emoji, after: after, limit: limit);
 }
 
 /// {@template message}

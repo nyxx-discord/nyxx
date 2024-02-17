@@ -640,10 +640,10 @@ void main() {
         execute: (manager) => manager.deleteBan(Snowflake.zero, Snowflake.zero),
         check: (_) {},
       ),
-      EndpointTest<GuildManager, MfaLevel, int>(
+      EndpointTest<GuildManager, MfaLevel, Map<String, Object?>>(
         name: 'updateMfaLevel',
         method: 'POST',
-        source: 0,
+        source: {'level': 0},
         urlMatcher: '/guilds/0/mfa',
         execute: (manager) => manager.updateMfaLevel(Snowflake.zero, MfaLevel.none),
         check: (level) => expect(level, equals(MfaLevel.none)),
