@@ -12,7 +12,7 @@ abstract class ApiOptions {
   static const nyxxRepositoryUrl = 'https://github.com/nyxx-discord/nyxx';
 
   /// The default value for the `User-Agent` header for bots made with nyxx.
-  static const defaultUserAgent = 'Nyxx ($nyxxRepositoryUrl, $nyxxVersion)';
+  static const defaultUserAgent = 'DiscordBot ($nyxxRepositoryUrl, $nyxxVersion)';
 
   /// The host at which the API can be found.
   ///
