@@ -94,7 +94,7 @@ class GuildManager extends Manager<Guild> {
   /// Parse [UserGuild] from [raw].
   UserGuild parseUserGuild(Map<String, Object?> raw) {
     final id = Snowflake.parse(raw['id']!);
-
+    print(raw);
     return UserGuild(
       id: id,
       manager: this,
