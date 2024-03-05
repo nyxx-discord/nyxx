@@ -91,6 +91,23 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse [UserGuild] from [raw].
+  UserGuild parseUserGuild(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id']!);
+
+    return UserGuild(
+      id: id,
+      manager: this,
+      name: raw['name'] as String,
+      iconHash: raw['icon'] as String?,
+      isOwnedByCurrentUser: raw['owner'] as bool,
+      currentUserPermissions: Permissions(int.parse(raw['permissions'] as String)),
+      features: parseGuildFeatures(raw['features'] as List),
+      approximateMemberCount: raw['approximate_member_count'] as int?,
+      approximatePresenceCount: raw['approximate_presence_count'] as int?,
+    );
+  }
+
   static final Map<String, Flag<GuildFeatures>> _nameToGuildFeature = {
     'ANIMATED_BANNER': GuildFeatures.animatedBanner,
     'ANIMATED_ICON': GuildFeatures.animatedIcon,

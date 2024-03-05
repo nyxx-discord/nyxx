@@ -109,7 +109,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   Future<ThreadList> listActiveThreads() => manager.listActiveThreads(id);
 
   /// List the bans in this guild.
-  Future<List<Ban>> listBans() => manager.listBans(id);
+  Future<List<Ban>> listBans({int? limit, Snowflake? after, Snowflake? before}) => manager.listBans(id, limit: limit, after: after, before: before);
 
   /// Ban a member in this guild.
   Future<void> createBan(Snowflake userId, {Duration? deleteMessages, String? auditLogReason}) =>
@@ -195,6 +195,63 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Fetch this guild's vanity invite code.
   Future<String?> fetchVanityCode() => manager.fetchVanityCode(id);
+}
+
+/// {@template guild}
+/// A collection of channels & users.
+///
+/// Guilds are often referred to as servers.
+/// {@endtemplate}
+class UserGuild extends PartialGuild {
+  /// This guild's name.
+  final String name;
+
+  /// The hash of this guild's icon.
+  final String? iconHash;
+
+  /// Whether this guild is owned by the current user.
+  final bool isOwnedByCurrentUser;
+
+  /// The current user's permissions.
+  final Permissions? currentUserPermissions;
+
+  /// A set of features enabled in this guild.
+  final GuildFeatures features;
+
+  /// An approximate number of members in this guild.
+  ///
+  /// {@template fetch_with_counts_only}
+  /// This is only returned when fetching this guild with `withCounts` set to `true`.
+  /// {@endtemplate}
+  final int? approximateMemberCount;
+
+  /// An approximate number of presences in this guild.
+  ///
+  /// {@macro fetch_with_counts_only}
+  final int? approximatePresenceCount;
+
+  /// {@macro guild}
+  /// @nodoc
+  UserGuild({
+    required super.id,
+    required super.manager,
+    required this.name,
+    required this.iconHash,
+    required this.isOwnedByCurrentUser,
+    required this.currentUserPermissions,
+    required this.features,
+    required this.approximateMemberCount,
+    required this.approximatePresenceCount,
+  });
+
+  /// This guild's icon.
+  CdnAsset? get icon => iconHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..icons(id: id.toString()),
+          hash: iconHash!,
+        );
 }
 
 /// {@template guild}

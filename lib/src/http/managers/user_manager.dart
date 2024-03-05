@@ -129,7 +129,7 @@ class UserManager extends ReadOnlyManager<User> {
   }
 
   /// List the guilds the current user is a member of.
-  Future<List<PartialGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
+  Future<List<UserGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
     final route = HttpRoute()
       ..users(id: '@me')
       ..guilds();
@@ -143,7 +143,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(
       response.jsonBody as List,
-      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
+      (Map<String, Object?> raw) => client.guilds.parseUserGuild(raw),
     );
   }
 

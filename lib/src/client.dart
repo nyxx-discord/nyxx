@@ -10,15 +10,19 @@ import 'package:nyxx/src/event_mixin.dart';
 import 'package:nyxx/src/gateway/gateway.dart';
 import 'package:nyxx/src/http/handler.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
+import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/oauth2.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
+import 'package:nyxx/src/utils/parsing_helpers.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:runtime_type/runtime_type.dart';
 
@@ -98,10 +102,14 @@ abstract class Nyxx {
 
   /// Create an instance of [NyxxOAuth2] that can perform requests to the HTTP API and is
   /// authenticated with OAuth2 [Credentials].
+  ///
+  /// Note that `client.user.id` will contain [Snowflake.zero] if there no `identify` scope.
   static Future<NyxxOAuth2> connectOAuth2(Credentials credentials, {RestClientOptions options = const RestClientOptions()}) =>
       connectOAuth2WithOptions(OAuth2ApiOptions(credentials: credentials), options);
 
   /// Create an instance of [NyxxOAuth2] using the provided options.
+  ///
+  /// Note that `client.user.id` will contain [Snowflake.zero] if there no `identify` scope.
   static Future<NyxxOAuth2> connectOAuth2WithOptions(OAuth2ApiOptions apiOptions, [RestClientOptions clientOptions = const RestClientOptions()]) async {
     clientOptions.logger
       ..info('Connecting to the REST API via OAuth2')
@@ -110,10 +118,11 @@ abstract class Nyxx {
 
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxOAuth2._(apiOptions, clientOptions);
+      final information = await client.fetchCurrentOAuth2Information();
 
       return client
-        .._application = await client.applications.fetchCurrentApplication()
-        .._user = await client.users.fetchCurrentUser();
+        .._application = information.application
+        .._user = information.user ?? PartialUser(id: Snowflake.zero, manager: client.users);
     }, clientOptions.plugins);
   }
 
@@ -199,7 +208,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   /// List the guilds the current user is a member of.
-  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+  Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   @override
@@ -246,8 +255,22 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   @override
-  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+  Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
+
+  Future<OAuth2Information> fetchCurrentOAuth2Information() async {
+    final route = HttpRoute()
+      ..oauth2()
+      ..add(HttpRoutePart('@me'));
+    final request = BasicRequest(route);
+    final response = await httpHandler.executeSafe(request);
+    final body = response.jsonBody as Map<String, Object?>;
+    return OAuth2Information(
+        application: PartialApplication(manager: applications, id: Snowflake.parse((body['application'] as Map<String, Object?>)['id']!)),
+        scopes: (body['scopes'] as List).cast(),
+        expiresOn: DateTime.parse(body['expires'] as String),
+        user: maybeParse(body['user'], users.parse));
+  }
 
   @override
   Future<void> close() {
@@ -299,7 +322,7 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   @override
-  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+  Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   /// Update the client's voice state in the guild with the ID [guildId].
