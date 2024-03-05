@@ -213,7 +213,7 @@ class UserGuild extends PartialGuild {
   final bool isOwnedByCurrentUser;
 
   /// The current user's permissions.
-  final Permissions? currentUserPermissions;
+  final Permissions currentUserPermissions;
 
   /// A set of features enabled in this guild.
   final GuildFeatures features;
