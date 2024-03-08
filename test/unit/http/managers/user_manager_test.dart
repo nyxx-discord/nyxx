@@ -1,6 +1,5 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:test/test.dart';
 
 import '../../../mocks/client.dart';

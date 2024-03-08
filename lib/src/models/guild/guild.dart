@@ -197,11 +197,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   Future<String?> fetchVanityCode() => manager.fetchVanityCode(id);
 }
 
-/// {@template guild}
-/// A collection of channels & users.
-///
-/// Guilds are often referred to as servers.
-/// {@endtemplate}
+/// {@macro guild}
 class UserGuild extends PartialGuild {
   /// This guild's name.
   final String name;
@@ -210,10 +206,10 @@ class UserGuild extends PartialGuild {
   final String? iconHash;
 
   /// Whether this guild is owned by the current user.
-  final bool isOwnedByCurrentUser;
+  final bool? isOwnedByCurrentUser;
 
   /// The current user's permissions.
-  final Permissions currentUserPermissions;
+  final Permissions? currentUserPermissions;
 
   /// A set of features enabled in this guild.
   final GuildFeatures features;
@@ -259,33 +255,15 @@ class UserGuild extends PartialGuild {
 ///
 /// Guilds are often referred to as servers.
 /// {@endtemplate}
-class Guild extends PartialGuild {
-  /// This guild's name.
-  final String name;
-
-  /// The hash of this guild's icon.
-  final String? iconHash;
-
+class Guild extends UserGuild {
   /// The hash of this guild's splash image.
   final String? splashHash;
 
   /// The hash of this guild's discovery splash image.
   final String? discoverySplashHash;
 
-  /// Whether this guild is owned by the current user.
-  ///
-  /// {@template get_current_user_guilds_only}
-  /// This field is only present when fetching the current user's guilds.
-  /// {@endtemplate}
-  final bool? isOwnedByCurrentUser;
-
   /// The ID of this guild's owner.
   final Snowflake ownerId;
-
-  /// The current user's permissions.
-  ///
-  /// {@macro get_current_user_guilds_only}
-  final Permissions? currentUserPermissions;
 
   /// The ID of this guild's AFK channel.
   final Snowflake? afkChannelId;
@@ -315,9 +293,6 @@ class Guild extends PartialGuild {
   /// A list of emojis in this guild.
   // Renamed to avoid conflict with the emojis manager.
   final List<Emoji> emojiList;
-
-  /// A set of features enabled in this guild.
-  final GuildFeatures features;
 
   /// This guild's MFA level.
   final MfaLevel mfaLevel;
@@ -367,18 +342,6 @@ class Guild extends PartialGuild {
   /// The maximum number of users in a stage video channel.
   final int? maxStageChannelUsers;
 
-  /// An approximate number of members in this guild.
-  ///
-  /// {@template fetch_with_counts_only}
-  /// This is only returned when fetching this guild with `withCounts` set to `true`.
-  /// {@endtemplate}
-  final int? approximateMemberCount;
-
-  /// An approximate number of presences in this guild.
-  ///
-  /// {@macro fetch_with_counts_only}
-  final int? approximatePresenceCount;
-
   /// This guild's welcome screen.
   final WelcomeScreen? welcomeScreen;
 
@@ -400,13 +363,13 @@ class Guild extends PartialGuild {
   Guild({
     required super.id,
     required super.manager,
-    required this.name,
-    required this.iconHash,
+    required super.name,
+    required super.iconHash,
     required this.splashHash,
     required this.discoverySplashHash,
-    required this.isOwnedByCurrentUser,
+    required super.isOwnedByCurrentUser,
     required this.ownerId,
-    required this.currentUserPermissions,
+    required super.currentUserPermissions,
     required this.afkChannelId,
     required this.afkTimeout,
     required this.isWidgetEnabled,
@@ -415,7 +378,7 @@ class Guild extends PartialGuild {
     required this.defaultMessageNotificationLevel,
     required this.explicitContentFilterLevel,
     required this.roleList,
-    required this.features,
+    required super.features,
     required this.mfaLevel,
     required this.applicationId,
     required this.systemChannelId,
@@ -432,8 +395,8 @@ class Guild extends PartialGuild {
     required this.publicUpdatesChannelId,
     required this.maxVideoChannelUsers,
     required this.maxStageChannelUsers,
-    required this.approximateMemberCount,
-    required this.approximatePresenceCount,
+    required super.approximateMemberCount,
+    required super.approximatePresenceCount,
     required this.welcomeScreen,
     required this.nsfwLevel,
     required this.hasPremiumProgressBarEnabled,
@@ -469,15 +432,6 @@ class Guild extends PartialGuild {
 
   /// The channel safety alerts are sent to.
   PartialTextChannel? get safetyAlertsChannel => safetyAlertsChannelId == null ? null : manager.client.channels[safetyAlertsChannelId!] as PartialTextChannel;
-
-  /// This guild's icon.
-  CdnAsset? get icon => iconHash == null
-      ? null
-      : CdnAsset(
-          client: manager.client,
-          base: HttpRoute()..icons(id: id.toString()),
-          hash: iconHash!,
-        );
 
   /// This guild's splash image.
   CdnAsset? get splash => splashHash == null

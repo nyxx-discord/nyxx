@@ -10,19 +10,15 @@ import 'package:nyxx/src/event_mixin.dart';
 import 'package:nyxx/src/gateway/gateway.dart';
 import 'package:nyxx/src/http/handler.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
-import 'package:nyxx/src/http/request.dart';
-import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
-import 'package:nyxx/src/models/oauth2.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/flags.dart';
-import 'package:nyxx/src/utils/parsing_helpers.dart';
 import 'package:oauth2/oauth2.dart';
 import 'package:runtime_type/runtime_type.dart';
 
@@ -118,7 +114,7 @@ abstract class Nyxx {
 
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxOAuth2._(apiOptions, clientOptions);
-      final information = await client.fetchCurrentOAuth2Information();
+      final information = await client.users.fetchCurrentOAuth2Information();
 
       return client
         .._application = information.application
@@ -257,20 +253,6 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
   @override
   Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
-
-  Future<OAuth2Information> fetchCurrentOAuth2Information() async {
-    final route = HttpRoute()
-      ..oauth2()
-      ..add(HttpRoutePart('@me'));
-    final request = BasicRequest(route);
-    final response = await httpHandler.executeSafe(request);
-    final body = response.jsonBody as Map<String, Object?>;
-    return OAuth2Information(
-        application: PartialApplication(manager: applications, id: Snowflake.parse((body['application'] as Map<String, Object?>)['id']!)),
-        scopes: (body['scopes'] as List).cast(),
-        expiresOn: DateTime.parse(body['expires'] as String),
-        user: maybeParse(body['user'], users.parse));
-  }
 
   @override
   Future<void> close() {

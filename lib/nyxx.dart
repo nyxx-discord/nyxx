@@ -176,7 +176,8 @@ export 'src/models/guild/guild.dart'
         MfaLevel,
         NsfwLevel,
         PremiumTier,
-        VerificationLevel;
+        VerificationLevel,
+        UserGuild;
 export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
