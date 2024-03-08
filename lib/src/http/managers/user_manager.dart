@@ -6,6 +6,7 @@ import 'package:nyxx/src/builders/user.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/types/dm.dart';
 import 'package:nyxx/src/models/channel/types/group_dm.dart';
 import 'package:nyxx/src/models/discord_color.dart';
@@ -13,6 +14,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/locale.dart';
+import 'package:nyxx/src/models/oauth2.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/application_role_connection.dart';
 import 'package:nyxx/src/models/user/connection.dart';
@@ -129,7 +131,7 @@ class UserManager extends ReadOnlyManager<User> {
   }
 
   /// List the guilds the current user is a member of.
-  Future<List<PartialGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
+  Future<List<UserGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
     final route = HttpRoute()
       ..users(id: '@me')
       ..guilds();
@@ -143,7 +145,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(
       response.jsonBody as List,
-      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
+      (Map<String, Object?> raw) => client.guilds.parseUserGuild(raw),
     );
   }
 
@@ -247,5 +249,19 @@ class UserManager extends ReadOnlyManager<User> {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseApplicationRoleConnection(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<OAuth2Information> fetchCurrentOAuth2Information() async {
+    final route = HttpRoute()
+      ..oauth2()
+      ..add(HttpRoutePart('@me'));
+    final request = BasicRequest(route);
+    final response = await client.httpHandler.executeSafe(request);
+    final body = response.jsonBody as Map<String, Object?>;
+    return OAuth2Information(
+        application: PartialApplication(manager: client.applications, id: Snowflake.parse((body['application'] as Map<String, Object?>)['id']!)),
+        scopes: (body['scopes'] as List).cast(),
+        expiresOn: DateTime.parse(body['expires'] as String),
+        user: maybeParse(body['user'], client.users.parse));
   }
 }

@@ -159,6 +159,17 @@ class ApplicationManager {
     return parse(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Fetch the current OAuth2 application.
+  Future<Application> fetchOAuth2CurrentApplication() async {
+    final route = HttpRoute()
+      ..oauth2()
+      ..applications(id: '@me');
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parse(response.jsonBody as Map<String, Object?>);
+  }
+
   /// Update the current application.
   Future<Application> updateCurrentApplication(ApplicationUpdateBuilder builder) async {
     final route = HttpRoute()..applications(id: '@me');
