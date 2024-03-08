@@ -176,7 +176,8 @@ export 'src/models/guild/guild.dart'
         MfaLevel,
         NsfwLevel,
         PremiumTier,
-        VerificationLevel;
+        VerificationLevel,
+        UserGuild;
 export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
@@ -300,6 +301,7 @@ export 'src/models/interaction.dart'
         PingInteraction;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
 export 'src/models/sku.dart' show Sku, SkuType, SkuFlags;
+export 'src/models/oauth2.dart' show OAuth2Information;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;
