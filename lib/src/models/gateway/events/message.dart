@@ -78,9 +78,12 @@ class MessageDeleteEvent extends DispatchEvent {
   /// The ID of the guild the message was deleted in.
   final Snowflake? guildId;
 
+  /// The message as it was cached before being deleted.
+  final Message? deletedMessage;
+
   /// {@macro message_delete_event}
   /// @nodoc
-  MessageDeleteEvent({required super.gateway, required this.id, required this.channelId, required this.guildId});
+  MessageDeleteEvent({required super.gateway, required this.id, required this.channelId, required this.guildId, required this.deletedMessage});
 
   /// The guild the message was deleted in.
   PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
