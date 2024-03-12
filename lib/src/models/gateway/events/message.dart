@@ -99,6 +99,9 @@ class MessageBulkDeleteEvent extends DispatchEvent {
   /// A list of the IDs of the deleted messages.
   final List<Snowflake> ids;
 
+  /// A list of the messages that were found in cache before being deleted.
+  final List<Message?> deletedMessages;
+
   /// The ID of the channel the messages were deleted in.
   final Snowflake channelId;
 
@@ -107,7 +110,7 @@ class MessageBulkDeleteEvent extends DispatchEvent {
 
   /// {@macro message_bulk_delete_event}
   /// @nodoc
-  MessageBulkDeleteEvent({required super.gateway, required this.ids, required this.channelId, required this.guildId});
+  MessageBulkDeleteEvent({required super.gateway, required this.ids, required this.deletedMessages, required this.channelId, required this.guildId});
 
   /// The guild the messages were deleted in.
   PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
