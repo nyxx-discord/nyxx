@@ -56,9 +56,12 @@ class IntegrationDeleteEvent extends DispatchEvent {
   /// The ID of the application associated with the integration.
   final Snowflake? applicationId;
 
+  /// The integration as it was cached before being deleted.
+  final Integration? deletedIntegration;
+
   /// {@macro integration_delete_event}
   /// @nodoc
-  IntegrationDeleteEvent({required super.gateway, required this.id, required this.guildId, required this.applicationId});
+  IntegrationDeleteEvent({required super.gateway, required this.id, required this.guildId, required this.applicationId, required this.deletedIntegration});
 
   /// The guild the integration was deleted from.
   PartialGuild get guild => gateway.client.guilds[guildId];

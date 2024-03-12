@@ -35,7 +35,10 @@ class EntitlementDeleteEvent extends DispatchEvent {
   /// The entitlement that was deleted.
   final Entitlement entitlement;
 
+  /// The entitlement as it was cached before it was deleted.
+  final Entitlement? deletedEntitlement;
+
   /// {@macro entitlement_delete_event}
   /// @nodoc
-  EntitlementDeleteEvent({required super.gateway, required this.entitlement});
+  EntitlementDeleteEvent({required super.gateway, required this.entitlement, required this.deletedEntitlement});
 }
