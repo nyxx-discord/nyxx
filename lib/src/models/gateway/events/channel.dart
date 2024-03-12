@@ -78,9 +78,12 @@ class ThreadDeleteEvent extends DispatchEvent {
   /// The thread which was deleted.
   final PartialChannel thread;
 
+  /// The thread as it was cached before it was deleted.
+  final Thread? deletedThread;
+
   /// {@macro thread_delete_event}
   /// @nodoc
-  ThreadDeleteEvent({required super.gateway, required this.thread});
+  ThreadDeleteEvent({required super.gateway, required this.thread, required this.deletedThread});
 }
 
 /// {@template thread_list_sync_event}

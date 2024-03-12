@@ -106,9 +106,12 @@ class GuildDeleteEvent extends DispatchEvent {
   /// Whether the client was removed because the guild is unavailable.
   final bool isUnavailable;
 
+  /// The guild as it was cached before it was deleted.
+  final Guild? deletedGuild;
+
   /// {@macro guild_delete_event}
   /// @nodoc
-  GuildDeleteEvent({required super.gateway, required this.guild, required this.isUnavailable});
+  GuildDeleteEvent({required super.gateway, required this.guild, required this.isUnavailable, required this.deletedGuild});
 }
 
 /// {@template guild_audit_log_create_event}
@@ -244,9 +247,12 @@ class GuildMemberRemoveEvent extends DispatchEvent {
   /// The removed user.
   final User user;
 
+  /// The member as it was cached before being removed.
+  final Member? removedMember;
+
   /// {@macro guild_member_remove_event}
   /// @nodoc
-  GuildMemberRemoveEvent({required super.gateway, required this.guildId, required this.user});
+  GuildMemberRemoveEvent({required super.gateway, required this.guildId, required this.user, required this.removedMember});
 
   /// The guild in which the member was removed.
   PartialGuild get guild => gateway.client.guilds[guildId];
@@ -361,12 +367,15 @@ class GuildRoleDeleteEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
 
+  /// The role as it was cached before being deleted.
+  final Role? deletedRole;
+
   /// The ID of the deleted role.
   final Snowflake roleId;
 
   /// {@macro guild_role_delete_event}
   /// @nodoc
-  GuildRoleDeleteEvent({required super.gateway, required this.roleId, required this.guildId});
+  GuildRoleDeleteEvent({required super.gateway, required this.roleId, required this.guildId, required this.deletedRole});
 
   /// The guild in which the role was deleted.
   PartialGuild get guild => gateway.client.guilds[guildId];
