@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/guild/auto_moderation.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
@@ -129,24 +130,25 @@ enum TriggerType {
 /// {@template trigger_metadata}
 /// Additional metadata associated with the trigger for an [AutoModerationRule].
 /// {@endtemplate}
-class TriggerMetadata with ToStringHelper {
-  /// A list of words that trigger the rule.
+// TODO(abitofevrything): Remove `implements TriggerMetadataBuilder`
+class TriggerMetadata with ToStringHelper implements TriggerMetadataBuilder {
+  @override
   final List<String>? keywordFilter;
 
-  /// A list of regex patterns that trigger the rule.
   // TODO: Do we want to parse these as RegExp objects?
+  @override
   final List<String>? regexPatterns;
 
-  /// A list of preset keyword types that trigger the rule.
+  @override
   final List<KeywordPresetType>? presets;
 
-  /// A list of words allowed to bypass the rule.
+  @override
   final List<String>? allowList;
 
-  /// The maximum number of mentions in a message.
+  @override
   final int? mentionTotalLimit;
 
-  /// Whether mention raid protection is enabled.
+  @override
   final bool? isMentionRaidProtectionEnabled;
 
   /// {@macro trigger_metadata}
@@ -159,6 +161,17 @@ class TriggerMetadata with ToStringHelper {
     required this.mentionTotalLimit,
     required this.isMentionRaidProtectionEnabled,
   });
+
+  @override
+  @Deprecated('Use TriggerMetadataBuilder instead')
+  Map<String, Object?> build() => {
+        'keyword_filter': keywordFilter,
+        'regex_patterns': regexPatterns,
+        'presets': presets?.map((type) => type.value).toList(),
+        'allow_list': allowList,
+        'mention_total_limit': mentionTotalLimit,
+        'mention_raid_protection_enabled': isMentionRaidProtectionEnabled,
+      };
 }
 
 /// A preset list of trigger keywords for an [AutoModerationRule].
@@ -187,11 +200,12 @@ enum KeywordPresetType {
 /// {@template auto_moderation_action}
 /// Describes an action to take when an [AutoModerationRule] is triggered.
 /// {@endtemplate}
-class AutoModerationAction with ToStringHelper {
-  /// The type of action to perform.
+// TODO(abitofevrything): Remove `implements AutoModerationActionBuilder`
+class AutoModerationAction with ToStringHelper implements AutoModerationActionBuilder {
+  @override
   final ActionType type;
 
-  /// Metadata needed to perform the action.
+  @override
   final ActionMetadata? metadata;
 
   /// {@macro auto_moderation_action}
@@ -200,6 +214,13 @@ class AutoModerationAction with ToStringHelper {
     required this.type,
     required this.metadata,
   });
+
+  @override
+  @Deprecated('Use AutoModerationActionBuilder instead')
+  Map<String, Object?> build() => {
+        'type': type.value,
+        if (metadata != null) 'metadata': metadata!.build(),
+      };
 }
 
 /// The type of action for an [AutoModerationAction].
@@ -228,16 +249,17 @@ enum ActionType {
 /// {@template action_metadata}
 /// Additional metadata associated with an [AutoModerationAction].
 /// {@endtemplate}
-class ActionMetadata with ToStringHelper {
+// TODO(abitofevrything): Remove `implements ActionMetadataBuilder`
+class ActionMetadata with ToStringHelper implements ActionMetadataBuilder {
   final AutoModerationManager manager;
 
-  /// The ID of the channel to send the alert message to.
+  @override
   final Snowflake? channelId;
 
-  /// The duration of time to time the user out for.
+  @override
   final Duration? duration;
 
-  /// A custom message to send to the user.
+  @override
   final String? customMessage;
 
   /// {@macro action_metadata}
@@ -251,4 +273,12 @@ class ActionMetadata with ToStringHelper {
 
   /// The channel to send the alert message to.
   PartialTextChannel? get channel => channelId == null ? null : manager.client.channels[channelId!] as PartialTextChannel?;
+
+  @override
+  @Deprecated('Use ActionMetadataBuilder instead')
+  Map<String, Object?> build() => {
+        'channel_id': channelId?.toString(),
+        'duration_seconds': duration?.inSeconds,
+        'custom_message': customMessage,
+      };
 }
