@@ -9,9 +9,9 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
 
   TriggerType triggerType;
 
-  TriggerMetadata? metadata;
+  TriggerMetadataBuilder? metadata;
 
-  List<AutoModerationAction> actions;
+  List<AutoModerationActionBuilder> actions;
 
   bool? isEnabled;
 
@@ -30,32 +30,70 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
     this.exemptChannelIds,
   });
 
+  AutoModerationRuleBuilder.keyword({
+    required this.name,
+    required this.eventType,
+    required this.actions,
+    this.isEnabled,
+    this.exemptRoleIds,
+    this.exemptChannelIds,
+    List<String>? keywordFilter,
+    List<String>? regexPatterns,
+    List<String>? allowList,
+  })  : triggerType = TriggerType.keyword,
+        metadata = TriggerMetadataBuilder(
+          keywordFilter: keywordFilter,
+          regexPatterns: regexPatterns,
+          allowList: allowList,
+        );
+
+  AutoModerationRuleBuilder.spam({
+    required this.name,
+    required this.eventType,
+    required this.actions,
+    this.isEnabled,
+    this.exemptRoleIds,
+    this.exemptChannelIds,
+  })  : triggerType = TriggerType.spam,
+        metadata = null;
+
+  AutoModerationRuleBuilder.keywordPreset({
+    required this.name,
+    required this.eventType,
+    required this.actions,
+    this.isEnabled,
+    this.exemptRoleIds,
+    this.exemptChannelIds,
+    required List<KeywordPresetType>? presets,
+    List<String>? allowList,
+  })  : triggerType = TriggerType.keywordPreset,
+        metadata = TriggerMetadataBuilder(
+          presets: presets,
+          allowList: allowList,
+        );
+
+  AutoModerationRuleBuilder.mentionSpam({
+    required this.name,
+    required this.eventType,
+    required this.actions,
+    this.isEnabled,
+    this.exemptRoleIds,
+    this.exemptChannelIds,
+    required int mentionTotalLimit,
+    bool? isMentionRaidProtectionEnabled,
+  })  : triggerType = TriggerType.mentionSpam,
+        metadata = TriggerMetadataBuilder(
+          mentionTotalLimit: mentionTotalLimit,
+          isMentionRaidProtectionEnabled: isMentionRaidProtectionEnabled,
+        );
+
   @override
   Map<String, Object?> build() => {
         'name': name,
         'event_type': eventType.value,
         'trigger_type': triggerType.value,
-        if (metadata != null)
-          'trigger_metadata': {
-            'keyword_filter': metadata!.keywordFilter,
-            'regex_patterns': metadata!.regexPatterns,
-            'presets': metadata!.presets?.map((type) => type.value).toList(),
-            'allow_list': metadata!.allowList,
-            'mention_total_limit': metadata!.mentionTotalLimit,
-            'mention_raid_protection_enabled': metadata!.isMentionRaidProtectionEnabled,
-          },
-        'actions': [
-          for (final action in actions)
-            {
-              'type': action.type.value,
-              if (action.metadata != null)
-                'metadata': {
-                  'channel_id': action.metadata!.channelId?.toString(),
-                  'duration_seconds': action.metadata!.duration?.inSeconds,
-                  'custom_message': action.metadata!.customMessage,
-                }
-            }
-        ],
+        if (metadata != null) 'trigger_metadata': metadata!.build(),
+        'actions': actions.map((a) => a.build()).toList(),
         if (isEnabled != null) 'enabled': isEnabled,
         if (exemptRoleIds != null) 'exempt_roles': exemptRoleIds!.map((id) => id.toString()).toList(),
         if (exemptChannelIds != null) 'exempt_channels': exemptChannelIds!.map((id) => id.toString()).toList(),
@@ -119,12 +157,12 @@ class TriggerMetadataBuilder extends CreateBuilder<TriggerMetadata> {
   final bool? isMentionRaidProtectionEnabled;
 
   TriggerMetadataBuilder({
-    required this.keywordFilter,
-    required this.regexPatterns,
-    required this.presets,
-    required this.allowList,
-    required this.mentionTotalLimit,
-    required this.isMentionRaidProtectionEnabled,
+    this.keywordFilter,
+    this.regexPatterns,
+    this.presets,
+    this.allowList,
+    this.mentionTotalLimit,
+    this.isMentionRaidProtectionEnabled,
   });
 
   @override
@@ -145,7 +183,19 @@ class AutoModerationActionBuilder extends CreateBuilder<AutoModerationAction> {
   /// Metadata needed to perform the action.
   final ActionMetadataBuilder? metadata;
 
-  AutoModerationActionBuilder({required this.type, required this.metadata});
+  AutoModerationActionBuilder({required this.type, this.metadata});
+
+  AutoModerationActionBuilder.blockMessage({String? customMessage})
+      : type = ActionType.blockMessage,
+        metadata = customMessage == null ? null : ActionMetadataBuilder(customMessage: customMessage);
+
+  AutoModerationActionBuilder.sendAlertMessage({required Snowflake channelId})
+      : type = ActionType.sendAlertMessage,
+        metadata = ActionMetadataBuilder(channelId: channelId);
+
+  AutoModerationActionBuilder.timeout({required Duration duration})
+      : type = ActionType.timeout,
+        metadata = ActionMetadataBuilder(duration: duration);
 
   @override
   Map<String, Object?> build() => {
@@ -165,15 +215,15 @@ class ActionMetadataBuilder extends CreateBuilder<ActionMetadata> {
   final String? customMessage;
 
   ActionMetadataBuilder({
-    required this.channelId,
-    required this.duration,
-    required this.customMessage,
+    this.channelId,
+    this.duration,
+    this.customMessage,
   });
 
   @override
   Map<String, Object?> build() => {
-        'channel_id': channelId?.toString(),
-        'duration_seconds': duration?.inSeconds,
-        'custom_message': customMessage,
+        if (channelId != null) 'channel_id': channelId!.toString(),
+        if (duration != null) 'duration_seconds': duration!.inSeconds,
+        if (customMessage != null) 'custom_message': customMessage,
       };
 }
