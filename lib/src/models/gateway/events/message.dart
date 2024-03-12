@@ -100,7 +100,7 @@ class MessageBulkDeleteEvent extends DispatchEvent {
   final List<Snowflake> ids;
 
   /// A list of the messages that were found in cache before being deleted.
-  final List<Message?> deletedMessages;
+  final List<Message> deletedMessages;
 
   /// The ID of the channel the messages were deleted in.
   final Snowflake channelId;

@@ -868,7 +868,7 @@ class Gateway extends GatewayManager with EventParser {
     return MessageBulkDeleteEvent(
       gateway: this,
       ids: ids,
-      deletedMessages: ids.map((id) => (client.channels[channelId] as PartialTextChannel).messages.cache[id]).toList(),
+      deletedMessages: ids.map((id) => (client.channels[channelId] as PartialTextChannel).messages.cache[id]).nonNulls.toList(),
       channelId: channelId,
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
     );
