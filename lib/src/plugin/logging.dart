@@ -50,7 +50,9 @@ class Logging extends NyxxPlugin {
     StringSink? stdout,
     StringSink? stderr,
   })  : stdout = stdout ?? io.stdout,
-        stderr = stderr ?? io.stderr;
+        stderr = stderr ?? io.stderr {
+    _listenIfNeeded();
+  }
 
   static int _clients = 0;
 
@@ -130,7 +132,6 @@ class Logging extends NyxxPlugin {
     }
 
     _clients++;
-    _listenIfNeeded();
   }
 
   @override
