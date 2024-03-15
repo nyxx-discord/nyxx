@@ -68,6 +68,9 @@ enum SkuType {
 
 /// Flags applied to an [Sku].
 class SkuFlags extends Flags<SkuFlags> {
+  /// The SKU is available for purchase.
+  static const available = Flag<SkuFlags>.fromOffset(0);
+
   /// The SKU is a guild subscription.
   static const guildSubscription = Flag<SkuFlags>.fromOffset(7);
 
@@ -76,6 +79,9 @@ class SkuFlags extends Flags<SkuFlags> {
 
   /// Create a new [SkuFlags].
   SkuFlags(super.value);
+
+  /// Whether this set of flags has the [available] flag set.
+  bool get isAvailable => has(available);
 
   /// Whether this set of flags has the [guildSubscription] flag set.
   bool get isGuildSubscription => has(guildSubscription);
