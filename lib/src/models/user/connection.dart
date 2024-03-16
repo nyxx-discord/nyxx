@@ -58,6 +58,8 @@ class Connection with ToStringHelper {
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object-services
 enum ConnectionType {
   battleNet._('battlenet', 'Battle.net'),
+  bungieNet._('bungie', 'Bungie.net'),
+  domain._('domain', 'Domain'),
   ebay._('ebay', 'eBay'),
   epicGames._('epicgames', 'Epic Games'),
   facebook._('facebook', 'Facebook'),
@@ -68,6 +70,7 @@ enum ConnectionType {
   playstation._('playstation', 'PlayStation Network'),
   reddit._('reddit', 'Reddit'),
   riotGames._('riotgames', 'Riot Games'),
+  roblox._('roblox', 'ROBLOX'),
   spotify._('spotify', 'Spotify'),
   skype._('skype', 'Skype'),
   steam._('steam', 'Steam'),
