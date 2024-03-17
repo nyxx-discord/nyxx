@@ -503,7 +503,7 @@ class GuildManager extends Manager<Guild> {
       method: 'POST',
       auditLogReason: auditLogReason,
       body: jsonEncode({
-        'user_ids': userIds.map((s) => s.toString()),
+        'user_ids': userIds.map((s) => s.toString()).toList(),
         if (deleteMessages != null) 'delete_message_seconds': deleteMessages.inSeconds,
       }),
     );
