@@ -314,4 +314,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`recipients`](https://discord.com/developers/docs/resources/channel#group-dm-add-recipient) part to this [HttpRoute].
   void recipients({String? id}) => add(HttpRoutePart('recipients', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`bulk-ban`](https://discord.com/developers/docs/resources/guild#bulk-guild-ban) part to this [HttpRoute].
+  void bulkBan() => add(HttpRoutePart('bulk-ban'));
 }

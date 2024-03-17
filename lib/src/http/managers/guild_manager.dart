@@ -210,6 +210,14 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [BulkBanResponse] from [raw].
+  BulkBanResponse parseBulkBanResponse(Map<String, Object?> raw) {
+    return BulkBanResponse(
+      bannedUsers: maybeParseMany(raw['banned_users'], Snowflake.parse),
+      failedUsers: maybeParseMany(raw['failed_users'], Snowflake.parse),
+    );
+  }
+
   /// Parse a [WidgetSettings] from [raw].
   WidgetSettings parseWidgetSettings(Map<String, Object?> raw) {
     return WidgetSettings(
@@ -483,6 +491,24 @@ class GuildManager extends Manager<Guild> {
     );
 
     await client.httpHandler.executeSafe(request);
+  }
+
+  /// Ban up to 200 users from a guild, and optionally delete previous messages sent by the banned users.
+  Future<BulkBanResponse> bulkBan(Snowflake id, List<Snowflake> userIds, {Duration? deleteMessages, String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..bulkBan();
+    final request = BasicRequest(
+      route,
+      method: 'POST',
+      auditLogReason: auditLogReason,
+      body: jsonEncode({
+        'user_ids': userIds.map((s) => s.toString()),
+        if (deleteMessages != null) 'delete_message_seconds': deleteMessages.inSeconds,
+      }),
+    );
+    final response = await client.httpHandler.executeSafe(request);
+    return parseBulkBanResponse(response.jsonBody as Map<String, Object?>);
   }
 
   /// Delete a ban in a guild.
