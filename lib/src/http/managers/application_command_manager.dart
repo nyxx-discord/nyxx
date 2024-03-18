@@ -60,7 +60,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       hasDmPermission: raw['dm_permission'] as bool?,
       isNsfw: raw['nsfw'] as bool?,
       integrationTypes: (raw['integration_types'] as List).cast<int>().map(ApplicationIntegrationType.parse).toList(),
-      contexts: (raw['contexts'] as List).cast<int>().map(InteractionContextType.parse).toList(),
+      contexts: (raw['contexts'] as List? ?? []).cast<int>().map(InteractionContextType.parse).toList(),
       version: Snowflake.parse(raw['version']!),
     );
   }
