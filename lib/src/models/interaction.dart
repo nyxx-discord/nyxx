@@ -109,7 +109,7 @@ abstract class Interaction<T> with ToStringHelper {
   final List<Entitlement> entitlements;
 
   /// Mapping of installation contexts that the interaction was authorized for to related user or guild IDs.
-  final Map<ApplicationIntegrationType, Snowflake> authorizingIntegrationOwners;
+  final Map<ApplicationIntegrationType, Snowflake>? authorizingIntegrationOwners;
 
   /// Context where the interaction was triggered from.
   final InteractionContextType? context;

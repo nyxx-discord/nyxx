@@ -83,7 +83,7 @@ class MessageManager extends Manager<Message> {
       ),
       interactionMetadata: maybeParse(
         raw['interaction_metadata'],
-        (Map<dynamic, dynamic> raw) => parseMessageInteractionMetadata(raw.cast()),
+        parseMessageInteractionMetadata,
       ),
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
       components: maybeParseMany(raw['components'], parseMessageComponent),
@@ -325,9 +325,10 @@ class MessageManager extends Manager<Message> {
       id: Snowflake.parse(raw['id']!),
       type: InteractionType.parse(raw['type'] as int),
       userId: Snowflake.parse(raw['user_id']!),
-      authorizingIntegrationOwners: (raw['authorizing_integration_owners'] as Map)
-          .cast<String, Object>()
-          .map((key, value) => MapEntry(ApplicationIntegrationType.parse(int.parse(key)), Snowflake.parse(value))),
+      authorizingIntegrationOwners: {
+        for (final MapEntry(:key, :value) in (raw['authorizing_integration_owners'] as Map<String, Object?>).entries)
+          ApplicationIntegrationType.parse(int.parse(key)): Snowflake.parse(value!),
+      },
       originalResponseMessageId: maybeParse(raw['original_response_message_id'], Snowflake.parse),
       interactedMessageId: maybeParse(raw['interacted_message_id'], Snowflake.parse),
       triggeringInteractionMetadata: maybeParse(raw['triggering_interaction_metadata'], parseMessageInteractionMetadata),

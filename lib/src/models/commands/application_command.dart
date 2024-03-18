@@ -66,7 +66,7 @@ class ApplicationCommand extends PartialApplicationCommand {
   final List<ApplicationIntegrationType> integrationTypes;
 
   /// Interaction context(s) where the command can be used, only for globally-scoped commands. By default, all interaction context types included for new commands.
-  final List<InteractionContextType> contexts;
+  final List<InteractionContextType>? contexts;
 
   /// An auto-incrementing version number.
   final Snowflake version;

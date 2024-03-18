@@ -55,10 +55,11 @@ class InteractionManager {
     final entitlements = parseMany(raw['entitlements'] as List, client.applications[applicationId].entitlements.parse);
 
     final authorizingIntegrationOwners = maybeParse(
-            raw['authorizing_integration_owners'],
-            (map) =>
-                (map as Map).cast<String, Object>().map((key, value) => MapEntry(ApplicationIntegrationType.parse(int.parse(key)), Snowflake.parse(value)))) ??
-        {};
+      raw['authorizing_integration_owners'],
+      (Map<String, Object?> map) => {
+        for (final MapEntry(:key, :value) in map.entries) ApplicationIntegrationType.parse(int.parse(key)): Snowflake.parse(value!),
+      },
+    );
     final context = maybeParse(raw['context'], InteractionContextType.parse);
 
     return switch (type) {

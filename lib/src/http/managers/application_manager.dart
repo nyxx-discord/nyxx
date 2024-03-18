@@ -62,9 +62,12 @@ class ApplicationManager {
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
       customInstallUrl: maybeParse(raw['custom_install_url'], Uri.parse),
       integrationTypesConfig: maybeParse(
-          raw['integration_types_config'],
-          (config) => (config as Map).cast<String, Object?>().map((key, value) =>
-              MapEntry(ApplicationIntegrationType.parse(int.parse(key)), parseApplicationIntegrationTypeConfiguration((value as Map).cast<String, Object>())))),
+        raw['integration_types_config'],
+        (Map<String, Object?> config) => {
+          for (final MapEntry(:key, :value) in config.entries)
+            ApplicationIntegrationType.parse(int.parse(key)): parseApplicationIntegrationTypeConfiguration(value as Map<String, Object?>)
+        },
+      ),
       roleConnectionsVerificationUrl: maybeParse(raw['role_connections_verification_url'], Uri.parse),
     );
   }
