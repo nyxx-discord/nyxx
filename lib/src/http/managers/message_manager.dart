@@ -81,6 +81,10 @@ class MessageManager extends Manager<Message> {
         raw['interaction'],
         (Map<String, Object?> raw) => parseMessageInteraction(raw, guildId: guildId),
       ),
+      interactionMetadata: maybeParse(
+        raw['interaction_metadata'],
+        (Map<dynamic, dynamic> raw) => parseMessageInteractionMetadata(raw.cast()),
+      ),
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
       components: maybeParseMany(raw['components'], parseMessageComponent),
       position: raw['position'] as int?,
@@ -299,9 +303,11 @@ class MessageManager extends Manager<Message> {
     );
   }
 
+  // ignore: deprecated_member_use_from_same_package
   MessageInteraction parseMessageInteraction(Map<String, Object?> raw, {Snowflake? guildId}) {
     final user = client.users.parse(raw['user'] as Map<String, Object?>);
 
+    // ignore: deprecated_member_use_from_same_package
     return MessageInteraction(
       id: Snowflake.parse(raw['id']!),
       type: InteractionType.parse(raw['type'] as int),
@@ -311,6 +317,20 @@ class MessageManager extends Manager<Message> {
         raw['member'],
         (Map<String, Object?> raw) => client.guilds[guildId ?? Snowflake.zero].members[user.id],
       ),
+    );
+  }
+
+  MessageInteractionMetadata parseMessageInteractionMetadata(Map<String, Object?> raw) {
+    return MessageInteractionMetadata(
+      id: Snowflake.parse(raw['id']!),
+      type: InteractionType.parse(raw['type'] as int),
+      userId: Snowflake.parse(raw['user_id']!),
+      authorizingIntegrationOwners: (raw['authorizing_integration_owners'] as Map)
+          .cast<String, Object>()
+          .map((key, value) => MapEntry(ApplicationIntegrationType.parse(int.parse(key)), Snowflake.parse(value))),
+      originalResponseMessageId: maybeParse(raw['original_response_message_id'], Snowflake.parse),
+      interactedMessageId: maybeParse(raw['interacted_message_id'], Snowflake.parse),
+      triggeringInteractionMetadata: maybeParse(raw['triggering_interaction_metadata'], parseMessageInteractionMetadata),
     );
   }
 

@@ -6,10 +6,12 @@ import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/response.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/commands/application_command_permissions.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -57,6 +59,8 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       defaultMemberPermissions: maybeParse(raw['default_member_permissions'], (String raw) => Permissions(int.parse(raw))),
       hasDmPermission: raw['dm_permission'] as bool?,
       isNsfw: raw['nsfw'] as bool?,
+      integrationTypes: (raw['integration_types'] as List).cast<int>().map(ApplicationIntegrationType.parse).toList(),
+      contexts: (raw['contexts'] as List).cast<int>().map(InteractionContextType.parse).toList(),
       version: Snowflake.parse(raw['version']!),
     );
   }

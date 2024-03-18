@@ -61,6 +61,10 @@ class ApplicationManager {
       tags: maybeParseMany(raw['tags']),
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
       customInstallUrl: maybeParse(raw['custom_install_url'], Uri.parse),
+      integrationTypesConfig: maybeParse(
+          raw['integration_types_config'],
+          (config) => (config as Map).cast<String, Object?>().map((key, value) =>
+              MapEntry(ApplicationIntegrationType.parse(int.parse(key)), parseApplicationIntegrationTypeConfiguration((value as Map).cast<String, Object>())))),
       roleConnectionsVerificationUrl: maybeParse(raw['role_connections_verification_url'], Uri.parse),
     );
   }
@@ -93,6 +97,12 @@ class ApplicationManager {
       scopes: parseMany(raw['scopes'] as List),
       permissions: Permissions(int.parse(raw['permissions'] as String)),
     );
+  }
+
+  /// Parse a [ApplicationIntegrationTypeConfiguration] from [raw].
+  ApplicationIntegrationTypeConfiguration parseApplicationIntegrationTypeConfiguration(Map<String, Object?> raw) {
+    return ApplicationIntegrationTypeConfiguration(
+        oauth2InstallParameters: parseInstallationParameters((raw['oauth2_install_params'] as Map).cast<String, Object>()));
   }
 
   /// Parse a [ApplicationRoleConnectionMetadata] from [raw].

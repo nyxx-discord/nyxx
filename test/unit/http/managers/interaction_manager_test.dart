@@ -38,6 +38,11 @@ final sampleCommandInteraction = {
   },
   "channel_id": "645027906669510667",
   "entitlements": [],
+  "authorizing_integration_owners": {
+    "0": "846136758470443069",
+    "1": "302359032612651009",
+  },
+  "context": 0,
 
   // Fields not present in the example but documented
   "application_id": "0",
@@ -63,6 +68,13 @@ void checkCommandInteraction(Interaction<dynamic> interaction) {
   expect(interaction.locale, equals(Locale.enUs));
   expect(interaction.guildLocale, equals(Locale.enUs));
   expect(interaction.entitlements, equals([]));
+  expect(
+      interaction.authorizingIntegrationOwners,
+      equals({
+        ApplicationIntegrationType.guildInstall: Snowflake(846136758470443069),
+        ApplicationIntegrationType.userInstall: Snowflake(302359032612651009),
+      }));
+  expect(interaction.context, equals(InteractionContextType.guild));
 }
 
 final sampleCommandInteraction2 = {
@@ -157,6 +169,10 @@ final sampleCommandInteraction2 = {
   },
   "application_id": "1033681843708510238",
   "app_permissions": "562949953421311",
+  "authorizing_integration_owners": {
+    "0": "846136758470443069",
+    "1": "302359032612651009",
+  },
 };
 
 void checkCommandInteraction2(Interaction<dynamic> interaction) {

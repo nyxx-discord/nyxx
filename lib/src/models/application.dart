@@ -39,6 +39,14 @@ class PartialApplication with ToStringHelper {
   Future<List<Sku>> listSkus() => manager.listSkus(id);
 }
 
+class ApplicationIntegrationTypeConfiguration {
+  /// Install params for each installation context's default in-app authorization link.
+  final InstallationParameters oauth2InstallParameters;
+
+  /// @nodoc
+  ApplicationIntegrationTypeConfiguration({required this.oauth2InstallParameters});
+}
+
 /// {@template application}
 /// An OAuth2 application.
 /// {@endtemplate}
@@ -112,6 +120,9 @@ class Application extends PartialApplication {
   /// Settings for this application's default authorization link.
   final InstallationParameters? installationParameters;
 
+  /// Default scopes and permissions for each supported installation context.
+  final Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>? integrationTypesConfig;
+
   /// The custom authorization link for this application.
   final Uri? customInstallUrl;
 
@@ -148,6 +159,7 @@ class Application extends PartialApplication {
     required this.interactionsEndpointUrl,
     required this.tags,
     required this.installationParameters,
+    required this.integrationTypesConfig,
     required this.customInstallUrl,
     required this.roleConnectionsVerificationUrl,
   });
@@ -169,6 +181,30 @@ class Application extends PartialApplication {
           base: HttpRoute()..appIcons(id: id.toString()),
           hash: coverImageHash!,
         );
+}
+
+enum ApplicationIntegrationType {
+  /// App is installable to servers.
+  guildInstall._(0),
+
+  /// App is installable to users.
+  userInstall._(1);
+
+  /// The value of this [ApplicationIntegrationType].
+  final int value;
+
+  const ApplicationIntegrationType._(this.value);
+
+  /// Parse an [ApplicationIntegrationType] from an [int].
+  ///
+  /// The [value] must be a valid application integration type.
+  factory ApplicationIntegrationType.parse(int value) => ApplicationIntegrationType.values.firstWhere(
+        (type) => type.value == value,
+        orElse: () => throw FormatException('Unknown ApplicationIntegrationType', value),
+      );
+
+  @override
+  String toString() => 'ApplicationIntegrationType($value)';
 }
 
 /// Flags for an [Application].

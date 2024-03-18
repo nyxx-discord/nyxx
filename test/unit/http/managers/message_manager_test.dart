@@ -140,6 +140,55 @@ void checkCrosspostedMessage(Message message) {
   expect(message.roleSubscriptionData, isNull);
 }
 
+final sampleMessageInteractionMetadata = {
+  "id": "1234567891234567800",
+  "type": 2,
+  "user_id": "1234567891234567801",
+  "authorizing_integration_owners": {
+    "0": "1234567891234567802",
+    "1": "1234567891234567803",
+  },
+  "original_response_message_id": "1234567891234567804",
+  "interacted_message_id": "1234567891234567805",
+  "triggering_interaction_metadata": {
+    "id": "1234567891234567806",
+    "type": 2,
+    "user_id": "1234567891234567807",
+    "authorizing_integration_owners": {
+      "0": "1234567891234567808",
+      "1": "1234567891234567809",
+    },
+  },
+};
+
+void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
+  expect(metadata.id, equals(Snowflake(1234567891234567800)));
+  expect(metadata.type, equals(InteractionType.applicationCommand));
+  expect(metadata.userId, equals(Snowflake(1234567891234567801)));
+  expect(
+      metadata.authorizingIntegrationOwners,
+      equals({
+        ApplicationIntegrationType.guildInstall: Snowflake(1234567891234567802),
+        ApplicationIntegrationType.userInstall: Snowflake(1234567891234567803),
+      }));
+  expect(metadata.originalResponseMessageId, Snowflake(1234567891234567804));
+  expect(metadata.interactedMessageId, Snowflake(1234567891234567805));
+  expect(metadata.triggeringInteractionMetadata, isNotNull);
+  MessageInteractionMetadata metadata2 = metadata.triggeringInteractionMetadata!;
+  expect(metadata2.id, equals(Snowflake(1234567891234567806)));
+  expect(metadata2.type, equals(InteractionType.applicationCommand));
+  expect(metadata2.userId, equals(Snowflake(1234567891234567807)));
+  expect(
+      metadata2.authorizingIntegrationOwners,
+      equals({
+        ApplicationIntegrationType.guildInstall: Snowflake(1234567891234567808),
+        ApplicationIntegrationType.userInstall: Snowflake(1234567891234567809),
+      }));
+  expect(metadata2.originalResponseMessageId, isNull);
+  expect(metadata2.interactedMessageId, isNull);
+  expect(metadata2.triggeringInteractionMetadata, isNull);
+}
+
 void main() {
   testManager<Message, MessageManager>(
     'MessageManager',
@@ -152,7 +201,14 @@ void main() {
     additionalSampleMatchers: [checkCrosspostedMessage],
     createBuilder: MessageBuilder(),
     updateBuilder: MessageUpdateBuilder(),
-    additionalParsingTests: [],
+    additionalParsingTests: [
+      ParsingTest<MessageManager, MessageInteractionMetadata, Map<String, Object?>>(
+        name: 'parseMessageInteractionMetadata',
+        source: sampleMessageInteractionMetadata,
+        parse: (manager) => manager.parseMessageInteractionMetadata,
+        check: checkMessageInteractionMetadata,
+      ),
+    ],
     additionalEndpointTests: [
       EndpointTest<MessageManager, List<Message>, List<Object?>>(
         name: 'fetchMany',

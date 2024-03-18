@@ -143,7 +143,8 @@ export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
-export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction;
+// ignore: deprecated_member_use_from_same_package
+export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
@@ -186,7 +187,14 @@ export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenC
 export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
 export 'src/models/guild/audit_log.dart' show AuditLogChange, AuditLogEntry, AuditLogEntryInfo, PartialAuditLogEntry, AuditLogEvent;
 export 'src/models/application.dart'
-    show Application, ApplicationFlags, InstallationParameters, PartialApplication, ApplicationRoleConnectionMetadata, ConnectionMetadataType;
+    show
+        Application,
+        ApplicationFlags,
+        InstallationParameters,
+        PartialApplication,
+        ApplicationRoleConnectionMetadata,
+        ConnectionMetadataType,
+        ApplicationIntegrationType;
 export 'src/models/guild/template.dart' show GuildTemplate;
 export 'src/models/guild/auto_moderation.dart'
     show
@@ -299,7 +307,8 @@ export 'src/models/interaction.dart'
         ApplicationCommandInteraction,
         MessageComponentInteraction,
         ModalSubmitInteraction,
-        PingInteraction;
+        PingInteraction,
+        InteractionContextType;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
 export 'src/models/sku.dart' show Sku, SkuType, SkuFlags;
 export 'src/models/oauth2.dart' show OAuth2Information;
