@@ -41,7 +41,7 @@ class PartialApplication with ToStringHelper {
 
 class ApplicationIntegrationTypeConfiguration {
   /// Install params for each installation context's default in-app authorization link.
-  final InstallationParameters oauth2InstallParameters;
+  final InstallationParameters? oauth2InstallParameters;
 
   /// @nodoc
   ApplicationIntegrationTypeConfiguration({required this.oauth2InstallParameters});

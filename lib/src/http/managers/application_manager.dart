@@ -102,7 +102,8 @@ class ApplicationManager {
   /// Parse a [ApplicationIntegrationTypeConfiguration] from [raw].
   ApplicationIntegrationTypeConfiguration parseApplicationIntegrationTypeConfiguration(Map<String, Object?> raw) {
     return ApplicationIntegrationTypeConfiguration(
-        oauth2InstallParameters: parseInstallationParameters((raw['oauth2_install_params'] as Map).cast<String, Object>()));
+      oauth2InstallParameters: maybeParse(raw['oauth2_install_params'], parseInstallationParameters),
+    );
   }
 
   /// Parse a [ApplicationRoleConnectionMetadata] from [raw].

@@ -50,10 +50,11 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
           },
         if (integrationTypesConfig != null)
           'integration_types_config': integrationTypesConfig!.map((key, value) => MapEntry(key.value.toString(), {
-                'oauth2_install_params': {
-                  'scopes': value.oauth2InstallParameters.scopes,
-                  'permissions': value.oauth2InstallParameters.permissions.value.toString(),
-                },
+                if (value.oauth2InstallParameters != null)
+                  'oauth2_install_params': {
+                    'scopes': value.oauth2InstallParameters!.scopes,
+                    'permissions': value.oauth2InstallParameters!.permissions.value.toString(),
+                  },
               })),
         if (flags != null) 'flags': flags!.value,
         if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
