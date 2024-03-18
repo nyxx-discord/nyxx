@@ -19,10 +19,10 @@ class Ban with ToStringHelper {
 
 class BulkBanResponse with ToStringHelper {
   /// A list of user IDs, that were succesfully banned.
-  final List<Snowflake>? bannedUsers;
+  final List<Snowflake> bannedUsers;
 
   /// A list of user IDs, that were not banned.
-  final List<Snowflake>? failedUsers;
+  final List<Snowflake> failedUsers;
 
   /// @nodoc
   BulkBanResponse({required this.bannedUsers, required this.failedUsers});
