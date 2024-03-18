@@ -97,7 +97,7 @@ abstract class Interaction<T> with ToStringHelper {
   final Message? message;
 
   /// The permissions of the application that triggered this interaction.
-  final Permissions? appPermissions;
+  final Permissions appPermissions;
 
   /// The preferred locale of the user that triggered this interaction.
   final Locale? locale;

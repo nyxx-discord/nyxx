@@ -23,6 +23,8 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
 
   List<String>? tags;
 
+  Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>? integrationTypesConfig;
+
   ApplicationUpdateBuilder({
     this.customInstallUrl,
     this.description,
@@ -33,6 +35,7 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
     this.coverImage = sentinelImageBuilder,
     this.interactionsEndpointUrl = sentinelUri,
     this.tags,
+    this.integrationTypesConfig,
   });
 
   @override
@@ -43,8 +46,15 @@ class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
         if (installationParameters != null)
           'install_params': {
             'scopes': installationParameters!.scopes,
-            'permissions': installationParameters!.permissions.toString(),
+            'permissions': installationParameters!.permissions.value.toString(),
           },
+        if (integrationTypesConfig != null)
+          'integration_types_config': integrationTypesConfig!.map((key, value) => MapEntry(key.value.toString(), {
+                'oauth2_install_params': {
+                  'scopes': value.oauth2InstallParameters.scopes,
+                  'permissions': value.oauth2InstallParameters.permissions.value.toString(),
+                },
+              })),
         if (flags != null) 'flags': flags!.value,
         if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
         if (!identical(coverImage, sentinelImageBuilder)) 'cover_image': coverImage?.buildDataString(),

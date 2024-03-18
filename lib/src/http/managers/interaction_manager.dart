@@ -49,7 +49,7 @@ class InteractionManager {
       raw['message'],
       (Map<String, Object?> raw) => (client.channels[channelId!] as PartialTextChannel).messages.parse(raw, guildId: guildId),
     );
-    final appPermissions = maybeParse(raw['app_permissions'], (String raw) => Permissions(int.parse(raw)));
+    final appPermissions = Permissions(int.parse(raw['app_permissions'] as String));
     final locale = maybeParse(raw['locale'], Locale.parse);
     final guildLocale = maybeParse(raw['guild_locale'], Locale.parse);
     final entitlements = parseMany(raw['entitlements'] as List, client.applications[applicationId].entitlements.parse);

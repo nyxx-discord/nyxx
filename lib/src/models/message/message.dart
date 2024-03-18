@@ -171,6 +171,7 @@ class Message extends PartialMessage {
 
   /// Information about the interaction related to this message.
   // ignore: deprecated_member_use_from_same_package
+  @Deprecated('Use `interactionMetadata`')
   final MessageInteraction? interaction;
 
   /// The thread that was started from this message if any, `null` otherwise.
