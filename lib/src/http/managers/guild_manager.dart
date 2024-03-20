@@ -213,8 +213,8 @@ class GuildManager extends Manager<Guild> {
   /// Parse a [BulkBanResponse] from [raw].
   BulkBanResponse parseBulkBanResponse(Map<String, Object?> raw) {
     return BulkBanResponse(
-      bannedUsers: (raw['banned_users'] as List).cast<Object>().map(Snowflake.parse).toList(),
-      failedUsers: (raw['failed_users'] as List).cast<Object>().map(Snowflake.parse).toList(),
+      bannedUsers: parseMany(raw['banned_users'] as List, Snowflake.parse),
+      failedUsers: parseMany(raw['failed_users'] as List, Snowflake.parse),
     );
   }
 
