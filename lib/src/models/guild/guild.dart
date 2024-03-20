@@ -111,11 +111,15 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// List the bans in this guild.
   Future<List<Ban>> listBans({int? limit, Snowflake? after, Snowflake? before}) => manager.listBans(id, limit: limit, after: after, before: before);
 
-  /// Ban a member in this guild.
+  /// Ban a user in this guild.
   Future<void> createBan(Snowflake userId, {Duration? deleteMessages, String? auditLogReason}) =>
       manager.createBan(id, userId, auditLogReason: auditLogReason, deleteMessages: deleteMessages);
 
-  /// Unban a member in this guild.
+  /// Ban up to 200 users from a guild, and optionally delete previous messages sent by the banned users.
+  Future<BulkBanResponse> bulkBan(List<Snowflake> userIds, {Duration? deleteMessages, String? auditLogReason}) =>
+      manager.bulkBan(id, userIds, deleteMessages: deleteMessages, auditLogReason: auditLogReason);
+
+  /// Unban a user in this guild.
   Future<void> deleteBan(Snowflake userId, {String? auditLogReason}) => manager.deleteBan(id, userId, auditLogReason: auditLogReason);
 
   /// Update a guild's MFA level.
