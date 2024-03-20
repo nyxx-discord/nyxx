@@ -61,6 +61,13 @@ class ApplicationManager {
       tags: maybeParseMany(raw['tags']),
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
       customInstallUrl: maybeParse(raw['custom_install_url'], Uri.parse),
+      integrationTypesConfig: maybeParse(
+        raw['integration_types_config'],
+        (Map<String, Object?> config) => {
+          for (final MapEntry(:key, :value) in config.entries)
+            ApplicationIntegrationType.parse(int.parse(key)): parseApplicationIntegrationTypeConfiguration(value as Map<String, Object?>)
+        },
+      ),
       roleConnectionsVerificationUrl: maybeParse(raw['role_connections_verification_url'], Uri.parse),
     );
   }
@@ -92,6 +99,13 @@ class ApplicationManager {
     return InstallationParameters(
       scopes: parseMany(raw['scopes'] as List),
       permissions: Permissions(int.parse(raw['permissions'] as String)),
+    );
+  }
+
+  /// Parse a [ApplicationIntegrationTypeConfiguration] from [raw].
+  ApplicationIntegrationTypeConfiguration parseApplicationIntegrationTypeConfiguration(Map<String, Object?> raw) {
+    return ApplicationIntegrationTypeConfiguration(
+      oauth2InstallParameters: maybeParse(raw['oauth2_install_params'], parseInstallationParameters),
     );
   }
 

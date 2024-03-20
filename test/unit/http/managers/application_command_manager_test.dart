@@ -14,24 +14,39 @@ final sampleCommand = {
   "description": "Ping the bot",
   "description_localizations": null,
   "dm_permission": true,
-  "contexts": null,
   "nsfw": false,
+  "integration_types": [0, 1],
+  "contexts": [0, 1, 2],
 };
 
 void checkCommand(ApplicationCommand command) {
   expect(command.id, equals(Snowflake(1102343284505968762)));
-  expect(command.type, equals(ApplicationCommandType.chatInput));
   expect(command.applicationId, equals(Snowflake(1033681843708510238)));
-  expect(command.guildId, isNull);
+  expect(command.version, equals(Snowflake(1107729458535878799)));
+  expect(command.defaultMemberPermissions, isNull);
+  expect(command.type, equals(ApplicationCommandType.chatInput));
   expect(command.name, equals('ping'));
   expect(command.nameLocalizations, isNull);
   expect(command.description, equals('Ping the bot'));
   expect(command.descriptionLocalizations, isNull);
+  expect(command.guildId, isNull);
   expect(command.options, isNull);
-  expect(command.defaultMemberPermissions, isNull);
+  // ignore: deprecated_member_use_from_same_package
   expect(command.hasDmPermission, isTrue);
   expect(command.isNsfw, isFalse);
-  expect(command.version, equals(Snowflake(1107729458535878799)));
+  expect(
+      command.integrationTypes,
+      equals([
+        ApplicationIntegrationType.guildInstall,
+        ApplicationIntegrationType.userInstall,
+      ]));
+  expect(
+      command.contexts,
+      equals([
+        InteractionContextType.guild,
+        InteractionContextType.botDm,
+        InteractionContextType.privateChannel,
+      ]));
 }
 
 final sampleCommandPermissions = {
