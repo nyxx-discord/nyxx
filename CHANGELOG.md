@@ -20,7 +20,7 @@ __20.03.2024__
 - bug: Fix all audit log parameters in `StickerManager`, `EmojiManager` and `WebhookManager.update`
 - bug: Fix `interactionsEndpointUrl` being ignored in `ApplicationUpdateBuilder`
 - feat: Add more shortcut methods on models.
-- feat: Add `enforceNone` to `MessageBuilder`.
+- feat: Add `enforceNonce` to `MessageBuilder`.
 - feat: Add missing role tags fields.
 - bug: Correct the default `User-Agent` header.
 - bug: Don't require OAuth2 identify scope when using `NyxxOauth2`.
