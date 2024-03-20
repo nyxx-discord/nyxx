@@ -167,6 +167,11 @@ class Message extends PartialMessage {
   final Message? referencedMessage;
 
   /// Information about the interaction related to this message.
+  final MessageInteractionMetadata? interactionMetadata;
+
+  /// Information about the interaction related to this message.
+  // ignore: deprecated_member_use_from_same_package
+  @Deprecated('Use `interactionMetadata`')
   final MessageInteraction? interaction;
 
   /// The thread that was started from this message if any, `null` otherwise.
@@ -216,6 +221,7 @@ class Message extends PartialMessage {
     required this.reference,
     required this.flags,
     required this.referencedMessage,
+    required this.interactionMetadata,
     required this.interaction,
     required this.thread,
     required this.components,
@@ -364,6 +370,8 @@ class MessageFlags extends Flags<MessageFlags> {
   const MessageFlags(super.value);
 }
 
+@Deprecated('Use MessageInteractionMetadata')
+
 /// {@template message_interaction}
 /// Information about an interaction associated with a message.
 /// {@endtemplate}
@@ -391,5 +399,43 @@ class MessageInteraction with ToStringHelper {
     required this.name,
     required this.user,
     required this.member,
+  });
+}
+
+/// {@template message_interaction_metadata}
+/// Metadata about the interaction, including the source of the interaction and relevant server and user IDs.
+/// {@endtemplate}
+class MessageInteractionMetadata with ToStringHelper {
+  /// The ID of the interaction.
+  final Snowflake id;
+
+  /// The type of the interaction.
+  final InteractionType type;
+
+  /// ID of the user that triggered the interaction.
+  final Snowflake userId;
+
+  /// IDs for installation context(s) related to an interaction.
+  final Map<ApplicationIntegrationType, Snowflake> authorizingIntegrationOwners;
+
+  /// ID of the original response message, present only on follow-up messages.
+  final Snowflake? originalResponseMessageId;
+
+  /// ID of the message that contained interactive component, present only on messages created from component interactions.
+  final Snowflake? interactedMessageId;
+
+  /// Metadata for the interaction that was used to open the modal, present only on modal submit interactions
+  final MessageInteractionMetadata? triggeringInteractionMetadata;
+
+  /// {@macro message_interaction_metadata}
+  /// @nodoc
+  MessageInteractionMetadata({
+    required this.id,
+    required this.type,
+    required this.userId,
+    required this.authorizingIntegrationOwners,
+    required this.originalResponseMessageId,
+    required this.interactedMessageId,
+    required this.triggeringInteractionMetadata,
   });
 }

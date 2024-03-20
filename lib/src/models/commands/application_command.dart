@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/commands/application_command_permissions.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -55,10 +56,17 @@ class ApplicationCommand extends PartialApplicationCommand {
   final Permissions? defaultMemberPermissions;
 
   /// Whether this command can be ran in DMs.
+  @Deprecated('Use `contexts`')
   final bool? hasDmPermission;
 
   /// Whether this command is NSFW.
   final bool? isNsfw;
+
+  /// Installation context(s) where the command is available, only for globally-scoped commands. Defaults to [InteractionContextType.guildInstall].
+  final List<ApplicationIntegrationType> integrationTypes;
+
+  /// Interaction context(s) where the command can be used, only for globally-scoped commands. By default, all interaction context types included for new commands.
+  final List<InteractionContextType>? contexts;
 
   /// An auto-incrementing version number.
   final Snowflake version;
@@ -79,6 +87,8 @@ class ApplicationCommand extends PartialApplicationCommand {
     required this.defaultMemberPermissions,
     required this.hasDmPermission,
     required this.isNsfw,
+    required this.integrationTypes,
+    required this.contexts,
     required this.version,
   });
 

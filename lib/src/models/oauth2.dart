@@ -14,5 +14,6 @@ class OAuth2Information {
   /// The user who has authorized, if the user has authorized with the `identify` scope.
   final User? user;
 
+  /// @nodoc
   OAuth2Information({required this.application, required this.scopes, required this.expiresOn, this.user});
 }

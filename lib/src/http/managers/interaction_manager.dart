@@ -7,6 +7,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
@@ -48,10 +49,18 @@ class InteractionManager {
       raw['message'],
       (Map<String, Object?> raw) => (client.channels[channelId!] as PartialTextChannel).messages.parse(raw, guildId: guildId),
     );
-    final appPermissions = maybeParse(raw['app_permissions'], (String raw) => Permissions(int.parse(raw)));
+    final appPermissions = Permissions(int.parse(raw['app_permissions'] as String));
     final locale = maybeParse(raw['locale'], Locale.parse);
     final guildLocale = maybeParse(raw['guild_locale'], Locale.parse);
     final entitlements = parseMany(raw['entitlements'] as List, client.applications[applicationId].entitlements.parse);
+
+    final authorizingIntegrationOwners = maybeParse(
+      raw['authorizing_integration_owners'],
+      (Map<String, Object?> map) => {
+        for (final MapEntry(:key, :value) in map.entries) ApplicationIntegrationType.parse(int.parse(key)): Snowflake.parse(value!),
+      },
+    );
+    final context = maybeParse(raw['context'], InteractionContextType.parse);
 
     return switch (type) {
       InteractionType.ping => PingInteraction(
@@ -71,6 +80,8 @@ class InteractionManager {
           locale: locale,
           guildLocale: guildLocale,
           entitlements: entitlements,
+          authorizingIntegrationOwners: authorizingIntegrationOwners,
+          context: context,
         ),
       InteractionType.applicationCommand => ApplicationCommandInteraction(
           manager: this,
@@ -90,6 +101,8 @@ class InteractionManager {
           locale: locale,
           guildLocale: guildLocale,
           entitlements: entitlements,
+          authorizingIntegrationOwners: authorizingIntegrationOwners,
+          context: context,
         ),
       InteractionType.messageComponent => MessageComponentInteraction(
           manager: this,
@@ -109,6 +122,8 @@ class InteractionManager {
           locale: locale,
           guildLocale: guildLocale,
           entitlements: entitlements,
+          authorizingIntegrationOwners: authorizingIntegrationOwners,
+          context: context,
         ),
       InteractionType.modalSubmit => ModalSubmitInteraction(
           manager: this,
@@ -128,6 +143,8 @@ class InteractionManager {
           locale: locale,
           guildLocale: guildLocale,
           entitlements: entitlements,
+          authorizingIntegrationOwners: authorizingIntegrationOwners,
+          context: context,
         ),
       InteractionType.applicationCommandAutocomplete => ApplicationCommandAutocompleteInteraction(
           manager: this,
@@ -147,6 +164,8 @@ class InteractionManager {
           locale: locale,
           guildLocale: guildLocale,
           entitlements: entitlements,
+          authorizingIntegrationOwners: authorizingIntegrationOwners,
+          context: context,
         ),
     } as Interaction;
   }
