@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/message/allowed_mentions.dart';
 import 'package:nyxx/src/builders/message/attachment.dart';
 import 'package:nyxx/src/builders/message/component.dart';
 import 'package:nyxx/src/builders/message/embed.dart';
+import 'package:nyxx/src/builders/message/poll.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -36,6 +37,8 @@ class MessageBuilder extends CreateBuilder<Message> {
   /// that message will be returned and no new message will be created.
   bool? enforceNonce;
 
+  PollBuilder? poll;
+
   MessageBuilder({
     this.content,
     this.nonce,
@@ -50,6 +53,7 @@ class MessageBuilder extends CreateBuilder<Message> {
     this.suppressEmbeds,
     this.suppressNotifications,
     this.enforceNonce,
+    this.poll,
   });
 
   @override
@@ -71,6 +75,7 @@ class MessageBuilder extends CreateBuilder<Message> {
           'flags':
               (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) | (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0),
         if (enforceNonce != null) 'enforce_nonce': enforceNonce,
+        if (poll != null) 'poll': poll!.build(),
       };
 }
 

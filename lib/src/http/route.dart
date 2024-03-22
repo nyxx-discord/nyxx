@@ -314,4 +314,13 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`recipients`](https://discord.com/developers/docs/resources/channel#group-dm-add-recipient) part to this [HttpRoute].
   void recipients({String? id}) => add(HttpRoutePart('recipients', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`polls`](https://discord.com/developers/docs/resources/poll#get-answer-voters) part to this [HttpRoute].
+  void polls({String? id}) => add(HttpRoutePart('polls', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`answers`](https://discord.com/developers/docs/resources/poll#get-answer-voters) part to this [HttpRoute].
+  void answers({int? id}) => add(HttpRoutePart('answers', [if (id != null) HttpRouteParam(id.toString())]));
+
+  /// Adds the [`expire`](https://discord.com/developers/docs/resources/poll#expire-poll) part to this [HttpRoute].
+  void expire() => add(HttpRoutePart('expire'));
 }
