@@ -105,6 +105,7 @@ extension CacheUpdates on NyxxRest {
             updateCacheWith(entity.author);
             entity.mentions.forEach(updateCacheWith);
             updateCacheWith(entity.referencedMessage);
+            // ignore: deprecated_member_use_from_same_package
             updateCacheWith(entity.interaction);
             updateCacheWith(entity.thread);
             updateCacheWith(entity.resolved);
@@ -280,6 +281,8 @@ extension CacheUpdates on NyxxRest {
         EntitlementCreateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementUpdateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementDeleteEvent(:final entitlement) => entitlement.manager.cache.remove(entitlement.id),
+        MessagePollVoteAddEvent() => null,
+        MessagePollVoteRemoveEvent() => null,
 
         // null and unhandled entity types
         WebhookAuthor() => null,
