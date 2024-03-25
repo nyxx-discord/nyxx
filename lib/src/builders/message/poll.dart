@@ -70,7 +70,6 @@ class PollBuilder extends CreateBuilder<Poll> {
         'answers': answers.map((a) => a.build()).toList(),
         'duration': duration.inHours,
         if (allowMultiselect != null) 'allow_multiselect': allowMultiselect,
-        // TODO: Remove `??` thing after API deploy
-        'layout_type': (layoutType ?? PollLayoutType.defaultLayout).value,
+        if (layoutType != null) 'layout_type': layoutType!.value,
       };
 }
