@@ -109,7 +109,7 @@ class GuildDeleteEvent extends DispatchEvent {
   /// The guild as it was cached before it was deleted.
   final Guild? deletedGuild;
 
-  /// Whether the bot was removed from guild, due to ban or kick.
+  /// Whether the client was removed from guild, due to a ban or kick.
   final bool wasRemoved;
 
   /// {@macro guild_delete_event}
