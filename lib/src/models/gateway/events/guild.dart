@@ -109,9 +109,12 @@ class GuildDeleteEvent extends DispatchEvent {
   /// The guild as it was cached before it was deleted.
   final Guild? deletedGuild;
 
+  /// Whether the bot was removed from guild, due to ban or kick.
+  final bool wasRemoved;
+
   /// {@macro guild_delete_event}
   /// @nodoc
-  GuildDeleteEvent({required super.gateway, required this.guild, required this.isUnavailable, required this.deletedGuild});
+  GuildDeleteEvent({required super.gateway, required this.guild, required this.isUnavailable, required this.deletedGuild, required this.wasRemoved});
 }
 
 /// {@template guild_audit_log_create_event}
