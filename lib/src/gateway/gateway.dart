@@ -536,6 +536,7 @@ class Gateway extends GatewayManager with EventParser {
       guild: PartialGuild(id: id, manager: client.guilds),
       isUnavailable: raw['unavailable'] as bool? ?? false,
       deletedGuild: client.guilds.cache[id],
+      wasRemoved: !raw.containsKey('unavailable'),
     );
   }
 
