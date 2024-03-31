@@ -25,6 +25,13 @@ __20.03.2024__
 - bug: Correct the default `User-Agent` header.
 - bug: Don't require OAuth2 identify scope when using `NyxxOauth2`.
 - feat: Add field to delete events containing the cached entity before it was deleted.
+- feat: Add builders for auto moderation actions.
+- bug: Initialize login sooner to avoid dropping logs.
+- feat: Add `banner` to `UserUpdateBuilder`.
+- feat: Add `SkuFlags.available`.
+- feat: Add bungie, domain and roblox connection types.
+- feat: Add support for user applications.
+- feat: Add `bulkBan` to `GuildManager`.
 
 ## 6.1.0
 __09.12.2023__
