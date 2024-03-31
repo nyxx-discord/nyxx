@@ -1,5 +1,40 @@
+## 6.2.0
+__20.03.2024__
+
+- feat: Add support for Group DM endpoints when using an OAuth client.
+- feat: Add support for `username` and `avatarUrl` parameters for webhooks.
+- feat: Add `Spanish, LATAM` locale.
+- bug: Fix events being dropped when plugins had async initialization.
+- bug: Return an empty list instead of throwing when fetching the permission overrides of a command that has none.
+- feat: Add ratelimits when sending Gateway events.
+- bug: Allow any `Flags<Permissions>` in `RoleUpdateBuilder.permissions`.
+- bug: Export types that were previously kept private.
+- feat: Allow plugins to intercept HTTP requests and Gateway events.
+- bug: Fix `MessageManager.bulkDelete` not serializing the request correctly.
+- bug: Fix `GuildDeleteEvent`s not being parsed when `unavailable` was not explicitly set.
+- bug: Correct serialization of guild builders.
+- bug: Correct value of `TriggerType.spam`.
+- docs: Hide constructors from documentation.
+- bug: Fix parsing role flags in guild templates.
+- bug: Fix `isHoisted` attribute in role builders.
+- bug: Fix all audit log parameters in `StickerManager`, `EmojiManager` and `WebhookManager.update`
+- bug: Fix `interactionsEndpointUrl` being ignored in `ApplicationUpdateBuilder`
+- feat: Add more shortcut methods on models.
+- feat: Add `enforceNonce` to `MessageBuilder`.
+- feat: Add missing role tags fields.
+- bug: Correct the default `User-Agent` header.
+- bug: Don't require OAuth2 identify scope when using `NyxxOauth2`.
+- feat: Add field to delete events containing the cached entity before it was deleted.
+- feat: Add builders for auto moderation actions.
+- bug: Initialize login sooner to avoid dropping logs.
+- feat: Add `banner` to `UserUpdateBuilder`.
+- feat: Add `SkuFlags.available`.
+- feat: Add bungie, domain and roblox connection types.
+- feat: Add support for user applications.
+- feat: Add `bulkBan` to `GuildManager`.
+
 ## 6.1.0
-__09.21.2023__
+__09.12.2023__
 
 - feat: Add payload to `EntitlementDeleteEvent`.
 - feat: Add `flags` field to `Sku`.
