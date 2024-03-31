@@ -166,7 +166,7 @@ export 'src/models/message/component.dart'
 export 'src/models/invite/invite.dart' show Invite, TargetType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
-export 'src/models/guild/ban.dart' show Ban;
+export 'src/models/guild/ban.dart' show Ban, BulkBanResponse;
 export 'src/models/guild/guild_preview.dart' show GuildPreview;
 export 'src/models/guild/guild_widget.dart' show GuildWidget, WidgetSettings, WidgetImageStyle;
 export 'src/models/guild/guild.dart'

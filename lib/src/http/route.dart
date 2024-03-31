@@ -323,4 +323,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`expire`](https://discord.com/developers/docs/resources/poll#expire-poll) part to this [HttpRoute].
   void expire() => add(HttpRoutePart('expire'));
+
+  /// Adds the [`bulk-ban`](https://discord.com/developers/docs/resources/guild#bulk-guild-ban) part to this [HttpRoute].
+  void bulkBan() => add(HttpRoutePart('bulk-ban'));
 }
