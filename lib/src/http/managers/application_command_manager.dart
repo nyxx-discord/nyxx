@@ -59,7 +59,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       defaultMemberPermissions: maybeParse(raw['default_member_permissions'], (String raw) => Permissions(int.parse(raw))),
       hasDmPermission: raw['dm_permission'] as bool?,
       isNsfw: raw['nsfw'] as bool?,
-      integrationTypes: maybeParseMany(raw['integration_types'], ApplicationIntegrationType.parse) ?? [],
+      integrationTypes: maybeParseMany(raw['integration_types'], ApplicationIntegrationType.parse) ?? [ApplicationIntegrationType.guildInstall],
       contexts: maybeParseMany(raw['contexts'], InteractionContextType.parse),
       version: Snowflake.parse(raw['version']!),
     );
