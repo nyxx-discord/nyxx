@@ -1,3 +1,8 @@
+## 6.2.1
+__03.04.2024__
+
+- bug: Fix parsing integration types when they are not present.
+
 ## 6.2.0
 __20.03.2024__
 
