@@ -21,15 +21,17 @@ class GatewayIntents extends Flags<GatewayIntents> {
   static const guildScheduledEvents = Flag<GatewayIntents>.fromOffset(16);
   static const autoModerationConfiguration = Flag<GatewayIntents>.fromOffset(20);
   static const autoModerationExecution = Flag<GatewayIntents>.fromOffset(21);
+  static const guildMessagePolls = Flag<GatewayIntents>.fromOffset(24);
+  static const directMessagePolls = Flag<GatewayIntents>.fromOffset(25);
 
   /// A [GatewayIntents] with all intents enabled.
-  static const all = GatewayIntents(0x1fffff);
+  static const all = GatewayIntents(0x331fffe);
 
   /// A [GatewayIntents] with all unprivileged intents enabled.
-  static const allUnprivileged = GatewayIntents(0x317efd);
+  static const allUnprivileged = GatewayIntents(0x3317efc);
 
   /// A [GatewayIntents] with all privileged intents enabled.
-  static const allPrivileged = GatewayIntents(0x8102);
+  static const allPrivileged = GatewayIntents(0x8101);
 
   /// A [GatewayIntents] with no intents enabled.
   static const none = GatewayIntents(0);
