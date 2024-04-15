@@ -119,7 +119,7 @@ class Poll with ToStringHelper {
   final List<PollAnswer> answers;
 
   /// The time when the poll ends.
-  final DateTime endsAt;
+  final DateTime? endsAt;
 
   /// Whether a user can select multiple answers.
   final bool allowsMultiselect;

@@ -370,7 +370,7 @@ class MessageManager extends Manager<Message> {
     return Poll(
         question: parsePollMedia(raw['question'] as Map<String, Object?>),
         answers: parseMany(raw['answers'] as List, parsePollAnswer),
-        endsAt: DateTime.parse(raw['expiry'] as String),
+        endsAt: maybeParse(raw['expiry'] as String?, DateTime.parse),
         allowsMultiselect: raw['allow_multiselect'] as bool,
         layoutType: PollLayoutType.parse(raw['layout_type'] as int),
         // workaround: `results` is not present in `MESSAGE_CREATE` events for some reason
