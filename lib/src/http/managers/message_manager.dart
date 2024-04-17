@@ -368,13 +368,13 @@ class MessageManager extends Manager<Message> {
 
   Poll parsePoll(Map<String, Object?> raw) {
     return Poll(
-        question: parsePollMedia(raw['question'] as Map<String, Object?>),
-        answers: parseMany(raw['answers'] as List, parsePollAnswer),
-        endsAt: maybeParse(raw['expiry'] as String?, DateTime.parse),
-        allowsMultiselect: raw['allow_multiselect'] as bool,
-        layoutType: PollLayoutType.parse(raw['layout_type'] as int),
-        // workaround: `results` is not present in `MESSAGE_CREATE` events for some reason
-        results: maybeParse(raw['results'], parsePollResults) ?? PollResults(isFinalized: true, answerCounts: []));
+      question: parsePollMedia(raw['question'] as Map<String, Object?>),
+      answers: parseMany(raw['answers'] as List, parsePollAnswer),
+      endsAt: maybeParse(raw['expiry'] as String?, DateTime.parse),
+      allowsMultiselect: raw['allow_multiselect'] as bool,
+      layoutType: PollLayoutType.parse(raw['layout_type'] as int),
+      results: maybeParse(raw['results'], parsePollResults),
+    );
   }
 
   @override

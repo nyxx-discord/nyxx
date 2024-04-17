@@ -128,7 +128,7 @@ class Poll with ToStringHelper {
   final PollLayoutType layoutType;
 
   /// The results of the poll.
-  final PollResults results;
+  final PollResults? results;
 
   /// {@macro poll}
   /// @nodoc
