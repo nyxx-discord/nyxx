@@ -130,7 +130,6 @@ extension CacheUpdates on NyxxRest {
             members.forEach(updateCacheWith);
           }(),
         ThreadMember(:final member) => updateCacheWith(member),
-        // ignore: deprecated_member_use_from_same_package
         MessageInteraction(:final user) => updateCacheWith(user),
         ResolvedData(:final users, :final roles, :final members) => () {
             users?.values.forEach(updateCacheWith);
