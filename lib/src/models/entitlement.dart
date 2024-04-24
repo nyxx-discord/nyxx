@@ -15,7 +15,7 @@ class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
   PartialEntitlement({required this.manager, required super.id});
 
   /// Marks a entitlement for the user as consumed.
-  Future<void> consume() => manager.consumeEntitlement(id);
+  Future<void> consume() => manager.consume(id);
 }
 
 /// {@template entitlement}

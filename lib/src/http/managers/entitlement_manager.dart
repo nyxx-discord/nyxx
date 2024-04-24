@@ -104,7 +104,7 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
   }
 
   /// Marks a entitlement for the user as consumed.
-  Future<void> consumeEntitlement(Snowflake id) async {
+  Future<void> consume(Snowflake id) async {
     final route = HttpRoute()
       ..applications(id: applicationId.toString())
       ..entitlements(id: id.toString())
