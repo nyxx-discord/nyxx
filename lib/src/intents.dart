@@ -31,7 +31,7 @@ class GatewayIntents extends Flags<GatewayIntents> {
   static const allUnprivileged = GatewayIntents(0x3317efc);
 
   /// A [GatewayIntents] with all privileged intents enabled.
-  static const allPrivileged = GatewayIntents(0x8101);
+  static const allPrivileged = GatewayIntents(0x8102);
 
   /// A [GatewayIntents] with no intents enabled.
   static const none = GatewayIntents(0);
