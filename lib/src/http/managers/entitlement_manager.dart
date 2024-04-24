@@ -31,7 +31,8 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       applicationId: Snowflake.parse(raw['application_id']!),
       type: EntitlementType.parse(raw['type'] as int),
-      isConsumed: raw['consumed'] as bool,
+      isConsumed: raw['consumed'] as bool? ?? false,
+      isDeleted: raw['deleted'] as bool? ?? false,
       startsAt: maybeParse(raw['starts_at'], DateTime.parse),
       endsAt: maybeParse(raw['ends_at'], DateTime.parse),
     );
@@ -100,5 +101,16 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
 
     await client.httpHandler.executeSafe(request);
     cache.remove(id);
+  }
+
+  /// Marks a entitlement for the user as consumed.
+  Future<void> consumeEntitlement(Snowflake id) async {
+    final route = HttpRoute()
+      ..applications(id: applicationId.toString())
+      ..entitlements(id: id.toString())
+      ..consume();
+    final request = BasicRequest(route, method: 'POST');
+
+    await client.httpHandler.executeSafe(request);
   }
 }

@@ -47,6 +47,11 @@ class Sku with ToStringHelper {
 
 /// The type of an [Sku].
 enum SkuType {
+  /// Durable one-time purchase.
+  durable._(2),
+
+  /// Consumable one-time purchase.
+  consumable._(3),
   subscription._(5),
   subscriptionGroup._(6);
 

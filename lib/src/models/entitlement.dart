@@ -13,6 +13,9 @@ class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
   /// Create a new [PartialEntitlement].
   /// @nodoc
   PartialEntitlement({required this.manager, required super.id});
+
+  /// Marks a entitlement for the user as consumed.
+  Future<void> consume() => manager.consumeEntitlement(id);
 }
 
 /// {@template entitlement}
@@ -34,6 +37,9 @@ class Entitlement extends PartialEntitlement {
   /// The type of this entitlement.
   final EntitlementType type;
 
+  /// Whether entitlement was deleted.
+  final bool isDeleted;
+
   /// Whether this entitlement is consumed.
   final bool isConsumed;
 
@@ -54,6 +60,7 @@ class Entitlement extends PartialEntitlement {
     required this.applicationId,
     required this.type,
     required this.isConsumed,
+    required this.isDeleted,
     required this.startsAt,
     required this.endsAt,
   });
@@ -70,6 +77,28 @@ class Entitlement extends PartialEntitlement {
 
 /// The type of an [Entitlement].
 enum EntitlementType {
+  /// Entitlement was purchased by user.
+  purchase._(1),
+
+  /// Entitlement for Discord Nitro subscription.
+  premiumSubscription._(2),
+
+  /// Entitlement was gifted by developer.
+  developerGift._(3),
+
+  /// Entitlement was purchased by a dev in application test mode.
+  testModePurchase._(4),
+
+  /// Entitlement was granted when the SKU was free.
+  freePurchase._(5),
+
+  /// Entitlement was gifted by another user.
+  userGift._(6),
+
+  /// Entitlement was claimed by user for free as a Nitro Subscriber.
+  premiumPurchase._(7),
+
+  /// Entitlement was purchased as an app subscription.
   applicationSubscription._(8);
 
   final int value;
