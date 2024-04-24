@@ -80,7 +80,7 @@ enum EntitlementType {
   /// Entitlement was purchased by user.
   purchase._(1),
 
-  /// Entitlement for Discord Nitro subscription.
+  /// Entitlement was granted by Discord Nitro subscription.
   premiumSubscription._(2),
 
   /// Entitlement was gifted by developer.
