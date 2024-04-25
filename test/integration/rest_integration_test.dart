@@ -72,6 +72,15 @@ void main() {
       await expectLater(client.users.fetchCurrentUser(), completes);
       await expectLater(client.users.listCurrentUserGuilds(), completes);
       await expectLater(client.users.fetchCurrentUserConnections(), completes);
+
+      final avatar = (await client.user.get()).avatar;
+
+      await expectLater(
+        client.users.updateCurrentUser(UserUpdateBuilder(
+          avatar: ImageBuilder(data: await avatar.fetch(), format: avatar.defaultFormat.extension),
+        )),
+        completes,
+      );
     });
 
     test('channels', skip: testTextChannel != null ? false : 'No test channel provided', () async {
