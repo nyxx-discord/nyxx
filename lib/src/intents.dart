@@ -25,10 +25,10 @@ class GatewayIntents extends Flags<GatewayIntents> {
   static const directMessagePolls = Flag<GatewayIntents>.fromOffset(25);
 
   /// A [GatewayIntents] with all intents enabled.
-  static const all = GatewayIntents(0x331fffe);
+  static const all = GatewayIntents(0x331ffff);
 
   /// A [GatewayIntents] with all unprivileged intents enabled.
-  static const allUnprivileged = GatewayIntents(0x3317efc);
+  static const allUnprivileged = GatewayIntents(0x3317efd);
 
   /// A [GatewayIntents] with all privileged intents enabled.
   static const allPrivileged = GatewayIntents(0x8102);

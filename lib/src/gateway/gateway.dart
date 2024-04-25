@@ -1083,23 +1083,25 @@ class Gateway extends GatewayManager with EventParser {
   /// Parse an [MessagePollVoteAddEvent] from [raw].
   MessagePollVoteAddEvent parseMessagePollVoteAdd(Map<String, Object?> raw) {
     return MessagePollVoteAddEvent(
-        gateway: this,
-        userId: Snowflake.parse(raw['user_id']!),
-        channelId: Snowflake.parse(raw['channel_id']!),
-        messageId: Snowflake.parse(raw['message_id']!),
-        guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-        answerId: raw['answer_id'] as int);
+      gateway: this,
+      userId: Snowflake.parse(raw['user_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
+      guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      answerId: raw['answer_id'] as int,
+    );
   }
 
   /// Parse an [MessagePollVoteRemoveEvent] from [raw].
   MessagePollVoteRemoveEvent parseMessagePollVoteRemove(Map<String, Object?> raw) {
     return MessagePollVoteRemoveEvent(
-        gateway: this,
-        userId: Snowflake.parse(raw['user_id']!),
-        channelId: Snowflake.parse(raw['channel_id']!),
-        messageId: Snowflake.parse(raw['message_id']!),
-        guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-        answerId: raw['answer_id'] as int);
+      gateway: this,
+      userId: Snowflake.parse(raw['user_id']!),
+      channelId: Snowflake.parse(raw['channel_id']!),
+      messageId: Snowflake.parse(raw['message_id']!),
+      guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      answerId: raw['answer_id'] as int,
+    );
   }
 
   /// Stream all members in a guild that match [query] or [userIds].

@@ -150,7 +150,7 @@ class Permissions extends Flags<Permissions> {
   static const sendPolls = Flag<Permissions>.fromOffset(49);
 
   /// A [Permissions] with all permissions enabled.
-  static const allPermissions = Permissions(140737488355327);
+  static const allPermissions = Permissions(703687441776639);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);

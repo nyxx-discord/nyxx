@@ -216,7 +216,7 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   PartialMessage get message => channel.messages[messageId];
 
   /// The member that removed the reaction.
-  PartialMember? get member => guildId == null ? null : gateway.client.guilds[guildId!].members[userId];
+  PartialMember? get member => guild?.members[userId];
 }
 
 /// {@template message_reaction_remove_all_event}
@@ -329,7 +329,7 @@ class MessagePollVoteAddEvent extends DispatchEvent {
   PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 
   /// The member that voted on a poll.
-  PartialMember? get member => guildId == null ? null : gateway.client.guilds[guildId!].members[userId];
+  PartialMember? get member => guild?.members[userId];
 }
 
 /// {@template message_poll_vote_remove_event}
@@ -375,5 +375,5 @@ class MessagePollVoteRemoveEvent extends DispatchEvent {
   PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
 
   /// The member that removed their vote from a poll.
-  PartialMember? get member => guildId == null ? null : gateway.client.guilds[guildId!].members[userId];
+  PartialMember? get member => guild?.members[userId];
 }

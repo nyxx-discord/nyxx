@@ -18,9 +18,8 @@ class PollMediaBuilder extends CreateBuilder<PollMedia> {
         if (text != null) 'text': text,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id == Snowflake.zero ? null : emoji!.id.toString(),
-            'name': emoji!.name,
-            if (emoji is GuildEmoji) 'animated': (emoji as GuildEmoji).isAnimated == true,
+            if (emoji!.id != Snowflake.zero) 'id': emoji!.id.toString(),
+            if (emoji case TextEmoji(:final name)) 'name': name,
           },
       };
 }

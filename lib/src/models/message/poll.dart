@@ -56,14 +56,14 @@ class PollMedia with ToStringHelper {
 /// {@endtemplate}
 class PollAnswer with ToStringHelper {
   /// The ID of the answer.
-  final int answerId;
+  final int id;
 
   /// The data of the answer.
   PollMedia pollMedia;
 
   /// {@macro poll_answer}
   /// @nodoc
-  PollAnswer({required this.answerId, required this.pollMedia});
+  PollAnswer({required this.id, required this.pollMedia});
 }
 
 class PollAnswerCount with ToStringHelper {

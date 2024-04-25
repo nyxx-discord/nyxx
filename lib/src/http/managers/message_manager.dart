@@ -346,7 +346,7 @@ class MessageManager extends Manager<Message> {
 
   PollAnswer parsePollAnswer(Map<String, Object?> raw) {
     return PollAnswer(
-      answerId: raw['answer_id'] as int,
+      id: raw['answer_id'] as int,
       pollMedia: parsePollMedia(raw['poll_media'] as Map<String, Object?>),
     );
   }
