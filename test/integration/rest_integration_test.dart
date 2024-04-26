@@ -189,29 +189,21 @@ void main() {
 
       await expectLater(message.delete(), completes);
 
-
       await expectLater(
         () async => message = await channel.sendMessage(
           MessageBuilder(
             content: 'Polls test',
             poll: PollBuilder(
-              question: PollMediaBuilder(text: 'Question'),
-              answers: [
-                PollAnswerBuilder(pollMedia: PollMediaBuilder(text: 'Answer 1')),
-                PollAnswerBuilder(pollMedia: PollMediaBuilder(text: 'Answer 2', emoji: TextEmoji(
-                  id: Snowflake.zero,
-                  manager: client.guilds[Snowflake.zero].emojis,
-                  name: '👽'
-                ))),
-                PollAnswerBuilder.text('Answer 3'),
-                PollAnswerBuilder.text('Answer 4', TextEmoji(
-                  id: Snowflake.zero,
-                  manager: client.guilds[Snowflake.zero].emojis,
-                  name: '👽'
-                ))
-              ],
-              duration: Duration(hours: 5)
-            ),
+                question: PollMediaBuilder(text: 'Question'),
+                answers: [
+                  PollAnswerBuilder(pollMedia: PollMediaBuilder(text: 'Answer 1')),
+                  PollAnswerBuilder(
+                      pollMedia:
+                          PollMediaBuilder(text: 'Answer 2', emoji: TextEmoji(id: Snowflake.zero, manager: client.guilds[Snowflake.zero].emojis, name: '👽'))),
+                  PollAnswerBuilder.text('Answer 3'),
+                  PollAnswerBuilder.text('Answer 4', TextEmoji(id: Snowflake.zero, manager: client.guilds[Snowflake.zero].emojis, name: '👽'))
+                ],
+                duration: Duration(hours: 5)),
           ),
         ),
         completes,
