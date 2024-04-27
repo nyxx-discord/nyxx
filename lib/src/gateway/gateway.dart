@@ -112,6 +112,8 @@ class Gateway extends GatewayManager with EventParser {
       final rateLimitKey = shard.id % maxConcurrency;
 
       // Delay the shard starting until it is (approximately) also ready to identify.
+      // This avoids opening many websocket connections simultaneously just to have most
+      // of them wait for their identify request.
       late final Timer startTimer;
       startTimer = Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
         logger.fine('Starting shard ${shard.id}');
