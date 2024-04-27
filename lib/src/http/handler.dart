@@ -305,6 +305,7 @@ class HttpHandler {
     httpClient.close();
     _onRequestController.close();
     _onResponseController.close();
+    _onRateLimitController.close();
   }
 }
 
