@@ -33,8 +33,20 @@ abstract class ClientOptions {
   /// The logger to use for this client.
   Logger get logger => Logger(loggerName);
 
+  /// The threshold after which a warning will be logged if a request is waiting for rate limits.
+  ///
+  /// If this value is `null`, no warnings are emitted when a long rate limit is encountered.
+  ///
+  /// This value is also used to prevent log spam. Requests will only emit a warning once per [rateLimitWarningThreshold], even if they are rate limited
+  /// multiple times during that period.
+  final Duration? rateLimitWarningThreshold;
+
   /// Create a new [ClientOptions].
-  const ClientOptions({this.plugins = const [], this.loggerName = 'Nyxx'});
+  const ClientOptions({
+    this.plugins = const [],
+    this.loggerName = 'Nyxx',
+    this.rateLimitWarningThreshold = const Duration(seconds: 10),
+  });
 }
 
 /// Options for controlling the behavior of a [NyxxRest] client.
@@ -100,6 +112,7 @@ class RestClientOptions extends ClientOptions {
   const RestClientOptions({
     super.plugins,
     super.loggerName,
+    super.rateLimitWarningThreshold,
     this.userCacheConfig = const CacheConfig(),
     this.channelCacheConfig = const CacheConfig(),
     this.messageCacheConfig = const CacheConfig(),
@@ -136,6 +149,7 @@ class GatewayClientOptions extends RestClientOptions {
     this.minimumSessionStarts = 10,
     super.plugins,
     super.loggerName,
+    super.rateLimitWarningThreshold,
     super.userCacheConfig,
     super.channelCacheConfig,
     super.messageCacheConfig,
