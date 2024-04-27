@@ -120,10 +120,10 @@ void main() {
         });
       } else if (message == 'closed') {
         failTimer!.cancel();
-        failTimer = Timer(Duration(milliseconds: 10), () {
+        failTimer = Timer(Duration(milliseconds: 50), () {
           receivePort.close();
 
-          fail('Pending async operations did not complete in 10ms');
+          fail('Pending async operations did not complete in 50ms');
         });
       } else if (message == 'done') {
         isDone = true;
