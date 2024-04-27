@@ -97,7 +97,34 @@ class HttpHandler {
   /// Create a new [HttpHandler].
   ///
   /// {@macro http_handler}
-  HttpHandler(this.client);
+  HttpHandler(this.client) {
+    if (client.options.rateLimitWarningThreshold case final threshold?) {
+      onRateLimit.listen((info) {
+        final (:request, :delay, :isGlobal, :isAnticipated) = info;
+        final requestStopwatch = _latencyStopwatches[request];
+        if (requestStopwatch == null) return;
+
+        final totalDelay = requestStopwatch.elapsed + delay;
+
+        // Prevent warnings being emitted too often. This limits warnings to once per [threshold].
+        if (totalDelay.inMicroseconds ~/ threshold.inMicroseconds <= requestStopwatch.elapsedMicroseconds ~/ threshold.inMicroseconds) return;
+
+        if (totalDelay > threshold) {
+          logger.warning(
+            '${request.loggingId} has been pending for ${requestStopwatch.elapsed} and will be sent in $delay due to rate limiting.'
+            ' The request will have been pending for $totalDelay.',
+          );
+          if (isAnticipated) {
+            logger.info('This is a predicted rate limit and was anticipated based on previous responses');
+          } else if (isGlobal) {
+            logger.info('This is a global rate limit and will apply to all requests for the next $delay');
+          } else {
+            logger.info('This rate limit was returned by the API');
+          }
+        }
+      });
+    }
+  }
 
   /// Send [request] to the API and return the response.
   ///
@@ -278,6 +305,7 @@ class HttpHandler {
     httpClient.close();
     _onRequestController.close();
     _onResponseController.close();
+    _onRateLimitController.close();
   }
 }
 
