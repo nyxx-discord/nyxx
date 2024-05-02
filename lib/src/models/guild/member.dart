@@ -25,7 +25,8 @@ class PartialMember extends WritableSnowflakeEntity<Member> {
   Future<void> removeRole(Snowflake roleId, {String? auditLogReason}) => manager.removeRole(id, roleId);
 
   /// Ban this member.
-  Future<void> ban({String? auditLogReason}) => manager.client.guilds[manager.guildId].createBan(id, auditLogReason: auditLogReason);
+  Future<void> ban({Duration? deleteMessages, String? auditLogReason}) =>
+      manager.client.guilds[manager.guildId].createBan(id, auditLogReason: auditLogReason, deleteMessages: deleteMessages);
 
   /// Unban this member.
   Future<void> unban({String? auditLogReason}) => manager.client.guilds[manager.guildId].deleteBan(id, auditLogReason: auditLogReason);
