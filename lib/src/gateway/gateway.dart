@@ -93,7 +93,7 @@ class Gateway extends GatewayManager with EventParser {
   /// See [Shard.latency] for details on how the latency is calculated.
   Duration get latency => shards.fold(Duration.zero, (previousValue, element) => previousValue + (element.latency ~/ shards.length));
 
-  final List<Timer> _startTimers = [];
+  final Set<Timer> _startOrIdentifyTimers = {};
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
@@ -112,10 +112,15 @@ class Gateway extends GatewayManager with EventParser {
       final rateLimitKey = shard.id % maxConcurrency;
 
       // Delay the shard starting until it is (approximately) also ready to identify.
-      _startTimers.add(Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
+      // This avoids opening many websocket connections simultaneously just to have most
+      // of them wait for their identify request.
+      late final Timer startTimer;
+      startTimer = Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
         logger.fine('Starting shard ${shard.id}');
         shard.add(StartShard());
-      }));
+        _startOrIdentifyTimers.remove(startTimer);
+      });
+      _startOrIdentifyTimers.add(startTimer);
 
       shard.listen(
         (event) {
@@ -137,7 +142,15 @@ class Gateway extends GatewayManager with EventParser {
 
               remainingIdentifyRequests--;
               shard.add(Identify());
-              return await Future.delayed(identifyDelay);
+
+              // Don't use Future.delayed so that we can exit early if close() is called.
+              // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+              // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
+              final delayCompleter = Completer<void>();
+              final delayTimer = Timer(identifyDelay, delayCompleter.complete);
+              _startOrIdentifyTimers.add(delayTimer);
+              await delayCompleter.future;
+              _startOrIdentifyTimers.remove(delayTimer);
             });
           }
         },
@@ -199,7 +212,7 @@ class Gateway extends GatewayManager with EventParser {
   Future<void> close() async {
     _closing = true;
     // Make sure we don't start any shards after we have closed.
-    for (final timer in _startTimers) {
+    for (final timer in _startOrIdentifyTimers) {
       timer.cancel();
     }
     await Future.wait(shards.map((shard) => shard.close()));

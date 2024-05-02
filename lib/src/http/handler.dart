@@ -5,6 +5,7 @@ import 'package:http/http.dart' hide MultipartRequest;
 import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/bucket.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/response.dart';
@@ -93,6 +94,8 @@ class HttpHandler {
   ///
   /// If no requests have been completed, this getter returns [Duration.zero].
   Duration get realLatency => _realLatencies.isEmpty ? Duration.zero : (_realLatencies.reduce((a, b) => a + b) ~/ _realLatencies.length);
+
+  final Set<Completer<void>> _pendingRateLimits = {};
 
   /// Create a new [HttpHandler].
   ///
@@ -204,7 +207,19 @@ class HttpHandler {
       if (waitTime > Duration.zero) {
         logger.finer('Holding ${request.loggingId} for $waitTime');
         _onRateLimitController.add((request: request, delay: waitTime, isGlobal: isGlobal, isAnticipated: true));
-        await Future.delayed(waitTime);
+
+        // Don't use Future.delayed so that we can exit early if close() is called.
+        // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+        // This is roughly equivalent to `await Future.delayed(waitTime)`
+        final completer = Completer<void>();
+        final timer = Timer(waitTime, completer.complete);
+        _pendingRateLimits.add(completer);
+        try {
+          await completer.future;
+        } finally {
+          _pendingRateLimits.remove(completer);
+          timer.cancel();
+        }
       }
     } while (waitTime > Duration.zero);
 
@@ -281,7 +296,20 @@ class HttpHandler {
         }
 
         _onRateLimitController.add((request: request, delay: retryAfter, isGlobal: isGlobal, isAnticipated: false));
-        return Future.delayed(retryAfter, () => execute(request));
+
+        // Don't use Future.delayed so that we can exit early if close() is called.
+        // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+        // This is roughly equivalent to `return Future.delayed(retryAfter, () => execute(request))`
+        final completer = Completer<void>();
+        final timer = Timer(retryAfter, completer.complete);
+        _pendingRateLimits.add(completer);
+        try {
+          await completer.future;
+          return execute(request);
+        } finally {
+          _pendingRateLimits.remove(completer);
+          timer.cancel();
+        }
       } on TypeError {
         logger.shout('Invalid rate limit body for ${request.loggingId}! Your client is probably cloudflare banned!');
       }
@@ -302,6 +330,15 @@ class HttpHandler {
   }
 
   void close() {
+    // Timers associated with these completers will be cancelled in
+    // the finally block from the try/catch that the completer is awaited in.
+    for (final completer in _pendingRateLimits) {
+      completer.completeError(
+        ClientClosedError(),
+        StackTrace.current,
+      );
+    }
+
     httpClient.close();
     _onRequestController.close();
     _onResponseController.close();
