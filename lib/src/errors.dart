@@ -139,3 +139,9 @@ class PluginError extends Error {
   @override
   String toString() => message;
 }
+
+/// An error thrown when the client is closed while an operation is pending, or when an already closed client is used.
+class ClientClosedError extends Error {
+  @override
+  String toString() => 'Client is closed';
+}
