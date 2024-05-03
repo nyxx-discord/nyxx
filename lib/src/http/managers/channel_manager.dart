@@ -665,7 +665,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   }
 
   /// Fetch information about a member in a thread.
-  Future<ThreadMember> fetchThreadMember(Snowflake id, Snowflake memberId, {bool? withMember}) async {
+  Future<ThreadMember> fetchThreadMember(Snowflake id, Snowflake memberId, {bool? withMember, Snowflake? guildId}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..threadMembers(id: memberId.toString());
@@ -677,13 +677,12 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    // TODO: Can we provide the guildId?
     // Don't update the cache since the guildId for the member will be Snowflake.zero
-    return parseThreadMember(response.jsonBody as Map<String, Object?>);
+    return parseThreadMember(response.jsonBody as Map<String, Object?>, guildId: guildId);
   }
 
   /// List the members of a thread.
-  Future<List<ThreadMember>> listThreadMembers(Snowflake id, {bool? withMembers, Snowflake? after, int? limit}) async {
+  Future<List<ThreadMember>> listThreadMembers(Snowflake id, {bool? withMembers, Snowflake? after, int? limit, Snowflake? guildId}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..threadMembers();
@@ -697,13 +696,12 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    // TODO: Can we provide the guildId?
     // Don't update the cache since the guildId for the member will be Snowflake.zero
-    return parseMany(response.jsonBody as List, parseThreadMember);
+    return parseMany(response.jsonBody as List, (Map<String, Object?> raw) => parseThreadMember(raw, guildId: guildId));
   }
 
   /// List the public archived threads in a channel.
-  Future<ThreadList> listPublicArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
+  Future<ThreadList> listPublicArchivedThreads(Snowflake id, {DateTime? before, int? limit, Snowflake? guildId}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..threads()
@@ -718,15 +716,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    // TODO: Can we provide the guild ID?
-    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>, guildId: guildId);
 
     client.updateCacheWith(threadList);
     return threadList;
   }
 
   /// List the private archived threads in a channel.
-  Future<ThreadList> listPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
+  Future<ThreadList> listPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit, Snowflake? guildId}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..threads()
@@ -741,15 +738,14 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    // TODO: Can we provide the guild ID?
-    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>, guildId: guildId);
 
     client.updateCacheWith(threadList);
     return threadList;
   }
 
   /// List the private archived threads the current user has joined in a channel.
-  Future<ThreadList> listJoinedPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
+  Future<ThreadList> listJoinedPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit, Snowflake? guildId}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..users(id: '@me')
@@ -765,8 +761,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    // TODO: Can we provide the guild ID?
-    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>);
+    final threadList = parseThreadList(response.jsonBody as Map<String, Object?>, guildId: guildId);
 
     client.updateCacheWith(threadList);
     return threadList;

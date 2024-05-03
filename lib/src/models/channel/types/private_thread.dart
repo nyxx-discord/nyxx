@@ -132,11 +132,12 @@ class PrivateThread extends TextChannel implements Thread {
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<ThreadMember> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
+  Future<ThreadMember> fetchThreadMember(Snowflake memberId, {bool? withMember}) =>
+      manager.fetchThreadMember(id, memberId, guildId: guildId, withMember: withMember);
 
   @override
   Future<List<ThreadMember>> listThreadMembers({bool? withMembers, Snowflake? after, int? limit}) =>
-      manager.listThreadMembers(id, after: after, limit: limit, withMembers: withMembers);
+      manager.listThreadMembers(id, after: after, limit: limit, withMembers: withMembers, guildId: guildId);
 
   @override
   Future<void> removeThreadMember(Snowflake memberId) => manager.removeThreadMember(id, memberId);

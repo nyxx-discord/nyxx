@@ -71,7 +71,7 @@ abstract class Thread implements TextChannel, GuildChannel {
   /// External reference:
   /// * [ChannelManager.fetchThreadMember]
   /// * Discord API References: https://discord.com/developers/docs/resources/channel#remove-thread-member
-  Future<ThreadMember> fetchThreadMember(Snowflake memberId);
+  Future<ThreadMember> fetchThreadMember(Snowflake memberId, {bool? withMember});
 
   /// List the members of this thread.
   ///

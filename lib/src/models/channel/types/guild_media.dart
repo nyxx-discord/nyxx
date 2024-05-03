@@ -112,14 +112,16 @@ class GuildMediaChannel extends Channel implements GuildChannel, ThreadsOnlyChan
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<ThreadList> listPrivateArchivedThreads({DateTime? before, int? limit}) => manager.listPrivateArchivedThreads(id, before: before, limit: limit);
+  Future<ThreadList> listPrivateArchivedThreads({DateTime? before, int? limit}) =>
+      manager.listPrivateArchivedThreads(id, before: before, limit: limit, guildId: guildId);
 
   @override
-  Future<ThreadList> listPublicArchivedThreads({DateTime? before, int? limit}) => manager.listPublicArchivedThreads(id, before: before, limit: limit);
+  Future<ThreadList> listPublicArchivedThreads({DateTime? before, int? limit}) =>
+      manager.listPublicArchivedThreads(id, before: before, limit: limit, guildId: guildId);
 
   @override
   Future<ThreadList> listJoinedPrivateArchivedThreads({DateTime? before, int? limit}) =>
-      manager.listJoinedPrivateArchivedThreads(id, before: before, limit: limit);
+      manager.listJoinedPrivateArchivedThreads(id, before: before, limit: limit, guildId: guildId);
 
   @override
   Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
