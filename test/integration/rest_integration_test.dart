@@ -275,7 +275,7 @@ void main() {
       );
 
       await expectLater(
-        webhook.delete(),
+        webhook.delete(auditLogReason: 'Testing Unicode in audit log reason 😀'),
         completes,
       );
     });

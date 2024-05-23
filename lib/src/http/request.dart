@@ -74,7 +74,7 @@ abstract class HttpRequest {
 
   Map<String, String> _getHeaders(Nyxx client) => {
         userAgent: client.apiOptions.userAgent,
-        if (auditLogReason != null) xAuditLogReason: auditLogReason!,
+        if (auditLogReason != null) xAuditLogReason: Uri.encodeComponent(auditLogReason!),
         if (authenticated) authorization: client.apiOptions.authorizationHeader,
         ...headers,
       };
