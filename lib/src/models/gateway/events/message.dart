@@ -214,6 +214,9 @@ class MessageReactionRemoveEvent extends DispatchEvent {
 
   /// The message the reaction was removed from.
   PartialMessage get message => channel.messages[messageId];
+
+  /// The member that removed the reaction.
+  PartialMember? get member => guild?.members[userId];
 }
 
 /// {@template message_reaction_remove_all_event}
@@ -281,4 +284,96 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
 
   /// The message the reactions were removed from.
   PartialMessage get message => channel.messages[messageId];
+}
+
+/// {@template message_poll_vote_add_event}
+/// Emitted when user votes on a poll. If the poll allows multiple selection, one event will be sent per answer.
+/// {@endtemplate}
+class MessagePollVoteAddEvent extends DispatchEvent {
+  /// The ID of the user that voted on a poll.
+  final Snowflake userId;
+
+  /// The ID of the channel the message is in.
+  final Snowflake channelId;
+
+  /// The ID of the message where vote added on a poll.
+  final Snowflake messageId;
+
+  /// The ID of the guild the message is in.
+  final Snowflake? guildId;
+
+  /// The ID of the answer on the poll.
+  final int answerId;
+
+  /// {@macro message_poll_vote_add_event}
+  /// @nodoc
+  MessagePollVoteAddEvent({
+    required super.gateway,
+    required this.userId,
+    required this.channelId,
+    required this.messageId,
+    required this.guildId,
+    required this.answerId,
+  });
+
+  /// The user that voted on a poll.
+  PartialUser get user => gateway.client.users[userId];
+
+  /// The channel the message is in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The message where vote added on a poll.
+  PartialMessage get message => channel.messages[messageId];
+
+  /// The guild the message is in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The member that voted on a poll.
+  PartialMember? get member => guild?.members[userId];
+}
+
+/// {@template message_poll_vote_remove_event}
+/// Emitted when user removes their vote on a poll. If the poll allows for multiple selections, one event will be sent per answer.
+/// {@endtemplate}
+class MessagePollVoteRemoveEvent extends DispatchEvent {
+  /// The ID of the user that removed their vote from a poll.
+  final Snowflake userId;
+
+  /// The ID of the channel the message is in.
+  final Snowflake channelId;
+
+  /// The ID of the message where vote removed from a poll.
+  final Snowflake messageId;
+
+  /// The ID of the guild the message is in.
+  final Snowflake? guildId;
+
+  /// The ID of the answer on the poll.
+  final int answerId;
+
+  /// {@macro message_poll_vote_remove_event}
+  /// @nodoc
+  MessagePollVoteRemoveEvent({
+    required super.gateway,
+    required this.userId,
+    required this.channelId,
+    required this.messageId,
+    required this.guildId,
+    required this.answerId,
+  });
+
+  /// The user that removed their vote from a poll.
+  PartialUser get user => gateway.client.users[userId];
+
+  /// The channel the message is in.
+  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+
+  /// The message where vote removed from a poll.
+  PartialMessage get message => channel.messages[messageId];
+
+  /// The guild the message is in.
+  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+
+  /// The member that removed their vote from a poll.
+  PartialMember? get member => guild?.members[userId];
 }

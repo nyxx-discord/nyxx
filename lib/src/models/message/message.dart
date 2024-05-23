@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/message/channel_mention.dart';
 import 'package:nyxx/src/models/message/component.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/author.dart';
+import 'package:nyxx/src/models/message/poll.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
@@ -77,6 +78,12 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// Get a list of users that reacted with a given emoji on a message.
   Future<List<User>> fetchReactions(ReactionBuilder emoji, {Snowflake? after, int? limit}) => manager.fetchReactions(id, emoji, after: after, limit: limit);
+
+  /// Get a list of users that voted for this specific answer.
+  Future<List<User>> fetchAnswerVoters(int answerId, {Snowflake? after, int? limit}) => manager.fetchAnswerVoters(id, answerId, after: after, limit: limit);
+
+  /// Immediately ends the poll.
+  Future<Message> endPoll() => manager.endPoll(id);
 }
 
 /// {@template message}
@@ -194,6 +201,9 @@ class Message extends PartialMessage {
   /// Data about entities in this message's auto-populated select menus.
   final ResolvedData? resolved;
 
+  /// A poll.
+  final Poll? poll;
+
   /// {@macro message}
   /// @nodoc
   Message({
@@ -229,6 +239,7 @@ class Message extends PartialMessage {
     required this.roleSubscriptionData,
     required this.stickers,
     required this.resolved,
+    required this.poll,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.

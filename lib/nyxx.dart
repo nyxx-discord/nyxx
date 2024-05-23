@@ -48,6 +48,7 @@ export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, 
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
 export 'src/builders/message/component.dart'
     show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
+export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
@@ -146,6 +147,7 @@ export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
 // ignore: deprecated_member_use_from_same_package
 export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata;
+export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
@@ -275,7 +277,9 @@ export 'src/models/gateway/events/message.dart'
         MessageReactionRemoveAllEvent,
         MessageReactionRemoveEmojiEvent,
         MessageReactionRemoveEvent,
-        MessageUpdateEvent;
+        MessageUpdateEvent,
+        MessagePollVoteAddEvent,
+        MessagePollVoteRemoveEvent;
 export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
 export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
