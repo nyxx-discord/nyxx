@@ -21,7 +21,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
-/// A language locale available in the Discord client.
+/// A context indicating whether command can be used in DMs, groups, or guilds.
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types

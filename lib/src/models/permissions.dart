@@ -146,8 +146,11 @@ class Permissions extends Flags<Permissions> {
   /// Allows sending voice messages.
   static const sendVoiceMessages = Flag<Permissions>.fromOffset(46);
 
+  /// Allows sending polls.
+  static const sendPolls = Flag<Permissions>.fromOffset(49);
+
   /// A [Permissions] with all permissions enabled.
-  static const allPermissions = Permissions(140737488355327);
+  static const allPermissions = Permissions(703687441776639);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
@@ -289,6 +292,9 @@ class Permissions extends Flags<Permissions> {
 
   /// Whether this set of permissions has the [sendVoiceMessages] permission.
   bool get canSendVoiceMessages => has(sendVoiceMessages);
+
+  /// Whether this set of permissions has the [sendPolls] permission.
+  bool get canSendPolls => has(sendPolls);
 
   /// Create a new [Permissions] from a permissions value.
   const Permissions(super.value);
