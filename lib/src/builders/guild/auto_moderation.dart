@@ -87,6 +87,23 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
           isMentionRaidProtectionEnabled: isMentionRaidProtectionEnabled,
         );
 
+  AutoModerationRuleBuilder.memberProfile({
+    required this.name,
+    required this.eventType,
+    required this.actions,
+    this.isEnabled,
+    this.exemptRoleIds,
+    this.exemptChannelIds,
+    List<String>? keywordFilter,
+    List<String>? regexPatterns,
+    List<String>? allowList,
+  })  : triggerType = TriggerType.memberProfile,
+        metadata = TriggerMetadataBuilder(
+          keywordFilter: keywordFilter,
+          regexPatterns: regexPatterns,
+          allowList: allowList,
+        );
+
   @override
   Map<String, Object?> build() => {
         'name': name,
