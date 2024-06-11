@@ -247,7 +247,7 @@ class MessageManager extends Manager<Message> {
   MessageComponent parseMessageComponent(Map<String, Object?> raw) {
     final type = MessageComponentType.parse(raw['type'] as int);
 
-    assert (!type.isUnknown, 'Unknown message component type: $type');
+    assert(!type.isUnknown, 'Unknown message component type: $type');
 
     return switch (type) {
       MessageComponentType.actionRow => ActionRowComponent(

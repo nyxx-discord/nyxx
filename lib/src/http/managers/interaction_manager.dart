@@ -35,7 +35,7 @@ class InteractionManager {
   Interaction<dynamic> parse(Map<String, Object?> raw) {
     final type = InteractionType.parse(raw['type'] as int);
 
-    assert (!type.isUnknown, 'Unknown interaction type: $type');
+    assert(!type.isUnknown, 'Unknown interaction type: $type');
 
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
     final channelId = maybeParse(raw['channel_id'], Snowflake.parse);
