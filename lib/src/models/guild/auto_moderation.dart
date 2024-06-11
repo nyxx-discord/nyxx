@@ -88,7 +88,7 @@ enum AutoModerationEventType {
   messageSend._(1),
 
   /// When a member edits their profile.
-  memberUpdate(2);
+  memberUpdate._(2);
 
   /// The value of this [AutoModerationEventType].
   final int value;
@@ -122,7 +122,7 @@ enum TriggerType {
   mentionSpam._(5),
 
   /// Check if member profile contains words from a user defined list of keywords.
-  memberProfile(6);
+  memberProfile._(6);
 
   /// The value of this [TriggerType].
   final int value;
