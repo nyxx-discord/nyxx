@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Entitlement].
 class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
@@ -76,40 +77,43 @@ class Entitlement extends PartialEntitlement {
 }
 
 /// The type of an [Entitlement].
-enum EntitlementType {
+final class EntitlementType extends EnumLike<int> {
   /// Entitlement was purchased by user.
-  purchase._(1),
+  static const EntitlementType purchase = EntitlementType._(1);
 
   /// Entitlement was granted by Discord Nitro subscription.
-  premiumSubscription._(2),
+  static const EntitlementType premiumSubscription = EntitlementType._(2);
 
   /// Entitlement was gifted by developer.
-  developerGift._(3),
+  static const EntitlementType developerGift = EntitlementType._(3);
 
   /// Entitlement was purchased by a dev in application test mode.
-  testModePurchase._(4),
+  static const EntitlementType testModePurchase = EntitlementType._(4);
 
   /// Entitlement was granted when the SKU was free.
-  freePurchase._(5),
+  static const EntitlementType freePurchase = EntitlementType._(5);
 
   /// Entitlement was gifted by another user.
-  userGift._(6),
+  static const EntitlementType userGift = EntitlementType._(6);
 
   /// Entitlement was claimed by user for free as a Nitro Subscriber.
-  premiumPurchase._(7),
+  static const EntitlementType premiumPurchase = EntitlementType._(7);
 
   /// Entitlement was purchased as an app subscription.
-  applicationSubscription._(8);
+  static const EntitlementType applicationSubscription = EntitlementType._(8);
 
-  final int value;
+  static const List<EntitlementType> values = [
+    purchase,
+    premiumSubscription,
+    developerGift,
+    testModePurchase,
+    freePurchase,
+    userGift,
+    premiumPurchase,
+    applicationSubscription,
+  ];
 
-  const EntitlementType._(this.value);
+  const EntitlementType._(super.value);
 
-  factory EntitlementType.parse(int value) => EntitlementType.values.firstWhere(
-        (element) => element.value == value,
-        orElse: () => throw FormatException('Unknown entitlement type', value),
-      );
-
-  @override
-  String toString() => 'EntitlementType($value)';
+  factory EntitlementType.parse(int value) => parseEnum(values, value);
 }

@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template permission_overwrite}
@@ -42,26 +43,16 @@ class PermissionOverwrite with ToStringHelper {
 }
 
 /// The type of a permission overwrite.
-enum PermissionOverwriteType {
+final class PermissionOverwriteType extends EnumLike<int> {
   /// The overwrite applies to a [Role]'s permissions.
-  role._(0),
+  static const role = PermissionOverwriteType._(0);
 
   /// The overwrite applies to a [Member]'s permissions.
-  member._(1);
+  static const member = PermissionOverwriteType._(1);
 
-  /// The value of this type.
-  final int value;
+  static const values = [role, member];
 
-  const PermissionOverwriteType._(this.value);
+  const PermissionOverwriteType._(super.value);
 
-  /// Parse a [PermissionOverwriteType] from a [value].
-  ///
-  /// The [value] must be a valid [PermissionOverwriteType].
-  factory PermissionOverwriteType.parse(int value) => PermissionOverwriteType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown PermissionOverwriteType', value),
-      );
-
-  @override
-  String toString() => 'PermissionOverwriteType($value)';
+  factory PermissionOverwriteType.parse(int value) => parseEnum(values, value);
 }

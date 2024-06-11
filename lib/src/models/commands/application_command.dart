@@ -8,6 +8,7 @@ import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [ApplicationCommand].
 class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationCommand> {
@@ -100,24 +101,19 @@ class ApplicationCommand extends PartialApplicationCommand {
 }
 
 /// The type of an [ApplicationCommand].
-enum ApplicationCommandType {
-  chatInput._(1),
-  user._(2),
-  message._(3);
+final class ApplicationCommandType extends EnumLike<int> {
+  /// A chat input command.
+  static const ApplicationCommandType chatInput = ApplicationCommandType._(1);
 
-  /// The value of this [ApplicationCommandType].
-  final int value;
+  /// A user command.
+  static const ApplicationCommandType user = ApplicationCommandType._(2);
 
-  const ApplicationCommandType._(this.value);
+  /// A message command.
+  static const ApplicationCommandType message = ApplicationCommandType._(3);
 
-  /// Parse an [ApplicationCommandType] from an [int].
-  ///
-  /// The [value] must be a valid application command type.
-  factory ApplicationCommandType.parse(int value) => ApplicationCommandType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown application command type', value),
-      );
+  static const List<ApplicationCommandType> values = [chatInput, user, message];
 
-  @override
-  String toString() => 'ApplicationCommandType($value)';
+  const ApplicationCommandType._(super.value);
+
+  factory ApplicationCommandType.parse(int value) => parseEnum(values, value);
 }

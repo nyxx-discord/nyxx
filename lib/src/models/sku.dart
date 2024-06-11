@@ -1,6 +1,7 @@
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -46,29 +47,29 @@ class Sku with ToStringHelper {
 }
 
 /// The type of an [Sku].
-enum SkuType {
+final class SkuType extends EnumLike<int> {
   /// Durable one-time purchase.
-  durable._(2),
+  static const SkuType durable = SkuType._(2);
 
   /// Consumable one-time purchase.
-  consumable._(3),
-  subscription._(5),
-  subscriptionGroup._(6);
+  static const SkuType consumable = SkuType._(3);
 
-  final int value;
+  /// Subscription.
+  static const SkuType subscription = SkuType._(5);
 
-  const SkuType._(this.value);
+  /// Subscription group.
+  static const SkuType subscriptionGroup = SkuType._(6);
 
-  /// Parse an [SkuType] from an [int].
-  ///
-  /// The [value] must be a valid sku type.
-  factory SkuType.parse(int value) => SkuType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown SKU type', value),
-      );
+  static const List<SkuType> values = [
+    durable,
+    consumable,
+    subscription,
+    subscriptionGroup,
+  ];
 
-  @override
-  String toString() => 'SkuType($value)';
+  const SkuType._(super.value);
+
+  factory SkuType.parse(int value) => parseEnum(values, value);
 }
 
 /// Flags applied to an [Sku].

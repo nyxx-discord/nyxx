@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A link to an account on a service other than Discord.
@@ -56,71 +57,77 @@ class Connection with ToStringHelper {
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object-services
-enum ConnectionType {
-  battleNet._('battlenet', 'Battle.net'),
-  bungieNet._('bungie', 'Bungie.net'),
-  domain._('domain', 'Domain'),
-  ebay._('ebay', 'eBay'),
-  epicGames._('epicgames', 'Epic Games'),
-  facebook._('facebook', 'Facebook'),
-  github._('github', 'GitHub'),
-  instagram._('instagram', 'Instagram'),
-  leagueOfLegends._('leagueoflegends', 'League of Legends'),
-  paypal._('paypal', 'PayPal'),
-  playstation._('playstation', 'PlayStation Network'),
-  reddit._('reddit', 'Reddit'),
-  riotGames._('riotgames', 'Riot Games'),
-  roblox._('roblox', 'ROBLOX'),
-  spotify._('spotify', 'Spotify'),
-  skype._('skype', 'Skype'),
-  steam._('steam', 'Steam'),
-  tikTok._('tiktok', 'TikTok'),
-  twitch._('twitch', 'Twitch'),
-  twitter._('twitter', 'Twitter'),
-  xbox._('xbox', 'Xbox'),
-  youtube._('youtube', 'YouTube');
+final class ConnectionType extends EnumLike<String> {
+  static const battleNet = ConnectionType._('battlenet', 'Battle.net');
+  static const bungieNet = ConnectionType._('bungie', 'Bungie.net');
+  static const domain = ConnectionType._('domain', 'Domain');
+  static const ebay = ConnectionType._('ebay', 'eBay');
+  static const epicGames = ConnectionType._('epicgames', 'Epic Games');
+  static const facebook = ConnectionType._('facebook', 'Facebook');
+  static const github = ConnectionType._('github', 'GitHub');
+  static const instagram = ConnectionType._('instagram', 'Instagram');
+  static const leagueOfLegends = ConnectionType._('leagueoflegends', 'League of Legends');
+  static const paypal = ConnectionType._('paypal', 'PayPal');
+  static const playstation = ConnectionType._('playstation', 'PlayStation Network');
+  static const reddit = ConnectionType._('reddit', 'Reddit');
+  static const riotGames = ConnectionType._('riotgames', 'Riot Games');
+  static const roblox = ConnectionType._('roblox', 'ROBLOX');
+  static const spotify = ConnectionType._('spotify', 'Spotify');
+  static const skype = ConnectionType._('skype', 'Skype');
+  static const steam = ConnectionType._('steam', 'Steam');
+  static const tikTok = ConnectionType._('tiktok', 'TikTok');
+  static const twitch = ConnectionType._('twitch', 'Twitch');
+  static const twitter = ConnectionType._('twitter', 'Twitter');
+  static const xbox = ConnectionType._('xbox', 'Xbox');
+  static const youtube = ConnectionType._('youtube', 'YouTube');
 
-  /// The value of this connection type.
-  final String value;
+  static const List<ConnectionType> values = [
+    battleNet,
+    bungieNet,
+    domain,
+    ebay,
+    epicGames,
+    facebook,
+    github,
+    instagram,
+    leagueOfLegends,
+    paypal,
+    playstation,
+    reddit,
+    riotGames,
+    roblox,
+    spotify,
+    skype,
+    steam,
+    tikTok,
+    twitch,
+    twitter,
+    xbox,
+    youtube,
+  ];
 
   /// A human-readable name for this connection type.
   final String name;
 
-  const ConnectionType._(this.value, this.name);
+  const ConnectionType._(super.value, this.name);
 
   /// Parse a string to a [ConnectionType].
   ///
   /// The [value] must be a string containing a valid [ConnectionType.value].
-  factory ConnectionType.parse(String value) => ConnectionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown ConnectionType', value),
-      );
-
-  @override
-  String toString() => 'ConnectionType($name)';
+  factory ConnectionType.parse(String value) => parseEnum(values, value);
 }
 
 /// The visibility level of a connection.
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object-visibility-types
-enum ConnectionVisibility {
-  none._(0),
-  everyone._(1);
+final class ConnectionVisibility extends EnumLike<int> {
+  static const none = ConnectionVisibility._(0);
+  static const everyone = ConnectionVisibility._(1);
 
-  /// THe value of this connection visibility level.
-  final int value;
+  static const List<ConnectionVisibility> values = [none, everyone];
 
-  const ConnectionVisibility._(this.value);
+  const ConnectionVisibility._(super.value);
 
-  /// Parse an integer value to a [ConnectionVisibility].
-  ///
-  /// The [value] must be a valid [ConnectionVisibility].
-  factory ConnectionVisibility.parse(int value) => ConnectionVisibility.values.firstWhere(
-        (visibility) => visibility.value == value,
-        orElse: () => throw FormatException('Unknown ConnectionVisibility', value),
-      );
-
-  @override
-  String toString() => 'ConnectionVisibility($name)';
+  factory ConnectionVisibility.parse(int value) => parseEnum(values, value);
 }

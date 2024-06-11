@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Integration].
@@ -94,25 +95,15 @@ class Integration extends PartialIntegration {
 }
 
 /// The behavior of an integration when a member's subscription expires.
-enum IntegrationExpireBehavior {
-  removeRole._(0),
-  kick._(1);
+final class IntegrationExpireBehavior extends EnumLike<int> {
+  static const removeRole = IntegrationExpireBehavior._(0);
+  static const kick = IntegrationExpireBehavior._(1);
 
-  /// TThe value of this [IntegrationExpireBehavior].
-  final int value;
+  static const List<IntegrationExpireBehavior> values = [removeRole, kick];
 
-  const IntegrationExpireBehavior._(this.value);
+  const IntegrationExpireBehavior._(super.value);
 
-  /// Parse an [IntegrationExpireBehavior] from an [int].
-  ///
-  /// The [value] must be a valid integration expire behavior.
-  factory IntegrationExpireBehavior.parse(int value) => IntegrationExpireBehavior.values.firstWhere(
-        (behavior) => behavior.value == value,
-        orElse: () => throw FormatException('Unknown integration expire behavior', value),
-      );
-
-  @override
-  String toString() => 'IntegrationExpireBehavior($value)';
+  factory IntegrationExpireBehavior.parse(int value) => parseEnum(values, value);
 }
 
 /// {@template integration_account}

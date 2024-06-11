@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -22,27 +23,17 @@ class ClientStatus with ToStringHelper {
 }
 
 /// The status of a client.
-enum UserStatus {
-  online._('online'),
-  idle._('idle'),
-  dnd._('dnd'),
-  offline._('offline');
+final class UserStatus extends EnumLike<String> {
+  static const online = UserStatus._('online');
+  static const dnd = UserStatus._('dnd');
+  static const idle = UserStatus._('idle');
+  static const offline = UserStatus._('offline');
 
-  /// The value of this [UserStatus].
-  final String value;
+  static const values = [online, dnd, idle, offline];
 
-  const UserStatus._(this.value);
+  const UserStatus._(super.value);
 
-  /// Parse a [UserStatus] from a [String].
-  ///
-  /// The [value] must be a valid user status.
-  factory UserStatus.parse(String value) => UserStatus.values.firstWhere(
-        (status) => status.value == value,
-        orElse: () => throw FormatException('Unknown user status', value),
-      );
-
-  @override
-  String toString() => 'UserStatus($value)';
+  factory UserStatus.parse(String value) => parseEnum(values, value);
 }
 
 /// {@template activity}
@@ -116,29 +107,19 @@ class Activity with ToStringHelper {
 }
 
 /// The type of an activity.
-enum ActivityType {
-  game._(0),
-  streaming._(1),
-  listening._(2),
-  watching._(3),
-  custom._(4),
-  competing._(5);
+final class ActivityType extends EnumLike<int> {
+  static const game = ActivityType._(0);
+  static const streaming = ActivityType._(1);
+  static const listening = ActivityType._(2);
+  static const watching = ActivityType._(3);
+  static const custom = ActivityType._(4);
+  static const competing = ActivityType._(5);
 
-  /// The value of this [ActivityType].
-  final int value;
+  static const values = [game, streaming, listening, watching, custom, competing];
 
-  const ActivityType._(this.value);
+  const ActivityType._(super.value);
 
-  /// Parse an [ActivityType] from an [int].
-  ///
-  /// The [value] must be a valid activity type.
-  factory ActivityType.parse(int value) => ActivityType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown activity type', value),
-      );
-
-  @override
-  String toString() => 'ActivityType($value)';
+  factory ActivityType.parse(int value) => parseEnum(values, value);
 }
 
 /// {@template activity_timestamps}

@@ -1,34 +1,25 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// The type of a [MessageComponent].
-enum MessageComponentType {
-  actionRow._(1),
-  button._(2),
-  stringSelect._(3),
-  textInput._(4),
-  userSelect._(5),
-  roleSelect._(6),
-  mentionableSelect._(7),
-  channelSelect._(8);
+final class MessageComponentType extends EnumLike<int> {
+  static const actionRow = MessageComponentType._(1);
+  static const button = MessageComponentType._(2);
+  static const stringSelect = MessageComponentType._(3);
+  static const textInput = MessageComponentType._(4);
+  static const userSelect = MessageComponentType._(5);
+  static const roleSelect = MessageComponentType._(6);
+  static const mentionableSelect = MessageComponentType._(7);
+  static const channelSelect = MessageComponentType._(8);
 
-  /// The value of this [MessageComponentType].
-  final int value;
+  static const List<MessageComponentType> values = [actionRow, button, stringSelect, textInput, userSelect, roleSelect, mentionableSelect, channelSelect];
 
-  const MessageComponentType._(this.value);
+  const MessageComponentType._(super.value);
 
-  /// Parse a [MessageComponentType] from an [int].
-  ///
-  /// The [value] must be a valid message component type.
-  factory MessageComponentType.parse(int value) => MessageComponentType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown message component type', value),
-      );
-
-  @override
-  String toString() => 'MessageComponentType($value)';
+  factory MessageComponentType.parse(int value) => parseEnum(values, value);
 }
 
 /// A component in a [Message].
@@ -86,28 +77,18 @@ class ButtonComponent extends MessageComponent {
 }
 
 /// The style of a [ButtonComponent].
-enum ButtonStyle {
-  primary._(1),
-  secondary._(2),
-  success._(3),
-  danger._(4),
-  link._(5);
+final class ButtonStyle extends EnumLike<int> {
+  static const primary = ButtonStyle._(1);
+  static const secondary = ButtonStyle._(2);
+  static const success = ButtonStyle._(3);
+  static const danger = ButtonStyle._(4);
+  static const link = ButtonStyle._(5);
 
-  /// The value of this [ButtonStyle].
-  final int value;
+  static const List<ButtonStyle> values = [primary, secondary, success, danger, link];
 
-  const ButtonStyle._(this.value);
+  const ButtonStyle._(super.value);
 
-  /// Parse a [ButtonStyle] from an [int].
-  ///
-  /// The [value] must be a valid button style.
-  factory ButtonStyle.parse(int value) => ButtonStyle.values.firstWhere(
-        (style) => style.value == value,
-        orElse: () => throw FormatException('Unknown button style', value),
-      );
-
-  @override
-  String toString() => 'ButtonStyle($value)';
+  factory ButtonStyle.parse(int value) => parseEnum(values, value);
 }
 
 /// A dropdown menu in which users can select from on or more choices.
@@ -159,23 +140,16 @@ class SelectMenuComponent extends MessageComponent {
 }
 
 /// The type of a [SelectMenuDefaultValue].
-enum SelectMenuDefaultValueType {
-  user._('user'),
-  role._('role'),
-  channel._('channel');
+final class SelectMenuDefaultValueType extends EnumLike<String> {
+  static const user = SelectMenuDefaultValueType._('user');
+  static const role = SelectMenuDefaultValueType._('role');
+  static const channel = SelectMenuDefaultValueType._('channel');
 
-  /// The value of this [SelectMenuDefaultValue].
-  final String value;
+  static const List<SelectMenuDefaultValueType> values = [user, role, channel];
 
-  const SelectMenuDefaultValueType._(this.value);
+  const SelectMenuDefaultValueType._(super.value);
 
-  /// Parse a [SelectMenuDefaultValueType] from a [String].
-  ///
-  /// The [value] must be a valid select menu default value type.
-  factory SelectMenuDefaultValueType.parse(String value) => SelectMenuDefaultValueType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown select menu default value type', value),
-      );
+  factory SelectMenuDefaultValueType.parse(String value) => parseEnum(values, value);
 }
 
 /// A default value in a [SelectMenuComponent].
@@ -263,23 +237,13 @@ class TextInputComponent extends MessageComponent {
 }
 
 /// The type of a [TextInputComponent].
-enum TextInputStyle {
-  short._(1),
-  paragraph._(2);
+final class TextInputStyle extends EnumLike<int> {
+  static const short = TextInputStyle._(1);
+  static const paragraph = TextInputStyle._(2);
 
-  /// The value of this [TextInputStyle].
-  final int value;
+  static const List<TextInputStyle> values = [short, paragraph];
 
-  const TextInputStyle._(this.value);
+  const TextInputStyle._(super.value);
 
-  /// Parse a [TextInputComponent] from an [int].
-  ///
-  /// The [value] must beb a valid text input style.
-  factory TextInputStyle.parse(int value) => TextInputStyle.values.firstWhere(
-        (style) => style.value == value,
-        orElse: () => throw FormatException('Unknown text input style', value),
-      );
-
-  @override
-  String toString() => 'TextInputStyle($value)';
+  factory TextInputStyle.parse(int value) => parseEnum(values, value);
 }

@@ -1,3 +1,4 @@
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template message_activity}
@@ -25,25 +26,15 @@ class MessageActivity with ToStringHelper {
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-activity-types
-enum MessageActivityType {
-  join._(1),
-  spectate._(2),
-  listen._(3),
-  joinRequest._(5);
+final class MessageActivityType extends EnumLike<int> {
+  static const join = MessageActivityType._(1);
+  static const spectate = MessageActivityType._(2);
+  static const listen = MessageActivityType._(3);
+  static const joinRequest = MessageActivityType._(5);
 
-  /// The value of this [MessageActivityType].
-  final int value;
+  static const List<MessageActivityType> values = [join, spectate, listen, joinRequest];
 
-  const MessageActivityType._(this.value);
+  const MessageActivityType._(super.value);
 
-  /// Parse a [MessageActivityType] from an [int].
-  ///
-  /// [value] must be a valid message activity type.
-  factory MessageActivityType.parse(int value) => MessageActivityType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown MessageActivityType', value),
-      );
-
-  @override
-  String toString() => 'MessageActivityType($value)';
+  factory MessageActivityType.parse(int value) => parseEnum(values, value);
 }

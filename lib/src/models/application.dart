@@ -9,6 +9,7 @@ import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -183,28 +184,18 @@ class Application extends PartialApplication {
         );
 }
 
-enum ApplicationIntegrationType {
+final class ApplicationIntegrationType extends EnumLike<int> {
   /// App is installable to servers.
-  guildInstall._(0),
+  static const ApplicationIntegrationType guildInstall = ApplicationIntegrationType._(0);
 
   /// App is installable to users.
-  userInstall._(1);
+  static const ApplicationIntegrationType userInstall = ApplicationIntegrationType._(1);
 
-  /// The value of this [ApplicationIntegrationType].
-  final int value;
+  static const List<ApplicationIntegrationType> values = [guildInstall, userInstall];
 
-  const ApplicationIntegrationType._(this.value);
+  factory ApplicationIntegrationType.parse(int value) => parseEnum(values, value);
 
-  /// Parse an [ApplicationIntegrationType] from an [int].
-  ///
-  /// The [value] must be a valid application integration type.
-  factory ApplicationIntegrationType.parse(int value) => ApplicationIntegrationType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown ApplicationIntegrationType', value),
-      );
-
-  @override
-  String toString() => 'ApplicationIntegrationType($value)';
+  const ApplicationIntegrationType._(super.value);
 }
 
 /// Flags for an [Application].
@@ -326,29 +317,28 @@ class ApplicationRoleConnectionMetadata with ToStringHelper {
 }
 
 /// The type of an [ApplicationRoleConnectionMetadata].
-enum ConnectionMetadataType {
-  integerLessThanOrEqual._(1),
-  integerGreaterThanOrEqual._(2),
-  integerEqual._(3),
-  integerNotEqual._(4),
-  dateTimeLessThanOrEqual._(5),
-  dateTimeGreaterThanOrEqual._(6),
-  booleanEqual._(7),
-  booleanNotEqual._(8);
+final class ConnectionMetadataType extends EnumLike<int> {
+  static const ConnectionMetadataType integerLessThanOrEqual = ConnectionMetadataType._(1);
+  static const ConnectionMetadataType integerGreaterThanOrEqual = ConnectionMetadataType._(2);
+  static const ConnectionMetadataType integerEqual = ConnectionMetadataType._(3);
+  static const ConnectionMetadataType integerNotEqual = ConnectionMetadataType._(4);
+  static const ConnectionMetadataType dateTimeLessThanOrEqual = ConnectionMetadataType._(5);
+  static const ConnectionMetadataType dateTimeGreaterThanOrEqual = ConnectionMetadataType._(6);
+  static const ConnectionMetadataType booleanEqual = ConnectionMetadataType._(7);
+  static const ConnectionMetadataType booleanNotEqual = ConnectionMetadataType._(8);
 
-  /// The value of this [ConnectionMetadataType].
-  final int value;
+  static const values = [
+    integerLessThanOrEqual,
+    integerGreaterThanOrEqual,
+    integerEqual,
+    integerNotEqual,
+    dateTimeLessThanOrEqual,
+    dateTimeGreaterThanOrEqual,
+    booleanEqual,
+    booleanNotEqual,
+  ];
 
-  const ConnectionMetadataType._(this.value);
+  const ConnectionMetadataType._(super.value);
 
-  /// Parse a [ConnectionMetadataType] from an [int].
-  ///
-  /// The [value] must be a valid connection metadata type.
-  factory ConnectionMetadataType.parse(int value) => ConnectionMetadataType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown connection metadata type', value),
-      );
-
-  @override
-  String toString() => 'ConnectionMetadataType($value)';
+  factory ConnectionMetadataType.parse(int value) => parseEnum(values, value);
 }

@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template invite}
@@ -69,26 +70,13 @@ class Invite with ToStringHelper {
 }
 
 /// The type of an [Invite]'s target.
-enum TargetType {
-  /// The invite is targeting a stream.
-  stream._(1),
+final class TargetType extends EnumLike<int> {
+  static const stream = TargetType._(1);
+  static const embeddedApplication = TargetType._(2);
 
-  /// The invite is targeting an embedded application.
-  embeddedApplication._(2);
+  static const List<TargetType> values = [stream, embeddedApplication];
 
-  /// The value of this [TargetType].
-  final int value;
+  const TargetType._(super.value);
 
-  /// Parse a [TargetType] from an [int].
-  ///
-  /// The [value] must be a valid target type.
-  factory TargetType.parse(int value) => TargetType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown TargetType', value),
-      );
-
-  const TargetType._(this.value);
-
-  @override
-  String toString() => 'TargetType($value)';
+  factory TargetType.parse(int value) => parseEnum(values, value);
 }

@@ -3,6 +3,7 @@ import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template team}
@@ -81,46 +82,29 @@ class TeamMember with ToStringHelper {
 }
 
 /// The status of a member in a [Team].
-enum TeamMembershipState {
-  invited._(1),
-  accepted._(2);
+final class TeamMembershipState extends EnumLike<int> {
+  /// The user has been invited to the team.
+  static const TeamMembershipState invited = TeamMembershipState._(1);
 
-  /// The value of this [TeamMembershipState].
-  final int value;
+  /// The user has accepted the invitation to the team.
+  static const TeamMembershipState accepted = TeamMembershipState._(2);
 
-  const TeamMembershipState._(this.value);
+  static const List<TeamMembershipState> values = [invited, accepted];
 
-  /// Parse a [TeamMembershipState] from a [value].
-  ///
-  /// The [value] must be a valid team membership state.
-  factory TeamMembershipState.parse(int value) => TeamMembershipState.values.firstWhere(
-        (state) => state.value == value,
-        orElse: () => throw FormatException('Unknown team membership state', value),
-      );
+  const TeamMembershipState._(super.value);
 
-  @override
-  String toString() => 'TeamMembershipState($value)';
+  factory TeamMembershipState.parse(int value) => parseEnum(values, value);
 }
 
 /// The role of a [TeamMember].
-enum TeamMemberRole {
-  admin._('admin'),
-  developer._('developer'),
-  readOnly._('read_only');
+final class TeamMemberRole extends EnumLike<String> {
+  static const admin = TeamMemberRole._('admin');
+  static const developer = TeamMemberRole._('developer');
+  static const readOnly = TeamMemberRole._('read_only');
 
-  /// The value of this [TeamMemberRole].
-  final String value;
+  static const List<TeamMemberRole> values = [admin, developer, readOnly];
 
-  const TeamMemberRole._(this.value);
+  const TeamMemberRole._(super.value);
 
-  /// Parse a [TeamMemberRole] from a [String].
-  ///
-  /// The [value] must be a valid team member role.
-  factory TeamMemberRole.parse(String value) => TeamMemberRole.values.firstWhere(
-        (role) => role.value == value,
-        orElse: () => throw FormatException('Unknown team member role', value),
-      );
-
-  @override
-  String toString() => 'TeamMemberRole($value)';
+  factory TeamMemberRole.parse(String value) => parseEnum(values, value);
 }

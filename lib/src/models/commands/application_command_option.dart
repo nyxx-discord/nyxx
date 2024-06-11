@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template command_option}
@@ -70,34 +71,36 @@ class CommandOption with ToStringHelper {
 }
 
 /// The type of a [CommandOption].
-enum CommandOptionType {
-  subCommand._(1),
-  subCommandGroup._(2),
-  string._(3),
-  integer._(4),
-  boolean._(5),
-  user._(6),
-  channel._(7),
-  role._(8),
-  mentionable._(9),
-  number._(10),
-  attachment._(11);
+final class CommandOptionType extends EnumLike<int> {
+  static const subCommand = CommandOptionType._(1);
+  static const subCommandGroup = CommandOptionType._(2);
+  static const string = CommandOptionType._(3);
+  static const integer = CommandOptionType._(4);
+  static const boolean = CommandOptionType._(5);
+  static const user = CommandOptionType._(6);
+  static const channel = CommandOptionType._(7);
+  static const role = CommandOptionType._(8);
+  static const mentionable = CommandOptionType._(9);
+  static const number = CommandOptionType._(10);
+  static const attachment = CommandOptionType._(11);
 
-  /// The value of this [CommandOptionType].
-  final int value;
+  static const values = [
+    subCommand,
+    subCommandGroup,
+    string,
+    integer,
+    boolean,
+    user,
+    channel,
+    role,
+    mentionable,
+    number,
+    attachment,
+  ];
 
-  const CommandOptionType._(this.value);
+  const CommandOptionType._(super.value);
 
-  /// Parse a [CommandOptionType] from an [int].
-  ///
-  /// The [value] must be a valid command option type.
-  factory CommandOptionType.parse(int value) => CommandOptionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown command option type', value),
-      );
-
-  @override
-  String toString() => 'CommandOptionType($value)';
+  factory CommandOptionType.parse(int value) => parseEnum(values, value);
 }
 
 /// {@template command_option_choice}

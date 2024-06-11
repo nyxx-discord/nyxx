@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Channel] object.
@@ -48,61 +49,65 @@ abstract class Channel extends PartialChannel {
 }
 
 /// The type of a channel.
-enum ChannelType {
+final class ChannelType extends EnumLike<int> {
   /// A text channel in a [Guild].
-  guildText._(0),
+  static const guildText = ChannelType._(0);
 
   /// A DM channel with a single other recipient.
-  dm._(1),
+  static const dm = ChannelType._(1);
 
   /// A voice channel in a [Guild].
-  guildVoice._(2),
+  static const guildVoice = ChannelType._(2);
 
   /// A DM channel with multiple recipients.
-  groupDm._(3),
+  static const groupDm = ChannelType._(3);
 
   /// A category in a [Guild].
-  guildCategory._(4),
+  static const guildCategory = ChannelType._(4);
 
   /// An announcement channel in a [Guild].
-  guildAnnouncement._(5),
+  static const guildAnnouncement = ChannelType._(5);
 
   /// A [Thread] in an announcement channel.
-  announcementThread._(10),
+  static const announcementThread = ChannelType._(10);
 
   /// A public thread.
-  publicThread._(11),
+  static const publicThread = ChannelType._(11);
 
   /// A private thread.
-  privateThread._(12),
+  static const privateThread = ChannelType._(12);
 
   /// A stage channel in a [Guild].
-  guildStageVoice._(13),
+  static const guildStageVoice = ChannelType._(13);
 
   /// A [Guild] directory.
-  guildDirectory._(14),
+  static const guildDirectory = ChannelType._(14);
 
   /// A forum channel in a [Guild].
-  guildForum._(15),
+  static const guildForum = ChannelType._(15);
 
   /// A media channel in a [Guild].
-  guildMedia._(16);
+  static const guildMedia = ChannelType._(16);
 
-  /// The value of this [ChannelType].
-  final int value;
+  static const List<ChannelType> values = [
+    guildText,
+    dm,
+    guildVoice,
+    groupDm,
+    guildCategory,
+    guildAnnouncement,
+    announcementThread,
+    publicThread,
+    privateThread,
+    guildStageVoice,
+    guildDirectory,
+    guildForum,
+    guildMedia,
+  ];
 
-  const ChannelType._(this.value);
+  const ChannelType._(super.value);
 
-  /// Parse a [ChannelType] from a [value].
-  ///
-  /// The [value] must be a valid channel type.
-  factory ChannelType.parse(int value) => ChannelType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown channel type', value),
-      );
-
-  @override
-  String toString() => 'ChannelType($value)';
+  factory ChannelType.parse(int value) => parseEnum(values, value);
 }
 
 /// A set of flags applied to channels.

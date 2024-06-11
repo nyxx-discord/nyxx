@@ -8,6 +8,7 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [ScheduledEvent].
@@ -117,50 +118,30 @@ class ScheduledEvent extends PartialScheduledEvent {
 }
 
 /// The status of a [ScheduledEvent].
-enum EventStatus {
-  scheduled._(1),
-  active._(2),
-  completed._(3),
-  cancelled._(4);
+final class EventStatus extends EnumLike<int> {
+  static const scheduled = EventStatus._(1);
+  static const active = EventStatus._(2);
+  static const completed = EventStatus._(3);
+  static const cancelled = EventStatus._(4);
 
-  /// TThe value of this [EventStatus].
-  final int value;
+  static const List<EventStatus> values = [scheduled, active, completed, cancelled];
 
-  const EventStatus._(this.value);
+  const EventStatus._(super.value);
 
-  /// Parse an [EventStatus] from an [int].
-  ///
-  /// The [value] must be a valid event status.
-  factory EventStatus.parse(int value) => EventStatus.values.firstWhere(
-        (status) => status.value == value,
-        orElse: () => throw FormatException('Unknown event status', value),
-      );
-
-  @override
-  String toString() => 'EventStatus($value)';
+  factory EventStatus.parse(int value) => parseEnum(values, value);
 }
 
 /// The type of the entity associated with a [ScheduledEvent].
-enum ScheduledEntityType {
-  stageInstance._(1),
-  voice._(2),
-  external._(3);
+final class ScheduledEntityType extends EnumLike<int> {
+  static const stageInstance = ScheduledEntityType._(1);
+  static const voice = ScheduledEntityType._(2);
+  static const external = ScheduledEntityType._(3);
 
-  /// The value of this [ScheduledEntityType].
-  final int value;
+  static const List<ScheduledEntityType> values = [stageInstance, voice, external];
 
-  const ScheduledEntityType._(this.value);
+  const ScheduledEntityType._(super.value);
 
-  /// Parse a [ScheduledEntityType] from an [int].
-  ///
-  /// The [value] must be a valid scheduled entity type.
-  factory ScheduledEntityType.parse(int value) => ScheduledEntityType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown scheduled entity type', value),
-      );
-
-  @override
-  String toString() => 'ScheduledEntityType($value)';
+  factory ScheduledEntityType.parse(int value) => parseEnum(values, value);
 }
 
 /// {@template entity_metadata}

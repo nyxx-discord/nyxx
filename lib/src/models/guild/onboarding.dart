@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template onboarding}
@@ -82,25 +83,15 @@ class OnboardingPrompt with ToStringHelper {
 }
 
 /// The type of an [Onboarding] prompt.
-enum OnboardingPromptType {
-  multipleChoice._(0),
-  dropdown._(1);
+final class OnboardingPromptType extends EnumLike<int> {
+  static const multipleChoice = OnboardingPromptType._(0);
+  static const dropdown = OnboardingPromptType._(1);
 
-  /// The value of this [OnboardingPromptType].
-  final int value;
+  static const List<OnboardingPromptType> values = [multipleChoice, dropdown];
 
-  const OnboardingPromptType._(this.value);
+  const OnboardingPromptType._(super.value);
 
-  /// Parse an [OnboardingPromptType] from an [int].
-  ///
-  /// The [value] must be a valid onboarding prompt type.
-  factory OnboardingPromptType.parse(int value) => OnboardingPromptType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown onboarding prompt type', value),
-      );
-
-  @override
-  String toString() => 'OnboardingPromptType($value)';
+  factory OnboardingPromptType.parse(int value) => parseEnum(values, value);
 }
 
 /// {@template onboarding_prompt_option}

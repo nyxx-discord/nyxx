@@ -1,48 +1,29 @@
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
-enum StickerType {
-  standard._(1),
-  guild._(2);
+final class StickerType extends EnumLike<int> {
+  static const standard = StickerType._(1);
+  static const guild = StickerType._(2);
 
-  /// The value of this [StickerType].
-  final int value;
+  static const List<StickerType> values = [standard, guild];
 
-  const StickerType._(this.value);
+  const StickerType._(super.value);
 
-  /// Parse a [StickerType] from a [value].
-  ///
-  /// The [value] must be a valid sticker type
-  factory StickerType.parse(int value) => StickerType.values.firstWhere(
-        (state) => state.value == value,
-        orElse: () => throw FormatException('Unknown sticker type', value),
-      );
-
-  @override
-  String toString() => 'StickerType($value)';
+  factory StickerType.parse(int value) => parseEnum(values, value);
 }
 
-enum StickerFormatType {
-  png._(1),
-  apng._(2),
-  lottie._(3),
-  gif._(4);
+final class StickerFormatType extends EnumLike<int> {
+  static const png = StickerFormatType._(1);
+  static const apng = StickerFormatType._(2);
+  static const lottie = StickerFormatType._(3);
+  static const gif = StickerFormatType._(4);
 
-  /// The value of this [StickerFormatType].
-  final int value;
+  static const List<StickerFormatType> values = [png, apng, lottie, gif];
 
-  const StickerFormatType._(this.value);
+  const StickerFormatType._(super.value);
 
-  /// Parse a [StickerFormatType] from a [value].
-  ///
-  /// The [value] must be a valid sticker format type
-  factory StickerFormatType.parse(int value) => StickerFormatType.values.firstWhere(
-        (state) => state.value == value,
-        orElse: () => throw FormatException('Unknown sticker format type', value),
-      );
-
-  @override
-  String toString() => 'StickerFormatType($value)';
+  factory StickerFormatType.parse(int value) => parseEnum(values, value);
 }
 
 /// Mixin with shared properties with stickers

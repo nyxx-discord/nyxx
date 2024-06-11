@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Webhook].
 class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
@@ -173,29 +174,19 @@ class Webhook extends PartialWebhook {
 }
 
 /// The type of a [Webhook].
-enum WebhookType {
+final class WebhookType extends EnumLike<int> {
   /// A webhook which sends messages to a channel using a [Webhook.token].
-  incoming._(1),
+  static const WebhookType incoming = WebhookType._(1);
 
   /// An internal webhook used to manage Channel Followers.
-  channelFollower._(2),
+  static const WebhookType channelFollower = WebhookType._(2);
 
   /// A webhook for use with interactions.
-  application._(3);
+  static const WebhookType application = WebhookType._(3);
 
-  /// The value of this webhook type.
-  final int value;
+  static const List<WebhookType> values = [incoming, channelFollower, application];
 
-  const WebhookType._(this.value);
+  const WebhookType._(super.value);
 
-  /// Parse a [WebhookType] from a [value].
-  ///
-  /// The [value] must be a valid webhook type.
-  factory WebhookType.parse(int value) => WebhookType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown webhook type', value),
-      );
-
-  @override
-  String toString() => 'WebhookType($value)';
+  factory WebhookType.parse(int value) => parseEnum(values, value);
 }

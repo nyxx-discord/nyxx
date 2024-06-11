@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [User] object.
@@ -227,25 +228,15 @@ class UserFlags extends Flags<UserFlags> {
 }
 
 /// The types of Discord Nitro subscription a user can have.
-enum NitroType {
-  none._(0),
-  classic._(1),
-  nitro._(2),
-  basic._(3);
+final class NitroType extends EnumLike<int> {
+  static const none = NitroType._(0);
+  static const classic = NitroType._(1);
+  static const nitro = NitroType._(2);
+  static const basic = NitroType._(3);
 
-  /// The value of this [NitroType].
-  final int value;
+  static const List<NitroType> values = [none, classic, nitro, basic];
 
-  const NitroType._(this.value);
+  const NitroType._(super.value);
 
-  /// Parse an integer from the API to a [NitroType].
-  ///
-  /// The [value] must be a valid nitro type.
-  factory NitroType.parse(int value) => NitroType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown NitroType', value),
-      );
-
-  @override
-  String toString() => 'NitroType($value)';
+  factory NitroType.parse(int value) => parseEnum(values, value);
 }
