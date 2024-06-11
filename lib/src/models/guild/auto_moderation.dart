@@ -241,7 +241,8 @@ class AutoModerationAction with ToStringHelper implements AutoModerationActionBu
 enum ActionType {
   blockMessage._(1),
   sendAlertMessage._(2),
-  timeout._(3);
+  timeout._(3),
+  blockMemberInteraction._(4);
 
   /// The value of this [ActionType].
   final int value;
