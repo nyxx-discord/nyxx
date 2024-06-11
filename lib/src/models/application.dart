@@ -186,12 +186,12 @@ class Application extends PartialApplication {
 
 final class ApplicationIntegrationType extends EnumLike<int> {
   /// App is installable to servers.
-  static const ApplicationIntegrationType guildInstall = ApplicationIntegrationType._(0);
+  static const guildInstall = ApplicationIntegrationType._(0);
 
   /// App is installable to users.
-  static const ApplicationIntegrationType userInstall = ApplicationIntegrationType._(1);
+  static const userInstall = ApplicationIntegrationType._(1);
 
-  static const List<ApplicationIntegrationType> values = [guildInstall, userInstall];
+  static const values = [guildInstall, userInstall];
 
   factory ApplicationIntegrationType.parse(int value) => parseEnum(values, value);
 
@@ -318,14 +318,14 @@ class ApplicationRoleConnectionMetadata with ToStringHelper {
 
 /// The type of an [ApplicationRoleConnectionMetadata].
 final class ConnectionMetadataType extends EnumLike<int> {
-  static const ConnectionMetadataType integerLessThanOrEqual = ConnectionMetadataType._(1);
-  static const ConnectionMetadataType integerGreaterThanOrEqual = ConnectionMetadataType._(2);
-  static const ConnectionMetadataType integerEqual = ConnectionMetadataType._(3);
-  static const ConnectionMetadataType integerNotEqual = ConnectionMetadataType._(4);
-  static const ConnectionMetadataType dateTimeLessThanOrEqual = ConnectionMetadataType._(5);
-  static const ConnectionMetadataType dateTimeGreaterThanOrEqual = ConnectionMetadataType._(6);
-  static const ConnectionMetadataType booleanEqual = ConnectionMetadataType._(7);
-  static const ConnectionMetadataType booleanNotEqual = ConnectionMetadataType._(8);
+  static const integerLessThanOrEqual = ConnectionMetadataType._(1);
+  static const integerGreaterThanOrEqual = ConnectionMetadataType._(2);
+  static const integerEqual = ConnectionMetadataType._(3);
+  static const integerNotEqual = ConnectionMetadataType._(4);
+  static const dateTimeLessThanOrEqual = ConnectionMetadataType._(5);
+  static const dateTimeGreaterThanOrEqual = ConnectionMetadataType._(6);
+  static const booleanEqual = ConnectionMetadataType._(7);
+  static const booleanNotEqual = ConnectionMetadataType._(8);
 
   static const values = [
     integerLessThanOrEqual,
