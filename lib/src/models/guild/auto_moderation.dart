@@ -84,7 +84,11 @@ class AutoModerationRule extends PartialAutoModerationRule {
 
 /// The type of event on which an [AutoModerationRule] triggers.
 enum AutoModerationEventType {
-  messageSend._(1);
+  /// When a member sends or edits a message in the guild.
+  messageSend._(1),
+
+  /// When a member edits their profile.
+  memberUpdate._(2);
 
   /// The value of this [AutoModerationEventType].
   final int value;
@@ -105,10 +109,20 @@ enum AutoModerationEventType {
 
 /// The type of a trigger for an [AutoModerationRule]
 enum TriggerType {
+  /// Check if content contains words from a user defined list of keywords.
   keyword._(1),
+
+  /// Check if content represents generic spam.
   spam._(3),
+
+  /// Check if content contains words from internal pre-defined wordsets.
   keywordPreset._(4),
-  mentionSpam._(5);
+
+  /// Check if content contains more unique mentions than allowed.
+  mentionSpam._(5),
+
+  /// Check if member profile contains words from a user defined list of keywords.
+  memberProfile._(6);
 
   /// The value of this [TriggerType].
   final int value;
