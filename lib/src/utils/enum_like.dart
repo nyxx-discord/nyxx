@@ -12,5 +12,5 @@ base class EnumLike<T extends Object, U extends EnumLike<T, U>> {
   int get hashCode => value.hashCode;
 
   @override
-  bool operator ==(Object other) => identical(this, other) || (other is U && other.value == value);
+  bool operator ==(covariant EnumLike<T, U> other) => identical(this, other) || (other is U && other.value == value);
 }
