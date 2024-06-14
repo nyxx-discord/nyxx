@@ -77,43 +77,32 @@ class Entitlement extends PartialEntitlement {
 }
 
 /// The type of an [Entitlement].
-final class EntitlementType extends EnumLike<int> {
+final class EntitlementType extends EnumLike<int, EntitlementType> {
   /// Entitlement was purchased by user.
-  static const EntitlementType purchase = EntitlementType._(1);
+  static const EntitlementType purchase = EntitlementType(1);
 
   /// Entitlement was granted by Discord Nitro subscription.
-  static const EntitlementType premiumSubscription = EntitlementType._(2);
+  static const EntitlementType premiumSubscription = EntitlementType(2);
 
   /// Entitlement was gifted by developer.
-  static const EntitlementType developerGift = EntitlementType._(3);
+  static const EntitlementType developerGift = EntitlementType(3);
 
   /// Entitlement was purchased by a dev in application test mode.
-  static const EntitlementType testModePurchase = EntitlementType._(4);
+  static const EntitlementType testModePurchase = EntitlementType(4);
 
   /// Entitlement was granted when the SKU was free.
-  static const EntitlementType freePurchase = EntitlementType._(5);
+  static const EntitlementType freePurchase = EntitlementType(5);
 
   /// Entitlement was gifted by another user.
-  static const EntitlementType userGift = EntitlementType._(6);
+  static const EntitlementType userGift = EntitlementType(6);
 
   /// Entitlement was claimed by user for free as a Nitro Subscriber.
-  static const EntitlementType premiumPurchase = EntitlementType._(7);
+  static const EntitlementType premiumPurchase = EntitlementType(7);
 
   /// Entitlement was purchased as an app subscription.
-  static const EntitlementType applicationSubscription = EntitlementType._(8);
+  static const EntitlementType applicationSubscription = EntitlementType(8);
 
-  static const List<EntitlementType> values = [
-    purchase,
-    premiumSubscription,
-    developerGift,
-    testModePurchase,
-    freePurchase,
-    userGift,
-    premiumPurchase,
-    applicationSubscription,
-  ];
+  const EntitlementType(super.value);
 
-  const EntitlementType._(super.value);
-
-  factory EntitlementType.parse(int value) => parseEnum(values, value);
+  EntitlementType.parse(int value) : this(value);
 }

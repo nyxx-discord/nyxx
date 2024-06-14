@@ -1019,8 +1019,6 @@ class Gateway extends GatewayManager with EventParser {
   InteractionCreateEvent<Interaction<dynamic>> parseInteractionCreate(Map<String, Object?> raw) {
     final interaction = client.interactions.parse(raw);
 
-    assert(!interaction.type.isUnknown, 'Unknown interaction type: ${interaction.type}');
-
     // Needed to get proper type promotion.
     return switch (interaction.type) {
       InteractionType.ping => InteractionCreateEvent<PingInteraction>(gateway: this, interaction: interaction as PingInteraction),
@@ -1031,8 +1029,7 @@ class Gateway extends GatewayManager with EventParser {
       InteractionType.modalSubmit => InteractionCreateEvent<ModalSubmitInteraction>(gateway: this, interaction: interaction as ModalSubmitInteraction),
       InteractionType.applicationCommandAutocomplete =>
         InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>(gateway: this, interaction: interaction as ApplicationCommandAutocompleteInteraction),
-      // stub, should never be reached
-      InteractionType() => null,
+      InteractionType() => throw StateError('Unknown interaction type: ${interaction.type}'),
     } as InteractionCreateEvent<Interaction<dynamic>>;
   }
 

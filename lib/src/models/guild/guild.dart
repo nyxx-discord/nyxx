@@ -467,43 +467,40 @@ class Guild extends UserGuild {
 }
 
 /// The verification level for a guild.
-final class VerificationLevel extends EnumLike<int> {
-  static const none = VerificationLevel._(0);
-  static const low = VerificationLevel._(1);
-  static const medium = VerificationLevel._(2);
-  static const high = VerificationLevel._(3);
-  static const veryHigh = VerificationLevel._(4);
+final class VerificationLevel extends EnumLike<int, VerificationLevel> {
+  static const none = VerificationLevel(0);
+  static const low = VerificationLevel(1);
+  static const medium = VerificationLevel(2);
+  static const high = VerificationLevel(3);
+  static const veryHigh = VerificationLevel(4);
 
-  static const values = [none, low, medium, high, veryHigh];
+  /// @nodoc
+  const VerificationLevel(super.value);
 
-  const VerificationLevel._(super.value);
-
-  factory VerificationLevel.parse(int value) => parseEnum(values, value);
+  VerificationLevel.parse(int value) : this(value);
 }
 
 /// The level at which message notifications are sent in a guild.
-final class MessageNotificationLevel extends EnumLike<int> {
-  static const allMessages = MessageNotificationLevel._(0);
-  static const onlyMentions = MessageNotificationLevel._(1);
+final class MessageNotificationLevel extends EnumLike<int, MessageNotificationLevel> {
+  static const allMessages = MessageNotificationLevel(0);
+  static const onlyMentions = MessageNotificationLevel(1);
 
-  static const values = [allMessages, onlyMentions];
+  /// @nodoc
+  const MessageNotificationLevel(super.value);
 
-  const MessageNotificationLevel._(super.value);
-
-  factory MessageNotificationLevel.parse(int value) => parseEnum(values, value);
+  MessageNotificationLevel.parse(int value) : this(value);
 }
 
 /// The level of explicit content filtering in a guild.
-final class ExplicitContentFilterLevel extends EnumLike<int> {
-  static const disabled = ExplicitContentFilterLevel._(0);
-  static const membersWithoutRoles = ExplicitContentFilterLevel._(1);
-  static const allMembers = ExplicitContentFilterLevel._(2);
+final class ExplicitContentFilterLevel extends EnumLike<int, ExplicitContentFilterLevel> {
+  static const disabled = ExplicitContentFilterLevel(0);
+  static const membersWithoutRoles = ExplicitContentFilterLevel(1);
+  static const allMembers = ExplicitContentFilterLevel(2);
 
-  static const values = [disabled, membersWithoutRoles, allMembers];
+  /// @nodoc
+  const ExplicitContentFilterLevel(super.value);
 
-  const ExplicitContentFilterLevel._(super.value);
-
-  factory ExplicitContentFilterLevel.parse(int value) => parseEnum(values, value);
+  ExplicitContentFilterLevel.parse(int value) : this(value);
 }
 
 /// Features that can be enabled in certain guilds.
@@ -676,13 +673,14 @@ class GuildFeatures extends Flags<GuildFeatures> {
 }
 
 /// The MFA level required for moderators of a guild.
-final class MfaLevel extends EnumLike<int> {
-  static const none = MfaLevel._(0);
-  static const elevated = MfaLevel._(1);
+final class MfaLevel extends EnumLike<int, MfaLevel> {
+  static const none = MfaLevel(0);
+  static const elevated = MfaLevel(1);
 
-  const MfaLevel._(super.value);
+  /// @nodoc
+  const MfaLevel(super.value);
 
-  factory MfaLevel.parse(int value) => parseEnum([none, elevated], value);
+  MfaLevel.parse(int value) : this(value);
 }
 
 /// The configuration of a guild's system channel.
@@ -728,29 +726,27 @@ class SystemChannelFlags extends Flags<SystemChannelFlags> {
 }
 
 /// The premium tier of a guild.
-final class PremiumTier extends EnumLike<int> {
-  static const none = PremiumTier._(0);
-  static const one = PremiumTier._(1);
-  static const two = PremiumTier._(2);
-  static const three = PremiumTier._(3);
+final class PremiumTier extends EnumLike<int, PremiumTier> {
+  static const none = PremiumTier(0);
+  static const one = PremiumTier(1);
+  static const two = PremiumTier(2);
+  static const three = PremiumTier(3);
 
-  static const values = [none, one, two, three];
+  /// nodoc
+  const PremiumTier(super.value);
 
-  const PremiumTier._(super.value);
-
-  factory PremiumTier.parse(int value) => parseEnum(values, value);
+  PremiumTier.parse(int value) : this(value);
 }
 
 /// The NSFW level of a guild.
-final class NsfwLevel extends EnumLike<int> {
-  static const unset = NsfwLevel._(0);
-  static const explicit = NsfwLevel._(1);
-  static const safe = NsfwLevel._(2);
-  static const ageRestricted = NsfwLevel._(3);
+final class NsfwLevel extends EnumLike<int, NsfwLevel> {
+  static const unset = NsfwLevel(0);
+  static const explicit = NsfwLevel(1);
+  static const safe = NsfwLevel(2);
+  static const ageRestricted = NsfwLevel(3);
 
-  static const values = [unset, explicit, safe, ageRestricted];
+  /// nodoc
+  const NsfwLevel(super.value);
 
-  const NsfwLevel._(super.value);
-
-  factory NsfwLevel.parse(int value) => parseEnum(values, value);
+  NsfwLevel.parse(int value) : this(value);
 }

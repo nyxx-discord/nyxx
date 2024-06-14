@@ -2,28 +2,26 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
-final class StickerType extends EnumLike<int> {
-  static const standard = StickerType._(1);
-  static const guild = StickerType._(2);
+final class StickerType extends EnumLike<int, StickerType> {
+  static const standard = StickerType(1);
+  static const guild = StickerType(2);
 
-  static const List<StickerType> values = [standard, guild];
+  /// @nodoc
+  const StickerType(super.value);
 
-  const StickerType._(super.value);
-
-  factory StickerType.parse(int value) => parseEnum(values, value);
+  StickerType.parse(int value) : this(value);
 }
 
-final class StickerFormatType extends EnumLike<int> {
-  static const png = StickerFormatType._(1);
-  static const apng = StickerFormatType._(2);
-  static const lottie = StickerFormatType._(3);
-  static const gif = StickerFormatType._(4);
+final class StickerFormatType extends EnumLike<int, StickerFormatType> {
+  static const png = StickerFormatType(1);
+  static const apng = StickerFormatType(2);
+  static const lottie = StickerFormatType(3);
+  static const gif = StickerFormatType(4);
 
-  static const List<StickerFormatType> values = [png, apng, lottie, gif];
+  /// @nodoc
+  const StickerFormatType(super.value);
 
-  const StickerFormatType._(super.value);
-
-  factory StickerFormatType.parse(int value) => parseEnum(values, value);
+  StickerFormatType.parse(int value) : this(value);
 }
 
 /// Mixin with shared properties with stickers

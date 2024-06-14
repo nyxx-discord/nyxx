@@ -82,126 +82,68 @@ class AuditLogChange with ToStringHelper {
 }
 
 /// The type of event an [AuditLogEntry] represents.
-final class AuditLogEvent extends EnumLike<int> {
-  static const guildUpdate = AuditLogEvent._(1);
-  static const channelCreate = AuditLogEvent._(10);
-  static const channelUpdate = AuditLogEvent._(11);
-  static const channelDelete = AuditLogEvent._(12);
-  static const channelOverwriteCreate = AuditLogEvent._(13);
-  static const channelOverwriteUpdate = AuditLogEvent._(14);
-  static const channelOverwriteDelete = AuditLogEvent._(15);
-  static const memberKick = AuditLogEvent._(20);
-  static const memberPrune = AuditLogEvent._(21);
-  static const memberBanAdd = AuditLogEvent._(22);
-  static const memberBanRemove = AuditLogEvent._(23);
-  static const memberUpdate = AuditLogEvent._(24);
-  static const memberRoleUpdate = AuditLogEvent._(25);
-  static const memberMove = AuditLogEvent._(26);
-  static const memberDisconnect = AuditLogEvent._(27);
-  static const botAdd = AuditLogEvent._(28);
-  static const roleCreate = AuditLogEvent._(30);
-  static const roleUpdate = AuditLogEvent._(31);
-  static const roleDelete = AuditLogEvent._(32);
-  static const inviteCreate = AuditLogEvent._(40);
-  static const inviteUpdate = AuditLogEvent._(41);
-  static const inviteDelete = AuditLogEvent._(42);
-  static const webhookCreate = AuditLogEvent._(50);
-  static const webhookUpdate = AuditLogEvent._(51);
-  static const webhookDelete = AuditLogEvent._(52);
-  static const emojiCreate = AuditLogEvent._(60);
-  static const emojiUpdate = AuditLogEvent._(61);
-  static const emojiDelete = AuditLogEvent._(62);
-  static const messageDelete = AuditLogEvent._(72);
-  static const messageBulkDelete = AuditLogEvent._(73);
-  static const messagePin = AuditLogEvent._(74);
-  static const messageUnpin = AuditLogEvent._(75);
-  static const integrationCreate = AuditLogEvent._(80);
-  static const integrationUpdate = AuditLogEvent._(81);
-  static const integrationDelete = AuditLogEvent._(82);
-  static const stageInstanceCreate = AuditLogEvent._(83);
-  static const stageInstanceUpdate = AuditLogEvent._(84);
-  static const stageInstanceDelete = AuditLogEvent._(85);
-  static const stickerCreate = AuditLogEvent._(90);
-  static const stickerUpdate = AuditLogEvent._(91);
-  static const stickerDelete = AuditLogEvent._(92);
-  static const guildScheduledEventCreate = AuditLogEvent._(100);
-  static const guildScheduledEventUpdate = AuditLogEvent._(101);
-  static const guildScheduledEventDelete = AuditLogEvent._(102);
-  static const threadCreate = AuditLogEvent._(110);
-  static const threadUpdate = AuditLogEvent._(111);
-  static const threadDelete = AuditLogEvent._(112);
-  static const applicationCommandPermissionUpdate = AuditLogEvent._(121);
-  static const autoModerationRuleCreate = AuditLogEvent._(140);
-  static const autoModerationRuleUpdate = AuditLogEvent._(141);
-  static const autoModerationRuleDelete = AuditLogEvent._(142);
-  static const autoModerationBlockMessage = AuditLogEvent._(143);
-  static const autoModerationFlagToChannel = AuditLogEvent._(144);
-  static const autoModerationUserCommunicationDisabled = AuditLogEvent._(145);
-  static const creatorMonetizationRequestCreated = AuditLogEvent._(150);
-  static const creatorMonetizationTermsAccepted = AuditLogEvent._(151);
+final class AuditLogEvent extends EnumLike<int, AuditLogEvent> {
+  static const guildUpdate = AuditLogEvent(1);
+  static const channelCreate = AuditLogEvent(10);
+  static const channelUpdate = AuditLogEvent(11);
+  static const channelDelete = AuditLogEvent(12);
+  static const channelOverwriteCreate = AuditLogEvent(13);
+  static const channelOverwriteUpdate = AuditLogEvent(14);
+  static const channelOverwriteDelete = AuditLogEvent(15);
+  static const memberKick = AuditLogEvent(20);
+  static const memberPrune = AuditLogEvent(21);
+  static const memberBanAdd = AuditLogEvent(22);
+  static const memberBanRemove = AuditLogEvent(23);
+  static const memberUpdate = AuditLogEvent(24);
+  static const memberRoleUpdate = AuditLogEvent(25);
+  static const memberMove = AuditLogEvent(26);
+  static const memberDisconnect = AuditLogEvent(27);
+  static const botAdd = AuditLogEvent(28);
+  static const roleCreate = AuditLogEvent(30);
+  static const roleUpdate = AuditLogEvent(31);
+  static const roleDelete = AuditLogEvent(32);
+  static const inviteCreate = AuditLogEvent(40);
+  static const inviteUpdate = AuditLogEvent(41);
+  static const inviteDelete = AuditLogEvent(42);
+  static const webhookCreate = AuditLogEvent(50);
+  static const webhookUpdate = AuditLogEvent(51);
+  static const webhookDelete = AuditLogEvent(52);
+  static const emojiCreate = AuditLogEvent(60);
+  static const emojiUpdate = AuditLogEvent(61);
+  static const emojiDelete = AuditLogEvent(62);
+  static const messageDelete = AuditLogEvent(72);
+  static const messageBulkDelete = AuditLogEvent(73);
+  static const messagePin = AuditLogEvent(74);
+  static const messageUnpin = AuditLogEvent(75);
+  static const integrationCreate = AuditLogEvent(80);
+  static const integrationUpdate = AuditLogEvent(81);
+  static const integrationDelete = AuditLogEvent(82);
+  static const stageInstanceCreate = AuditLogEvent(83);
+  static const stageInstanceUpdate = AuditLogEvent(84);
+  static const stageInstanceDelete = AuditLogEvent(85);
+  static const stickerCreate = AuditLogEvent(90);
+  static const stickerUpdate = AuditLogEvent(91);
+  static const stickerDelete = AuditLogEvent(92);
+  static const guildScheduledEventCreate = AuditLogEvent(100);
+  static const guildScheduledEventUpdate = AuditLogEvent(101);
+  static const guildScheduledEventDelete = AuditLogEvent(102);
+  static const threadCreate = AuditLogEvent(110);
+  static const threadUpdate = AuditLogEvent(111);
+  static const threadDelete = AuditLogEvent(112);
+  static const applicationCommandPermissionUpdate = AuditLogEvent(121);
+  static const autoModerationRuleCreate = AuditLogEvent(140);
+  static const autoModerationRuleUpdate = AuditLogEvent(141);
+  static const autoModerationRuleDelete = AuditLogEvent(142);
+  static const autoModerationBlockMessage = AuditLogEvent(143);
+  static const autoModerationFlagToChannel = AuditLogEvent(144);
+  static const autoModerationUserCommunicationDisabled = AuditLogEvent(145);
+  static const creatorMonetizationRequestCreated = AuditLogEvent(150);
+  static const creatorMonetizationTermsAccepted = AuditLogEvent(151);
 
-  static const values = [
-    guildUpdate,
-    channelCreate,
-    channelUpdate,
-    channelDelete,
-    channelOverwriteCreate,
-    channelOverwriteUpdate,
-    channelOverwriteDelete,
-    memberKick,
-    memberPrune,
-    memberBanAdd,
-    memberBanRemove,
-    memberUpdate,
-    memberRoleUpdate,
-    memberMove,
-    memberDisconnect,
-    botAdd,
-    roleCreate,
-    roleUpdate,
-    roleDelete,
-    inviteCreate,
-    inviteUpdate,
-    inviteDelete,
-    webhookCreate,
-    webhookUpdate,
-    webhookDelete,
-    emojiCreate,
-    emojiUpdate,
-    emojiDelete,
-    messageDelete,
-    messageBulkDelete,
-    messagePin,
-    messageUnpin,
-    integrationCreate,
-    integrationUpdate,
-    integrationDelete,
-    stageInstanceCreate,
-    stageInstanceUpdate,
-    stageInstanceDelete,
-    stickerCreate,
-    stickerUpdate,
-    stickerDelete,
-    guildScheduledEventCreate,
-    guildScheduledEventUpdate,
-    guildScheduledEventDelete,
-    threadCreate,
-    threadUpdate,
-    threadDelete,
-    applicationCommandPermissionUpdate,
-    autoModerationRuleCreate,
-    autoModerationRuleUpdate,
-    autoModerationRuleDelete,
-    autoModerationBlockMessage,
-    autoModerationFlagToChannel,
-    autoModerationUserCommunicationDisabled,
-    creatorMonetizationRequestCreated,
-    creatorMonetizationTermsAccepted,
-  ];
+  /// @nodoc
+  const AuditLogEvent(super.value);
 
-  const AuditLogEvent._(super.value);
-
-  factory AuditLogEvent.parse(int value) => parseEnum(values, value);
+  AuditLogEvent.parse(int value) : this(value);
 }
 
 /// {@template audit_log_entry_info}

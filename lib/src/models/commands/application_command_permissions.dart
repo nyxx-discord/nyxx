@@ -75,19 +75,18 @@ class CommandPermission with ToStringHelper {
 }
 
 /// The type of a [CommandPermission].
-final class CommandPermissionType extends EnumLike<int> {
+final class CommandPermissionType extends EnumLike<int, CommandPermissionType> {
   /// The permission applies to a role.
-  static const CommandPermissionType role = CommandPermissionType._(1);
+  static const role = CommandPermissionType(1);
 
   /// The permission applies to a user.
-  static const CommandPermissionType user = CommandPermissionType._(2);
+  static const user = CommandPermissionType(2);
 
   /// The permission applies to a channel.
-  static const CommandPermissionType channel = CommandPermissionType._(3);
+  static const channel = CommandPermissionType(3);
 
-  static const List<CommandPermissionType> values = [role, user, channel];
+  /// @nodoc
+  const CommandPermissionType(super.value);
 
-  const CommandPermissionType._(super.value);
-
-  factory CommandPermissionType.parse(int value) => parseEnum(values, value);
+  CommandPermissionType.parse(int value) : this(value);
 }

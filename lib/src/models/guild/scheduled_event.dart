@@ -118,30 +118,28 @@ class ScheduledEvent extends PartialScheduledEvent {
 }
 
 /// The status of a [ScheduledEvent].
-final class EventStatus extends EnumLike<int> {
-  static const scheduled = EventStatus._(1);
-  static const active = EventStatus._(2);
-  static const completed = EventStatus._(3);
-  static const cancelled = EventStatus._(4);
+final class EventStatus extends EnumLike<int, EventStatus> {
+  static const scheduled = EventStatus(1);
+  static const active = EventStatus(2);
+  static const completed = EventStatus(3);
+  static const cancelled = EventStatus(4);
 
-  static const List<EventStatus> values = [scheduled, active, completed, cancelled];
+  /// @nodoc
+  const EventStatus(super.value);
 
-  const EventStatus._(super.value);
-
-  factory EventStatus.parse(int value) => parseEnum(values, value);
+  EventStatus.parse(int value) : this(value);
 }
 
 /// The type of the entity associated with a [ScheduledEvent].
-final class ScheduledEntityType extends EnumLike<int> {
-  static const stageInstance = ScheduledEntityType._(1);
-  static const voice = ScheduledEntityType._(2);
-  static const external = ScheduledEntityType._(3);
+final class ScheduledEntityType extends EnumLike<int, ScheduledEntityType> {
+  static const stageInstance = ScheduledEntityType(1);
+  static const voice = ScheduledEntityType(2);
+  static const external = ScheduledEntityType(3);
 
-  static const List<ScheduledEntityType> values = [stageInstance, voice, external];
+  /// @nodoc
+  const ScheduledEntityType(super.value);
 
-  const ScheduledEntityType._(super.value);
-
-  factory ScheduledEntityType.parse(int value) => parseEnum(values, value);
+  ScheduledEntityType.parse(int value) : this(value);
 }
 
 /// {@template entity_metadata}

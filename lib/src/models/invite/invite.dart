@@ -70,13 +70,12 @@ class Invite with ToStringHelper {
 }
 
 /// The type of an [Invite]'s target.
-final class TargetType extends EnumLike<int> {
-  static const stream = TargetType._(1);
-  static const embeddedApplication = TargetType._(2);
+final class TargetType extends EnumLike<int, TargetType> {
+  static const stream = TargetType(1);
+  static const embeddedApplication = TargetType(2);
 
-  static const List<TargetType> values = [stream, embeddedApplication];
+  /// @nodoc
+  const TargetType(super.value);
 
-  const TargetType._(super.value);
-
-  factory TargetType.parse(int value) => parseEnum(values, value);
+  TargetType.parse(int value) : this(value);
 }

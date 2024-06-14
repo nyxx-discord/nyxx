@@ -23,17 +23,16 @@ class ClientStatus with ToStringHelper {
 }
 
 /// The status of a client.
-final class UserStatus extends EnumLike<String> {
-  static const online = UserStatus._('online');
-  static const dnd = UserStatus._('dnd');
-  static const idle = UserStatus._('idle');
-  static const offline = UserStatus._('offline');
+final class UserStatus extends EnumLike<String, UserStatus> {
+  static const online = UserStatus('online');
+  static const dnd = UserStatus('dnd');
+  static const idle = UserStatus('idle');
+  static const offline = UserStatus('offline');
 
-  static const values = [online, dnd, idle, offline];
+  /// @nodoc
+  const UserStatus(super.value);
 
-  const UserStatus._(super.value);
-
-  factory UserStatus.parse(String value) => parseEnum(values, value);
+  UserStatus.parse(String value) : this(value);
 }
 
 /// {@template activity}
@@ -107,19 +106,17 @@ class Activity with ToStringHelper {
 }
 
 /// The type of an activity.
-final class ActivityType extends EnumLike<int> {
-  static const game = ActivityType._(0);
-  static const streaming = ActivityType._(1);
-  static const listening = ActivityType._(2);
-  static const watching = ActivityType._(3);
-  static const custom = ActivityType._(4);
-  static const competing = ActivityType._(5);
+final class ActivityType extends EnumLike<int, ActivityType> {
+  static const game = ActivityType(0);
+  static const streaming = ActivityType(1);
+  static const listening = ActivityType(2);
+  static const watching = ActivityType(3);
+  static const custom = ActivityType(4);
+  static const competing = ActivityType(5);
 
-  static const values = [game, streaming, listening, watching, custom, competing];
+  const ActivityType(super.value);
 
-  const ActivityType._(super.value);
-
-  factory ActivityType.parse(int value) => parseEnum(values, value);
+  ActivityType.parse(int value) : this(value);
 }
 
 /// {@template activity_timestamps}

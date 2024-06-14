@@ -253,84 +253,47 @@ class Message extends PartialMessage {
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-types
-final class MessageType extends EnumLike<int> {
-  static const normal = MessageType._(0);
-  static const recipientAdd = MessageType._(1);
-  static const recipientRemove = MessageType._(2);
-  static const call = MessageType._(3);
-  static const channelNameChange = MessageType._(4);
-  static const channelIconChange = MessageType._(5);
-  static const channelPinnedMessage = MessageType._(6);
-  static const userJoin = MessageType._(7);
-  static const guildBoost = MessageType._(8);
-  static const guildBoostTier1 = MessageType._(9);
-  static const guildBoostTier2 = MessageType._(10);
-  static const guildBoostTier3 = MessageType._(11);
-  static const channelFollowAdd = MessageType._(12);
-  static const guildDiscoveryDisqualified = MessageType._(14);
-  static const guildDiscoveryRequalified = MessageType._(15);
-  static const guildDiscoveryGracePeriodInitialWarning = MessageType._(16);
-  static const guildDiscoveryGracePeriodFinalWarning = MessageType._(17);
-  static const threadCreated = MessageType._(18);
-  static const reply = MessageType._(19);
-  static const chatInputCommand = MessageType._(20);
-  static const threadStarterMessage = MessageType._(21);
-  static const guildInviteReminder = MessageType._(22);
-  static const contextMenuCommand = MessageType._(23);
-  static const autoModerationAction = MessageType._(24);
-  static const roleSubscriptionPurchase = MessageType._(25);
-  static const interactionPremiumUpsell = MessageType._(26);
-  static const stageStart = MessageType._(27);
-  static const stageEnd = MessageType._(28);
-  static const stageSpeaker = MessageType._(29);
-  static const stageTopic = MessageType._(31);
-  static const guildApplicationPremiumSubscription = MessageType._(32);
-  static const guildIncidentAlertModeEnabled = MessageType._(36);
-  static const guildIncidentAlertModeDisabled = MessageType._(37);
-  static const guildIncidentReportRaid = MessageType._(38);
-  static const guildIncidentReportFalseAlarm = MessageType._(39);
+final class MessageType extends EnumLike<int, MessageType> {
+  static const normal = MessageType(0);
+  static const recipientAdd = MessageType(1);
+  static const recipientRemove = MessageType(2);
+  static const call = MessageType(3);
+  static const channelNameChange = MessageType(4);
+  static const channelIconChange = MessageType(5);
+  static const channelPinnedMessage = MessageType(6);
+  static const userJoin = MessageType(7);
+  static const guildBoost = MessageType(8);
+  static const guildBoostTier1 = MessageType(9);
+  static const guildBoostTier2 = MessageType(10);
+  static const guildBoostTier3 = MessageType(11);
+  static const channelFollowAdd = MessageType(12);
+  static const guildDiscoveryDisqualified = MessageType(14);
+  static const guildDiscoveryRequalified = MessageType(15);
+  static const guildDiscoveryGracePeriodInitialWarning = MessageType(16);
+  static const guildDiscoveryGracePeriodFinalWarning = MessageType(17);
+  static const threadCreated = MessageType(18);
+  static const reply = MessageType(19);
+  static const chatInputCommand = MessageType(20);
+  static const threadStarterMessage = MessageType(21);
+  static const guildInviteReminder = MessageType(22);
+  static const contextMenuCommand = MessageType(23);
+  static const autoModerationAction = MessageType(24);
+  static const roleSubscriptionPurchase = MessageType(25);
+  static const interactionPremiumUpsell = MessageType(26);
+  static const stageStart = MessageType(27);
+  static const stageEnd = MessageType(28);
+  static const stageSpeaker = MessageType(29);
+  static const stageTopic = MessageType(31);
+  static const guildApplicationPremiumSubscription = MessageType(32);
+  static const guildIncidentAlertModeEnabled = MessageType(36);
+  static const guildIncidentAlertModeDisabled = MessageType(37);
+  static const guildIncidentReportRaid = MessageType(38);
+  static const guildIncidentReportFalseAlarm = MessageType(39);
 
-  static const List<MessageType> values = [
-    normal,
-    recipientAdd,
-    recipientRemove,
-    call,
-    channelNameChange,
-    channelIconChange,
-    channelPinnedMessage,
-    userJoin,
-    guildBoost,
-    guildBoostTier1,
-    guildBoostTier2,
-    guildBoostTier3,
-    channelFollowAdd,
-    guildDiscoveryDisqualified,
-    guildDiscoveryRequalified,
-    guildDiscoveryGracePeriodInitialWarning,
-    guildDiscoveryGracePeriodFinalWarning,
-    threadCreated,
-    reply,
-    chatInputCommand,
-    threadStarterMessage,
-    guildInviteReminder,
-    contextMenuCommand,
-    autoModerationAction,
-    roleSubscriptionPurchase,
-    interactionPremiumUpsell,
-    stageStart,
-    stageEnd,
-    stageSpeaker,
-    stageTopic,
-    guildApplicationPremiumSubscription,
-    guildIncidentAlertModeEnabled,
-    guildIncidentAlertModeDisabled,
-    guildIncidentReportRaid,
-    guildIncidentReportFalseAlarm,
-  ];
+  /// @nodoc
+  const MessageType(super.value);
 
-  const MessageType._(super.value);
-
-  factory MessageType.parse(int value) => parseEnum(values, value);
+  MessageType.parse(int value) : this(value);
 }
 
 /// Flags that can be applied to a [Message].

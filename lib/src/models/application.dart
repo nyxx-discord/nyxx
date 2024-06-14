@@ -184,18 +184,17 @@ class Application extends PartialApplication {
         );
 }
 
-final class ApplicationIntegrationType extends EnumLike<int> {
+final class ApplicationIntegrationType extends EnumLike<int, ApplicationIntegrationType> {
   /// App is installable to servers.
-  static const guildInstall = ApplicationIntegrationType._(0);
+  static const guildInstall = ApplicationIntegrationType(0);
 
   /// App is installable to users.
-  static const userInstall = ApplicationIntegrationType._(1);
+  static const userInstall = ApplicationIntegrationType(1);
 
-  static const values = [guildInstall, userInstall];
+  /// @nodoc
+  const ApplicationIntegrationType(super.value);
 
-  factory ApplicationIntegrationType.parse(int value) => parseEnum(values, value);
-
-  const ApplicationIntegrationType._(super.value);
+  ApplicationIntegrationType.parse(int value) : this(value);
 }
 
 /// Flags for an [Application].
@@ -317,28 +316,18 @@ class ApplicationRoleConnectionMetadata with ToStringHelper {
 }
 
 /// The type of an [ApplicationRoleConnectionMetadata].
-final class ConnectionMetadataType extends EnumLike<int> {
-  static const integerLessThanOrEqual = ConnectionMetadataType._(1);
-  static const integerGreaterThanOrEqual = ConnectionMetadataType._(2);
-  static const integerEqual = ConnectionMetadataType._(3);
-  static const integerNotEqual = ConnectionMetadataType._(4);
-  static const dateTimeLessThanOrEqual = ConnectionMetadataType._(5);
-  static const dateTimeGreaterThanOrEqual = ConnectionMetadataType._(6);
-  static const booleanEqual = ConnectionMetadataType._(7);
-  static const booleanNotEqual = ConnectionMetadataType._(8);
+final class ConnectionMetadataType extends EnumLike<int, ConnectionMetadataType> {
+  static const integerLessThanOrEqual = ConnectionMetadataType(1);
+  static const integerGreaterThanOrEqual = ConnectionMetadataType(2);
+  static const integerEqual = ConnectionMetadataType(3);
+  static const integerNotEqual = ConnectionMetadataType(4);
+  static const dateTimeLessThanOrEqual = ConnectionMetadataType(5);
+  static const dateTimeGreaterThanOrEqual = ConnectionMetadataType(6);
+  static const booleanEqual = ConnectionMetadataType(7);
+  static const booleanNotEqual = ConnectionMetadataType(8);
 
-  static const values = [
-    integerLessThanOrEqual,
-    integerGreaterThanOrEqual,
-    integerEqual,
-    integerNotEqual,
-    dateTimeLessThanOrEqual,
-    dateTimeGreaterThanOrEqual,
-    booleanEqual,
-    booleanNotEqual,
-  ];
+  /// @nodoc
+  const ConnectionMetadataType(super.value);
 
-  const ConnectionMetadataType._(super.value);
-
-  factory ConnectionMetadataType.parse(int value) => parseEnum(values, value);
+  ConnectionMetadataType.parse(int value) : this(value);
 }

@@ -26,25 +26,20 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
-final class InteractionContextType extends EnumLike<int> {
+final class InteractionContextType extends EnumLike<int, InteractionContextType> {
   /// Interaction can be used within servers.
-  static const InteractionContextType guild = InteractionContextType._(0);
+  static const InteractionContextType guild = InteractionContextType(0);
 
   /// Interaction can be used within DMs with the app's bot user.
-  static const InteractionContextType botDm = InteractionContextType._(1);
+  static const InteractionContextType botDm = InteractionContextType(1);
 
   /// Interaction can be used within Group DMs and DMs other than the app's bot user.
-  static const InteractionContextType privateChannel = InteractionContextType._(2);
+  static const InteractionContextType privateChannel = InteractionContextType(2);
 
-  static const List<InteractionContextType> values = [
-    guild,
-    botDm,
-    privateChannel,
-  ];
+  /// @nodoc
+  const InteractionContextType(super.value);
 
-  const InteractionContextType._(super.value);
-
-  factory InteractionContextType.parse(int value) => parseEnum(values, value);
+  InteractionContextType.parse(int value) : this(value);
 }
 
 /// {@template interaction}
@@ -422,24 +417,17 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
 }
 
 /// The type of an interaction.
-final class InteractionType extends EnumLike<int> {
-  static const InteractionType ping = InteractionType._(1);
-  static const InteractionType applicationCommand = InteractionType._(2);
-  static const InteractionType messageComponent = InteractionType._(3);
-  static const InteractionType applicationCommandAutocomplete = InteractionType._(4);
-  static const InteractionType modalSubmit = InteractionType._(5);
+final class InteractionType extends EnumLike<int, InteractionType> {
+  static const ping = InteractionType(1);
+  static const applicationCommand = InteractionType(2);
+  static const messageComponent = InteractionType(3);
+  static const applicationCommandAutocomplete = InteractionType(4);
+  static const modalSubmit = InteractionType(5);
 
-  static const List<InteractionType> values = [
-    ping,
-    applicationCommand,
-    messageComponent,
-    applicationCommandAutocomplete,
-    modalSubmit,
-  ];
+  /// @nodoc
+  const InteractionType(super.value);
 
-  const InteractionType._(super.value);
-
-  factory InteractionType.parse(int value) => parseEnum(values, value);
+  InteractionType.parse(int value) : this(value);
 }
 
 /// {@template application_command_interaction_data}

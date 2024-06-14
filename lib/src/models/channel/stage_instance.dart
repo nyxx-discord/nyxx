@@ -59,13 +59,12 @@ class StageInstance extends SnowflakeEntity<StageInstance> {
 }
 
 /// The privacy level of a [StageInstance].
-final class PrivacyLevel extends EnumLike<int> {
-  static const public = PrivacyLevel._(1);
-  static const guildOnly = PrivacyLevel._(2);
+final class PrivacyLevel extends EnumLike<int, PrivacyLevel> {
+  static const public = PrivacyLevel(1);
+  static const guildOnly = PrivacyLevel(2);
 
-  static const List<PrivacyLevel> values = [public, guildOnly];
+  /// @nodoc
+  const PrivacyLevel(super.value);
 
-  const PrivacyLevel._(super.value);
-
-  factory PrivacyLevel.parse(int value) => parseEnum(values, value);
+  PrivacyLevel.parse(int value) : this(value);
 }

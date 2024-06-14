@@ -84,42 +84,40 @@ class AutoModerationRule extends PartialAutoModerationRule {
 }
 
 /// The type of event on which an [AutoModerationRule] triggers.
-final class AutoModerationEventType extends EnumLike<int> {
+final class AutoModerationEventType extends EnumLike<int, AutoModerationEventType> {
   /// When a member sends or edits a message in the guild.
-  static const AutoModerationEventType messageSend = AutoModerationEventType._(1);
+  static const messageSend = AutoModerationEventType(1);
 
   /// When a member edits their profile.
-  static const AutoModerationEventType memberUpdate = AutoModerationEventType._(2);
+  static const memberUpdate = AutoModerationEventType(2);
 
-  static const List<AutoModerationEventType> values = [messageSend, memberUpdate];
+  /// @nodoc
+  const AutoModerationEventType(super.value);
 
-  const AutoModerationEventType._(super.value);
-
-  factory AutoModerationEventType.parse(int value) => parseEnum(values, value);
+  AutoModerationEventType.parse(int value) : this(value);
 }
 
 /// The type of a trigger for an [AutoModerationRule]
-final class TriggerType extends EnumLike<int> {
+final class TriggerType extends EnumLike<int, TriggerType> {
   /// Check if content contains words from a user defined list of keywords.
-  static const TriggerType keyword = TriggerType._(1);
+  static const keyword = TriggerType(1);
 
   /// Check if content represents generic spam.
-  static const TriggerType spam = TriggerType._(3);
+  static const spam = TriggerType(3);
 
   /// Check if content contains words from internal pre-defined wordsets.
-  static const TriggerType keywordPreset = TriggerType._(4);
+  static const keywordPreset = TriggerType(4);
 
   /// Check if content contains more unique mentions than allowed.
-  static const TriggerType mentionSpam = TriggerType._(5);
+  static const mentionSpam = TriggerType(5);
 
   /// Check if member profile contains words from a user defined list of keywords.
-  static const TriggerType memberProfile = TriggerType._(6);
+  static const memberProfile = TriggerType(6);
 
-  static const List<TriggerType> values = [keyword, spam, keywordPreset, mentionSpam, memberProfile];
+  /// @nodoc
+  const TriggerType(super.value);
 
-  const TriggerType._(super.value);
-
-  factory TriggerType.parse(int value) => parseEnum(values, value);
+  TriggerType.parse(int value) : this(value);
 }
 
 /// {@template trigger_metadata}
@@ -170,16 +168,15 @@ class TriggerMetadata with ToStringHelper implements TriggerMetadataBuilder {
 }
 
 /// A preset list of trigger keywords for an [AutoModerationRule].
-final class KeywordPresetType extends EnumLike<int> {
-  static const profanity = KeywordPresetType._(1);
-  static const sexualContent = KeywordPresetType._(2);
-  static const slurs = KeywordPresetType._(3);
+final class KeywordPresetType extends EnumLike<int, KeywordPresetType> {
+  static const profanity = KeywordPresetType(1);
+  static const sexualContent = KeywordPresetType(2);
+  static const slurs = KeywordPresetType(3);
 
-  static const values = [profanity, sexualContent, slurs];
+  /// @nodoc
+  const KeywordPresetType(super.value);
 
-  const KeywordPresetType._(super.value);
-
-  factory KeywordPresetType.parse(int value) => parseEnum(values, value);
+  KeywordPresetType.parse(int value) : this(value);
 }
 
 /// {@template auto_moderation_action}
@@ -209,17 +206,16 @@ class AutoModerationAction with ToStringHelper implements AutoModerationActionBu
 }
 
 /// The type of action for an [AutoModerationAction].
-final class ActionType extends EnumLike<int> {
-  static const blockMessage = ActionType._(1);
-  static const sendAlertMessage = ActionType._(2);
-  static const timeout = ActionType._(3);
-  static const blockMemberInteraction = ActionType._(4);
+final class ActionType extends EnumLike<int, ActionType> {
+  static const blockMessage = ActionType(1);
+  static const sendAlertMessage = ActionType(2);
+  static const timeout = ActionType(3);
+  static const blockMemberInteraction = ActionType(4);
 
-  static const values = [blockMessage, sendAlertMessage, timeout, blockMemberInteraction];
+  /// @nodoc
+  const ActionType(super.value);
 
-  const ActionType._(super.value);
-
-  factory ActionType.parse(int value) => parseEnum(values, value);
+  ActionType.parse(int value) : this(value);
 }
 
 /// {@template action_metadata}

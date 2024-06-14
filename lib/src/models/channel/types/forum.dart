@@ -185,26 +185,24 @@ class DefaultReaction with ToStringHelper {
 }
 
 /// The sorting order in a [ForumChannel].
-final class ForumSort extends EnumLike<int> {
-  static const latestActivity = ForumSort._(0);
-  static const creationDate = ForumSort._(1);
+final class ForumSort extends EnumLike<int, ForumSort> {
+  static const latestActivity = ForumSort(0);
+  static const creationDate = ForumSort(1);
 
-  static const values = [latestActivity, creationDate];
+  /// @nodoc
+  const ForumSort(super.value);
 
-  const ForumSort._(super.value);
-
-  factory ForumSort.parse(int value) => parseEnum(values, value);
+  ForumSort.parse(int value) : this(value);
 }
 
 /// The layout in a [ForumChannel].
-final class ForumLayout extends EnumLike<int> {
-  static const notSet = ForumLayout._(0);
-  static const listView = ForumLayout._(1);
-  static const galleryView = ForumLayout._(2);
+final class ForumLayout extends EnumLike<int, ForumLayout> {
+  static const notSet = ForumLayout(0);
+  static const listView = ForumLayout(1);
+  static const galleryView = ForumLayout(2);
 
-  static const values = [notSet, listView, galleryView];
+  /// @nodoc
+  const ForumLayout(super.value);
 
-  const ForumLayout._(super.value);
-
-  factory ForumLayout.parse(int value) => parseEnum(values, value);
+  ForumLayout.parse(int value) : this(value);
 }

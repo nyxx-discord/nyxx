@@ -26,15 +26,14 @@ class MessageActivity with ToStringHelper {
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-activity-types
-final class MessageActivityType extends EnumLike<int> {
-  static const join = MessageActivityType._(1);
-  static const spectate = MessageActivityType._(2);
-  static const listen = MessageActivityType._(3);
-  static const joinRequest = MessageActivityType._(5);
+final class MessageActivityType extends EnumLike<int, MessageActivityType> {
+  static const join = MessageActivityType(1);
+  static const spectate = MessageActivityType(2);
+  static const listen = MessageActivityType(3);
+  static const joinRequest = MessageActivityType(5);
 
-  static const List<MessageActivityType> values = [join, spectate, listen, joinRequest];
+  /// @nodoc
+  const MessageActivityType(super.value);
 
-  const MessageActivityType._(super.value);
-
-  factory MessageActivityType.parse(int value) => parseEnum(values, value);
+  MessageActivityType.parse(int value) : this(value);
 }

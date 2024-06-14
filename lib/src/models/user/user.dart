@@ -228,15 +228,14 @@ class UserFlags extends Flags<UserFlags> {
 }
 
 /// The types of Discord Nitro subscription a user can have.
-final class NitroType extends EnumLike<int> {
-  static const none = NitroType._(0);
-  static const classic = NitroType._(1);
-  static const nitro = NitroType._(2);
-  static const basic = NitroType._(3);
+final class NitroType extends EnumLike<int, NitroType> {
+  static const none = NitroType(0);
+  static const classic = NitroType(1);
+  static const nitro = NitroType(2);
+  static const basic = NitroType(3);
 
-  static const List<NitroType> values = [none, classic, nitro, basic];
+  /// @nodoc
+  const NitroType(super.value);
 
-  const NitroType._(super.value);
-
-  factory NitroType.parse(int value) => parseEnum(values, value);
+  NitroType.parse(int value) : this(value);
 }

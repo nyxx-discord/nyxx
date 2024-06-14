@@ -49,65 +49,50 @@ abstract class Channel extends PartialChannel {
 }
 
 /// The type of a channel.
-final class ChannelType extends EnumLike<int> {
+final class ChannelType extends EnumLike<int, ChannelType> {
   /// A text channel in a [Guild].
-  static const guildText = ChannelType._(0);
+  static const guildText = ChannelType(0);
 
   /// A DM channel with a single other recipient.
-  static const dm = ChannelType._(1);
+  static const dm = ChannelType(1);
 
   /// A voice channel in a [Guild].
-  static const guildVoice = ChannelType._(2);
+  static const guildVoice = ChannelType(2);
 
   /// A DM channel with multiple recipients.
-  static const groupDm = ChannelType._(3);
+  static const groupDm = ChannelType(3);
 
   /// A category in a [Guild].
-  static const guildCategory = ChannelType._(4);
+  static const guildCategory = ChannelType(4);
 
   /// An announcement channel in a [Guild].
-  static const guildAnnouncement = ChannelType._(5);
+  static const guildAnnouncement = ChannelType(5);
 
   /// A [Thread] in an announcement channel.
-  static const announcementThread = ChannelType._(10);
+  static const announcementThread = ChannelType(10);
 
   /// A public thread.
-  static const publicThread = ChannelType._(11);
+  static const publicThread = ChannelType(11);
 
   /// A private thread.
-  static const privateThread = ChannelType._(12);
+  static const privateThread = ChannelType(12);
 
   /// A stage channel in a [Guild].
-  static const guildStageVoice = ChannelType._(13);
+  static const guildStageVoice = ChannelType(13);
 
   /// A [Guild] directory.
-  static const guildDirectory = ChannelType._(14);
+  static const guildDirectory = ChannelType(14);
 
   /// A forum channel in a [Guild].
-  static const guildForum = ChannelType._(15);
+  static const guildForum = ChannelType(15);
 
   /// A media channel in a [Guild].
-  static const guildMedia = ChannelType._(16);
+  static const guildMedia = ChannelType(16);
 
-  static const List<ChannelType> values = [
-    guildText,
-    dm,
-    guildVoice,
-    groupDm,
-    guildCategory,
-    guildAnnouncement,
-    announcementThread,
-    publicThread,
-    privateThread,
-    guildStageVoice,
-    guildDirectory,
-    guildForum,
-    guildMedia,
-  ];
+  /// @nodoc
+  const ChannelType(super.value);
 
-  const ChannelType._(super.value);
-
-  factory ChannelType.parse(int value) => parseEnum(values, value);
+  ChannelType.parse(int value) : this(value);
 }
 
 /// A set of flags applied to channels.

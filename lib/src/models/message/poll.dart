@@ -6,15 +6,14 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#layout-type
-final class PollLayoutType extends EnumLike<int> {
+final class PollLayoutType extends EnumLike<int, PollLayoutType> {
   /// The default layout type.
-  static const defaultLayout = PollLayoutType._(1);
+  static const defaultLayout = PollLayoutType(1);
 
-  static const List<PollLayoutType> values = [defaultLayout];
+  /// @nodoc
+  const PollLayoutType(super.value);
 
-  const PollLayoutType._(super.value);
-
-  factory PollLayoutType.parse(int value) => parseEnum(values, value);
+  PollLayoutType.parse(int value) : this(value);
 }
 
 /// {@template poll_media}

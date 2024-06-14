@@ -82,29 +82,26 @@ class TeamMember with ToStringHelper {
 }
 
 /// The status of a member in a [Team].
-final class TeamMembershipState extends EnumLike<int> {
+final class TeamMembershipState extends EnumLike<int, TeamMembershipState> {
   /// The user has been invited to the team.
-  static const TeamMembershipState invited = TeamMembershipState._(1);
+  static const invited = TeamMembershipState(1);
 
   /// The user has accepted the invitation to the team.
-  static const TeamMembershipState accepted = TeamMembershipState._(2);
+  static const accepted = TeamMembershipState(2);
 
-  static const List<TeamMembershipState> values = [invited, accepted];
+  /// @nodoc
+  const TeamMembershipState(super.value);
 
-  const TeamMembershipState._(super.value);
-
-  factory TeamMembershipState.parse(int value) => parseEnum(values, value);
+  TeamMembershipState.parse(int value) : this(value);
 }
 
 /// The role of a [TeamMember].
-final class TeamMemberRole extends EnumLike<String> {
-  static const admin = TeamMemberRole._('admin');
-  static const developer = TeamMemberRole._('developer');
-  static const readOnly = TeamMemberRole._('read_only');
+final class TeamMemberRole extends EnumLike<String, TeamMemberRole> {
+  static const admin = TeamMemberRole('admin');
+  static const developer = TeamMemberRole('developer');
+  static const readOnly = TeamMemberRole('read_only');
 
-  static const List<TeamMemberRole> values = [admin, developer, readOnly];
+  const TeamMemberRole(super.value);
 
-  const TeamMemberRole._(super.value);
-
-  factory TeamMemberRole.parse(String value) => parseEnum(values, value);
+  TeamMemberRole.parse(String value) : this(value);
 }

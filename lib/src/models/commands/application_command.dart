@@ -101,19 +101,18 @@ class ApplicationCommand extends PartialApplicationCommand {
 }
 
 /// The type of an [ApplicationCommand].
-final class ApplicationCommandType extends EnumLike<int> {
+final class ApplicationCommandType extends EnumLike<int, ApplicationCommandType> {
   /// A chat input command.
-  static const ApplicationCommandType chatInput = ApplicationCommandType._(1);
+  static const chatInput = ApplicationCommandType(1);
 
   /// A user command.
-  static const ApplicationCommandType user = ApplicationCommandType._(2);
+  static const user = ApplicationCommandType(2);
 
   /// A message command.
-  static const ApplicationCommandType message = ApplicationCommandType._(3);
+  static const message = ApplicationCommandType(3);
 
-  static const List<ApplicationCommandType> values = [chatInput, user, message];
+  /// @nodoc
+  const ApplicationCommandType(super.value);
 
-  const ApplicationCommandType._(super.value);
-
-  factory ApplicationCommandType.parse(int value) => parseEnum(values, value);
+  ApplicationCommandType.parse(int value) : this(value);
 }

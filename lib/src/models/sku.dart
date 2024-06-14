@@ -47,29 +47,23 @@ class Sku with ToStringHelper {
 }
 
 /// The type of an [Sku].
-final class SkuType extends EnumLike<int> {
+final class SkuType extends EnumLike<int, SkuType> {
   /// Durable one-time purchase.
-  static const SkuType durable = SkuType._(2);
+  static const durable = SkuType(2);
 
   /// Consumable one-time purchase.
-  static const SkuType consumable = SkuType._(3);
+  static const consumable = SkuType(3);
 
   /// Subscription.
-  static const SkuType subscription = SkuType._(5);
+  static const subscription = SkuType(5);
 
   /// Subscription group.
-  static const SkuType subscriptionGroup = SkuType._(6);
+  static const subscriptionGroup = SkuType(6);
 
-  static const List<SkuType> values = [
-    durable,
-    consumable,
-    subscription,
-    subscriptionGroup,
-  ];
+  /// @nodoc
+  const SkuType(super.value);
 
-  const SkuType._(super.value);
-
-  factory SkuType.parse(int value) => parseEnum(values, value);
+  SkuType.parse(int value) : this(value);
 }
 
 /// Flags applied to an [Sku].

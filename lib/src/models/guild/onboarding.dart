@@ -83,15 +83,14 @@ class OnboardingPrompt with ToStringHelper {
 }
 
 /// The type of an [Onboarding] prompt.
-final class OnboardingPromptType extends EnumLike<int> {
-  static const multipleChoice = OnboardingPromptType._(0);
-  static const dropdown = OnboardingPromptType._(1);
+final class OnboardingPromptType extends EnumLike<int, OnboardingPromptType> {
+  static const multipleChoice = OnboardingPromptType(0);
+  static const dropdown = OnboardingPromptType(1);
 
-  static const List<OnboardingPromptType> values = [multipleChoice, dropdown];
+  /// @nodoc
+  const OnboardingPromptType(super.value);
 
-  const OnboardingPromptType._(super.value);
-
-  factory OnboardingPromptType.parse(int value) => parseEnum(values, value);
+  OnboardingPromptType.parse(int value) : this(value);
 }
 
 /// {@template onboarding_prompt_option}

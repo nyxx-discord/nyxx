@@ -17,16 +17,15 @@ abstract class VoiceChannel implements Channel {
 }
 
 /// The quality mode of cameras in a [VoiceChannel].
-final class VideoQualityMode extends EnumLike<int> {
+final class VideoQualityMode extends EnumLike<int, VideoQualityMode> {
   /// Automatic.
-  static const VideoQualityMode auto = VideoQualityMode._(1);
+  static const auto = VideoQualityMode(1);
 
   /// 720p.
-  static const VideoQualityMode full = VideoQualityMode._(2);
+  static const full = VideoQualityMode(2);
 
-  static const List<VideoQualityMode> values = [auto, full];
+  /// @nodoc
+  const VideoQualityMode(super.value);
 
-  const VideoQualityMode._(super.value);
-
-  factory VideoQualityMode.parse(int value) => parseEnum(values, value);
+  VideoQualityMode.parse(int value) : this(value);
 }

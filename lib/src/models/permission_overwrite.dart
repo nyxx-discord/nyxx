@@ -43,16 +43,15 @@ class PermissionOverwrite with ToStringHelper {
 }
 
 /// The type of a permission overwrite.
-final class PermissionOverwriteType extends EnumLike<int> {
+final class PermissionOverwriteType extends EnumLike<int, PermissionOverwriteType> {
   /// The overwrite applies to a [Role]'s permissions.
-  static const role = PermissionOverwriteType._(0);
+  static const role = PermissionOverwriteType(0);
 
   /// The overwrite applies to a [Member]'s permissions.
-  static const member = PermissionOverwriteType._(1);
+  static const member = PermissionOverwriteType(1);
 
-  static const values = [role, member];
+  /// @nodoc
+  const PermissionOverwriteType(super.value);
 
-  const PermissionOverwriteType._(super.value);
-
-  factory PermissionOverwriteType.parse(int value) => parseEnum(values, value);
+  PermissionOverwriteType.parse(int value) : this(value);
 }

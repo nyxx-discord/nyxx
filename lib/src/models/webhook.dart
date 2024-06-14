@@ -174,19 +174,18 @@ class Webhook extends PartialWebhook {
 }
 
 /// The type of a [Webhook].
-final class WebhookType extends EnumLike<int> {
+final class WebhookType extends EnumLike<int, WebhookType> {
   /// A webhook which sends messages to a channel using a [Webhook.token].
-  static const WebhookType incoming = WebhookType._(1);
+  static const incoming = WebhookType(1);
 
   /// An internal webhook used to manage Channel Followers.
-  static const WebhookType channelFollower = WebhookType._(2);
+  static const channelFollower = WebhookType(2);
 
   /// A webhook for use with interactions.
-  static const WebhookType application = WebhookType._(3);
+  static const application = WebhookType(3);
 
-  static const List<WebhookType> values = [incoming, channelFollower, application];
+  /// @nodoc
+  const WebhookType(super.value);
 
-  const WebhookType._(super.value);
-
-  factory WebhookType.parse(int value) => parseEnum(values, value);
+  WebhookType.parse(int value) : this(value);
 }

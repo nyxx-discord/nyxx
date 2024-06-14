@@ -71,36 +71,23 @@ class CommandOption with ToStringHelper {
 }
 
 /// The type of a [CommandOption].
-final class CommandOptionType extends EnumLike<int> {
-  static const subCommand = CommandOptionType._(1);
-  static const subCommandGroup = CommandOptionType._(2);
-  static const string = CommandOptionType._(3);
-  static const integer = CommandOptionType._(4);
-  static const boolean = CommandOptionType._(5);
-  static const user = CommandOptionType._(6);
-  static const channel = CommandOptionType._(7);
-  static const role = CommandOptionType._(8);
-  static const mentionable = CommandOptionType._(9);
-  static const number = CommandOptionType._(10);
-  static const attachment = CommandOptionType._(11);
+final class CommandOptionType extends EnumLike<int, CommandOptionType> {
+  static const subCommand = CommandOptionType(1);
+  static const subCommandGroup = CommandOptionType(2);
+  static const string = CommandOptionType(3);
+  static const integer = CommandOptionType(4);
+  static const boolean = CommandOptionType(5);
+  static const user = CommandOptionType(6);
+  static const channel = CommandOptionType(7);
+  static const role = CommandOptionType(8);
+  static const mentionable = CommandOptionType(9);
+  static const number = CommandOptionType(10);
+  static const attachment = CommandOptionType(11);
 
-  static const values = [
-    subCommand,
-    subCommandGroup,
-    string,
-    integer,
-    boolean,
-    user,
-    channel,
-    role,
-    mentionable,
-    number,
-    attachment,
-  ];
+  /// @nodoc
+  const CommandOptionType(super.value);
 
-  const CommandOptionType._(super.value);
-
-  factory CommandOptionType.parse(int value) => parseEnum(values, value);
+  CommandOptionType.parse(int value) : this(value);
 }
 
 /// {@template command_option_choice}

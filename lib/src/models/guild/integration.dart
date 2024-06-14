@@ -95,15 +95,14 @@ class Integration extends PartialIntegration {
 }
 
 /// The behavior of an integration when a member's subscription expires.
-final class IntegrationExpireBehavior extends EnumLike<int> {
-  static const removeRole = IntegrationExpireBehavior._(0);
-  static const kick = IntegrationExpireBehavior._(1);
+final class IntegrationExpireBehavior extends EnumLike<int, IntegrationExpireBehavior> {
+  static const removeRole = IntegrationExpireBehavior(0);
+  static const kick = IntegrationExpireBehavior(1);
 
-  static const List<IntegrationExpireBehavior> values = [removeRole, kick];
+  /// @nodoc
+  const IntegrationExpireBehavior(super.value);
 
-  const IntegrationExpireBehavior._(super.value);
-
-  factory IntegrationExpireBehavior.parse(int value) => parseEnum(values, value);
+  IntegrationExpireBehavior.parse(int value) : this(value);
 }
 
 /// {@template integration_account}

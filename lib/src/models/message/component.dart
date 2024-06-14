@@ -5,21 +5,20 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// The type of a [MessageComponent].
-final class MessageComponentType extends EnumLike<int> {
-  static const actionRow = MessageComponentType._(1);
-  static const button = MessageComponentType._(2);
-  static const stringSelect = MessageComponentType._(3);
-  static const textInput = MessageComponentType._(4);
-  static const userSelect = MessageComponentType._(5);
-  static const roleSelect = MessageComponentType._(6);
-  static const mentionableSelect = MessageComponentType._(7);
-  static const channelSelect = MessageComponentType._(8);
+final class MessageComponentType extends EnumLike<int, MessageComponentType> {
+  static const actionRow = MessageComponentType(1);
+  static const button = MessageComponentType(2);
+  static const stringSelect = MessageComponentType(3);
+  static const textInput = MessageComponentType(4);
+  static const userSelect = MessageComponentType(5);
+  static const roleSelect = MessageComponentType(6);
+  static const mentionableSelect = MessageComponentType(7);
+  static const channelSelect = MessageComponentType(8);
 
-  static const List<MessageComponentType> values = [actionRow, button, stringSelect, textInput, userSelect, roleSelect, mentionableSelect, channelSelect];
+  /// @nodoc
+  const MessageComponentType(super.value);
 
-  const MessageComponentType._(super.value);
-
-  factory MessageComponentType.parse(int value) => parseEnum(values, value);
+  MessageComponentType.parse(int value) : this(value);
 }
 
 /// A component in a [Message].
@@ -77,18 +76,17 @@ class ButtonComponent extends MessageComponent {
 }
 
 /// The style of a [ButtonComponent].
-final class ButtonStyle extends EnumLike<int> {
-  static const primary = ButtonStyle._(1);
-  static const secondary = ButtonStyle._(2);
-  static const success = ButtonStyle._(3);
-  static const danger = ButtonStyle._(4);
-  static const link = ButtonStyle._(5);
+final class ButtonStyle extends EnumLike<int, ButtonStyle> {
+  static const primary = ButtonStyle(1);
+  static const secondary = ButtonStyle(2);
+  static const success = ButtonStyle(3);
+  static const danger = ButtonStyle(4);
+  static const link = ButtonStyle(5);
 
-  static const List<ButtonStyle> values = [primary, secondary, success, danger, link];
+  /// @nodoc
+  const ButtonStyle(super.value);
 
-  const ButtonStyle._(super.value);
-
-  factory ButtonStyle.parse(int value) => parseEnum(values, value);
+  ButtonStyle.parse(int value) : this(value);
 }
 
 /// A dropdown menu in which users can select from on or more choices.
@@ -140,16 +138,15 @@ class SelectMenuComponent extends MessageComponent {
 }
 
 /// The type of a [SelectMenuDefaultValue].
-final class SelectMenuDefaultValueType extends EnumLike<String> {
-  static const user = SelectMenuDefaultValueType._('user');
-  static const role = SelectMenuDefaultValueType._('role');
-  static const channel = SelectMenuDefaultValueType._('channel');
+final class SelectMenuDefaultValueType extends EnumLike<String, SelectMenuDefaultValueType> {
+  static const user = SelectMenuDefaultValueType('user');
+  static const role = SelectMenuDefaultValueType('role');
+  static const channel = SelectMenuDefaultValueType('channel');
 
-  static const List<SelectMenuDefaultValueType> values = [user, role, channel];
+  /// @nodoc
+  const SelectMenuDefaultValueType(super.value);
 
-  const SelectMenuDefaultValueType._(super.value);
-
-  factory SelectMenuDefaultValueType.parse(String value) => parseEnum(values, value);
+  SelectMenuDefaultValueType.parse(String value) : this(value);
 }
 
 /// A default value in a [SelectMenuComponent].
@@ -237,13 +234,12 @@ class TextInputComponent extends MessageComponent {
 }
 
 /// The type of a [TextInputComponent].
-final class TextInputStyle extends EnumLike<int> {
-  static const short = TextInputStyle._(1);
-  static const paragraph = TextInputStyle._(2);
+final class TextInputStyle extends EnumLike<int, TextInputStyle> {
+  static const short = TextInputStyle(1);
+  static const paragraph = TextInputStyle(2);
 
-  static const List<TextInputStyle> values = [short, paragraph];
+  /// @nodoc
+  const TextInputStyle(super.value);
 
-  const TextInputStyle._(super.value);
-
-  factory TextInputStyle.parse(int value) => parseEnum(values, value);
+  TextInputStyle.parse(int value) : this(value);
 }
