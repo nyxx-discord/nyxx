@@ -38,6 +38,8 @@ class ButtonBuilder extends MessageComponentBuilder {
 
   String? customId;
 
+  Snowflake? skuId;
+
   Uri? url;
 
   bool? isDisabled;
@@ -47,6 +49,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.label,
     this.emoji,
     this.customId,
+    this.skuId,
     this.url,
     this.isDisabled,
   }) : super(type: MessageComponentType.button);
@@ -91,6 +94,14 @@ class ButtonBuilder extends MessageComponentBuilder {
   })  : style = ButtonStyle.link,
         super(type: MessageComponentType.button);
 
+  ButtonBuilder.premium({
+    this.label,
+    this.emoji,
+    required Snowflake this.skuId,
+    this.isDisabled,
+  })  : style = ButtonStyle.premium,
+        super(type: MessageComponentType.button);
+
   @override
   Map<String, Object?> build() => {
         ...super.build(),
@@ -103,6 +114,7 @@ class ButtonBuilder extends MessageComponentBuilder {
             if (emoji is GuildEmoji) 'animated': (emoji as GuildEmoji).isAnimated == true,
           },
         if (customId != null) 'custom_id': customId,
+        if (skuId != null) 'sku_id': skuId.toString(),
         if (url != null) 'url': url!.toString(),
         if (isDisabled != null) 'disabled': isDisabled,
       };
