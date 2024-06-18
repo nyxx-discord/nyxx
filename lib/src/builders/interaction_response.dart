@@ -54,6 +54,7 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.modal(ModalBuilder modal) => InteractionResponseBuilder(type: InteractionCallbackType.modal, data: modal);
 
+  @Deprecated('Respond with ButtonStyle.premium button instead')
   factory InteractionResponseBuilder.premiumRequired() => InteractionResponseBuilder(type: InteractionCallbackType.premiumRequired, data: null);
 
   @override
@@ -111,6 +112,7 @@ enum InteractionCallbackType {
   updateMessage._(7),
   applicationCommandAutocompleteResult._(8),
   modal._(9),
+  @Deprecated('Respond with ButtonStyle.premium button instead')
   premiumRequired._(10);
 
   final int value;

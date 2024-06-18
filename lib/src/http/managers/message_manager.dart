@@ -256,6 +256,7 @@ class MessageManager extends Manager<Message> {
           label: raw['label'] as String?,
           emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
           customId: raw['custom_id'] as String?,
+          skuId: maybeParse(raw['sku_id'], Snowflake.parse),
           url: maybeParse(raw['url'], Uri.parse),
           isDisabled: raw['disabled'] as bool?,
         ),

@@ -67,6 +67,9 @@ class ButtonComponent extends MessageComponent {
   /// This component's custom ID.
   final String? customId;
 
+  /// The purchasable SKU ID, if this button has [ButtonStyle.premium] style.
+  final Snowflake? skuId;
+
   /// The URL this button redirects to, if this button is a URL button.
   final Uri? url;
 
@@ -80,6 +83,7 @@ class ButtonComponent extends MessageComponent {
     required this.label,
     required this.emoji,
     required this.customId,
+    required this.skuId,
     required this.url,
     required this.isDisabled,
   });
@@ -91,7 +95,8 @@ enum ButtonStyle {
   secondary._(2),
   success._(3),
   danger._(4),
-  link._(5);
+  link._(5),
+  premium._(6);
 
   /// The value of this [ButtonStyle].
   final int value;
