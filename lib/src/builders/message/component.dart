@@ -95,8 +95,6 @@ class ButtonBuilder extends MessageComponentBuilder {
         super(type: MessageComponentType.button);
 
   ButtonBuilder.premium({
-    this.label,
-    this.emoji,
     required Snowflake this.skuId,
     this.isDisabled,
   })  : style = ButtonStyle.premium,
