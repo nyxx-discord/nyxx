@@ -88,7 +88,7 @@ final class ButtonStyle extends EnumLike<int, ButtonStyle> {
   static const danger = ButtonStyle(4);
   static const link = ButtonStyle(5);
   static const premium = ButtonStyle(6);
-  
+
   /// @nodoc
   const ButtonStyle(super.value);
 
