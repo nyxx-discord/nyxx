@@ -30,7 +30,7 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
       userId: maybeParse(raw['user_id'], Snowflake.parse),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       applicationId: Snowflake.parse(raw['application_id']!),
-      type: EntitlementType.parse(raw['type'] as int),
+      type: EntitlementType(raw['type'] as int),
       isConsumed: raw['consumed'] as bool? ?? false,
       isDeleted: raw['deleted'] as bool? ?? false,
       startsAt: maybeParse(raw['starts_at'], DateTime.parse),

@@ -104,5 +104,6 @@ final class EntitlementType extends EnumLike<int, EntitlementType> {
 
   const EntitlementType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   EntitlementType.parse(int value) : this(value);
 }

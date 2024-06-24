@@ -477,6 +477,7 @@ final class VerificationLevel extends EnumLike<int, VerificationLevel> {
   /// @nodoc
   const VerificationLevel(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   VerificationLevel.parse(int value) : this(value);
 }
 
@@ -488,6 +489,7 @@ final class MessageNotificationLevel extends EnumLike<int, MessageNotificationLe
   /// @nodoc
   const MessageNotificationLevel(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   MessageNotificationLevel.parse(int value) : this(value);
 }
 
@@ -500,6 +502,7 @@ final class ExplicitContentFilterLevel extends EnumLike<int, ExplicitContentFilt
   /// @nodoc
   const ExplicitContentFilterLevel(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ExplicitContentFilterLevel.parse(int value) : this(value);
 }
 
@@ -680,6 +683,7 @@ final class MfaLevel extends EnumLike<int, MfaLevel> {
   /// @nodoc
   const MfaLevel(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   MfaLevel.parse(int value) : this(value);
 }
 
@@ -735,6 +739,7 @@ final class PremiumTier extends EnumLike<int, PremiumTier> {
   /// nodoc
   const PremiumTier(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   PremiumTier.parse(int value) : this(value);
 }
 
@@ -748,5 +753,6 @@ final class NsfwLevel extends EnumLike<int, NsfwLevel> {
   /// nodoc
   const NsfwLevel(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   NsfwLevel.parse(int value) : this(value);
 }

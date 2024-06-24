@@ -29,7 +29,7 @@ class IntegrationManager extends ReadOnlyManager<Integration> {
       isSyncing: raw['syncing'] as bool?,
       roleId: maybeParse(raw['role_id'], Snowflake.parse),
       enableEmoticons: raw['enable_emoticons'] as bool?,
-      expireBehavior: maybeParse(raw['expire_behavior'], IntegrationExpireBehavior.parse),
+      expireBehavior: maybeParse(raw['expire_behavior'], IntegrationExpireBehavior.new),
       expireGracePeriod: maybeParse(raw['expire_grace_period'], (int value) => Duration(days: value)),
       user: maybeParse(raw['user'], client.users.parse),
       account: parseIntegrationAccount(raw['account'] as Map<String, Object?>),

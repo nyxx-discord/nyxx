@@ -59,12 +59,12 @@ class GuildManager extends Manager<Guild> {
       afkTimeout: Duration(seconds: raw['afk_timeout'] as int),
       isWidgetEnabled: raw['widget_enabled'] as bool? ?? false,
       widgetChannelId: maybeParse(raw['widget_channel_id'], Snowflake.parse),
-      verificationLevel: VerificationLevel.parse(raw['verification_level'] as int),
-      defaultMessageNotificationLevel: MessageNotificationLevel.parse(raw['default_message_notifications'] as int),
-      explicitContentFilterLevel: ExplicitContentFilterLevel.parse(raw['explicit_content_filter'] as int),
+      verificationLevel: VerificationLevel(raw['verification_level'] as int),
+      defaultMessageNotificationLevel: MessageNotificationLevel(raw['default_message_notifications'] as int),
+      explicitContentFilterLevel: ExplicitContentFilterLevel(raw['explicit_content_filter'] as int),
       roleList: parseMany(raw['roles'] as List, this[id].roles.parse),
       features: parseGuildFeatures(raw['features'] as List),
-      mfaLevel: MfaLevel.parse(raw['mfa_level'] as int),
+      mfaLevel: MfaLevel(raw['mfa_level'] as int),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       systemChannelId: maybeParse(raw['system_channel_id'], Snowflake.parse),
       systemChannelFlags: SystemChannelFlags(raw['system_channel_flags'] as int),
@@ -74,7 +74,7 @@ class GuildManager extends Manager<Guild> {
       vanityUrlCode: raw['vanity_url_code'] as String?,
       description: raw['description'] as String?,
       bannerHash: raw['banner'] as String?,
-      premiumTier: PremiumTier.parse(raw['premium_tier'] as int),
+      premiumTier: PremiumTier(raw['premium_tier'] as int),
       premiumSubscriptionCount: raw['premium_subscription_count'] as int?,
       preferredLocale: Locale.parse(raw['preferred_locale'] as String),
       publicUpdatesChannelId: maybeParse(raw['public_updates_channel_id'], Snowflake.parse),
@@ -83,7 +83,7 @@ class GuildManager extends Manager<Guild> {
       approximateMemberCount: raw['approximate_member_count'] as int?,
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
       welcomeScreen: maybeParse(raw['welcome_screen'], parseWelcomeScreen),
-      nsfwLevel: NsfwLevel.parse(raw['nsfw_level'] as int),
+      nsfwLevel: NsfwLevel(raw['nsfw_level'] as int),
       hasPremiumProgressBarEnabled: raw['premium_progress_bar_enabled'] as bool,
       emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
       stickerList: parseMany(raw['stickers'] as List? ?? [], this[id].stickers.parse),
@@ -263,7 +263,7 @@ class GuildManager extends Manager<Guild> {
   OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw, {Snowflake? guildId}) {
     return OnboardingPrompt(
       id: Snowflake.parse(raw['id']!),
-      type: OnboardingPromptType.parse(raw['type'] as int),
+      type: OnboardingPromptType(raw['type'] as int),
       options: parseMany(raw['options'] as List, (Map<String, Object?> raw) => parseOnboardingPromptOption(raw, guildId: guildId)),
       title: raw['title'] as String,
       isSingleSelect: raw['single_select'] as bool,
@@ -534,7 +534,7 @@ class GuildManager extends Manager<Guild> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return MfaLevel.parse((response.jsonBody as Map<String, Object?>)['level'] as int);
+    return MfaLevel((response.jsonBody as Map<String, Object?>)['level'] as int);
   }
 
   /// Fetch the prune count in a guild.

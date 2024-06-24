@@ -32,6 +32,7 @@ final class UserStatus extends EnumLike<String, UserStatus> {
   /// @nodoc
   const UserStatus(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   UserStatus.parse(String value) : this(value);
 }
 
@@ -116,6 +117,7 @@ final class ActivityType extends EnumLike<int, ActivityType> {
 
   const ActivityType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ActivityType.parse(int value) : this(value);
 }
 

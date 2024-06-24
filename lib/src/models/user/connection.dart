@@ -109,5 +109,6 @@ final class ConnectionVisibility extends EnumLike<int, ConnectionVisibility> {
   /// @nodoc
   const ConnectionVisibility(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ConnectionVisibility.parse(int value) : this(value);
 }

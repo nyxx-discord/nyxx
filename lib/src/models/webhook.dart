@@ -187,5 +187,6 @@ final class WebhookType extends EnumLike<int, WebhookType> {
   /// @nodoc
   const WebhookType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   WebhookType.parse(int value) : this(value);
 }

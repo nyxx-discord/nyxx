@@ -143,6 +143,7 @@ final class AuditLogEvent extends EnumLike<int, AuditLogEvent> {
   /// @nodoc
   const AuditLogEvent(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   AuditLogEvent.parse(int value) : this(value);
 }
 

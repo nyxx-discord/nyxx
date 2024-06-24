@@ -192,6 +192,7 @@ final class ForumSort extends EnumLike<int, ForumSort> {
   /// @nodoc
   const ForumSort(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ForumSort.parse(int value) : this(value);
 }
 
@@ -204,5 +205,6 @@ final class ForumLayout extends EnumLike<int, ForumLayout> {
   /// @nodoc
   const ForumLayout(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ForumLayout.parse(int value) : this(value);
 }

@@ -88,5 +88,6 @@ final class CommandPermissionType extends EnumLike<int, CommandPermissionType> {
   /// @nodoc
   const CommandPermissionType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   CommandPermissionType.parse(int value) : this(value);
 }

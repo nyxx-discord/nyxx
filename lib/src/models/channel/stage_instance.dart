@@ -66,5 +66,6 @@ final class PrivacyLevel extends EnumLike<int, PrivacyLevel> {
   /// @nodoc
   const PrivacyLevel(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   PrivacyLevel.parse(int value) : this(value);
 }

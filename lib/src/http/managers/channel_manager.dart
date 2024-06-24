@@ -64,7 +64,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
   @override
   Channel parse(Map<String, Object?> raw, {Snowflake? guildId}) {
-    final type = ChannelType.parse(raw['type'] as int);
+    final type = ChannelType(raw['type'] as int);
 
     final parsers = {
       ChannelType.guildText: parseGuildTextChannel,
@@ -139,7 +139,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       rtcRegion: raw['rtc_region'] as String?,
       userLimit: raw['user_limit'] == 0 ? null : raw['user_limit'] as int?,
-      videoQualityMode: maybeParse(raw['video_quality_mode'], VideoQualityMode.parse) ?? VideoQualityMode.auto,
+      videoQualityMode: maybeParse(raw['video_quality_mode'], VideoQualityMode.new) ?? VideoQualityMode.auto,
     );
   }
 
@@ -305,7 +305,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       rtcRegion: raw['rtc_region'] as String?,
       userLimit: raw['user_limit'] == 0 ? null : raw['user_limit'] as int?,
-      videoQualityMode: maybeParse(raw['video_quality_mode'], VideoQualityMode.parse) ?? VideoQualityMode.auto,
+      videoQualityMode: maybeParse(raw['video_quality_mode'], VideoQualityMode.new) ?? VideoQualityMode.auto,
     );
   }
 
@@ -324,7 +324,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     return ForumChannel(
       id: Snowflake.parse(raw['id']!),
       manager: this,
-      defaultLayout: maybeParse(raw['default_forum_layout'], ForumLayout.parse),
+      defaultLayout: maybeParse(raw['default_forum_layout'], ForumLayout.new),
       topic: raw['topic'] as String?,
       rateLimitPerUser: maybeParse<Duration?, int>(raw['rate_limit_per_user'], (value) => value == 0 ? null : Duration(seconds: value)),
       lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
@@ -332,7 +332,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       flags: ChannelFlags(raw['flags'] as int),
       availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
       defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
-      defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.parse),
+      defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.new),
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
@@ -359,7 +359,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       flags: ChannelFlags(raw['flags'] as int),
       availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
       defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
-      defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.parse),
+      defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.new),
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
       defaultAutoArchiveDuration: Duration(minutes: raw['default_auto_archive_duration'] as int? ?? 4320),
       defaultThreadRateLimitPerUser:
@@ -376,7 +376,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   PermissionOverwrite parsePermissionOverwrite(Map<String, Object?> raw) {
     return PermissionOverwrite(
       id: Snowflake.parse(raw['id']!),
-      type: PermissionOverwriteType.parse(raw['type'] as int),
+      type: PermissionOverwriteType(raw['type'] as int),
       allow: Permissions(int.parse(raw['allow'] as String)),
       deny: Permissions(int.parse(raw['deny'] as String)),
     );
@@ -436,7 +436,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       guildId: Snowflake.parse(raw['guild_id']!),
       channelId: Snowflake.parse(raw['channel_id']!),
       topic: raw['topic'] as String,
-      privacyLevel: PrivacyLevel.parse(raw['privacy_level'] as int),
+      privacyLevel: PrivacyLevel(raw['privacy_level'] as int),
       scheduledEventId: maybeParse(raw['guild_scheduled_event_id'], Snowflake.parse),
     );
   }

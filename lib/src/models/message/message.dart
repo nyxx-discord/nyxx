@@ -293,6 +293,7 @@ final class MessageType extends EnumLike<int, MessageType> {
   /// @nodoc
   const MessageType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   MessageType.parse(int value) : this(value);
 }
 

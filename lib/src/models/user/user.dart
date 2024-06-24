@@ -237,5 +237,6 @@ final class NitroType extends EnumLike<int, NitroType> {
   /// @nodoc
   const NitroType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   NitroType.parse(int value) : this(value);
 }

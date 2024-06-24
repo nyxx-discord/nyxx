@@ -68,7 +68,7 @@ class MessageManager extends Manager<Message> {
       nonce: raw['nonce'] /* as int | String */,
       isPinned: raw['pinned'] as bool,
       webhookId: webhookId,
-      type: MessageType.parse(raw['type'] as int),
+      type: MessageType(raw['type'] as int),
       activity: maybeParse(raw['activity'], parseMessageActivity),
       application: maybeParse(
         raw['application'],
@@ -101,7 +101,7 @@ class MessageManager extends Manager<Message> {
       id: Snowflake.parse(raw['id']!),
       manager: client.channels,
       guildId: Snowflake.parse(raw['guild_id']!),
-      type: ChannelType.parse(raw['type'] as int),
+      type: ChannelType(raw['type'] as int),
       name: raw['name'] as String,
     );
   }
@@ -221,7 +221,7 @@ class MessageManager extends Manager<Message> {
 
   MessageActivity parseMessageActivity(Map<String, Object?> raw) {
     return MessageActivity(
-      type: MessageActivityType.parse(raw['type'] as int),
+      type: MessageActivityType(raw['type'] as int),
       partyId: raw['party_id'] as String?,
     );
   }
@@ -245,14 +245,14 @@ class MessageManager extends Manager<Message> {
   }
 
   MessageComponent parseMessageComponent(Map<String, Object?> raw) {
-    final type = MessageComponentType.parse(raw['type'] as int);
+    final type = MessageComponentType(raw['type'] as int);
 
     return switch (type) {
       MessageComponentType.actionRow => ActionRowComponent(
           components: parseMany(raw['components'] as List, parseMessageComponent),
         ),
       MessageComponentType.button => ButtonComponent(
-          style: ButtonStyle.parse(raw['style'] as int),
+          style: ButtonStyle(raw['style'] as int),
           label: raw['label'] as String?,
           emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
           customId: raw['custom_id'] as String?,
@@ -261,7 +261,7 @@ class MessageManager extends Manager<Message> {
         ),
       MessageComponentType.textInput => TextInputComponent(
           customId: raw['custom_id'] as String,
-          style: maybeParse(raw['style'], TextInputStyle.parse),
+          style: maybeParse(raw['style'], TextInputStyle.new),
           label: raw['label'] as String?,
           minLength: raw['min_length'] as int?,
           maxLength: raw['max_length'] as int?,
@@ -278,7 +278,7 @@ class MessageManager extends Manager<Message> {
           type: type,
           customId: raw['custom_id'] as String,
           options: maybeParseMany(raw['options'], parseSelectMenuOption),
-          channelTypes: maybeParseMany(raw['channel_types'], ChannelType.parse),
+          channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
           placeholder: raw['placeholder'] as String?,
           defaultValues: maybeParseMany(raw['default_values'], parseSelectMenuDefaultValue),
           minValues: raw['min_values'] as int?,
@@ -302,7 +302,7 @@ class MessageManager extends Manager<Message> {
   SelectMenuDefaultValue parseSelectMenuDefaultValue(Map<String, Object?> raw) {
     return SelectMenuDefaultValue(
       id: Snowflake.parse(raw['id']!),
-      type: SelectMenuDefaultValueType.parse(raw['type'] as String),
+      type: SelectMenuDefaultValueType(raw['type'] as String),
     );
   }
 
@@ -313,7 +313,7 @@ class MessageManager extends Manager<Message> {
     // ignore: deprecated_member_use_from_same_package
     return MessageInteraction(
       id: Snowflake.parse(raw['id']!),
-      type: InteractionType.parse(raw['type'] as int),
+      type: InteractionType(raw['type'] as int),
       name: raw['name'] as String,
       user: user,
       member: maybeParse(
@@ -326,11 +326,11 @@ class MessageManager extends Manager<Message> {
   MessageInteractionMetadata parseMessageInteractionMetadata(Map<String, Object?> raw) {
     return MessageInteractionMetadata(
       id: Snowflake.parse(raw['id']!),
-      type: InteractionType.parse(raw['type'] as int),
+      type: InteractionType(raw['type'] as int),
       userId: Snowflake.parse(raw['user_id']!),
       authorizingIntegrationOwners: {
         for (final MapEntry(:key, :value) in (raw['authorizing_integration_owners'] as Map<String, Object?>).entries)
-          ApplicationIntegrationType.parse(int.parse(key)): Snowflake.parse(value!),
+          ApplicationIntegrationType(int.parse(key)): Snowflake.parse(value!),
       },
       originalResponseMessageId: maybeParse(raw['original_response_message_id'], Snowflake.parse),
       interactedMessageId: maybeParse(raw['interacted_message_id'], Snowflake.parse),
@@ -373,7 +373,7 @@ class MessageManager extends Manager<Message> {
       answers: parseMany(raw['answers'] as List, parsePollAnswer),
       endsAt: maybeParse(raw['expiry'] as String?, DateTime.parse),
       allowsMultiselect: raw['allow_multiselect'] as bool,
-      layoutType: PollLayoutType.parse(raw['layout_type'] as int),
+      layoutType: PollLayoutType(raw['layout_type'] as int),
       results: maybeParse(raw['results'], parsePollResults),
     );
   }

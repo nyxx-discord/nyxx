@@ -102,6 +102,7 @@ final class IntegrationExpireBehavior extends EnumLike<int, IntegrationExpireBeh
   /// @nodoc
   const IntegrationExpireBehavior(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   IntegrationExpireBehavior.parse(int value) : this(value);
 }
 

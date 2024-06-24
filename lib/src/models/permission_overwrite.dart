@@ -53,5 +53,6 @@ final class PermissionOverwriteType extends EnumLike<int, PermissionOverwriteTyp
   /// @nodoc
   const PermissionOverwriteType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   PermissionOverwriteType.parse(int value) : this(value);
 }

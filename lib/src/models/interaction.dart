@@ -39,6 +39,7 @@ final class InteractionContextType extends EnumLike<int, InteractionContextType>
   /// @nodoc
   const InteractionContextType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   InteractionContextType.parse(int value) : this(value);
 }
 
@@ -427,6 +428,7 @@ final class InteractionType extends EnumLike<int, InteractionType> {
   /// @nodoc
   const InteractionType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   InteractionType.parse(int value) : this(value);
 }
 

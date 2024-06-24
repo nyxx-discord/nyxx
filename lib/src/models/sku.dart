@@ -63,6 +63,7 @@ final class SkuType extends EnumLike<int, SkuType> {
   /// @nodoc
   const SkuType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   SkuType.parse(int value) : this(value);
 }
 

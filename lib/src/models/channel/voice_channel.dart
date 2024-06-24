@@ -27,5 +27,6 @@ final class VideoQualityMode extends EnumLike<int, VideoQualityMode> {
   /// @nodoc
   const VideoQualityMode(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   VideoQualityMode.parse(int value) : this(value);
 }

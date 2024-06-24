@@ -13,6 +13,7 @@ final class PollLayoutType extends EnumLike<int, PollLayoutType> {
   /// @nodoc
   const PollLayoutType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   PollLayoutType.parse(int value) : this(value);
 }
 

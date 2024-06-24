@@ -194,6 +194,7 @@ final class ApplicationIntegrationType extends EnumLike<int, ApplicationIntegrat
   /// @nodoc
   const ApplicationIntegrationType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ApplicationIntegrationType.parse(int value) : this(value);
 }
 
@@ -329,5 +330,6 @@ final class ConnectionMetadataType extends EnumLike<int, ConnectionMetadataType>
   /// @nodoc
   const ConnectionMetadataType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ConnectionMetadataType.parse(int value) : this(value);
 }

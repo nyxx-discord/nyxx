@@ -18,6 +18,7 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   /// @nodoc
   const MessageComponentType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   MessageComponentType.parse(int value) : this(value);
 }
 
@@ -86,6 +87,7 @@ final class ButtonStyle extends EnumLike<int, ButtonStyle> {
   /// @nodoc
   const ButtonStyle(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ButtonStyle.parse(int value) : this(value);
 }
 
@@ -146,6 +148,7 @@ final class SelectMenuDefaultValueType extends EnumLike<String, SelectMenuDefaul
   /// @nodoc
   const SelectMenuDefaultValueType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   SelectMenuDefaultValueType.parse(String value) : this(value);
 }
 
@@ -241,5 +244,6 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
   /// @nodoc
   const TextInputStyle(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TextInputStyle.parse(int value) : this(value);
 }

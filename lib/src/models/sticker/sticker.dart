@@ -21,6 +21,7 @@ final class StickerFormatType extends EnumLike<int, StickerFormatType> {
   /// @nodoc
   const StickerFormatType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   StickerFormatType.parse(int value) : this(value);
 }
 

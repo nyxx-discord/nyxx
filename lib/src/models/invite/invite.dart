@@ -77,5 +77,6 @@ final class TargetType extends EnumLike<int, TargetType> {
   /// @nodoc
   const TargetType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TargetType.parse(int value) : this(value);
 }

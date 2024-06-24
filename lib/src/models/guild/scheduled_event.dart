@@ -127,6 +127,7 @@ final class EventStatus extends EnumLike<int, EventStatus> {
   /// @nodoc
   const EventStatus(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   EventStatus.parse(int value) : this(value);
 }
 
@@ -139,6 +140,7 @@ final class ScheduledEntityType extends EnumLike<int, ScheduledEntityType> {
   /// @nodoc
   const ScheduledEntityType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ScheduledEntityType.parse(int value) : this(value);
 }
 

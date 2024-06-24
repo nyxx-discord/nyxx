@@ -35,5 +35,6 @@ final class MessageActivityType extends EnumLike<int, MessageActivityType> {
   /// @nodoc
   const MessageActivityType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   MessageActivityType.parse(int value) : this(value);
 }

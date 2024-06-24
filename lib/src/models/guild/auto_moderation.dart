@@ -94,6 +94,7 @@ final class AutoModerationEventType extends EnumLike<int, AutoModerationEventTyp
   /// @nodoc
   const AutoModerationEventType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   AutoModerationEventType.parse(int value) : this(value);
 }
 
@@ -117,6 +118,7 @@ final class TriggerType extends EnumLike<int, TriggerType> {
   /// @nodoc
   const TriggerType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TriggerType.parse(int value) : this(value);
 }
 
@@ -176,6 +178,7 @@ final class KeywordPresetType extends EnumLike<int, KeywordPresetType> {
   /// @nodoc
   const KeywordPresetType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   KeywordPresetType.parse(int value) : this(value);
 }
 
@@ -215,6 +218,7 @@ final class ActionType extends EnumLike<int, ActionType> {
   /// @nodoc
   const ActionType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ActionType.parse(int value) : this(value);
 }
 

@@ -30,7 +30,7 @@ class InviteManager {
       guild: guild,
       channel: PartialChannel(id: Snowflake.parse((raw['channel'] as Map<String, Object?>)['id']!), manager: client.channels),
       inviter: maybeParse(raw['inviter'], client.users.parse),
-      targetType: maybeParse(raw['target_type'], TargetType.parse),
+      targetType: maybeParse(raw['target_type'], TargetType.new),
       targetUser: maybeParse(raw['target_user'], client.users.parse),
       targetApplication: maybeParse(
         raw['target_application'],

@@ -87,6 +87,7 @@ final class CommandOptionType extends EnumLike<int, CommandOptionType> {
   /// @nodoc
   const CommandOptionType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   CommandOptionType.parse(int value) : this(value);
 }
 

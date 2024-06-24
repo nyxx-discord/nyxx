@@ -114,5 +114,6 @@ final class ApplicationCommandType extends EnumLike<int, ApplicationCommandType>
   /// @nodoc
   const ApplicationCommandType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ApplicationCommandType.parse(int value) : this(value);
 }

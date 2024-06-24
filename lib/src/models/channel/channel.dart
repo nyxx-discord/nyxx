@@ -92,6 +92,7 @@ final class ChannelType extends EnumLike<int, ChannelType> {
   /// @nodoc
   const ChannelType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   ChannelType.parse(int value) : this(value);
 }
 

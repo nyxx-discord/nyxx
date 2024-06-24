@@ -90,6 +90,7 @@ final class OnboardingPromptType extends EnumLike<int, OnboardingPromptType> {
   /// @nodoc
   const OnboardingPromptType(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   OnboardingPromptType.parse(int value) : this(value);
 }
 

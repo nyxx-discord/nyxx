@@ -382,7 +382,7 @@ class Gateway extends GatewayManager with EventParser {
       guildId: guildId,
       action: client.guilds[guildId].autoModerationRules.parseAutoModerationAction(raw['action'] as Map<String, Object?>),
       ruleId: Snowflake.parse(raw['rule_id']!),
-      triggerType: TriggerType.parse(raw['rule_trigger_type'] as int),
+      triggerType: TriggerType(raw['rule_trigger_type'] as int),
       userId: Snowflake.parse(raw['user_id']!),
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
@@ -951,7 +951,7 @@ class Gateway extends GatewayManager with EventParser {
         (Map<String, Object?> raw) => PartialUser(id: Snowflake.parse(raw['id']!), manager: client.users),
       ),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
-      status: maybeParse(raw['status'], UserStatus.parse),
+      status: maybeParse(raw['status'], UserStatus.new),
       activities: maybeParseMany(raw['activities'], parseActivity),
       clientStatus: maybeParse(raw['client_status'], parseClientStatus),
     );

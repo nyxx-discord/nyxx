@@ -92,6 +92,7 @@ final class TeamMembershipState extends EnumLike<int, TeamMembershipState> {
   /// @nodoc
   const TeamMembershipState(super.value);
 
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TeamMembershipState.parse(int value) : this(value);
 }
 
