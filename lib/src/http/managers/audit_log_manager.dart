@@ -24,7 +24,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
       targetId: maybeParse(raw['target_id'], Snowflake.parse),
       changes: maybeParseMany(raw['changes'], parseAuditLogChange),
       userId: maybeParse(raw['user_id'], Snowflake.parse),
-      actionType: AuditLogEvent.parse(raw['action_type'] as int),
+      actionType: AuditLogEvent(raw['action_type'] as int),
       options: maybeParse(raw['options'], parseAuditLogEntryInfo),
       reason: raw['reason'] as String?,
     );
@@ -53,7 +53,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
       membersRemoved: raw['members_removed'] as String?,
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
       roleName: raw['role_name'] as String?,
-      overwriteType: maybeParse(raw['type'], (String raw) => PermissionOverwriteType.parse(int.parse(raw))),
+      overwriteType: maybeParse(raw['type'], (String raw) => PermissionOverwriteType(int.parse(raw))),
       integrationType: raw['integration_type'] as String?,
     );
   }

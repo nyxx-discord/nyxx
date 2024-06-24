@@ -42,6 +42,7 @@ import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Guild].
@@ -466,73 +467,43 @@ class Guild extends UserGuild {
 }
 
 /// The verification level for a guild.
-enum VerificationLevel {
-  none._(0),
-  low._(1),
-  medium._(2),
-  high._(3),
-  veryHigh._(4);
+final class VerificationLevel extends EnumLike<int, VerificationLevel> {
+  static const none = VerificationLevel(0);
+  static const low = VerificationLevel(1);
+  static const medium = VerificationLevel(2);
+  static const high = VerificationLevel(3);
+  static const veryHigh = VerificationLevel(4);
 
-  /// The value of this verification level.
-  final int value;
+  /// @nodoc
+  const VerificationLevel(super.value);
 
-  const VerificationLevel._(this.value);
-
-  /// Parses a [VerificationLevel] from an [int].
-  ///
-  /// The [value] must be a valid verification level.
-  factory VerificationLevel.parse(int value) => VerificationLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid verification level', value),
-      );
-
-  @override
-  String toString() => 'VerificationLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  VerificationLevel.parse(int value) : this(value);
 }
 
 /// The level at which message notifications are sent in a guild.
-enum MessageNotificationLevel {
-  allMessages._(0),
-  onlyMentions._(1);
+final class MessageNotificationLevel extends EnumLike<int, MessageNotificationLevel> {
+  static const allMessages = MessageNotificationLevel(0);
+  static const onlyMentions = MessageNotificationLevel(1);
 
-  /// The value of this message notification level.
-  final int value;
+  /// @nodoc
+  const MessageNotificationLevel(super.value);
 
-  const MessageNotificationLevel._(this.value);
-
-  /// Parses a [MessageNotificationLevel] from an [int].
-  ///
-  /// The [value] must be a valid message notification level.
-  factory MessageNotificationLevel.parse(int value) => MessageNotificationLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid message notification level', value),
-      );
-
-  @override
-  String toString() => 'MessageNotificationLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  MessageNotificationLevel.parse(int value) : this(value);
 }
 
 /// The level of explicit content filtering in a guild.
-enum ExplicitContentFilterLevel {
-  disabled._(0),
-  membersWithoutRoles._(1),
-  allMembers._(2);
+final class ExplicitContentFilterLevel extends EnumLike<int, ExplicitContentFilterLevel> {
+  static const disabled = ExplicitContentFilterLevel(0);
+  static const membersWithoutRoles = ExplicitContentFilterLevel(1);
+  static const allMembers = ExplicitContentFilterLevel(2);
 
-  /// The value of this explicit content filter level.
-  final int value;
+  /// @nodoc
+  const ExplicitContentFilterLevel(super.value);
 
-  const ExplicitContentFilterLevel._(this.value);
-
-  /// Parses an [ExplicitContentFilterLevel] from an [int].
-  ///
-  /// The [value] must be a valid explicit content filter level.
-  factory ExplicitContentFilterLevel.parse(int value) => ExplicitContentFilterLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid explicit content filter level', value),
-      );
-
-  @override
-  String toString() => 'ExplicitContentFilterLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ExplicitContentFilterLevel.parse(int value) : this(value);
 }
 
 /// Features that can be enabled in certain guilds.
@@ -705,25 +676,15 @@ class GuildFeatures extends Flags<GuildFeatures> {
 }
 
 /// The MFA level required for moderators of a guild.
-enum MfaLevel {
-  none._(0),
-  elevated._(1);
+final class MfaLevel extends EnumLike<int, MfaLevel> {
+  static const none = MfaLevel(0);
+  static const elevated = MfaLevel(1);
 
-  /// The value of this MFA level.
-  final int value;
+  /// @nodoc
+  const MfaLevel(super.value);
 
-  const MfaLevel._(this.value);
-
-  /// Parses an [MfaLevel] from an [int].
-  ///
-  /// The [value] must be a valid mfa level.
-  factory MfaLevel.parse(int value) => MfaLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid mfa level', value),
-      );
-
-  @override
-  String toString() => 'MfaLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  MfaLevel.parse(int value) : this(value);
 }
 
 /// The configuration of a guild's system channel.
@@ -769,49 +730,29 @@ class SystemChannelFlags extends Flags<SystemChannelFlags> {
 }
 
 /// The premium tier of a guild.
-enum PremiumTier {
-  none._(0),
-  one._(1),
-  two._(2),
-  three._(3);
+final class PremiumTier extends EnumLike<int, PremiumTier> {
+  static const none = PremiumTier(0);
+  static const one = PremiumTier(1);
+  static const two = PremiumTier(2);
+  static const three = PremiumTier(3);
 
-  /// The value of this tier.
-  final int value;
+  /// nodoc
+  const PremiumTier(super.value);
 
-  const PremiumTier._(this.value);
-
-  /// Parses a [PremiumTier] from an [int].
-  ///
-  /// The [value] must be a valid premium tier.
-  factory PremiumTier.parse(int value) => PremiumTier.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid premium tier', value),
-      );
-
-  @override
-  String toString() => 'PremiumTier($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  PremiumTier.parse(int value) : this(value);
 }
 
 /// The NSFW level of a guild.
-enum NsfwLevel {
-  unset._(0),
-  explicit._(1),
-  safe._(2),
-  ageRestricted._(3);
+final class NsfwLevel extends EnumLike<int, NsfwLevel> {
+  static const unset = NsfwLevel(0);
+  static const explicit = NsfwLevel(1);
+  static const safe = NsfwLevel(2);
+  static const ageRestricted = NsfwLevel(3);
 
-  /// The value of this NSFW level.
-  final int value;
+  /// nodoc
+  const NsfwLevel(super.value);
 
-  const NsfwLevel._(this.value);
-
-  /// Parses an [NsfwLevel] from an [int].
-  ///
-  /// The [value] must be a valid nsfw level.
-  factory NsfwLevel.parse(int value) => NsfwLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid nsfw level', value),
-      );
-
-  @override
-  String toString() => 'NsfwLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  NsfwLevel.parse(int value) : this(value);
 }

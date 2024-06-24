@@ -65,7 +65,7 @@ class ApplicationManager {
         raw['integration_types_config'],
         (Map<String, Object?> config) => {
           for (final MapEntry(:key, :value) in config.entries)
-            ApplicationIntegrationType.parse(int.parse(key)): parseApplicationIntegrationTypeConfiguration(value as Map<String, Object?>)
+            ApplicationIntegrationType(int.parse(key)): parseApplicationIntegrationTypeConfiguration(value as Map<String, Object?>)
         },
       ),
       roleConnectionsVerificationUrl: maybeParse(raw['role_connections_verification_url'], Uri.parse),
@@ -87,7 +87,7 @@ class ApplicationManager {
   /// Parse a [TeamMember] from [raw].
   TeamMember parseTeamMember(Map<String, Object?> raw) {
     return TeamMember(
-      membershipState: TeamMembershipState.parse(raw['membership_state'] as int),
+      membershipState: TeamMembershipState(raw['membership_state'] as int),
       teamId: Snowflake.parse(raw['team_id']!),
       user: PartialUser(id: Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!), manager: client.users),
       role: TeamMemberRole.parse(raw['role'] as String),
@@ -112,7 +112,7 @@ class ApplicationManager {
   /// Parse a [ApplicationRoleConnectionMetadata] from [raw].
   ApplicationRoleConnectionMetadata parseApplicationRoleConnectionMetadata(Map<String, Object?> raw) {
     return ApplicationRoleConnectionMetadata(
-      type: ConnectionMetadataType.parse(raw['type'] as int),
+      type: ConnectionMetadataType(raw['type'] as int),
       key: raw['key'] as String,
       name: raw['name'] as String,
       localizedNames: maybeParse(
@@ -132,7 +132,7 @@ class ApplicationManager {
     return Sku(
       manager: this,
       id: Snowflake.parse(raw['id']!),
-      type: SkuType.parse(raw['type'] as int),
+      type: SkuType(raw['type'] as int),
       applicationId: Snowflake.parse(raw['application_id']!),
       name: raw['name'] as String,
       slug: raw['slug'] as String,

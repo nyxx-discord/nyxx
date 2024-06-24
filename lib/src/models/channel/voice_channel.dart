@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A voice channel.
 abstract class VoiceChannel implements Channel {
@@ -16,26 +17,16 @@ abstract class VoiceChannel implements Channel {
 }
 
 /// The quality mode of cameras in a [VoiceChannel].
-enum VideoQualityMode {
+final class VideoQualityMode extends EnumLike<int, VideoQualityMode> {
   /// Automatic.
-  auto._(1),
+  static const auto = VideoQualityMode(1);
 
   /// 720p.
-  full._(2);
+  static const full = VideoQualityMode(2);
 
-  /// The value of this [VideoQualityMode].
-  final int value;
+  /// @nodoc
+  const VideoQualityMode(super.value);
 
-  const VideoQualityMode._(this.value);
-
-  /// Parse a [VideoQualityMode] from an [int].
-  ///
-  /// [value] must be a valid [VideoQualityMode].
-  factory VideoQualityMode.parse(int value) => VideoQualityMode.values.firstWhere(
-        (mode) => mode.value == value,
-        orElse: () => throw FormatException('Unknown VideoQualityMode', value),
-      );
-
-  @override
-  String toString() => 'VideoQualityMode($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  VideoQualityMode.parse(int value) : this(value);
 }

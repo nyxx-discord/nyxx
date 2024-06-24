@@ -45,7 +45,7 @@ abstract class GatewayManager {
     // No fields are validated server-side. Expect errors.
     return Activity(
       name: raw['name'] as String,
-      type: ActivityType.parse(raw['type'] as int),
+      type: ActivityType(raw['type'] as int),
       url: tryParse(raw['url'], Uri.parse),
       createdAt: tryParse(raw['created_at'], DateTime.fromMillisecondsSinceEpoch),
       timestamps: tryParse(raw['timestamps'], parseActivityTimestamps),
@@ -103,9 +103,9 @@ abstract class GatewayManager {
 
   ClientStatus parseClientStatus(Map<String, Object?> raw) {
     return ClientStatus(
-      desktop: maybeParse(raw['desktop'], UserStatus.parse),
-      mobile: maybeParse(raw['mobile'], UserStatus.parse),
-      web: maybeParse(raw['web'], UserStatus.parse),
+      desktop: maybeParse(raw['desktop'], UserStatus.new),
+      mobile: maybeParse(raw['mobile'], UserStatus.new),
+      web: maybeParse(raw['web'], UserStatus.new),
     );
   }
 
