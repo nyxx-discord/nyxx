@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/guild/integration.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A link to an account on a service other than Discord.
@@ -91,36 +92,23 @@ enum ConnectionType {
   /// Parse a string to a [ConnectionType].
   ///
   /// The [value] must be a string containing a valid [ConnectionType.value].
-  factory ConnectionType.parse(String value) => ConnectionType.values.firstWhere(
+  factory ConnectionType.parse(String value) => values.firstWhere(
         (type) => type.value == value,
         orElse: () => throw FormatException('Unknown ConnectionType', value),
       );
-
-  @override
-  String toString() => 'ConnectionType($name)';
 }
 
 /// The visibility level of a connection.
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#connection-object-visibility-types
-enum ConnectionVisibility {
-  none._(0),
-  everyone._(1);
+final class ConnectionVisibility extends EnumLike<int, ConnectionVisibility> {
+  static const none = ConnectionVisibility(0);
+  static const everyone = ConnectionVisibility(1);
 
-  /// THe value of this connection visibility level.
-  final int value;
+  /// @nodoc
+  const ConnectionVisibility(super.value);
 
-  const ConnectionVisibility._(this.value);
-
-  /// Parse an integer value to a [ConnectionVisibility].
-  ///
-  /// The [value] must be a valid [ConnectionVisibility].
-  factory ConnectionVisibility.parse(int value) => ConnectionVisibility.values.firstWhere(
-        (visibility) => visibility.value == value,
-        orElse: () => throw FormatException('Unknown ConnectionVisibility', value),
-      );
-
-  @override
-  String toString() => 'ConnectionVisibility($name)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ConnectionVisibility.parse(int value) : this(value);
 }

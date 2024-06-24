@@ -38,7 +38,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     return ApplicationCommand(
       id: Snowflake.parse(raw['id']!),
       manager: this,
-      type: ApplicationCommandType.parse(raw['type'] as int? ?? 1),
+      type: ApplicationCommandType(raw['type'] as int? ?? 1),
       applicationId: Snowflake.parse(raw['application_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       name: raw['name'] as String,
@@ -59,8 +59,8 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       defaultMemberPermissions: maybeParse(raw['default_member_permissions'], (String raw) => Permissions(int.parse(raw))),
       hasDmPermission: raw['dm_permission'] as bool?,
       isNsfw: raw['nsfw'] as bool?,
-      integrationTypes: maybeParseMany(raw['integration_types'], ApplicationIntegrationType.parse) ?? [ApplicationIntegrationType.guildInstall],
-      contexts: maybeParseMany(raw['contexts'], InteractionContextType.parse),
+      integrationTypes: maybeParseMany(raw['integration_types'], ApplicationIntegrationType.new) ?? [ApplicationIntegrationType.guildInstall],
+      contexts: maybeParseMany(raw['contexts'], InteractionContextType.new),
       version: Snowflake.parse(raw['version']!),
     );
   }
@@ -68,7 +68,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
   /// Parse a [CommandOption] from [raw].
   CommandOption parseApplicationCommandOption(Map<String, Object?> raw) {
     return CommandOption(
-      type: CommandOptionType.parse(raw['type'] as int),
+      type: CommandOptionType(raw['type'] as int),
       name: raw['name'] as String,
       nameLocalizations: maybeParse(
         raw['name_localizations'],
@@ -86,7 +86,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       isRequired: raw['required'] as bool?,
       choices: maybeParseMany(raw['choices'], parseOptionChoice),
       options: maybeParseMany(raw['options'], parseApplicationCommandOption),
-      channelTypes: maybeParseMany(raw['channel_types'], ChannelType.parse),
+      channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
       minValue: raw['min_value'] as num?,
       maxValue: raw['max_value'] as num?,
       minLength: raw['min_length'] as int?,
@@ -234,7 +234,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
   CommandPermission parseCommandPermission(Map<String, Object?> raw) {
     return CommandPermission(
       id: Snowflake.parse(raw['id']!),
-      type: CommandPermissionType.parse(raw['type'] as int),
+      type: CommandPermissionType(raw['type'] as int),
       hasPermission: raw['permission'] as bool,
     );
   }

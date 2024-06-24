@@ -19,37 +19,28 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A context indicating whether command can be used in DMs, groups, or guilds.
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
-enum InteractionContextType {
+final class InteractionContextType extends EnumLike<int, InteractionContextType> {
   /// Interaction can be used within servers.
-  guild._(0),
+  static const InteractionContextType guild = InteractionContextType(0);
 
   /// Interaction can be used within DMs with the app's bot user.
-  botDm._(1),
+  static const InteractionContextType botDm = InteractionContextType(1);
 
   /// Interaction can be used within Group DMs and DMs other than the app's bot user.
-  privateChannel._(2);
+  static const InteractionContextType privateChannel = InteractionContextType(2);
 
-  /// The value of this [InteractionContextType].
-  final int value;
+  /// @nodoc
+  const InteractionContextType(super.value);
 
-  const InteractionContextType._(this.value);
-
-  /// Parse an [InteractionContextType] from an [int].
-  ///
-  /// The [value] must be a valid interaction context type.
-  factory InteractionContextType.parse(int value) => InteractionContextType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown InteractionContextType', value),
-      );
-
-  @override
-  String toString() => 'InteractionContextType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  InteractionContextType.parse(int value) : this(value);
 }
 
 /// {@template interaction}
@@ -427,28 +418,18 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
 }
 
 /// The type of an interaction.
-enum InteractionType {
-  ping._(1),
-  applicationCommand._(2),
-  messageComponent._(3),
-  applicationCommandAutocomplete._(4),
-  modalSubmit._(5);
+final class InteractionType extends EnumLike<int, InteractionType> {
+  static const ping = InteractionType(1);
+  static const applicationCommand = InteractionType(2);
+  static const messageComponent = InteractionType(3);
+  static const applicationCommandAutocomplete = InteractionType(4);
+  static const modalSubmit = InteractionType(5);
 
-  /// The value of this [InteractionType].
-  final int value;
+  /// @nodoc
+  const InteractionType(super.value);
 
-  const InteractionType._(this.value);
-
-  /// Parse an [InteractionType] from an [int].
-  ///
-  /// The [value] must be a valid interaction type.
-  factory InteractionType.parse(int value) => InteractionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown interaction type', value),
-      );
-
-  @override
-  String toString() => 'InteractionType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  InteractionType.parse(int value) : this(value);
 }
 
 /// {@template application_command_interaction_data}

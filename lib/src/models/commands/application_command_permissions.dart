@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template command_permissions}
@@ -74,24 +75,19 @@ class CommandPermission with ToStringHelper {
 }
 
 /// The type of a [CommandPermission].
-enum CommandPermissionType {
-  role._(1),
-  user._(2),
-  channel._(3);
+final class CommandPermissionType extends EnumLike<int, CommandPermissionType> {
+  /// The permission applies to a role.
+  static const role = CommandPermissionType(1);
 
-  /// The value of this [CommandPermissionType].
-  final int value;
+  /// The permission applies to a user.
+  static const user = CommandPermissionType(2);
 
-  const CommandPermissionType._(this.value);
+  /// The permission applies to a channel.
+  static const channel = CommandPermissionType(3);
 
-  /// Parse a [CommandPermissionType] from an [int].
-  ///
-  /// The [value] must be a valid command permission type.
-  factory CommandPermissionType.parse(int value) => CommandPermissionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown command permission type', value),
-      );
+  /// @nodoc
+  const CommandPermissionType(super.value);
 
-  @override
-  String toString() => 'CommandPermissionType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  CommandPermissionType.parse(int value) : this(value);
 }

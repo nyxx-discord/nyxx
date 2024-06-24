@@ -1,48 +1,28 @@
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
-enum StickerType {
-  standard._(1),
-  guild._(2);
+final class StickerType extends EnumLike<int, StickerType> {
+  static const standard = StickerType(1);
+  static const guild = StickerType(2);
 
-  /// The value of this [StickerType].
-  final int value;
+  /// @nodoc
+  const StickerType(super.value);
 
-  const StickerType._(this.value);
-
-  /// Parse a [StickerType] from a [value].
-  ///
-  /// The [value] must be a valid sticker type
-  factory StickerType.parse(int value) => StickerType.values.firstWhere(
-        (state) => state.value == value,
-        orElse: () => throw FormatException('Unknown sticker type', value),
-      );
-
-  @override
-  String toString() => 'StickerType($value)';
+  StickerType.parse(int value) : this(value);
 }
 
-enum StickerFormatType {
-  png._(1),
-  apng._(2),
-  lottie._(3),
-  gif._(4);
+final class StickerFormatType extends EnumLike<int, StickerFormatType> {
+  static const png = StickerFormatType(1);
+  static const apng = StickerFormatType(2);
+  static const lottie = StickerFormatType(3);
+  static const gif = StickerFormatType(4);
 
-  /// The value of this [StickerFormatType].
-  final int value;
+  /// @nodoc
+  const StickerFormatType(super.value);
 
-  const StickerFormatType._(this.value);
-
-  /// Parse a [StickerFormatType] from a [value].
-  ///
-  /// The [value] must be a valid sticker format type
-  factory StickerFormatType.parse(int value) => StickerFormatType.values.firstWhere(
-        (state) => state.value == value,
-        orElse: () => throw FormatException('Unknown sticker format type', value),
-      );
-
-  @override
-  String toString() => 'StickerFormatType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  StickerFormatType.parse(int value) : this(value);
 }
 
 /// Mixin with shared properties with stickers

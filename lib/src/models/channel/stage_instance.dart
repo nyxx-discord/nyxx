@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// {@template stage_instance}
 /// Information about a live stage.
@@ -58,19 +59,13 @@ class StageInstance extends SnowflakeEntity<StageInstance> {
 }
 
 /// The privacy level of a [StageInstance].
-enum PrivacyLevel {
-  public._(1),
-  guildOnly._(2);
+final class PrivacyLevel extends EnumLike<int, PrivacyLevel> {
+  static const public = PrivacyLevel(1);
+  static const guildOnly = PrivacyLevel(2);
 
-  final int value;
+  /// @nodoc
+  const PrivacyLevel(super.value);
 
-  const PrivacyLevel._(this.value);
-
-  /// Parse a [PrivacyLevel] from an [int].
-  ///
-  /// The [value] must be a valid privacy level.
-  factory PrivacyLevel.parse(int value) => PrivacyLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Unknown privacy level', value),
-      );
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  PrivacyLevel.parse(int value) : this(value);
 }

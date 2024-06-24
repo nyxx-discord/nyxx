@@ -52,7 +52,7 @@ class UserManager extends ReadOnlyManager<User> {
       accentColor: hasAccentColor ? DiscordColor(raw['accent_color'] as int) : null,
       locale: hasLocale ? Locale.parse(raw['locale'] as String) : null,
       flags: hasFlags ? UserFlags(raw['flags'] as int) : null,
-      nitroType: hasPremiumType ? NitroType.parse(raw['premium_type'] as int) : NitroType.none,
+      nitroType: hasPremiumType ? NitroType(raw['premium_type'] as int) : NitroType.none,
       publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
       avatarDecorationHash: raw['avatar_decoration'] as String?,
     );
@@ -77,7 +77,7 @@ class UserManager extends ReadOnlyManager<User> {
       isFriendSyncEnabled: raw['friend_sync'] as bool,
       showActivity: raw['show_activity'] as bool,
       isTwoWayLink: raw['two_way_link'] as bool,
-      visibility: ConnectionVisibility.parse(raw['visibility'] as int),
+      visibility: ConnectionVisibility(raw['visibility'] as int),
     );
   }
 

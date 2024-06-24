@@ -1,29 +1,20 @@
 import 'package:nyxx/src/models/emoji.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A layout type indicating how poll looks.
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#layout-type
-enum PollLayoutType {
+final class PollLayoutType extends EnumLike<int, PollLayoutType> {
   /// The default layout type.
-  defaultLayout._(1);
+  static const defaultLayout = PollLayoutType(1);
 
-  /// The value of this [PollLayoutType].
-  final int value;
+  /// @nodoc
+  const PollLayoutType(super.value);
 
-  const PollLayoutType._(this.value);
-
-  /// Parse an [PollLayoutType] from an [int].
-  ///
-  /// The [value] must be a valid poll layout type.
-  factory PollLayoutType.parse(int value) => PollLayoutType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown PollLayoutType', value),
-      );
-
-  @override
-  String toString() => 'PollLayoutType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  PollLayoutType.parse(int value) : this(value);
 }
 
 /// {@template poll_media}

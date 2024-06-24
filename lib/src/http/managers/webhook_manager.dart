@@ -30,7 +30,7 @@ class WebhookManager extends Manager<Webhook> {
     return Webhook(
       id: Snowflake.parse(raw['id']!),
       manager: this,
-      type: WebhookType.parse(raw['type'] as int),
+      type: WebhookType(raw['type'] as int),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       user: maybeParse(raw['user'], client.users.parse),

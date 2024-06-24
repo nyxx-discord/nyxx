@@ -12,6 +12,7 @@ import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template forum_channel}
@@ -184,46 +185,26 @@ class DefaultReaction with ToStringHelper {
 }
 
 /// The sorting order in a [ForumChannel].
-enum ForumSort {
-  latestActivity._(0),
-  creationDate._(1);
+final class ForumSort extends EnumLike<int, ForumSort> {
+  static const latestActivity = ForumSort(0);
+  static const creationDate = ForumSort(1);
 
-  /// The value of this forum sort.
-  final int value;
+  /// @nodoc
+  const ForumSort(super.value);
 
-  const ForumSort._(this.value);
-
-  /// Parse a [ForumSort] from an [int].
-  ///
-  /// The [value] must be a valid forum sort.
-  factory ForumSort.parse(int value) => ForumSort.values.firstWhere(
-        (sort) => sort.value == value,
-        orElse: () => throw FormatException('Unknown forum sort', value),
-      );
-
-  @override
-  String toString() => 'ForumSort($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ForumSort.parse(int value) : this(value);
 }
 
 /// The layout in a [ForumChannel].
-enum ForumLayout {
-  notSet._(0),
-  listView._(1),
-  galleryView._(2);
+final class ForumLayout extends EnumLike<int, ForumLayout> {
+  static const notSet = ForumLayout(0);
+  static const listView = ForumLayout(1);
+  static const galleryView = ForumLayout(2);
 
-  /// The value of this forum layout.
-  final int value;
+  /// @nodoc
+  const ForumLayout(super.value);
 
-  const ForumLayout._(this.value);
-
-  /// Parse a [ForumLayout] from an [int].
-  ///
-  /// The [value] must be a valid forum layout.
-  factory ForumLayout.parse(int value) => ForumLayout.values.firstWhere(
-        (layout) => layout.value == value,
-        orElse: () => throw FormatException('Unknown forum layout', value),
-      );
-
-  @override
-  String toString() => 'ForumLayout($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ForumLayout.parse(int value) : this(value);
 }

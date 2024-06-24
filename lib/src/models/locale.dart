@@ -51,11 +51,8 @@ enum Locale {
   ///
   /// [identifier] must be a string containing an identifier matching [Locale.identifier] for one of
   /// the listed locales.
-  factory Locale.parse(String identifier) => Locale.values.firstWhere(
-        (locale) => locale.identifier == identifier,
+  factory Locale.parse(String identifier) => values.firstWhere(
+        (loc) => loc.identifier == identifier,
         orElse: () => throw FormatException('Unknown Locale', identifier),
       );
-
-  @override
-  String toString() => 'Locale($identifier)';
 }
