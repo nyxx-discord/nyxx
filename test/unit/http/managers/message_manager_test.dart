@@ -143,7 +143,14 @@ void checkCrosspostedMessage(Message message) {
 final sampleMessageInteractionMetadata = {
   "id": "1234567891234567800",
   "type": 2,
-  "user_id": "1234567891234567801",
+  "user": {
+    "id": "1234567891234567801",
+    "username": "rizzedskibidi",
+    "discriminator": "0000",
+    "global_name": "Ultra Man",
+    "flags": 256,
+    "avatar": "a_abc123",
+  },
   "authorizing_integration_owners": {
     "0": "1234567891234567802",
     "1": "1234567891234567803",
