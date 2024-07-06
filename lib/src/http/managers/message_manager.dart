@@ -325,7 +325,7 @@ class MessageManager extends Manager<Message> {
   }
 
   MessageInteractionMetadata parseMessageInteractionMetadata(Map<String, Object?> raw) {
-    final userId = Snowflake.parse((raw['user'] as Map<String, Object>)['id']!);
+    final userId = Snowflake.parse((raw['user'] as Map<String, Object?>)['id']!);
 
     return MessageInteractionMetadata(
       id: Snowflake.parse(raw['id']!),
