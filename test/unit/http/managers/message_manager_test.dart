@@ -143,7 +143,14 @@ void checkCrosspostedMessage(Message message) {
 final sampleMessageInteractionMetadata = {
   "id": "1234567891234567800",
   "type": 2,
-  "user_id": "1234567891234567801",
+  "user": {
+    "id": "1234567891234567801",
+    "username": "rizzedskibidi",
+    "discriminator": "0",
+    "global_name": "Read if cute",
+    "flags": 256,
+    "avatar": "a_abc123",
+  },
   "authorizing_integration_owners": {
     "0": "1234567891234567802",
     "1": "1234567891234567803",
@@ -154,6 +161,14 @@ final sampleMessageInteractionMetadata = {
     "id": "1234567891234567806",
     "type": 2,
     "user_id": "1234567891234567807",
+    "user": {
+      "username": "nocap-fr",
+      "discriminator": "0",
+      "id": "1234567891234567807",
+      "avatar": "a_abc123",
+      "global_name": "Iloaf",
+      "flags": 256,
+    },
     "authorizing_integration_owners": {
       "0": "1234567891234567808",
       "1": "1234567891234567809",
@@ -165,6 +180,11 @@ void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
   expect(metadata.id, equals(Snowflake(1234567891234567800)));
   expect(metadata.type, equals(InteractionType.applicationCommand));
   expect(metadata.userId, equals(Snowflake(1234567891234567801)));
+  expect(metadata.user.username, equals('rizzedskibidi'));
+  expect(metadata.user.discriminator, equals('0'));
+  expect(metadata.user.globalName, equals('Read if cute'));
+  expect(metadata.user.flags, equals(UserFlags(256)));
+  expect(metadata.user.avatarHash, equals('a_abc123'));
   expect(
       metadata.authorizingIntegrationOwners,
       equals({
@@ -178,6 +198,11 @@ void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
   expect(metadata2.id, equals(Snowflake(1234567891234567806)));
   expect(metadata2.type, equals(InteractionType.applicationCommand));
   expect(metadata2.userId, equals(Snowflake(1234567891234567807)));
+  expect(metadata2.user.username, equals('nocap-fr'));
+  expect(metadata2.user.discriminator, equals('0'));
+  expect(metadata2.user.globalName, equals('Iloaf'));
+  expect(metadata2.user.flags, equals(UserFlags(256)));
+  expect(metadata2.user.avatarHash, equals('a_abc123'));
   expect(
       metadata2.authorizingIntegrationOwners,
       equals({
