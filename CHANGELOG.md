@@ -1,3 +1,20 @@
+## 6.3.0
+__07.07.2024__
+
+- feat: Add one time purchase SKUs support.
+- bug: Include query parameters in CDN requests.
+- feat: Add warning logs for rate limits.
+- feat: Add `deleteMessages` parameter to `Member.ban`.
+- bug: Ensure `client.close()` cleans up all pending operations.
+- feat: Add polls support.
+- bug: Allow non-ascii characters in audit log reasons.
+- feat: Add `memberUpdate` automod type.
+- feat: Add `blockMemberInteraction` automod action type.
+- feat: Add support for premium buttons.
+- bug: Allow parsing unknown enum values.
+- bug: Fix parsing of message interaction metadata user.
+
+
 ## 6.2.1
 __03.04.2024__
 
