@@ -418,7 +418,7 @@ class MessageInteractionMetadata with ToStringHelper {
   final Snowflake userId;
 
   /// The user that triggered the interaction.
-  final PartialUser user;
+  final User user;
 
   /// IDs for installation context(s) related to an interaction.
   final Map<ApplicationIntegrationType, Snowflake> authorizingIntegrationOwners;
