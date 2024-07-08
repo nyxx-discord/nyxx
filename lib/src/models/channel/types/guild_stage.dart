@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
+import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
@@ -15,7 +16,8 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_stage_channel}
 /// A stage channel.
 /// {@endtemplate}
-class GuildStageChannel extends TextChannel implements VoiceChannel, GuildChannel {
+class GuildStageChannel extends TextChannel
+    implements VoiceChannel, GuildChannel {
   @override
   final int bitrate;
 
@@ -82,23 +84,40 @@ class GuildStageChannel extends TextChannel implements VoiceChannel, GuildChanne
   PartialGuild get guild => manager.client.guilds[guildId];
 
   @override
-  PartialMessage? get lastMessage => lastMessageId == null ? null : messages[lastMessageId!];
+  PartialMessage? get lastMessage =>
+      lastMessageId == null ? null : messages[lastMessageId!];
 
   @override
-  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
+  PartialChannel? get parent =>
+      parentId == null ? null : manager.client.channels[parentId!];
 
   @override
-  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
+  Future<void> deletePermissionOverwrite(Snowflake id) =>
+      manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) =>
+      manager.updatePermissionOverwrite(id, builder);
 
   @override
-  Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
+  Future<List<Webhook>> fetchWebhooks() =>
+      manager.client.webhooks.fetchChannelWebhooks(id);
 
   @override
   Future<List<InviteWithMetadata>> listInvites() => manager.listInvites(id);
 
   @override
-  Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
+  Future<Invite> createInvite(InviteBuilder builder,
+          {String? auditLogReason}) =>
+      manager.createInvite(id, builder, auditLogReason: auditLogReason);
+
+  @override
+  GuildChannelBuilder<GuildStageChannel> toBuilder() => GuildChannelBuilder(
+      name: name,
+      type: type,
+      permissionOverwrites: permissionOverwrites
+          .map((e) => PermissionOverwriteBuilder(
+              id: e.id, type: e.type, allow: e.allow, deny: e.deny))
+          .toList(),
+      position: position);
 }

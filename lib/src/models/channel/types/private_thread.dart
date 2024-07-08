@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
+import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
@@ -114,7 +115,8 @@ class PrivateThread extends TextChannel implements Thread {
   PartialGuild get guild => manager.client.guilds[guildId];
 
   @override
-  PartialMessage? get lastMessage => lastMessageId == null ? null : messages[lastMessageId!];
+  PartialMessage? get lastMessage =>
+      lastMessageId == null ? null : messages[lastMessageId!];
 
   @override
   PartialUser get owner => manager.client.users[ownerId];
@@ -123,33 +125,54 @@ class PrivateThread extends TextChannel implements Thread {
   PartialMember get ownerMember => guild.members[ownerId];
 
   @override
-  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
+  PartialChannel? get parent =>
+      parentId == null ? null : manager.client.channels[parentId!];
 
   @override
-  Future<void> addThreadMember(Snowflake memberId) => manager.addThreadMember(id, memberId);
+  Future<void> addThreadMember(Snowflake memberId) =>
+      manager.addThreadMember(id, memberId);
 
   @override
-  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
+  Future<void> deletePermissionOverwrite(Snowflake id) =>
+      manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<ThreadMember> fetchThreadMember(Snowflake memberId) => manager.fetchThreadMember(id, memberId);
+  Future<ThreadMember> fetchThreadMember(Snowflake memberId) =>
+      manager.fetchThreadMember(id, memberId);
 
   @override
-  Future<List<ThreadMember>> listThreadMembers({bool? withMembers, Snowflake? after, int? limit}) =>
-      manager.listThreadMembers(id, after: after, limit: limit, withMembers: withMembers);
+  Future<List<ThreadMember>> listThreadMembers(
+          {bool? withMembers, Snowflake? after, int? limit}) =>
+      manager.listThreadMembers(id,
+          after: after, limit: limit, withMembers: withMembers);
 
   @override
-  Future<void> removeThreadMember(Snowflake memberId) => manager.removeThreadMember(id, memberId);
+  Future<void> removeThreadMember(Snowflake memberId) =>
+      manager.removeThreadMember(id, memberId);
 
   @override
-  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) =>
+      manager.updatePermissionOverwrite(id, builder);
 
   @override
-  Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
+  Future<List<Webhook>> fetchWebhooks() =>
+      manager.client.webhooks.fetchChannelWebhooks(id);
 
   @override
   Future<List<InviteWithMetadata>> listInvites() => manager.listInvites(id);
 
   @override
-  Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
+  Future<Invite> createInvite(InviteBuilder builder,
+          {String? auditLogReason}) =>
+      manager.createInvite(id, builder, auditLogReason: auditLogReason);
+
+  @override
+  GuildChannelBuilder<PrivateThread> toBuilder() => GuildChannelBuilder(
+      name: name,
+      type: type,
+      permissionOverwrites: permissionOverwrites
+          .map((e) => PermissionOverwriteBuilder(
+              id: e.id, type: e.type, allow: e.allow, deny: e.deny))
+          .toList(),
+      position: position);
 }

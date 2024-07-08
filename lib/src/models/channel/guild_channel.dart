@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/invite.dart';
 import 'package:nyxx/src/builders/permission_overwrite.dart';
+import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
@@ -58,4 +59,7 @@ abstract class GuildChannel implements Channel {
 
   /// Create an invite to this channel.
   Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason});
+
+  /// Creates a builder with the exact same properties of this channel.
+  GuildChannelBuilder toBuilder();
 }
