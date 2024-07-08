@@ -52,36 +52,27 @@ class GuildCategory extends Channel implements GuildChannel {
   PartialGuild get guild => manager.client.guilds[guildId];
 
   @override
-  PartialChannel? get parent =>
-      parentId == null ? null : manager.client.channels[parentId!];
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
-  Future<void> deletePermissionOverwrite(Snowflake id) =>
-      manager.deletePermissionOverwrite(this.id, id);
+  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
 
   @override
-  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) =>
-      manager.updatePermissionOverwrite(id, builder);
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
 
   @override
-  Future<List<Webhook>> fetchWebhooks() =>
-      throw UnsupportedError('Cannot fetch webhooks in guild category');
+  Future<List<Webhook>> fetchWebhooks() => throw UnsupportedError('Cannot fetch webhooks in guild category');
 
   @override
   Future<List<InviteWithMetadata>> listInvites() => manager.listInvites(id);
 
   @override
-  Future<Invite> createInvite(InviteBuilder builder,
-          {String? auditLogReason}) =>
-      manager.createInvite(id, builder, auditLogReason: auditLogReason);
+  Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
 
   @override
   GuildChannelBuilder<GuildCategory> toBuilder() => GuildChannelBuilder(
       name: name,
       type: type,
-      permissionOverwrites: permissionOverwrites
-          .map((e) => PermissionOverwriteBuilder(
-              id: e.id, type: e.type, allow: e.allow, deny: e.deny))
-          .toList(),
+      permissionOverwrites: permissionOverwrites.map((e) => PermissionOverwriteBuilder(id: e.id, type: e.type, allow: e.allow, deny: e.deny)).toList(),
       position: position);
 }
