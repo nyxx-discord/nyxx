@@ -1,3 +1,8 @@
+## 6.3.1
+__11.07.2024__
+
+- bug: poll answer in message object throwing an error.
+
 ## 6.3.0
 __07.07.2024__
 
