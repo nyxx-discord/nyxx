@@ -37,7 +37,31 @@ final sampleMessage = {
       "name": "example sticker",
       "format_type": 1,
     }
-  ]
+  ],
+  "poll": {
+    "allow_multiselect": false,
+    "answers": [
+      {
+        "answer_id": 1,
+        "poll_media": {"text": "oof"},
+      }
+    ],
+    "expiry": "2024-07-12T22:00:25.095257+00:00",
+    "layout_type": 1,
+    "question": {
+      "text": "Why are you so dumb?",
+    },
+    "results": {
+      "is_finalized": false,
+      "answer_counts": [
+        {
+          "count": 1,
+          "id": 1,
+          "me_voted": true,
+        }
+      ]
+    }
+  }
 };
 
 void checkMessage(Message message) {
@@ -68,6 +92,21 @@ void checkMessage(Message message) {
   expect(message.position, isNull);
   expect(message.roleSubscriptionData, isNull);
   expect(message.stickers, hasLength(1));
+  expect(message.poll, isNotNull);
+  expect(message.poll!.allowsMultiselect, equals(false));
+  expect(message.poll!.answers, hasLength(1));
+  expect(message.poll!.answers.single.id, equals(1));
+  expect(message.poll!.answers.single.pollMedia.text, equals('oof'));
+  expect(message.poll!.endsAt, equals(DateTime.utc(2024, 07, 12, 22, 00, 25, 095, 257)));
+  expect(message.poll!.layoutType, equals(PollLayoutType.defaultLayout));
+  expect(message.poll!.question.text, equals('Why are you so dumb?'));
+  expect(message.poll!.results, isNotNull);
+  expect(message.poll!.results!.isFinalized, isFalse);
+  expect(message.poll!.results!.answerCounts, hasLength(1));
+  expect(message.poll!.results!.answerCounts.single.count, equals(1));
+  expect(message.poll!.results!.answerCounts.single.answerId, equals(1));
+  expect(message.poll!.results!.answerCounts.single.me, isTrue);
+  expect(message.poll!.results!.answerCounts.single.count, equals(1));
 }
 
 final sampleCrosspostedMessage = {

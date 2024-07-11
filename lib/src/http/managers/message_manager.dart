@@ -355,7 +355,7 @@ class MessageManager extends Manager<Message> {
 
   PollAnswerCount parsePollAnswerCount(Map<String, Object?> raw) {
     return PollAnswerCount(
-      answerId: raw['answer_id'] as int,
+      answerId: raw['id'] as int,
       count: raw['count'] as int,
       me: raw['me_voted'] as bool,
     );
