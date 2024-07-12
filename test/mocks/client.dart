@@ -10,9 +10,6 @@ class MockNyxx with Mock, ManagerMixin implements NyxxRest {
 
   @override
   PartialUser get user => users[Snowflake.zero];
-
-  @override
-  RestApiOptions get apiOptions => RestApiOptions(token: '');
 }
 
 class MockNyxxGateway with Mock, ManagerMixin implements NyxxGateway {

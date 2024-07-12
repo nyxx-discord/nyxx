@@ -1,3 +1,4 @@
+import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
@@ -5,8 +6,12 @@ import '../../mocks/client.dart';
 
 void main() {
   test('CdnAsset', () {
+    final client = MockNyxx();
+
+    when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
+
     final asset = CdnAsset(
-      client: MockNyxx(),
+      client: client,
       base: HttpRoute()
         ..add(HttpRoutePart('hello'))
         ..add(HttpRoutePart('world')),
