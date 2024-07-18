@@ -205,6 +205,9 @@ class Message extends PartialMessage {
   /// A poll.
   final Poll? poll;
 
+  /// The message(s) associated with the [reference].
+  final List<MessageSnapshot>? snapshots;
+
   /// {@macro message}
   /// @nodoc
   Message({
@@ -241,6 +244,7 @@ class Message extends PartialMessage {
     required this.stickers,
     required this.resolved,
     required this.poll,
+    required this.snapshots,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
@@ -289,6 +293,7 @@ final class MessageType extends EnumLike<int, MessageType> {
   static const guildIncidentAlertModeDisabled = MessageType(37);
   static const guildIncidentReportRaid = MessageType(38);
   static const guildIncidentReportFalseAlarm = MessageType(39);
+  static const purchaseNotification = MessageType(44);
 
   /// @nodoc
   const MessageType(super.value);
@@ -443,5 +448,59 @@ class MessageInteractionMetadata with ToStringHelper {
     required this.originalResponseMessageId,
     required this.interactedMessageId,
     required this.triggeringInteractionMetadata,
+  });
+}
+
+class MessageSnapshot {
+  /// The forwarded message.
+  final ForwardedMessage message;
+
+  MessageSnapshot({required this.message});
+}
+
+// No id provided, apparently.
+/// A message that was forwarded from another channel.
+class ForwardedMessage {
+  /// The type of this message.
+  final MessageType type;
+
+  /// The content of the message.
+  /// 
+  /// {@macro message_content_intent_required}
+  final String content;
+
+  /// A list of embeds in this message.
+  ///
+  /// {@macro message_content_intent_required}
+  final List<Embed> embeds;
+
+  /// A list of files attached to this message.
+  ///
+  /// {@macro message_content_intent_required}
+  final List<Attachment> attachments;
+
+  /// The time when this message was sent.
+  final DateTime timestamp;
+
+  /// The time when this message was last edited, or `null` if the message was never edited.
+  final DateTime? editedTimestamp;
+
+  /// Any flags applied to this message.
+  final MessageFlags flags;
+
+  /// A list of users specifically mentioned in this message.
+  final List<User> mentions;
+
+  // Cannot provide roleMentions as we (still) do not have access to the guild.
+
+  ForwardedMessage({
+    required this.type,
+    required this.content,
+    required this.embeds,
+    required this.attachments,
+    required this.timestamp,
+    required this.editedTimestamp,
+    required this.flags,
+    required this.mentions,
   });
 }

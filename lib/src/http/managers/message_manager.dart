@@ -93,6 +93,7 @@ class MessageManager extends Manager<Message> {
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
       resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => client.interactions.parseResolvedData(raw, guildId: guildId, channelId: channelId)),
       poll: maybeParse(raw['poll'], parsePoll),
+      snapshots: maybeParseMany(raw['message_snapshots'], parseSnapshot),
     );
   }
 
@@ -230,8 +231,12 @@ class MessageManager extends Manager<Message> {
     return MessageReference(
       manager: this,
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
+
+      /// TODO: Apparently, channel_id is nullable.
       channelId: Snowflake.parse(raw['channel_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
+      // * If type is unset, DEFAULT can be assumed in order to match the behaviour before message reference had types.
+      type: maybeParse(raw['type'], MessageReferenceType.new) ?? MessageReferenceType.default_,
     );
   }
 
@@ -379,6 +384,25 @@ class MessageManager extends Manager<Message> {
       allowsMultiselect: raw['allow_multiselect'] as bool,
       layoutType: PollLayoutType(raw['layout_type'] as int),
       results: maybeParse(raw['results'], parsePollResults),
+    );
+  }
+
+  MessageSnapshot parseSnapshot(Map<String, Object?> raw) {
+    return MessageSnapshot(
+      message: parseForwardedMessage(raw['message'] as Map<String, Object?>),
+    );
+  }
+
+  ForwardedMessage parseForwardedMessage(Map<String, Object?> raw) {
+    return ForwardedMessage(
+      type: MessageType(raw['type'] as int),
+      content: raw['content'] as String,
+      embeds: parseMany(raw['embeds'] as List, parseEmbed),
+      attachments: parseMany(raw['attachments'] as List, parseAttachment),
+      timestamp: DateTime.parse(raw['timestamp'] as String),
+      editedTimestamp: maybeParse(raw['edited_timestamp'], DateTime.parse),
+      flags: MessageFlags(raw['flags'] as int),
+      mentions: parseMany(raw['mentions'] as List, client.users.parse),
     );
   }
 
