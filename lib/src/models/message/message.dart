@@ -465,7 +465,7 @@ class ForwardedMessage {
   final MessageType type;
 
   /// The content of the message.
-  /// 
+  ///
   /// {@macro message_content_intent_required}
   final String content;
 
