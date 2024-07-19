@@ -45,6 +45,10 @@ class TextEmoji extends Emoji {
   Future<TextEmoji> fetch() async => this;
 }
 
+
+// TODO(lexedia): Rename GuildEmoji to ApplicationEmoji?
+typedef ApplicationEmoji = GuildEmoji;
+
 /// A custom guild emoji.
 class GuildEmoji extends Emoji {
   @override
