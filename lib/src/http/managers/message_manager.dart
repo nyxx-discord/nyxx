@@ -403,6 +403,7 @@ class MessageManager extends Manager<Message> {
       editedTimestamp: maybeParse(raw['edited_timestamp'], DateTime.parse),
       flags: MessageFlags(raw['flags'] as int),
       mentions: parseMany(raw['mentions'] as List, client.users.parse),
+      snapshots: maybeParseMany(raw['message_snapshots'], parseSnapshot),
     );
   }
 
