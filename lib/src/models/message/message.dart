@@ -491,6 +491,9 @@ class ForwardedMessage {
   /// A list of users specifically mentioned in this message.
   final List<User> mentions;
 
+  /// The messages snapshots this message includes.
+  final List<MessageSnapshot>? snapshots;
+
   // Cannot provide roleMentions as we (still) do not have access to the guild.
 
   ForwardedMessage({
@@ -502,5 +505,6 @@ class ForwardedMessage {
     required this.editedTimestamp,
     required this.flags,
     required this.mentions,
+    required this.snapshots,
   });
 }
