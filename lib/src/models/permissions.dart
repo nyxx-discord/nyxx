@@ -157,7 +157,7 @@ class Permissions extends Flags<Permissions> {
   /// Allows sending polls.
   static const sendPolls = Flag<Permissions>.fromOffset(49);
 
-  /// Allows user-installed apps to send public responses. When disabled, users will still be allowed to use their apps but the responses will be ephemeral. 
+  /// Allows user-installed apps to send public responses. When disabled, users will still be allowed to use their apps but the responses will be ephemeral.
   /// This only applies to apps not also installed to the server.
   static const useExternalApps = Flag<Permissions>.fromOffset(50);
 
