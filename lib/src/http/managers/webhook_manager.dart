@@ -197,6 +197,8 @@ class WebhookManager extends Manager<Webhook> {
           ...builder.build(),
           if (threadName != null) 'thread_name': threadName,
           if (appliedTags != null) 'applied_tags': appliedTags.map((e) => e.toString()),
+          if (username != null) 'username': username,
+          if (avatarUrl != null) 'avatar_url': avatarUrl,
         }),
         queryParameters: queryParameters,
         authenticated: false,
