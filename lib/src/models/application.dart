@@ -1,7 +1,9 @@
+import 'package:nyxx/src/builders/emoji/emoji.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/entitlement_manager.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
@@ -38,6 +40,24 @@ class PartialApplication with ToStringHelper {
 
   /// List this application's SKUs.
   Future<List<Sku>> listSkus() => manager.listSkus(id);
+
+  // NOTE: Do we want an ApplicationEmojiManager?
+
+  /// List this application's emojis.
+  Future<List<ApplicationEmoji>> listEmojis() => manager.listApplicationEmojis(id);
+
+  /// Returns an application emoji by its ID.
+  Future<ApplicationEmoji> fetchEmoji(Snowflake emojiId) => manager.getApplicationEmoji(id, emojiId);
+
+  /// Create a new emoji for the application.
+  Future<ApplicationEmoji> createEmoji(ApplicationEmojiBuilder builder) => manager.createApplicationEmoji(id, builder: builder);
+
+  /// Update an emoji for the application.
+  Future<ApplicationEmoji> updateEmoji(Snowflake emojiId, ApplicationEmojiUpdateBuilder builder) =>
+      manager.updateApplicationEmoji(id, emojiId, builder: builder);
+
+  /// Delete an emoji for the application.
+  Future<void> deleteEmoji(Snowflake emojiId) => manager.deleteApplicationEmoji(id, emojiId);
 }
 
 class ApplicationIntegrationTypeConfiguration {

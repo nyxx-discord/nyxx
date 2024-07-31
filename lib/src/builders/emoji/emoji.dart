@@ -46,3 +46,36 @@ class EmojiUpdateBuilder implements UpdateBuilder<GuildEmoji> {
         if (!identical(roles, sentinelList)) 'roles': roles?.map((s) => s.toString()).toList(),
       };
 }
+
+class ApplicationEmojiBuilder implements CreateBuilder<ApplicationEmoji> {
+  /// The name of the emoji.
+  String name;
+
+  /// The 128x128 emoji image.
+  ImageBuilder image;
+
+  ApplicationEmojiBuilder({
+    required this.name,
+    required this.image,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        'name': name,
+        'image': image.buildDataString(),
+      };
+}
+
+class ApplicationEmojiUpdateBuilder implements UpdateBuilder<ApplicationEmoji> {
+  /// The name of the emoji.
+  String? name;
+
+  ApplicationEmojiUpdateBuilder({
+    this.name,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        if (name != null) 'name': name,
+      };
+}
