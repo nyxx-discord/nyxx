@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template message_reference}
@@ -57,6 +58,8 @@ class MessageReference with ToStringHelper {
   /// The ID of the originating message's [Guild].
   final Snowflake? guildId;
 
+  final MessageReferenceType type;
+
   /// {@macro message_reference}
   /// @nodoc
   MessageReference({
@@ -64,6 +67,7 @@ class MessageReference with ToStringHelper {
     required this.messageId,
     required this.channelId,
     required this.guildId,
+    required this.type,
   });
 
   /// The originating message's channel.
@@ -74,4 +78,15 @@ class MessageReference with ToStringHelper {
 
   /// The guild of the originating message.
   PartialGuild? get guild => guildId == null ? null : manager.client.guilds[guildId!];
+}
+
+final class MessageReferenceType extends EnumLike<int, MessageReferenceType> {
+  /// A standard reference, used by replies.
+  static const default_ = MessageReferenceType(0);
+
+  /// A reference used to point to a message at a point in time.
+  static const forward = MessageReferenceType(1);
+
+  //@nodoc
+  const MessageReferenceType(super.value);
 }
