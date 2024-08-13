@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/role.dart';
-import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
