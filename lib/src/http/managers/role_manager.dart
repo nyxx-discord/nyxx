@@ -69,14 +69,16 @@ class RoleManager extends Manager<Role> {
 
   @override
   Future<Role> fetch(Snowflake id) async {
-    // There isn't an endpoint to fetch a single role. Re-fetch all the roles to ensure they are up to date,
-    // and return the matching role.
-    final roles = await list();
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..roles(id: id.toString());
 
-    return roles.firstWhere(
-      (role) => role.id == id,
-      orElse: () => throw RoleNotFoundException(guildId, id),
-    );
+    final request = BasicRequest(route);
+    final response = await client.httpHandler.executeSafe(request);
+    final role = parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(role);
+    return role;
   }
 
   @override
