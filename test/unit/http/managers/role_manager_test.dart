@@ -38,8 +38,6 @@ void main() {
     RegExp(r'/guilds/0/roles(/\d+)?'),
     '/guilds/0/roles',
     sampleObject: sampleRole,
-    // Fetch implementation internally uses `list()`, so we return a list
-    fetchObjectOverride: [sampleRole],
     sampleMatches: checkRole,
     additionalParsingTests: [],
     additionalEndpointTests: [
