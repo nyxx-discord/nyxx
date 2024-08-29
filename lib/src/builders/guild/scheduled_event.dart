@@ -126,6 +126,30 @@ class RecurrenceRuleBuilder extends CreateBuilder<RecurrenceRule> {
     this.byMonthDay,
   });
 
+  RecurrenceRuleBuilder.daily({required this.start, this.byWeekday})
+      : frequency = RecurrenceRuleFrequency.daily,
+        interval = 1;
+
+  RecurrenceRuleBuilder.weekly({
+    required this.start,
+    required this.interval,
+    RecurrenceRuleWeekday? day,
+  })  : frequency = RecurrenceRuleFrequency.weekly,
+        byWeekday = day == null ? null : [day];
+
+  RecurrenceRuleBuilder.monthly({
+    required this.start,
+    RecurrenceRuleNWeekday? day,
+  })  : frequency = RecurrenceRuleFrequency.monthly,
+        interval = 1,
+        byNWeekday = day == null ? null : [day];
+
+  RecurrenceRuleBuilder.yearly({required this.start, (RecurrenceRuleMonth, int)? day})
+      : frequency = RecurrenceRuleFrequency.yearly,
+        interval = 1,
+        byMonth = day == null ? null : [day.$1],
+        byMonthDay = day == null ? null : [day.$2];
+
   @override
   Map<String, Object?> build() => {
         'start': start.toIso8601String(),
