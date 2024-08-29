@@ -24,6 +24,8 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
 
   ImageBuilder? image;
 
+  RecurrenceRuleBuilder? recurrenceRule;
+
   ScheduledEventBuilder({
     required this.channelId,
     this.metadata,
@@ -34,6 +36,7 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
     this.description,
     required this.type,
     this.image,
+    this.recurrenceRule,
   });
 
   @override
@@ -47,6 +50,7 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
         if (description != null) 'description': description,
         'entity_type': type.value,
         if (image != null) 'image': image!.buildDataString(),
+        if (recurrenceRule != null) 'recurrence_rule': recurrenceRule!.build(),
       };
 }
 
@@ -71,6 +75,8 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
 
   ImageBuilder? image;
 
+  RecurrenceRuleBuilder? recurrenceRule;
+
   ScheduledEventUpdateBuilder({
     this.channelId = sentinelSnowflake,
     this.metadata = sentinelEntityMetadata,
@@ -82,6 +88,7 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
     this.type,
     this.status,
     this.image,
+    this.recurrenceRule,
   });
 
   @override
@@ -96,5 +103,37 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
         if (type != null) 'entity_type': type!.value,
         if (status != null) 'status': status!.value,
         if (image != null) 'image': image!.buildDataString(),
+        if (recurrenceRule != null) 'recurrence_rule': recurrenceRule!.build(),
+      };
+}
+
+class RecurrenceRuleBuilder extends CreateBuilder<RecurrenceRule> {
+  DateTime start;
+  RecurrenceRuleFrequency frequency;
+  int interval;
+  List<RecurrenceRuleWeekday>? byWeekday;
+  List<RecurrenceRuleNWeekday>? byNWeekday;
+  List<RecurrenceRuleMonth>? byMonth;
+  List<int>? byMonthDay;
+
+  RecurrenceRuleBuilder({
+    required this.start,
+    required this.frequency,
+    required this.interval,
+    this.byWeekday,
+    this.byNWeekday,
+    this.byMonth,
+    this.byMonthDay,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        'start': start.toIso8601String(),
+        'frequency': frequency.value,
+        'interval': interval,
+        'by_weekday': byWeekday?.map((weekday) => weekday.value).toList(),
+        'by_n_weekday': byNWeekday?.map((nWeekday) => {'n': nWeekday.n, 'day': nWeekday.day.value}).toList(),
+        'by_month': byMonth?.map((month) => month.value).toList(),
+        'by_month_day': byMonthDay,
       };
 }
