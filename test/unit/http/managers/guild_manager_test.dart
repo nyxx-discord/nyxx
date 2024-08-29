@@ -730,6 +730,21 @@ void main() {
         execute: (manager) => manager.fetchOnboarding(Snowflake.zero),
         check: checkOnboarding,
       ),
+      EndpointTest<GuildManager, Onboarding, Map<String, Object?>>(
+        name: 'updateOnboarding',
+        source: sampleOnboarding,
+        urlMatcher: '/guilds/0/onboarding',
+        method: 'PUT',
+        execute: (manager) => manager.updateOnboarding(
+            Snowflake.zero,
+            OnboardingUpdateBuilder(
+              prompts: [],
+              defaultChannelIds: [],
+              isEnabled: true,
+              mode: OnboardingMode.defaultMode,
+            )),
+        check: checkOnboarding,
+      ),
       EndpointTest<GuildManager, void, void>(
         name: 'updateCurrentUserVoiceState',
         method: 'PATCH',

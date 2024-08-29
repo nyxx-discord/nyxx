@@ -58,6 +58,7 @@ export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, Sch
 export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTemplateUpdateBuilder;
 export 'src/builders/guild/auto_moderation.dart'
     show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder, ActionMetadataBuilder, AutoModerationActionBuilder;
+export 'src/builders/guild/onboarding.dart' show OnboardingPromptBuilder, OnboardingPromptOptionBuilder, OnboardingUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
@@ -185,7 +186,7 @@ export 'src/models/guild/guild.dart'
         UserGuild;
 export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
-export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
+export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType, OnboardingMode;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
 export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
 export 'src/models/guild/audit_log.dart' show AuditLogChange, AuditLogEntry, AuditLogEntryInfo, PartialAuditLogEntry, AuditLogEvent;
