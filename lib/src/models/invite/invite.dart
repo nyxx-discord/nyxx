@@ -11,6 +11,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// If the invite is to a [Channel], this will be a [GroupDmChannel].
 /// {@endtemplate}
 class Invite with ToStringHelper {
+  /// The type of this invite.
+  final InviteType type;
+
   /// The invite's code. This is a unique identifier.
   final String code;
 
@@ -55,6 +58,7 @@ class Invite with ToStringHelper {
   /// {@macro invite}
   /// @nodoc
   Invite({
+    required this.type,
     required this.code,
     required this.guild,
     required this.channel,
@@ -79,4 +83,15 @@ final class TargetType extends EnumLike<int, TargetType> {
 
   @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TargetType.parse(int value) : this(value);
+}
+
+/// The type of an [Invite].
+
+final class InviteType extends EnumLike<int, InviteType> {
+  static const guild = InviteType(0);
+  static const groupDm = InviteType(1);
+  static const friend = InviteType(3);
+
+  /// @nodoc
+  const InviteType(super.value);
 }
