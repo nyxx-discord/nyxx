@@ -39,6 +39,40 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
     this.recurrenceRule,
   });
 
+  ScheduledEventBuilder.stageInstance({
+    required Snowflake this.channelId,
+    required this.name,
+    required this.privacyLevel,
+    required this.scheduledStartTime,
+    this.scheduledEndTime,
+    this.description,
+    this.image,
+    this.recurrenceRule,
+  }) : type = ScheduledEntityType.stageInstance;
+
+  ScheduledEventBuilder.voice({
+    required Snowflake this.channelId,
+    required this.name,
+    required this.privacyLevel,
+    required this.scheduledStartTime,
+    this.scheduledEndTime,
+    this.description,
+    this.image,
+    this.recurrenceRule,
+  }) : type = ScheduledEntityType.voice;
+
+  ScheduledEventBuilder.external({
+    required this.name,
+    required this.privacyLevel,
+    required this.scheduledStartTime,
+    required DateTime this.scheduledEndTime,
+    required String location,
+    this.description,
+    this.image,
+    this.recurrenceRule,
+  })  : type = ScheduledEntityType.external,
+        metadata = EntityMetadata(location: location);
+
   @override
   Map<String, Object?> build() => {
         if (channelId != null) 'channel_id': channelId.toString(),
