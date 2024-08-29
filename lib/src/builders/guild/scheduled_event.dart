@@ -42,7 +42,7 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
   @override
   Map<String, Object?> build() => {
         if (channelId != null) 'channel_id': channelId.toString(),
-        if (metadata != null) 'metadata': {'location': metadata!.location},
+        if (metadata != null) 'entity_metadata': {'location': metadata!.location},
         'name': name,
         'privacy_level': privacyLevel.value,
         'scheduled_start_time': scheduledStartTime.toIso8601String(),
