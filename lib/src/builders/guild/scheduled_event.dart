@@ -27,12 +27,12 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
   RecurrenceRuleBuilder? recurrenceRule;
 
   ScheduledEventBuilder({
-    required this.channelId,
+    this.channelId,
     this.metadata,
     required this.name,
     required this.privacyLevel,
     required this.scheduledStartTime,
-    required this.scheduledEndTime,
+    this.scheduledEndTime,
     this.description,
     required this.type,
     this.image,
