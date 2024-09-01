@@ -161,6 +161,7 @@ class Message extends PartialMessage implements MessageSnapshot {
   /// Data showing the source of a crosspost, channel follow add, pin, or reply message.
   final MessageReference? reference;
 
+  /// The messages associated with [reference].
   final List<MessageSnapshot>? messageSnapshots;
 
   @override
