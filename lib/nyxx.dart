@@ -146,7 +146,8 @@ export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
 // ignore: deprecated_member_use_from_same_package
-export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata;
+export 'src/models/message/message.dart'
+    show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata, MessageSnapshot;
 export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference;

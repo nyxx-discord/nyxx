@@ -48,27 +48,30 @@ class MessageManager extends Manager<Message> {
 
     final webhookId = maybeParse(raw['webhook_id'], Snowflake.parse);
 
+    final snapshot = parseMessageSnapshot(raw);
+
     return Message(
       id: Snowflake.parse(raw['id']!),
       manager: this,
+      content: snapshot.content,
+      timestamp: snapshot.timestamp,
+      editedTimestamp: snapshot.editedTimestamp,
+      attachments: snapshot.attachments,
+      embeds: snapshot.embeds,
+      flags: snapshot.flags,
+      mentions: snapshot.mentions,
+      roleMentionIds: snapshot.roleMentionIds,
+      type: snapshot.type,
       author: (webhookId == null
           ? client.users.parse(raw['author'] as Map<String, Object?>)
           : client.webhooks.parseWebhookAuthor(raw['author'] as Map<String, Object?>)) as MessageAuthor,
-      content: raw['content'] as String,
-      timestamp: DateTime.parse(raw['timestamp'] as String),
-      editedTimestamp: maybeParse(raw['edited_timestamp'], DateTime.parse),
       isTts: raw['tts'] as bool,
       mentionsEveryone: raw['mention_everyone'] as bool,
-      mentions: parseMany(raw['mentions'] as List, client.users.parse),
-      roleMentionIds: parseMany(raw['mention_roles'] as List, Snowflake.parse),
       channelMentions: maybeParseMany(raw['mention_channels'], parseChannelMention) ?? [],
-      attachments: parseMany(raw['attachments'] as List, parseAttachment),
-      embeds: parseMany(raw['embeds'] as List, parseEmbed),
       reactions: maybeParseMany(raw['reactions'], parseReaction) ?? [],
       nonce: raw['nonce'] /* as int | String */,
       isPinned: raw['pinned'] as bool,
       webhookId: webhookId,
-      type: MessageType(raw['type'] as int),
       activity: maybeParse(raw['activity'], parseMessageActivity),
       application: maybeParse(
         raw['application'],
@@ -76,7 +79,10 @@ class MessageManager extends Manager<Message> {
       ),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       reference: maybeParse(raw['message_reference'], parseMessageReference),
-      flags: MessageFlags(raw['flags'] as int? ?? 0),
+      messageSnapshots: maybeParseMany(
+        raw['message_snapshots'],
+        (Map<String, Object?> raw) => parseMessageSnapshot(raw['message'] as Map<String, Object?>),
+      ),
       referencedMessage: maybeParse(raw['referenced_message'], parse),
       interaction: maybeParse(
         raw['interaction'],
@@ -379,6 +385,24 @@ class MessageManager extends Manager<Message> {
       allowsMultiselect: raw['allow_multiselect'] as bool,
       layoutType: PollLayoutType(raw['layout_type'] as int),
       results: maybeParse(raw['results'], parsePollResults),
+    );
+  }
+
+  /// Parse a [MessageSnapshot] from [raw].
+  ///
+  /// [raw] must be the inner `message` field from the actual message snapshot
+  /// object. See the comment on [MessageReference] for why.
+  MessageSnapshot parseMessageSnapshot(Map<String, Object?> raw) {
+    return MessageSnapshot(
+      content: raw['content'] as String,
+      timestamp: DateTime.parse(raw['timestamp'] as String),
+      editedTimestamp: maybeParse(raw['edited_timestamp'], DateTime.parse),
+      attachments: parseMany(raw['attachments'] as List, parseAttachment),
+      embeds: parseMany(raw['embeds'] as List, parseEmbed),
+      flags: MessageFlags(raw['flags'] as int? ?? 0),
+      mentions: parseMany(raw['mentions'] as List, client.users.parse),
+      roleMentionIds: parseMany(raw['mention_roles'] as List, Snowflake.parse),
+      type: MessageType(raw['type'] as int),
     );
   }
 
