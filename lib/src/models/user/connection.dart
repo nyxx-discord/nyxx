@@ -77,7 +77,7 @@ enum ConnectionType {
   steam._('steam', 'Steam'),
   tikTok._('tiktok', 'TikTok'),
   twitch._('twitch', 'Twitch'),
-  twitter._('twitter', 'Twitter'),
+  twitter._('twitter', 'X (Twitter)'),
   xbox._('xbox', 'Xbox'),
   youtube._('youtube', 'YouTube');
 
