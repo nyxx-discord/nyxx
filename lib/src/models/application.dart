@@ -1,6 +1,6 @@
-import 'package:nyxx/src/builders/emoji/emoji.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/entitlement_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji.dart';
@@ -28,6 +28,9 @@ class PartialApplication with ToStringHelper {
   /// An [EntitlementManager] for this application's [Entitlement]s.
   EntitlementManager get entitlements => EntitlementManager(manager.client.options.entitlementConfig, manager.client, applicationId: id);
 
+  /// An [ApplicationEmojiManager] for this application's [Emoji]s.
+  ApplicationEmojiManager get emojis => ApplicationEmojiManager(manager.client.options.emojiCacheConfig, manager.client, applicationId: id);
+
   /// Create a new [PartialApplication].
   /// @nodoc
   PartialApplication({required this.id, required this.manager});
@@ -40,24 +43,6 @@ class PartialApplication with ToStringHelper {
 
   /// List this application's SKUs.
   Future<List<Sku>> listSkus() => manager.listSkus(id);
-
-  // NOTE: Do we want an ApplicationEmojiManager?
-
-  /// List this application's emojis.
-  Future<List<ApplicationEmoji>> listEmojis() => manager.listApplicationEmojis(id);
-
-  /// Returns an application emoji by its ID.
-  Future<ApplicationEmoji> fetchEmoji(Snowflake emojiId) => manager.getApplicationEmoji(id, emojiId);
-
-  /// Create a new emoji for the application.
-  Future<ApplicationEmoji> createEmoji(ApplicationEmojiBuilder builder) => manager.createApplicationEmoji(id, builder: builder);
-
-  /// Update an emoji for the application.
-  Future<ApplicationEmoji> updateEmoji(Snowflake emojiId, ApplicationEmojiUpdateBuilder builder) =>
-      manager.updateApplicationEmoji(id, emojiId, builder: builder);
-
-  /// Delete an emoji for the application.
-  Future<void> deleteEmoji(Snowflake emojiId) => manager.deleteApplicationEmoji(id, emojiId);
 }
 
 class ApplicationIntegrationTypeConfiguration {

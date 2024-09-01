@@ -1,5 +1,6 @@
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -99,3 +100,12 @@ class _SentinelUri implements Uri {
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+class _SentinelEmoji implements Emoji {
+  const _SentinelEmoji();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelEmoji = _SentinelEmoji();

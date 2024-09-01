@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/application.dart';
-import 'package:nyxx/src/builders/emoji/emoji.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
-import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
@@ -205,67 +203,5 @@ class ApplicationManager {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(response.jsonBody as List, parseSku);
-  }
-
-  /// Returns an object containing a list of emoji objects for the given application under the items key.
-  /// Includes a user object for the team member that uploaded the emoji from the app's settings, or for the bot user if uploaded using the API.
-  Future<List<ApplicationEmoji>> listApplicationEmojis(Snowflake id) async {
-    final route = HttpRoute()
-      ..applications(id: id.toString())
-      ..emojis();
-    final request = BasicRequest(route);
-
-    final response = await client.httpHandler.executeSafe(request);
-    return parseMany(
-      response.jsonBody as List,
-      (raw) => client.guilds[Snowflake.zero].emojis.parse((raw as Map)['items'] as Map<String, Object?>) as ApplicationEmoji,
-    );
-  }
-
-  /// Returns an emoji object for the given application and emoji IDs. Includes the user field.
-  Future<ApplicationEmoji> getApplicationEmoji(Snowflake id, Snowflake emojiId) async {
-    final route = HttpRoute()
-      ..applications(id: id.toString())
-      ..emojis(id: emojiId.toString());
-
-    final request = BasicRequest(route);
-
-    final response = await client.httpHandler.executeSafe(request);
-    return client.guilds[Snowflake.zero].emojis.parse(response.jsonBody as Map<String, Object?>) as ApplicationEmoji;
-  }
-
-  /// Create a new emoji for the application. Returns the new emoji object on success.
-  Future<ApplicationEmoji> createApplicationEmoji(Snowflake id, {required ApplicationEmojiBuilder builder}) async {
-    final route = HttpRoute()
-      ..applications(id: id.toString())
-      ..emojis();
-
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
-
-    final response = await client.httpHandler.executeSafe(request);
-    return client.guilds[Snowflake.zero].emojis.parse(response.jsonBody as Map<String, Object?>) as ApplicationEmoji;
-  }
-
-  /// Modify the given emoji. Returns the updated emoji object on success.
-  Future<ApplicationEmoji> updateApplicationEmoji(Snowflake id, Snowflake emojiId, {required ApplicationEmojiUpdateBuilder builder}) async {
-    final route = HttpRoute()
-      ..applications(id: id.toString())
-      ..emojis(id: emojiId.toString());
-
-    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
-
-    final response = await client.httpHandler.executeSafe(request);
-    return client.guilds[Snowflake.zero].emojis.parse(response.jsonBody as Map<String, Object?>) as ApplicationEmoji;
-  }
-
-  /// Delete the given emoji.
-  Future<void> deleteApplicationEmoji(Snowflake id, Snowflake emojiId) async {
-    final route = HttpRoute()
-      ..applications(id: id.toString())
-      ..emojis(id: emojiId.toString());
-
-    final request = BasicRequest(route, method: 'DELETE');
-
-    await client.httpHandler.executeSafe(request);
   }
 }

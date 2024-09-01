@@ -11,6 +11,7 @@ import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/voice_manager.dart';
+import 'package:nyxx/src/http/managers/emoji_manager.dart';
 
 /// An internal mixin to add managers to a [Nyxx] instance.
 mixin ManagerMixin implements Nyxx {
@@ -49,4 +50,7 @@ mixin ManagerMixin implements Nyxx {
       GlobalApplicationCommandManager(options.applicationCommandConfig, this as NyxxRest, applicationId: (this as NyxxRest).application.id);
 
   InteractionManager get interactions => InteractionManager(this as NyxxRest, applicationId: (this as NyxxRest).application.id);
+
+  /// [An] [ApplicationEmojiManager] that manages emojis for this client.
+  ApplicationEmojiManager get emojis => (this as NyxxRest).application.emojis;
 }
