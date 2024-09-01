@@ -144,7 +144,7 @@ export 'src/models/message/activity.dart' show MessageActivity, MessageActivityT
 export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
-export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
+export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
 // ignore: deprecated_member_use_from_same_package
 export 'src/models/message/message.dart'
     show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata, MessageSnapshot, MessageCall;

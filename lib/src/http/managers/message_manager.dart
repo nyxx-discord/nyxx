@@ -135,6 +135,7 @@ class MessageManager extends Manager<Message> {
   Embed parseEmbed(Map<String, Object?> raw) {
     return Embed(
       title: raw['title'] as String?,
+      type: EmbedType(raw['type'] as String),
       description: raw['description'] as String?,
       url: maybeParse(raw['url'], Uri.parse),
       timestamp: maybeParse(raw['timestamp'], DateTime.parse),
