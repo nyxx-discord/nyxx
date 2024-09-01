@@ -1,6 +1,7 @@
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/entitlement_manager.dart';
+import 'package:nyxx/src/http/managers/sku_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
@@ -25,6 +26,9 @@ class PartialApplication with ToStringHelper {
 
   /// An [EntitlementManager] for this application's [Entitlement]s.
   EntitlementManager get entitlements => EntitlementManager(manager.client.options.entitlementConfig, manager.client, applicationId: id);
+
+  /// An [SkuManager] for this application's [Sku]s.
+  SkuManager get skus => SkuManager(manager.client.options.skuConfig, manager.client, applicationId: id);
 
   /// Create a new [PartialApplication].
   /// @nodoc
