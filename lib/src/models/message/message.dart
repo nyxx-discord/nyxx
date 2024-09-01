@@ -96,23 +96,19 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object
 /// {@endtemplate}
-class Message extends PartialMessage {
+class Message extends PartialMessage implements MessageSnapshot {
   /// The author of this message.
   ///
   /// This could be a [User] or a [WebhookAuthor].
   final MessageAuthor author;
 
-  /// The content of the message.
-  ///
-  /// {@template message_content_intent_required}
-  /// The message content intent is needed for this field to be non-empty.
-  /// {@endtemplate}
+  @override
   final String content;
 
-  /// The time when this message was sent.
+  @override
   final DateTime timestamp;
 
-  /// The time when this message was last edited, or `null` if the message was never edited.
+  @override
   final DateTime? editedTimestamp;
 
   /// Whether this was a TTS message.
@@ -121,22 +117,19 @@ class Message extends PartialMessage {
   /// Whether this message mentions everyone.
   final bool mentionsEveryone;
 
-  /// A list of users specifically mentioned in this message.
+  @override
   final List<User> mentions;
 
+  @override
   final List<Snowflake> roleMentionIds;
 
   /// A list of channels specifically mentioned in this message.
   final List<ChannelMention> channelMentions;
 
-  /// A list of files attached to this message.
-  ///
-  /// {@macro message_content_intent_required}
+  @override
   final List<Attachment> attachments;
 
-  /// A list of embeds in this message.
-  ///
-  /// {@macro message_content_intent_required}
+  @override
   final List<Embed> embeds;
 
   /// A list of reactions to this message.
@@ -153,7 +146,7 @@ class Message extends PartialMessage {
   /// The ID of the webhook that sent this message if it was sent by a webhook, `null` otherwise.
   final Snowflake? webhookId;
 
-  /// The type of this message.
+  @override
   final MessageType type;
 
   /// Activity information if this message is related to Rich Presence, `null` otherwise.
@@ -168,7 +161,10 @@ class Message extends PartialMessage {
   /// Data showing the source of a crosspost, channel follow add, pin, or reply message.
   final MessageReference? reference;
 
-  /// Any flags applied to this message.
+  /// The messages associated with [reference].
+  final List<MessageSnapshot>? messageSnapshots;
+
+  @override
   final MessageFlags flags;
 
   /// The message associated with [reference].
@@ -205,6 +201,9 @@ class Message extends PartialMessage {
   /// A poll.
   final Poll? poll;
 
+  /// Information about a call in a DM channel.
+  final MessageCall? call;
+
   /// {@macro message}
   /// @nodoc
   Message({
@@ -230,6 +229,7 @@ class Message extends PartialMessage {
     required this.application,
     required this.applicationId,
     required this.reference,
+    required this.messageSnapshots,
     required this.flags,
     required this.referencedMessage,
     required this.interactionMetadata,
@@ -241,6 +241,7 @@ class Message extends PartialMessage {
     required this.stickers,
     required this.resolved,
     required this.poll,
+    required this.call,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
@@ -289,6 +290,8 @@ final class MessageType extends EnumLike<int, MessageType> {
   static const guildIncidentAlertModeDisabled = MessageType(37);
   static const guildIncidentReportRaid = MessageType(38);
   static const guildIncidentReportFalseAlarm = MessageType(39);
+  static const purchaseNotification = MessageType(44);
+  static const pollResult = MessageType(46);
 
   /// @nodoc
   const MessageType(super.value);
@@ -414,9 +417,6 @@ class MessageInteractionMetadata with ToStringHelper {
   /// The type of the interaction.
   final InteractionType type;
 
-  /// ID of the user that triggered the interaction.
-  final Snowflake userId;
-
   /// The user that triggered the interaction.
   final User user;
 
@@ -437,11 +437,95 @@ class MessageInteractionMetadata with ToStringHelper {
   MessageInteractionMetadata({
     required this.id,
     required this.type,
-    required this.userId,
     required this.user,
     required this.authorizingIntegrationOwners,
     required this.originalResponseMessageId,
     required this.interactedMessageId,
     required this.triggeringInteractionMetadata,
   });
+
+  /// ID of the user that triggered the interaction.
+  @Deprecated('Use user.id instead.')
+  Snowflake get userId => user.id;
+}
+
+/// A limited set of fields of a [Message].
+// Technically this class should contain a single `message` field, of type
+// `PartialMessage`. However, partials in nyxx require the ID of the object to
+// be known, and the id field is not included in the nested partial message
+// object. Since this object would then be useless as it cannot contain any
+// useful data using existing nyxx types, we instead forward the field of the
+// nested object into this type.
+class MessageSnapshot with ToStringHelper {
+  /// The time when this message was sent.
+  final DateTime timestamp;
+
+  /// The time when this message was last edited, or `null` if the message was never edited.
+  final DateTime? editedTimestamp;
+
+  /// The type of this message.
+  final MessageType type;
+
+  /// The content of the message.
+  ///
+  /// {@template message_content_intent_required}
+  /// The message content intent is needed for this field to be non-empty.
+  /// {@endtemplate}
+  final String content;
+
+  /// A list of files attached to this message.
+  ///
+  /// {@macro message_content_intent_required}
+  final List<Attachment> attachments;
+
+  /// A list of embeds in this message.
+  ///
+  /// {@macro message_content_intent_required}
+  final List<Embed> embeds;
+
+  /// Any flags applied to this message.
+  final MessageFlags flags;
+
+  /// A list of users specifically mentioned in this message.
+  final List<User> mentions;
+
+  /// A list of roles mentioned in the message.
+  final List<Snowflake> roleMentionIds;
+
+  /// @nodoc
+  MessageSnapshot({
+    required this.timestamp,
+    required this.editedTimestamp,
+    required this.type,
+    required this.content,
+    required this.attachments,
+    required this.embeds,
+    required this.flags,
+    required this.mentions,
+    required this.roleMentionIds,
+  });
+}
+
+/// Information about a call in a private channel.
+class MessageCall with ToStringHelper {
+  /// The manager for this [MessageCall].
+  final MessageManager manager;
+
+  /// The IDs of the users in the call.
+  final List<Snowflake> participantIds;
+
+  /// The time at which the call ended.
+  final DateTime? endedAt;
+
+  /// @nodoc
+  MessageCall({
+    required this.manager,
+    required this.participantIds,
+    required this.endedAt,
+  });
+
+  /// The users in the call.
+  List<PartialUser> get participants => [
+        for (final participantId in participantIds) manager.client.users[participantId],
+      ];
 }

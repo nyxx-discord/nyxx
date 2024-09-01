@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/discord_color.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template embed}
@@ -10,6 +11,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 class Embed {
   /// The title of this embed.
   final String? title;
+
+  /// The type of this embed.
+  final EmbedType type;
 
   /// The description of this embed.
   final String? description;
@@ -48,6 +52,7 @@ class Embed {
   /// @nodoc
   Embed({
     required this.title,
+    required this.type,
     required this.description,
     required this.url,
     required this.timestamp,
@@ -60,6 +65,19 @@ class Embed {
     required this.author,
     required this.fields,
   });
+}
+
+/// The type of an embed.
+final class EmbedType extends EnumLike<String, EmbedType> {
+  static const rich = EmbedType('rich');
+  static const image = EmbedType('image');
+  static const video = EmbedType('video');
+  static const gifv = EmbedType('gifv');
+  static const article = EmbedType('article');
+  static const link = EmbedType('link');
+  static const pollResult = EmbedType('poll_result');
+// @nodoc
+  const EmbedType(super.value);
 }
 
 /// {@template embed_footer}
