@@ -200,6 +200,9 @@ class Message extends PartialMessage implements MessageSnapshot {
   /// A poll.
   final Poll? poll;
 
+  /// Information about a call in a DM channel.
+  final MessageCall? call;
+
   /// {@macro message}
   /// @nodoc
   Message({
@@ -237,6 +240,7 @@ class Message extends PartialMessage implements MessageSnapshot {
     required this.stickers,
     required this.resolved,
     required this.poll,
+    required this.call,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
@@ -497,4 +501,28 @@ class MessageSnapshot with ToStringHelper {
     required this.mentions,
     required this.roleMentionIds,
   });
+}
+
+/// Information about a call in a private channel.
+class MessageCall with ToStringHelper {
+  /// The manager for this [MessageCall].
+  final MessageManager manager;
+
+  /// The IDs of the users in the call.
+  final List<Snowflake> participantIds;
+
+  /// The time at which the call ended.
+  final DateTime? endedAt;
+
+  /// @nodoc
+  MessageCall({
+    required this.manager,
+    required this.participantIds,
+    required this.endedAt,
+  });
+
+  /// The users in the call.
+  List<PartialUser> get participants => [
+        for (final participantId in participantIds) manager.client.users[participantId],
+      ];
 }

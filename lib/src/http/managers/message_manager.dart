@@ -99,6 +99,7 @@ class MessageManager extends Manager<Message> {
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
       resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => client.interactions.parseResolvedData(raw, guildId: guildId, channelId: channelId)),
       poll: maybeParse(raw['poll'], parsePoll),
+      call: maybeParse(raw['call'], parseMessageCall),
     );
   }
 
@@ -403,6 +404,14 @@ class MessageManager extends Manager<Message> {
       mentions: parseMany(raw['mentions'] as List, client.users.parse),
       roleMentionIds: parseMany(raw['mention_roles'] as List, Snowflake.parse),
       type: MessageType(raw['type'] as int),
+    );
+  }
+
+  MessageCall parseMessageCall(Map<String, Object?> raw) {
+    return MessageCall(
+      manager: this,
+      participantIds: parseMany(raw['participants'] as List, Snowflake.parse),
+      endedAt: maybeParse(raw['ended_at'], DateTime.parse),
     );
   }
 
