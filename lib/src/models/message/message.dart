@@ -290,6 +290,8 @@ final class MessageType extends EnumLike<int, MessageType> {
   static const guildIncidentAlertModeDisabled = MessageType(37);
   static const guildIncidentReportRaid = MessageType(38);
   static const guildIncidentReportFalseAlarm = MessageType(39);
+  static const purchaseNotification = MessageType(44);
+  static const pollResult = MessageType(46);
 
   /// @nodoc
   const MessageType(super.value);
