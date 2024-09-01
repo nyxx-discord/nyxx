@@ -76,7 +76,7 @@ final class EmbedType extends EnumLike<String, EmbedType> {
   static const article = EmbedType('article');
   static const link = EmbedType('link');
   static const pollResult = EmbedType('poll_result');
-
+// @nodoc
   const EmbedType(super.value);
 }
 
