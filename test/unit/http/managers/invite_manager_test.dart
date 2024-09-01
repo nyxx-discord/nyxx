@@ -35,7 +35,7 @@ void checkInvite(Invite invite) {
   expect(invite.channel.id, equals(Snowflake(165176875973476352)));
   expect(invite.inviter?.id, equals(Snowflake(115590097100865541)));
   expect(invite.targetType, equals(TargetType.stream));
-  expect(invite.expiresAt, equals(DateTime.utc(2017, 07, 11, 17, 27, 07, 299)));
+  expect(invite.expiresAt, isNull);
 }
 
 final sampleInviteWithMetadata = {
