@@ -54,7 +54,7 @@ export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
-export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder;
+export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder, RecurrenceRuleBuilder;
 export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTemplateUpdateBuilder;
 export 'src/builders/guild/auto_moderation.dart'
     show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder, ActionMetadataBuilder, AutoModerationActionBuilder;
@@ -187,7 +187,19 @@ export 'src/models/guild/integration.dart' show PartialIntegration, Integration,
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
-export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
+export 'src/models/guild/scheduled_event.dart'
+    show
+        EntityMetadata,
+        PartialScheduledEvent,
+        ScheduledEvent,
+        ScheduledEventUser,
+        EventStatus,
+        ScheduledEntityType,
+        RecurrenceRule,
+        RecurrenceRuleFrequency,
+        RecurrenceRuleMonth,
+        RecurrenceRuleNWeekday,
+        RecurrenceRuleWeekday;
 export 'src/models/guild/audit_log.dart' show AuditLogChange, AuditLogEntry, AuditLogEntryInfo, PartialAuditLogEntry, AuditLogEvent;
 export 'src/models/application.dart'
     show
