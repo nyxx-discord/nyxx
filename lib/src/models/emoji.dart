@@ -89,7 +89,6 @@ class ApplicationEmoji extends Emoji {
       );
 }
 
-
 /// A custom guild emoji.
 class GuildEmoji extends Emoji {
   @override
