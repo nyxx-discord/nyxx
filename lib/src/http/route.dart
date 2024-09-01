@@ -329,4 +329,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`bulk-ban`](https://discord.com/developers/docs/resources/guild#bulk-guild-ban) part to this [HttpRoute].
   void bulkBan() => add(HttpRoutePart('bulk-ban'));
+
+  /// Adds the [`subscriptions`](https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions) part to this [HttpRoute].
+  void subscriptions({String? id}) => add(HttpRoutePart('subscriptions', [if (id != null) HttpRouteParam(id)]));
 }
