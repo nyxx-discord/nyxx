@@ -45,7 +45,7 @@ export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadB
 export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
-export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
+export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder, MessageReferenceBuilder;
 export 'src/builders/message/component.dart'
     show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
@@ -150,7 +150,7 @@ export 'src/models/message/message.dart'
     show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata, MessageSnapshot, MessageCall;
 export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
-export 'src/models/message/reference.dart' show MessageReference;
+export 'src/models/message/reference.dart' show MessageReference, MessageReferenceType;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/message/component.dart'
     show
