@@ -152,6 +152,9 @@ class Application extends PartialApplication {
   /// When configured, this will render the app as a verification method in the guild role verification configuration.
   final Uri? roleConnectionsVerificationUrl;
 
+  /// The approximate number of users that have installed this application.
+  final int? approximateUserInstallCount;
+
   /// {@macro application}
   /// @nodoc
   Application({
@@ -183,6 +186,7 @@ class Application extends PartialApplication {
     required this.integrationTypesConfig,
     required this.customInstallUrl,
     required this.roleConnectionsVerificationUrl,
+    required this.approximateUserInstallCount,
   });
 
   /// This application's icon.

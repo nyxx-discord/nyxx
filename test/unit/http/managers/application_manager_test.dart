@@ -14,6 +14,20 @@ final sampleApplication = {
   "guild_id": "290926798626357260",
   "icon": null,
   "id": "172150183260323840",
+  "integration_types_config": {
+    "0": {
+      "oauth2_install_params": {
+        "scopes": ["applications.commands", "bot"],
+        "permissions": "2048"
+      }
+    },
+    "1": {
+      "oauth2_install_params": {
+        "scopes": ["applications.commands"],
+        "permissions": "0"
+      }
+    }
+  },
   "name": "Baba O-Riley",
   "owner": {"avatar": null, "discriminator": "1738", "flags": 1024, "id": "172150183260323840", "username": "i own a bot"},
   "primary_sku_id": "172150183260323840",
@@ -25,9 +39,10 @@ final sampleApplication = {
     "members": [
       {
         "membership_state": 2,
+        "permissions": ["*"],
         "team_id": "531992624043786253",
-        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"},
         "role": "admin",
+        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"}
       }
     ],
 
@@ -60,6 +75,13 @@ void checkApplication(Application application) {
   expect(application.installationParameters, isNull);
   expect(application.customInstallUrl, isNull);
   expect(application.roleConnectionsVerificationUrl, isNull);
+  expect(application.integrationTypesConfig?[ApplicationIntegrationType.guildInstall], isNotNull);
+  expect(application.integrationTypesConfig![ApplicationIntegrationType.guildInstall]!, (ApplicationIntegrationTypeConfiguration config) {
+    expect(config.oauth2InstallParameters, isNotNull);
+    expect(config.oauth2InstallParameters!.scopes, equals(["applications.commands", "bot"]));
+    expect(config.oauth2InstallParameters!.permissions, equals(Permissions(2048)));
+    return true;
+  });
 }
 
 final sampleRoleConnectionMetadata = {

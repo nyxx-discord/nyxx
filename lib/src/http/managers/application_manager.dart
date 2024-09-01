@@ -71,6 +71,7 @@ class ApplicationManager {
         },
       ),
       roleConnectionsVerificationUrl: maybeParse(raw['role_connections_verification_url'], Uri.parse),
+      approximateUserInstallCount: raw['approximate_user_install_count'] as int?,
     );
   }
 
