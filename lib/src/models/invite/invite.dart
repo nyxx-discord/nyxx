@@ -86,7 +86,6 @@ final class TargetType extends EnumLike<int, TargetType> {
 }
 
 /// The type of an [Invite].
-
 final class InviteType extends EnumLike<int, InviteType> {
   static const guild = InviteType(0);
   static const groupDm = InviteType(1);
