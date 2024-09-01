@@ -139,6 +139,13 @@ final class AuditLogEvent extends EnumLike<int, AuditLogEvent> {
   static const autoModerationUserCommunicationDisabled = AuditLogEvent(145);
   static const creatorMonetizationRequestCreated = AuditLogEvent(150);
   static const creatorMonetizationTermsAccepted = AuditLogEvent(151);
+  static const onboardingPromptCreate = AuditLogEvent(163);
+  static const onboardingPromptUpdate = AuditLogEvent(164);
+  static const onboardingPromptDelete = AuditLogEvent(165);
+  static const onboardingCreate = AuditLogEvent(166);
+  static const onboardingUpdate = AuditLogEvent(167);
+  static const homeSettingsCreate = AuditLogEvent(190);
+  static const homeSettingsUpdate = AuditLogEvent(191);
 
   /// @nodoc
   const AuditLogEvent(super.value);
