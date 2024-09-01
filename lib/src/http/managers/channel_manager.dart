@@ -535,11 +535,16 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   }
 
   /// Add a channel to another channel's followers.
-  Future<FollowedChannel> followChannel(Snowflake id, Snowflake toFollow) async {
+  Future<FollowedChannel> followChannel(Snowflake id, Snowflake toFollow, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: toFollow.toString())
       ..followers();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'webhook_channel_id': id.toString()}));
+    final request = BasicRequest(
+      route,
+      method: 'POST',
+      body: jsonEncode({'webhook_channel_id': id.toString()}),
+      auditLogReason: auditLogReason,
+    );
 
     final response = await client.httpHandler.executeSafe(request);
 
