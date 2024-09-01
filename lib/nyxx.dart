@@ -197,7 +197,8 @@ export 'src/models/application.dart'
         PartialApplication,
         ApplicationRoleConnectionMetadata,
         ConnectionMetadataType,
-        ApplicationIntegrationType;
+        ApplicationIntegrationType,
+        ApplicationIntegrationTypeConfiguration;
 export 'src/models/guild/template.dart' show GuildTemplate;
 export 'src/models/guild/auto_moderation.dart'
     show
