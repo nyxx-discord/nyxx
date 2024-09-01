@@ -414,9 +414,6 @@ class MessageInteractionMetadata with ToStringHelper {
   /// The type of the interaction.
   final InteractionType type;
 
-  /// ID of the user that triggered the interaction.
-  final Snowflake userId;
-
   /// The user that triggered the interaction.
   final User user;
 
@@ -437,13 +434,16 @@ class MessageInteractionMetadata with ToStringHelper {
   MessageInteractionMetadata({
     required this.id,
     required this.type,
-    required this.userId,
     required this.user,
     required this.authorizingIntegrationOwners,
     required this.originalResponseMessageId,
     required this.interactedMessageId,
     required this.triggeringInteractionMetadata,
   });
+
+  /// ID of the user that triggered the interaction.
+  @Deprecated('Use user.id instead.')
+  Snowflake get userId => user.id;
 }
 
 /// A limited set of fields of a [Message].
