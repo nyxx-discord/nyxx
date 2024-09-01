@@ -165,7 +165,7 @@ export 'src/models/message/component.dart'
         ButtonStyle,
         MessageComponentType,
         TextInputStyle;
-export 'src/models/invite/invite.dart' show Invite, TargetType;
+export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban, BulkBanResponse;
