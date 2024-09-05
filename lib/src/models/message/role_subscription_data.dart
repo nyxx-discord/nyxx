@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template role_subscription_data}
 /// Information about a role subscription.
@@ -6,7 +7,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#role-subscription-data-object
 /// {@endtemplate}
-class RoleSubscriptionData {
+class RoleSubscriptionData with ToStringHelper {
   ///The ID of the sku and listing that the user is subscribed to.
   final Snowflake listingId;
 
