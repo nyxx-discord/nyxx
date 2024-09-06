@@ -467,6 +467,7 @@ Stream<dynamic> decompressZLibTransport(Stream<List<int>> raw) {
   });
 }
 
+// See https://github.com/instantiations/es_compression/issues/52 for why the isNotEmpty check is needed.
 Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) => raw.transform(zstd.decoder).where((message) => message.isNotEmpty);
 
 Stream<dynamic> decompressPayloads(Stream<dynamic> raw) => raw.map((message) {
