@@ -72,7 +72,7 @@ export 'src/builders/interaction_response.dart' show InteractionResponseBuilder,
 export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
 export 'src/builders/application.dart' show ApplicationUpdateBuilder, ApplicationIntegrationTypeConfigurationBuilder;
 
-export 'src/cache/cache.dart' show Cache, CacheConfig;
+export 'src/cache/cache.dart' show Cache, CacheConfig, CacheManager;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler, RateLimitInfo;

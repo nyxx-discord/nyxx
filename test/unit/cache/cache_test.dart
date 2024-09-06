@@ -38,6 +38,7 @@ void main() {
         cache[entity.id] = entity;
       }
 
+      // Cache filtering does not happen synchronously.
       await null;
 
       expect(cache, hasLength(3));
