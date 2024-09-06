@@ -11,7 +11,7 @@ class MockSnowflakeEntity extends ManagedSnowflakeEntity<MockSnowflakeEntity> wi
 void main() {
   group('Cache', () {
     test('stores entities', () async {
-      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
+      final cache = MockNyxx().cache.getCache('test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('respects maximum size', () async {
-      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig(maxSize: 3));
+      final cache = MockNyxx().cache.getCache('test', CacheConfig(maxSize: 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('keeps most used items', () async {
-      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig(maxSize: 3));
+      final cache = MockNyxx().cache.getCache('test', CacheConfig(maxSize: 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -75,7 +75,7 @@ void main() {
     });
 
     test("doesn't cache items if a filter is provided", () {
-      final cache = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig(shouldCache: (e) => e.id.value > 3));
+      final cache = MockNyxx().cache.getCache<MockSnowflakeEntity>('test', CacheConfig(shouldCache: (e) => e.id.value > 3));
 
       final entity1 = MockSnowflakeEntity(id: Snowflake(1));
       final entity2 = MockSnowflakeEntity(id: Snowflake(2));
@@ -98,8 +98,8 @@ void main() {
     test('shares resources with the same identifier', () {
       final client = MockNyxx();
 
-      final cache1 = Cache<MockSnowflakeEntity>(client, 'test', CacheConfig());
-      final cache2 = Cache<MockSnowflakeEntity>(client, 'test', CacheConfig());
+      final cache1 = client.cache.getCache('test', CacheConfig());
+      final cache2 = client.cache.getCache('test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 
@@ -108,8 +108,8 @@ void main() {
     });
 
     test("doesn't share resources across clients", () {
-      final cache1 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
-      final cache2 = Cache<MockSnowflakeEntity>(MockNyxx(), 'test', CacheConfig());
+      final cache1 = MockNyxx().cache.getCache<MockSnowflakeEntity>('test', CacheConfig());
+      final cache2 = MockNyxx().cache.getCache<MockSnowflakeEntity>('test', CacheConfig());
 
       final entity = MockSnowflakeEntity(id: Snowflake.zero);
 

@@ -75,7 +75,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
 
   /// A [Cache] for [VoiceState]s in this guild.
-  Cache<VoiceState> get voiceStates => Cache(manager.client, '$id.voiceStates', manager.client.options.voiceStateConfig);
+  Cache<VoiceState> get voiceStates => manager.client.cache.getCache('$id.voiceStates', manager.client.options.voiceStateConfig);
 
   /// A [GuildApplicationCommandManager] for the application commands of this guild.
   GuildApplicationCommandManager get commands => GuildApplicationCommandManager(

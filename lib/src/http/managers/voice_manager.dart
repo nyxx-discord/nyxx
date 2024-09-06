@@ -18,7 +18,7 @@ class VoiceManager {
 
   /// Create a new [VoiceManager].
   // ignore: deprecated_member_use_from_same_package
-  VoiceManager(this.client) : cache = Cache(client, 'voiceStates', client.options.voiceStateConfig);
+  VoiceManager(this.client) : cache = client.cache.getCache('voiceStates', client.options.voiceStateConfig);
 
   /// Parse a [VoiceState] from a [Map].
   VoiceState parseVoiceState(Map<String, Object?> raw, {Snowflake? guildId}) {
