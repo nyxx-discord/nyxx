@@ -17,6 +17,7 @@ dependencies:
   runtime_type: ^1.1.0
   meta: ^1.16.0
   oauth2: ^2.0.3
+  es_compression: ^2.0.15
 
 dev_dependencies:
   test: ^1.25.14
