@@ -45,10 +45,8 @@ class TextEmoji extends Emoji {
   Future<TextEmoji> fetch() async => this;
 }
 
-// TODO(lexedia): Rename GuildEmoji to ApplicationEmoji?
-// typedef ApplicationEmoji = GuildEmoji;
-
-// Apparently an ApplicationEmoji contains a `roles` field, but it's always an empty list.
+// Apparently an ApplicationEmoji contains a `roles` field, but it's always an empty list, so we don't include it here.
+/// A custom emoji created on the application's emoji tab.
 class ApplicationEmoji extends Emoji {
   @override
   final String name;
