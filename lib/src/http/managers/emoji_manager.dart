@@ -16,6 +16,9 @@ abstract class EmojiManager extends Manager<Emoji> {
   EmojiManager(super.config, super.client, {required super.identifier});
 
   @override
+  PartialEmoji operator [](Snowflake id) => PartialEmoji(id: id, manager: this);
+
+  @override
   Emoji parse(Map<String, Object?> raw) {
     final isUnicode = raw['id'] == null;
 
@@ -38,9 +41,6 @@ class ApplicationEmojiManager extends EmojiManager {
   final Snowflake applicationId;
 
   ApplicationEmojiManager(super.config, super.client, {required this.applicationId}) : super(identifier: 'applications.$applicationId.emojis');
-
-  @override
-  PartialEmoji operator [](Snowflake id) => PartialEmoji(id: id, manager: this);
 
   @override
   Emoji parse(Map<String, Object?> raw) {
@@ -143,9 +143,6 @@ class GuildEmojiManager extends EmojiManager {
   final Snowflake guildId;
 
   GuildEmojiManager(super.config, super.client, {required this.guildId}) : super(identifier: 'guilds.$guildId.emojis');
-
-  @override
-  PartialEmoji operator [](Snowflake id) => PartialEmoji(id: id, manager: this);
 
   @override
   Emoji parse(Map<String, Object?> raw) {
