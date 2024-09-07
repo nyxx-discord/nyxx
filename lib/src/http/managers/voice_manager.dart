@@ -5,6 +5,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [VoiceState]s.
@@ -63,5 +64,31 @@ class VoiceManager {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(response.jsonBody as List, parseVoiceRegion);
+  }
+
+  Future<VoiceState> fetchCurrentUserVoiceState(Snowflake guildId) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..voiceStates(id: '@me');
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final state = parseVoiceState(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(state);
+    return state;
+  }
+
+  Future<VoiceState> fetchVoiceState(Snowflake guildId, Snowflake userId) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..voiceStates(id: userId.toString());
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final state = parseVoiceState(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(state);
+    return state;
   }
 }
