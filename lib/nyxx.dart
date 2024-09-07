@@ -102,6 +102,8 @@ export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, Global
 export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
 export 'src/http/managers/interaction_manager.dart' show InteractionManager;
 export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
+export 'src/http/managers/sku_manager.dart' show SkuManager;
+export 'src/http/managers/subscription_manager.dart' show SubscriptionManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart'
@@ -329,8 +331,9 @@ export 'src/models/interaction.dart'
         PingInteraction,
         InteractionContextType;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
-export 'src/models/sku.dart' show Sku, SkuType, SkuFlags;
+export 'src/models/sku.dart' show Sku, SkuType, SkuFlags, PartialSku;
 export 'src/models/oauth2.dart' show OAuth2Information;
+export 'src/models/subscription.dart' show PartialSubscription, Subscription, SubscriptionStatus;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;

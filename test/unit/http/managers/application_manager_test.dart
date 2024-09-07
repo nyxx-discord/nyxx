@@ -100,30 +100,6 @@ void checkRoleConnectionMetadata(ApplicationRoleConnectionMetadata metadata) {
   expect(metadata.localizedDescriptions, isNull);
 }
 
-final sampleSku = {
-  "id": "1088510058284990888",
-  "type": 5,
-  "dependent_sku_id": null,
-  "application_id": "788708323867885999",
-  "manifest_labels": null,
-  "access_type": 1,
-  "name": "Test Premium",
-  "features": [],
-  "release_date": null,
-  "premium": false,
-  "slug": "test-premium",
-  "flags": 128,
-  "show_age_gate": false
-};
-
-void checkSku(Sku sku) {
-  expect(sku.id, equals(Snowflake(1088510058284990888)));
-  expect(sku.type, equals(SkuType.subscription));
-  expect(sku.applicationId, equals(Snowflake(788708323867885999)));
-  expect(sku.name, equals('Test Premium'));
-  expect(sku.slug, equals('test-premium'));
-}
-
 void main() {
   group('ApplicationManager', () {
     test('parse', () {
@@ -149,19 +125,6 @@ void main() {
         source: sampleRoleConnectionMetadata,
         parse: (manager) => manager.parseApplicationRoleConnectionMetadata,
         check: checkRoleConnectionMetadata,
-      ).runWithManager(ApplicationManager(client));
-    });
-
-    test('parseSku', () {
-      final client = MockNyxx();
-      when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
-      when(() => client.options).thenReturn(RestClientOptions());
-
-      ParsingTest<ApplicationManager, Sku, Map<String, Object?>>(
-        name: 'parseSku',
-        source: sampleSku,
-        parse: (manager) => manager.parseSku,
-        check: checkSku,
       ).runWithManager(ApplicationManager(client));
     });
 
@@ -191,12 +154,6 @@ void main() {
       method: 'PATCH',
       (client) => client.applications.updateCurrentApplication(ApplicationUpdateBuilder()),
       response: sampleApplication,
-    );
-
-    testEndpoint(
-      '/applications/0/skus',
-      (client) => client.applications.listSkus(Snowflake.zero),
-      response: [sampleSku],
     );
   });
 }

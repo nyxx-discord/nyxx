@@ -15,6 +15,7 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -108,6 +109,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Application.entitlements] manager.
   final CacheConfig<Entitlement> entitlementConfig;
 
+  /// The [CacheConfig] to use for the [Application.skus] manager.
+  final CacheConfig<Sku> skuConfig;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -132,6 +136,7 @@ class RestClientOptions extends ClientOptions {
     this.applicationCommandConfig = const CacheConfig(),
     this.commandPermissionsConfig = const CacheConfig(),
     this.entitlementConfig = const CacheConfig(),
+    this.skuConfig = const CacheConfig(),
   });
 }
 
@@ -166,5 +171,9 @@ class GatewayClientOptions extends RestClientOptions {
     super.applicationCommandConfig,
     super.commandPermissionsConfig,
     super.entitlementConfig,
+    super.skuConfig,
+    super.emojiCacheConfig,
+    super.globalStickerCacheConfig,
+    super.stickerCacheConfig,
   });
 }
