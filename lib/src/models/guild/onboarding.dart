@@ -25,6 +25,9 @@ class Onboarding with ToStringHelper {
   /// Whether onboarding is enabled for this guild.
   final bool isEnabled;
 
+  /// The current onboarding mode.
+  final OnboardingMode mode;
+
   /// {@macro onboarding}
   /// @nodoc
   Onboarding({
@@ -33,6 +36,7 @@ class Onboarding with ToStringHelper {
     required this.prompts,
     required this.defaultChannelIds,
     required this.isEnabled,
+    required this.mode,
   });
 
   /// The guild this onboarding is for.
@@ -111,6 +115,9 @@ class OnboardingPromptOption with ToStringHelper {
   final List<Snowflake> roleIds;
 
   /// The emoji associated with this onboarding prompt.
+  // The `emoji_id`, `emoji_name`, and `emoji_animated` fields never seem to be
+  // included in this structure when it is returned from the API. Since the
+  // `emoji` object contains this information anyway, we don't include them.
   final Emoji? emoji;
 
   /// The title of this option.
@@ -133,4 +140,20 @@ class OnboardingPromptOption with ToStringHelper {
 
   /// The channels the user is granted access to.
   List<PartialChannel> get channels => channelIds.map((e) => manager.client.channels[e]).toList();
+}
+
+/// The mode under which onboarding constraints operate when creating an
+/// [Onboarding].
+///
+/// These constraints are that there must be at least 7 Default Channels and
+/// at least 5 of them must allow sending messages to the @everyone role.
+final class OnboardingMode extends EnumLike<int, OnboardingMode> {
+  /// Only default channels count towards the constraints.
+  static const defaultMode = OnboardingMode(0);
+
+  /// Both default channels and questions count towards the constraints,
+  static const advanced = OnboardingMode(1);
+
+  /// @nodoc
+  const OnboardingMode(super.value);
 }
