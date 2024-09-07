@@ -36,7 +36,6 @@ void checkMemberNoUser(Member member, {Snowflake expectedUserId = const Snowflak
   expect(member.isPending, isFalse);
   expect(member.permissions, isNull);
   expect(member.communicationDisabledUntil, isNull);
-  expect(member.bannerHash, isNotNull);
   expect(member.bannerHash, equals('a_coolHashDude'));
 }
 
