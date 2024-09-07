@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/builders/guild/guild.dart';
+import 'package:nyxx/src/builders/guild/onboarding.dart';
 import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
@@ -256,6 +257,7 @@ class GuildManager extends Manager<Guild> {
       prompts: parseMany(raw['prompts'] as List, (Map<String, Object?> raw) => parseOnboardingPrompt(raw, guildId: guildId)),
       defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
       isEnabled: raw['enabled'] as bool,
+      mode: OnboardingMode(raw['mode'] as int),
     );
   }
 
@@ -689,6 +691,17 @@ class GuildManager extends Manager<Guild> {
       ..guilds(id: id.toString())
       ..onboarding();
     final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseOnboarding(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Update a guild's onboarding.
+  Future<Onboarding> updateOnboarding(Snowflake id, OnboardingUpdateBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..onboarding();
+    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     return parseOnboarding(response.jsonBody as Map<String, Object?>);

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
+import 'package:nyxx/src/builders/guild/onboarding.dart';
 import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
@@ -167,6 +168,10 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Fetch the onboarding information for this guild.
   Future<Onboarding> fetchOnboarding() => manager.fetchOnboarding(id);
+
+  /// Update this guild's onboarding.
+  Future<Onboarding> updateOnboarding(OnboardingUpdateBuilder builder, {String? auditLogReason}) =>
+      manager.updateOnboarding(id, builder, auditLogReason: auditLogReason);
 
   /// Update the current user's voice state in this guild.
   Future<void> updateCurrentUserVoiceState(CurrentUserVoiceStateUpdateBuilder builder) => manager.updateCurrentUserVoiceState(id, builder);

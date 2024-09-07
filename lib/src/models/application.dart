@@ -2,6 +2,7 @@ import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/entitlement_manager.dart';
+import 'package:nyxx/src/http/managers/sku_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -30,6 +31,9 @@ class PartialApplication with ToStringHelper {
 
   /// An [ApplicationEmojiManager] for this application's [Emoji]s.
   ApplicationEmojiManager get emojis => ApplicationEmojiManager(manager.client.options.emojiCacheConfig, manager.client, applicationId: id);
+
+  /// An [SkuManager] for this application's [Sku]s.
+  SkuManager get skus => SkuManager(manager.client.options.skuConfig, manager.client, applicationId: id);
 
   /// Create a new [PartialApplication].
   /// @nodoc

@@ -93,5 +93,19 @@ void main() {
       (client) => client.voice.listRegions(),
       response: [sampleVoiceRegion],
     );
+
+    testEndpoint(
+      name: 'fetchCurrentUserVoiceState',
+      '/guilds/0/voice-states/@me',
+      (client) => client.voice.fetchCurrentUserVoiceState(Snowflake.zero),
+      response: sampleVoiceState,
+    );
+
+    testEndpoint(
+      name: 'fetchVoiceState',
+      '/guilds/0/voice-states/1',
+      (client) => client.voice.fetchVoiceState(Snowflake.zero, Snowflake(1)),
+      response: sampleVoiceState,
+    );
   });
 }

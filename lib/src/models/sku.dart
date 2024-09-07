@@ -1,20 +1,23 @@
-import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/http/managers/sku_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
-import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
+
+/// A partial [Sku].
+class PartialSku extends ManagedSnowflakeEntity<Sku> {
+  @override
+  final SkuManager manager;
+
+  /// @nodoc
+  PartialSku({required this.manager, required super.id});
+}
 
 /// {@template sku}
 /// A premium offering that can be made available to your application's users or guilds.
 /// {@endtemplate}
-class Sku with ToStringHelper {
-  /// The [Manager] for this SKU.
-  final ApplicationManager manager;
-
-  /// This SKU's ID.
-  final Snowflake id;
-
+class Sku extends PartialSku {
   /// This SKU's type.
   final SkuType type;
 
@@ -33,8 +36,8 @@ class Sku with ToStringHelper {
   /// {@macro sku}
   /// @nodoc
   Sku({
-    required this.manager,
-    required this.id,
+    required super.manager,
+    required super.id,
     required this.type,
     required this.applicationId,
     required this.name,
@@ -43,7 +46,7 @@ class Sku with ToStringHelper {
   });
 
   /// The application this SKU belongs to.
-  PartialApplication get application => PartialApplication(id: applicationId, manager: manager);
+  PartialApplication get application => PartialApplication(id: applicationId, manager: manager.client.applications);
 }
 
 /// The type of an [Sku].

@@ -129,16 +129,11 @@ class ApplicationManager {
   }
 
   /// Parse a [Sku] from [raw].
+  @Deprecated('Use SkuManager.parse')
   Sku parseSku(Map<String, Object?> raw) {
-    return Sku(
-      manager: this,
-      id: Snowflake.parse(raw['id']!),
-      type: SkuType(raw['type'] as int),
-      applicationId: Snowflake.parse(raw['application_id']!),
-      name: raw['name'] as String,
-      slug: raw['slug'] as String,
-      flags: SkuFlags(raw['flags'] as int),
-    );
+    final applicationId = Snowflake.parse(raw['application_id']!);
+
+    return client.applications[applicationId].skus.parse(raw);
   }
 
   /// Fetch an application's role connection metadata.
@@ -195,13 +190,6 @@ class ApplicationManager {
   }
 
   /// List this application's SKUs.
-  Future<List<Sku>> listSkus(Snowflake id) async {
-    final route = HttpRoute()
-      ..applications(id: id.toString())
-      ..skus();
-    final request = BasicRequest(route);
-
-    final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseSku);
-  }
+  @Deprecated('Use SkuManager.list')
+  Future<List<Sku>> listSkus(Snowflake id) => client.applications[id].skus.list();
 }
