@@ -97,7 +97,7 @@ export 'src/http/managers/gateway_manager.dart' show GatewayManager;
 export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
 export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
 export 'src/http/managers/integration_manager.dart' show IntegrationManager;
-export 'src/http/managers/emoji_manager.dart' show EmojiManager;
+export 'src/http/managers/emoji_manager.dart' show EmojiManager, ApplicationEmojiManager, GuildEmojiManager;
 export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
 export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;

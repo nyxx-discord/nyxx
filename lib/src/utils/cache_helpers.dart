@@ -88,6 +88,10 @@ extension CacheUpdates on NyxxRest {
             if (entity case GuildEmoji(:final user?)) {
               updateCacheWith(user);
             }
+
+            if (entity case ApplicationEmoji(:final user)) {
+              updateCacheWith(user);
+            }
           }(),
         Guild() => () {
             entity.manager.cache[entity.id] = entity;

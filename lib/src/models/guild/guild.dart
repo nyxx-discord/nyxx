@@ -66,8 +66,8 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// An [IntegrationManager] for the integrations of this guild.
   IntegrationManager get integrations => IntegrationManager(manager.client.options.integrationConfig, manager.client, guildId: id);
 
-  /// An [EmojiManager] for the emojis of this guild.
-  EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
+  /// A [GuildEmojiManager] for the emojis of this guild.
+  GuildEmojiManager get emojis => GuildEmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
 
   /// An [GuildStickerManager] for the stickers of this guild.
   GuildStickerManager get stickers => GuildStickerManager(manager.client.options.stickerCacheConfig, manager.client, guildId: id);
