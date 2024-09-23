@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/event_mixin.dart';
@@ -72,6 +73,9 @@ abstract class Nyxx {
 
   /// The logger for this client.
   Logger get logger;
+
+  /// The cache manager for this client.
+  CacheManager get cache;
 
   Completer<void> get _initializedCompleter;
 
@@ -187,6 +191,9 @@ class NyxxRest with ManagerMixin implements Nyxx {
   @override
   final Completer<void> _initializedCompleter = Completer();
 
+  @override
+  late final CacheManager cache = CacheManager(this);
+
   NyxxRest._(this.apiOptions, this.options);
 
   /// Add the current user to the thread with the ID [id].
@@ -242,6 +249,9 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
   @override
   final Completer<void> _initializedCompleter = Completer();
 
+  @override
+  late final CacheManager cache = CacheManager(this);
+
   NyxxOAuth2._(this.apiOptions, this.options);
 
   @override
@@ -294,6 +304,9 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
 
   @override
   final Completer<void> _initializedCompleter = Completer();
+
+  @override
+  late final CacheManager cache = CacheManager(this);
 
   NyxxGateway._(this.apiOptions, this.options);
 

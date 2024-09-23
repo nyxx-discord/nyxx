@@ -73,7 +73,7 @@ export 'src/builders/interaction_response.dart' show InteractionResponseBuilder,
 export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
 export 'src/builders/application.dart' show ApplicationUpdateBuilder, ApplicationIntegrationTypeConfigurationBuilder;
 
-export 'src/cache/cache.dart' show Cache, CacheConfig;
+export 'src/cache/cache.dart' show Cache, CacheConfig, CacheManager;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler, RateLimitInfo;
@@ -148,9 +148,18 @@ export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
-// ignore: deprecated_member_use_from_same_package
+
 export 'src/models/message/message.dart'
-    show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata, MessageSnapshot, MessageCall;
+    show
+        Message,
+        MessageFlags,
+        PartialMessage,
+        MessageType,
+        // ignore: deprecated_member_use_from_same_package
+        MessageInteraction,
+        MessageInteractionMetadata,
+        MessageSnapshot,
+        MessageCall;
 export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference, MessageReferenceType;
