@@ -148,7 +148,7 @@ class Cache<T> extends MapBase<Snowflake, T> {
   factory Cache(Nyxx client, String identifier, CacheConfig<T> config) => client.cache.getCache(identifier, config);
 
   @override
-  Iterable<Snowflake> get keys => _mru.map((entry) => entry.id);
+  Iterable<Snowflake> get keys => _entries.keys;
 
   /// Filter the items in this cache so that it obeys the [config].
   ///

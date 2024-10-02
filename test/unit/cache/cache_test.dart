@@ -116,5 +116,22 @@ void main() {
       cache1[entity.id] = entity;
       expect(cache2.containsKey(entity.id), isFalse);
     });
+
+    test('toList', () {
+      final cache = MockNyxx().cache.getCache<MockSnowflakeEntity>('test', CacheConfig());
+
+      final entity1 = MockSnowflakeEntity(id: Snowflake(1));
+      final entity2 = MockSnowflakeEntity(id: Snowflake(2));
+      final entity3 = MockSnowflakeEntity(id: Snowflake(3));
+      final entity4 = MockSnowflakeEntity(id: Snowflake(4));
+      final entity5 = MockSnowflakeEntity(id: Snowflake(5));
+
+      for (final entity in [entity1, entity2, entity3, entity4, entity5]) {
+        cache[entity.id] = entity;
+      }
+
+      expect(cache.keys.toList, returnsNormally);
+      expect(cache.values.toList, returnsNormally);
+    });
   });
 }
