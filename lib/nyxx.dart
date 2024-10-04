@@ -15,7 +15,8 @@ export 'src/errors.dart'
         AlreadyAcknowledgedError,
         AlreadyRespondedError,
         PluginError,
-        ClientClosedError;
+        ClientClosedError,
+        SkuNotFoundException;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -57,13 +58,13 @@ export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
 export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder, RecurrenceRuleBuilder;
 export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTemplateUpdateBuilder;
 export 'src/builders/guild/auto_moderation.dart'
-    show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder, ActionMetadataBuilder, AutoModerationActionBuilder;
+    show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder, ActionMetadataBuilder, AutoModerationActionBuilder, TriggerMetadataBuilder;
 export 'src/builders/guild/onboarding.dart' show OnboardingPromptBuilder, OnboardingPromptOptionBuilder, OnboardingUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
 export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
-export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder;
+export 'src/builders/emoji/emoji.dart' show EmojiBuilder, EmojiUpdateBuilder, ApplicationEmojiBuilder, ApplicationEmojiUpdateBuilder;
 export 'src/builders/emoji/reaction.dart' show ReactionBuilder;
 export 'src/builders/invite.dart' show InviteBuilder;
 export 'src/builders/sticker.dart' show StickerBuilder, StickerUpdateBuilder;
@@ -107,6 +108,8 @@ export 'src/http/managers/sku_manager.dart' show SkuManager;
 export 'src/http/managers/subscription_manager.dart' show SubscriptionManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
+export 'src/gateway/event_parser.dart' show EventParser;
+export 'src/gateway/shard_runner.dart' show ShardRunner, ShardConnection;
 export 'src/gateway/message.dart'
     show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, Sent, ShardData, ShardMessage, Identify, RequestingIdentify, StartShard;
 export 'src/gateway/shard.dart' show Shard;
@@ -346,6 +349,7 @@ export 'src/models/oauth2.dart' show OAuth2Information;
 export 'src/models/subscription.dart' show PartialSubscription, Subscription, SubscriptionStatus;
 
 export 'src/utils/flags.dart' show Flag, Flags;
+export 'src/utils/enum_like.dart' show EnumLike;
 export 'src/intents.dart' show GatewayIntents;
 
 export 'src/plugin/plugin.dart' show NyxxPlugin, NyxxPluginState;
