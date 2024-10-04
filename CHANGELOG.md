@@ -1,6 +1,11 @@
 ## 6.4.0
 __04.10.2024__
 
+- bug: Fix exports
+
+## 6.4.0
+__04.10.2024__
+
 - feat: Add new permissions (#679)
 - bug: Make webhook execute apply name/avatar when message doesn't contain any attachments (#681)
 - bug: Add missing `approximateUserInstallCount` to `Application` (#683)
