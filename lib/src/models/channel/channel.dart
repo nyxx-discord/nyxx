@@ -33,7 +33,7 @@ class PartialChannel extends ManagedSnowflakeEntity<Channel> {
   /// External references:
   /// * [ChannelManager.followChannel]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#follow-announcement-channel
-  Future<void> follow(Snowflake id) => manager.followChannel(this.id, id);
+  Future<void> follow(Snowflake id, {String? auditLogReason}) => manager.followChannel(this.id, id, auditLogReason: auditLogReason);
 }
 
 /// {@template channel}

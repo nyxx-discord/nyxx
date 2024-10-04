@@ -218,7 +218,7 @@ final sampleMessageInteractionMetadata = {
 void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
   expect(metadata.id, equals(Snowflake(1234567891234567800)));
   expect(metadata.type, equals(InteractionType.applicationCommand));
-  expect(metadata.userId, equals(Snowflake(1234567891234567801)));
+  expect(metadata.user.id, equals(Snowflake(1234567891234567801)));
   expect(metadata.user.username, equals('rizzedskibidi'));
   expect(metadata.user.discriminator, equals('0'));
   expect(metadata.user.globalName, equals('Read if cute'));
@@ -236,7 +236,7 @@ void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
   MessageInteractionMetadata metadata2 = metadata.triggeringInteractionMetadata!;
   expect(metadata2.id, equals(Snowflake(1234567891234567806)));
   expect(metadata2.type, equals(InteractionType.applicationCommand));
-  expect(metadata2.userId, equals(Snowflake(1234567891234567807)));
+  expect(metadata2.user.id, equals(Snowflake(1234567891234567807)));
   expect(metadata2.user.username, equals('nocap-fr'));
   expect(metadata2.user.discriminator, equals('0'));
   expect(metadata2.user.globalName, equals('Iloaf'));

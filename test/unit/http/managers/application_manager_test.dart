@@ -14,6 +14,20 @@ final sampleApplication = {
   "guild_id": "290926798626357260",
   "icon": null,
   "id": "172150183260323840",
+  "integration_types_config": {
+    "0": {
+      "oauth2_install_params": {
+        "scopes": ["applications.commands", "bot"],
+        "permissions": "2048"
+      }
+    },
+    "1": {
+      "oauth2_install_params": {
+        "scopes": ["applications.commands"],
+        "permissions": "0"
+      }
+    }
+  },
   "name": "Baba O-Riley",
   "owner": {"avatar": null, "discriminator": "1738", "flags": 1024, "id": "172150183260323840", "username": "i own a bot"},
   "primary_sku_id": "172150183260323840",
@@ -25,9 +39,10 @@ final sampleApplication = {
     "members": [
       {
         "membership_state": 2,
+        "permissions": ["*"],
         "team_id": "531992624043786253",
-        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"},
         "role": "admin",
+        "user": {"avatar": "d9e261cd35999608eb7e3de1fae3688b", "discriminator": "0001", "id": "511972282709709995", "username": "Mr Owner"}
       }
     ],
 
@@ -60,6 +75,13 @@ void checkApplication(Application application) {
   expect(application.installationParameters, isNull);
   expect(application.customInstallUrl, isNull);
   expect(application.roleConnectionsVerificationUrl, isNull);
+  expect(application.integrationTypesConfig?[ApplicationIntegrationType.guildInstall], isNotNull);
+  expect(application.integrationTypesConfig![ApplicationIntegrationType.guildInstall]!, (ApplicationIntegrationTypeConfiguration config) {
+    expect(config.oauth2InstallParameters, isNotNull);
+    expect(config.oauth2InstallParameters!.scopes, equals(["applications.commands", "bot"]));
+    expect(config.oauth2InstallParameters!.permissions, equals(Permissions(2048)));
+    return true;
+  });
 }
 
 final sampleRoleConnectionMetadata = {
@@ -76,30 +98,6 @@ void checkRoleConnectionMetadata(ApplicationRoleConnectionMetadata metadata) {
   expect(metadata.localizedNames, isNull);
   expect(metadata.description, equals('test description'));
   expect(metadata.localizedDescriptions, isNull);
-}
-
-final sampleSku = {
-  "id": "1088510058284990888",
-  "type": 5,
-  "dependent_sku_id": null,
-  "application_id": "788708323867885999",
-  "manifest_labels": null,
-  "access_type": 1,
-  "name": "Test Premium",
-  "features": [],
-  "release_date": null,
-  "premium": false,
-  "slug": "test-premium",
-  "flags": 128,
-  "show_age_gate": false
-};
-
-void checkSku(Sku sku) {
-  expect(sku.id, equals(Snowflake(1088510058284990888)));
-  expect(sku.type, equals(SkuType.subscription));
-  expect(sku.applicationId, equals(Snowflake(788708323867885999)));
-  expect(sku.name, equals('Test Premium'));
-  expect(sku.slug, equals('test-premium'));
 }
 
 void main() {
@@ -130,19 +128,6 @@ void main() {
       ).runWithManager(ApplicationManager(client));
     });
 
-    test('parseSku', () {
-      final client = MockNyxx();
-      when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'TEST_TOKEN'));
-      when(() => client.options).thenReturn(RestClientOptions());
-
-      ParsingTest<ApplicationManager, Sku, Map<String, Object?>>(
-        name: 'parseSku',
-        source: sampleSku,
-        parse: (manager) => manager.parseSku,
-        check: checkSku,
-      ).runWithManager(ApplicationManager(client));
-    });
-
     testEndpoint(
       '/applications/0/role-connections/metadata',
       name: 'fetchApplicationRoleConnectionMetadata',
@@ -169,12 +154,6 @@ void main() {
       method: 'PATCH',
       (client) => client.applications.updateCurrentApplication(ApplicationUpdateBuilder()),
       response: sampleApplication,
-    );
-
-    testEndpoint(
-      '/applications/0/skus',
-      (client) => client.applications.listSkus(Snowflake.zero),
-      response: [sampleSku],
     );
   });
 }

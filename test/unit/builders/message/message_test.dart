@@ -30,7 +30,6 @@ void main() {
         ),
       ],
       nonce: '1234',
-      replyId: null,
       stickerIds: [Snowflake.zero],
       suppressEmbeds: false,
       suppressNotifications: true,

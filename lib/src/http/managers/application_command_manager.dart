@@ -216,7 +216,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     required super.applicationId,
     required this.guildId,
     required CacheConfig<CommandPermissions> permissionsConfig,
-  })  : permissionsCache = Cache(client, '$guildId.commandPermissions', permissionsConfig),
+  })  : permissionsCache = client.cache.getCache('$guildId.commandPermissions', permissionsConfig),
         super(identifier: '$guildId.commands');
 
   /// Parse a [CommandPermissions] from [raw].

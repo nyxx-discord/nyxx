@@ -49,6 +49,9 @@ void main() {
     });
 
     tearDownAll(() async {
+      // Reset commands state in case we failed a test without deleting them.
+      await client.commands.bulkOverride([]);
+
       await client.close();
     });
 
@@ -64,8 +67,11 @@ void main() {
       late Application application;
 
       await expectLater(() async => application = await client.applications.fetchCurrentApplication(), completes);
-      await expectLater(application.listSkus(), completes);
       await expectLater(client.applications.updateCurrentApplication(ApplicationUpdateBuilder(description: application.description)), completes);
+    });
+
+    test('skus', () async {
+      await expectLater(client.application.skus.list(), completes);
     });
 
     test('users', () async {
@@ -394,7 +400,7 @@ void main() {
 
       await expectLater(command.fetch(), completes);
       await expectLater(command.update(ApplicationCommandUpdateBuilder.chatInput(name: 'new_name')), completes);
-      await expectLater(client.commands.list(), completion(isNotEmpty));
+      await expectLater(client.commands.list(), completion(contains(command)));
       await expectLater(
         () async => command =
             (await client.commands.bulkOverride([ApplicationCommandBuilder.chatInput(name: 'test_2', description: 'A test command', options: [])])).single,

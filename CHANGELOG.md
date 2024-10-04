@@ -1,3 +1,22 @@
+## 6.4.0
+__04.10.2024__
+
+- feat: Add new permissions (#679)
+- bug: Make webhook execute apply name/avatar when message doesn't contain any attachments (#681)
+- bug: Add missing `approximateUserInstallCount` to `Application` (#683)
+- feat: Add missing audit log event types (#684)
+- feat: Add auditLogReason to followChannel (#685)
+- feat: Add recurrence rules for scheduled events (#686)
+- bug: Add missing fields to Message (#689)
+- feat: Add type field to Invite (#688)
+- bug: Delete any commands left over in tests (#693)
+- feat: Add fetch voice state endpoints (#692)
+- feat: Add support for subscriptions (#690)
+- feat: Add update onboarding endpoint to GuildManager (#687)
+- feat: Add application emojis (#678)
+- feat: Improve cache implementation (#694)
+- bug: Don't modify Cache.keys during iteration (#698)
+
 ## 6.3.1
 __11.07.2024__
 

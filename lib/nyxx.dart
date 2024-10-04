@@ -45,7 +45,7 @@ export 'src/builders/channel/thread.dart' show ThreadUpdateBuilder, ForumThreadB
 export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
-export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder;
+export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder, MessageReferenceBuilder;
 export 'src/builders/message/component.dart'
     show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
@@ -54,10 +54,11 @@ export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
-export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder;
+export 'src/builders/guild/scheduled_event.dart' show ScheduledEventBuilder, ScheduledEventUpdateBuilder, RecurrenceRuleBuilder;
 export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTemplateUpdateBuilder;
 export 'src/builders/guild/auto_moderation.dart'
     show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder, ActionMetadataBuilder, AutoModerationActionBuilder;
+export 'src/builders/guild/onboarding.dart' show OnboardingPromptBuilder, OnboardingPromptOptionBuilder, OnboardingUpdateBuilder;
 export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
@@ -72,7 +73,7 @@ export 'src/builders/interaction_response.dart' show InteractionResponseBuilder,
 export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
 export 'src/builders/application.dart' show ApplicationUpdateBuilder, ApplicationIntegrationTypeConfigurationBuilder;
 
-export 'src/cache/cache.dart' show Cache, CacheConfig;
+export 'src/cache/cache.dart' show Cache, CacheConfig, CacheManager;
 
 export 'src/http/bucket.dart' show HttpBucket;
 export 'src/http/handler.dart' show HttpHandler, Oauth2HttpHandler, RateLimitInfo;
@@ -96,12 +97,14 @@ export 'src/http/managers/gateway_manager.dart' show GatewayManager;
 export 'src/http/managers/scheduled_event_manager.dart' show ScheduledEventManager;
 export 'src/http/managers/auto_moderation_manager.dart' show AutoModerationManager;
 export 'src/http/managers/integration_manager.dart' show IntegrationManager;
-export 'src/http/managers/emoji_manager.dart' show EmojiManager;
+export 'src/http/managers/emoji_manager.dart' show EmojiManager, ApplicationEmojiManager, GuildEmojiManager;
 export 'src/http/managers/audit_log_manager.dart' show AuditLogManager;
 export 'src/http/managers/sticker_manager.dart' show GuildStickerManager, GlobalStickerManager;
 export 'src/http/managers/application_command_manager.dart' show ApplicationCommandManager, GlobalApplicationCommandManager, GuildApplicationCommandManager;
 export 'src/http/managers/interaction_manager.dart' show InteractionManager;
 export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
+export 'src/http/managers/sku_manager.dart' show SkuManager;
+export 'src/http/managers/subscription_manager.dart' show SubscriptionManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/message.dart'
@@ -144,12 +147,22 @@ export 'src/models/message/activity.dart' show MessageActivity, MessageActivityT
 export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
-export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo;
-// ignore: deprecated_member_use_from_same_package
-export 'src/models/message/message.dart' show Message, MessageFlags, PartialMessage, MessageType, MessageInteraction, MessageInteractionMetadata;
+export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
+
+export 'src/models/message/message.dart'
+    show
+        Message,
+        MessageFlags,
+        PartialMessage,
+        MessageType,
+        // ignore: deprecated_member_use_from_same_package
+        MessageInteraction,
+        MessageInteractionMetadata,
+        MessageSnapshot,
+        MessageCall;
 export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
-export 'src/models/message/reference.dart' show MessageReference;
+export 'src/models/message/reference.dart' show MessageReference, MessageReferenceType;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
 export 'src/models/message/component.dart'
     show
@@ -164,7 +177,7 @@ export 'src/models/message/component.dart'
         ButtonStyle,
         MessageComponentType,
         TextInputStyle;
-export 'src/models/invite/invite.dart' show Invite, TargetType;
+export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban, BulkBanResponse;
@@ -185,9 +198,21 @@ export 'src/models/guild/guild.dart'
         UserGuild;
 export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
-export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType;
+export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType, OnboardingMode;
 export 'src/models/guild/welcome_screen.dart' show WelcomeScreen, WelcomeScreenChannel;
-export 'src/models/guild/scheduled_event.dart' show EntityMetadata, PartialScheduledEvent, ScheduledEvent, ScheduledEventUser, EventStatus, ScheduledEntityType;
+export 'src/models/guild/scheduled_event.dart'
+    show
+        EntityMetadata,
+        PartialScheduledEvent,
+        ScheduledEvent,
+        ScheduledEventUser,
+        EventStatus,
+        ScheduledEntityType,
+        RecurrenceRule,
+        RecurrenceRuleFrequency,
+        RecurrenceRuleMonth,
+        RecurrenceRuleNWeekday,
+        RecurrenceRuleWeekday;
 export 'src/models/guild/audit_log.dart' show AuditLogChange, AuditLogEntry, AuditLogEntryInfo, PartialAuditLogEntry, AuditLogEvent;
 export 'src/models/application.dart'
     show
@@ -197,7 +222,8 @@ export 'src/models/application.dart'
         PartialApplication,
         ApplicationRoleConnectionMetadata,
         ConnectionMetadataType,
-        ApplicationIntegrationType;
+        ApplicationIntegrationType,
+        ApplicationIntegrationTypeConfiguration;
 export 'src/models/guild/template.dart' show GuildTemplate;
 export 'src/models/guild/auto_moderation.dart'
     show
@@ -315,8 +341,9 @@ export 'src/models/interaction.dart'
         PingInteraction,
         InteractionContextType;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
-export 'src/models/sku.dart' show Sku, SkuType, SkuFlags;
+export 'src/models/sku.dart' show Sku, SkuType, SkuFlags, PartialSku;
 export 'src/models/oauth2.dart' show OAuth2Information;
+export 'src/models/subscription.dart' show PartialSubscription, Subscription, SubscriptionStatus;
 
 export 'src/utils/flags.dart' show Flag, Flags;
 export 'src/intents.dart' show GatewayIntents;

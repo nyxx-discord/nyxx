@@ -41,6 +41,8 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/sticker/sticker_pack.dart';
+import 'package:nyxx/src/models/sku.dart';
+import 'package:nyxx/src/models/subscription.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -86,6 +88,10 @@ extension CacheUpdates on NyxxRest {
             if (entity case GuildEmoji(:final user?)) {
               updateCacheWith(user);
             }
+
+            if (entity case ApplicationEmoji(:final user)) {
+              updateCacheWith(user);
+            }
           }(),
         Guild() => () {
             entity.manager.cache[entity.id] = entity;
@@ -121,6 +127,8 @@ extension CacheUpdates on NyxxRest {
 
             updateCacheWith(entity.user);
           }(),
+        Sku() => entity.manager.cache[entity.id] = entity,
+        Subscription() => entity.manager.cache[entity.id] = entity,
 
         // "Aggregate" types - objects that contain other (potentially root) objects
 

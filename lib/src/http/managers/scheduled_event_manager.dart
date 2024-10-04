@@ -40,6 +40,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
       creator: maybeParse(raw['creator'], client.users.parse),
       userCount: raw['user_count'] as int?,
       coverImageHash: raw['image'] as String?,
+      recurrenceRule: maybeParse(raw['recurrence_rule'], parseRecurrenceRule),
     );
   }
 
@@ -57,6 +58,28 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
       scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id']!),
       user: user,
       member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId].members.parse(raw, userId: user.id)),
+    );
+  }
+
+  RecurrenceRule parseRecurrenceRule(Map<String, Object?> raw) {
+    return RecurrenceRule(
+      start: DateTime.parse(raw['start'] as String),
+      end: maybeParse(raw['end'], DateTime.parse),
+      frequency: RecurrenceRuleFrequency(raw['frequency'] as int),
+      interval: raw['interval'] as int,
+      byWeekday: maybeParseMany(raw['by_weekday'], RecurrenceRuleWeekday.new),
+      byNWeekday: maybeParseMany(raw['by_n_weekday'], parseRecurrenceRuleNWeekday),
+      byMonth: maybeParseMany(raw['by_month'], RecurrenceRuleMonth.new),
+      byMonthDay: maybeParseMany(raw['by_month_day']),
+      byYearDay: maybeParseMany(raw['by_year_day']),
+      count: raw['count'] as int?,
+    );
+  }
+
+  RecurrenceRuleNWeekday parseRecurrenceRuleNWeekday(Map<String, Object?> raw) {
+    return RecurrenceRuleNWeekday(
+      n: raw['n'] as int,
+      day: RecurrenceRuleWeekday(raw['day'] as int),
     );
   }
 
