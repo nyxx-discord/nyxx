@@ -1,3 +1,8 @@
+## 6.4.2
+__05.10.2024__
+
+- bug: Prevent caches from growing forever.
+
 ## 6.4.1
 __04.10.2024__
 
