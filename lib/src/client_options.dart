@@ -24,6 +24,36 @@ import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/models/webhook.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
+/// The default [CacheConfig].
+///
+/// 2500 is a relatively arbitrary value that corresponds to the maximum number
+/// of guilds a single shard can handle. This doesn't mean a client can cache
+/// all the guilds it is in as it may have more than one shard. However, 2500
+/// is a large enough value that the cache will contain the most important
+/// entities to avoid making network requests:
+/// - The most active guilds.
+/// - The most active channels.
+/// - The most commonly used entitlements.
+/// - (etc)
+const _defaultCacheConfig = CacheConfig<Never>(maxSize: 2500);
+
+/// A [CacheConfig] with a smaller maximum size than [_defaultCacheConfig],
+/// ideal for certain caches.
+///
+/// Notably, the following types of caches may want to default to a smaller
+/// maximum size:
+/// - Caches that are not global (e.g that belong to a specific guild), as the
+///   total number of entities cached is multiplied by the number of "parent"
+///   entities. For example, setting the maximum member cache size to 100 on a
+///   client which is in 1000 guilds means the total number of cached members
+///   may still approach 100000.
+/// - Caches that see a lot of ephemeral entries, for example the users cache.
+///   Users are generally not needed over a long period of time, but rather for
+///   a short burst (e.g when processing a command) before being discarded. We
+///   don't need to cache these entities longer than the operations they are
+///   involved in.
+const _smallCacheConfig = CacheConfig<Never>(maxSize: 100);
+
 /// Options for controlling the behavior of a [Nyxx] client.
 abstract class ClientOptions {
   /// The plugins to use for this client.
@@ -98,7 +128,7 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Guild.auditLogs] manager.
   final CacheConfig<AuditLogEntry> auditLogEntryConfig;
 
-  /// The [CacheConfig] to use for the [NyxxRest.voice] manager.
+  /// The [CacheConfig] to use for the [PartialGuild.voiceStates] cache.
   final CacheConfig<VoiceState> voiceStateConfig;
 
   /// The [CacheConfig] to use for the [NyxxRest.commands] manager.
@@ -121,27 +151,42 @@ class RestClientOptions extends ClientOptions {
     super.plugins,
     super.loggerName,
     super.rateLimitWarningThreshold,
-    this.userCacheConfig = const CacheConfig(),
-    this.channelCacheConfig = const CacheConfig(),
-    this.messageCacheConfig = const CacheConfig(),
-    this.webhookCacheConfig = const CacheConfig(),
-    this.guildCacheConfig = const CacheConfig(),
-    this.memberCacheConfig = const CacheConfig(),
-    this.roleCacheConfig = const CacheConfig(),
-    this.emojiCacheConfig = const CacheConfig(),
-    this.stageInstanceCacheConfig = const CacheConfig(),
-    this.scheduledEventCacheConfig = const CacheConfig(),
-    this.autoModerationRuleConfig = const CacheConfig(),
-    this.integrationConfig = const CacheConfig(),
-    this.auditLogEntryConfig = const CacheConfig(),
-    this.voiceStateConfig = const CacheConfig(),
-    this.stickerCacheConfig = const CacheConfig(),
-    this.globalStickerCacheConfig = const CacheConfig(),
-    this.applicationCommandConfig = const CacheConfig(),
-    this.commandPermissionsConfig = const CacheConfig(),
-    this.entitlementConfig = const CacheConfig(),
-    this.skuConfig = const CacheConfig(),
-    this.subscriptionConfig = const CacheConfig(),
+    // Users are generally not needed over long periods of time; use a small
+    // cache.
+    this.userCacheConfig = _smallCacheConfig,
+    this.channelCacheConfig = _defaultCacheConfig,
+    // Messages are generally not needed over long periods of time and are
+    // cached per channel anyway; use a small cache.
+    this.messageCacheConfig = _smallCacheConfig,
+    this.webhookCacheConfig = _defaultCacheConfig,
+    this.guildCacheConfig = _defaultCacheConfig,
+    // Members are generally not needed over long periods of time and are
+    // cached per guild anyway; use a small cache.
+    this.memberCacheConfig = _smallCacheConfig,
+    // Guilds tend not to have a large amount of roles (relatively speaking),
+    // but we also want to access all of a guild's roles during e.g permission
+    // calculations; use a larger cache.
+    this.roleCacheConfig = _defaultCacheConfig,
+    // Bots don't tend to use emoji or sticker data. Don't bother caching too
+    // many.
+    this.emojiCacheConfig = _smallCacheConfig,
+    this.stickerCacheConfig = _smallCacheConfig,
+    // ...but there are not too many global stickers, and they are the most
+    // used, so use a larger cache for these.
+    this.globalStickerCacheConfig = _defaultCacheConfig,
+    this.stageInstanceCacheConfig = _defaultCacheConfig,
+    this.scheduledEventCacheConfig = _smallCacheConfig,
+    this.autoModerationRuleConfig = _smallCacheConfig,
+    this.integrationConfig = _smallCacheConfig,
+    this.auditLogEntryConfig = _smallCacheConfig,
+    // Voice states are saved per guild, so we don't need to store large amount
+    // of them at a time.
+    this.voiceStateConfig = _smallCacheConfig,
+    this.applicationCommandConfig = _defaultCacheConfig,
+    this.commandPermissionsConfig = _smallCacheConfig,
+    this.entitlementConfig = _defaultCacheConfig,
+    this.skuConfig = _defaultCacheConfig,
+    this.subscriptionConfig = _defaultCacheConfig,
   });
 }
 
