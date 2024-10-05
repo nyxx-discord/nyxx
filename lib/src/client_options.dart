@@ -18,6 +18,7 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
+import 'package:nyxx/src/models/subscription.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -112,6 +113,9 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Application.skus] manager.
   final CacheConfig<Sku> skuConfig;
 
+  /// Tje [CacheConfig] to use for the [Sku.subscriptions] manager.
+  final CacheConfig<Subscription> subscriptionConfig;
+
   /// Create a new [RestClientOptions].
   const RestClientOptions({
     super.plugins,
@@ -137,6 +141,7 @@ class RestClientOptions extends ClientOptions {
     this.commandPermissionsConfig = const CacheConfig(),
     this.entitlementConfig = const CacheConfig(),
     this.skuConfig = const CacheConfig(),
+    this.subscriptionConfig = const CacheConfig(),
   });
 }
 

@@ -1,4 +1,5 @@
 import 'package:nyxx/src/http/managers/sku_manager.dart';
+import 'package:nyxx/src/http/managers/subscription_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -9,6 +10,10 @@ import 'package:nyxx/src/utils/flags.dart';
 class PartialSku extends ManagedSnowflakeEntity<Sku> {
   @override
   final SkuManager manager;
+
+  /// A manager for this [Sku]'s [Subscription]s.
+  SubscriptionManager get subscriptions =>
+      SubscriptionManager(manager.client.options.subscriptionConfig, manager.client, applicationId: manager.applicationId, skuId: id);
 
   /// @nodoc
   PartialSku({required this.manager, required super.id});
