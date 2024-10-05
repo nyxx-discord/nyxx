@@ -10,7 +10,7 @@ class SubscriptionManager extends ReadOnlyManager<Subscription> {
   final Snowflake applicationId;
   final Snowflake skuId;
 
-  SubscriptionManager(super.client, super.config, {required this.applicationId, required this.skuId})
+  SubscriptionManager(super.config, super.client, {required this.applicationId, required this.skuId})
       : super(identifier: '$applicationId.$skuId.subscriptions');
 
   @override
