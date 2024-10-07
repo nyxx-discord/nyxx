@@ -8,6 +8,8 @@ import 'package:nyxx/src/utils/flags.dart';
 // ASCII encoded "nyxx"
 const sentinelInteger = 0x6E797878;
 
+const sentinelDouble = double.nan;
+
 // ESC-"nyxx"
 const sentinelString = '\u{1B}nyxx';
 

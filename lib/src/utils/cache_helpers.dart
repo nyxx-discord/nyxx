@@ -38,6 +38,7 @@ import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/sticker/sticker_pack.dart';
@@ -288,6 +289,7 @@ extension CacheUpdates on NyxxRest {
         EntitlementCreateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementUpdateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementDeleteEvent(:final entitlement) => entitlement.manager.cache.remove(entitlement.id),
+        SoundboardSound(:final user) => updateCacheWith(user),
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
 

@@ -332,4 +332,10 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`subscriptions`](https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions) part to this [HttpRoute].
   void subscriptions({String? id}) => add(HttpRoutePart('subscriptions', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`sounboard-default-sounds`](https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds) part to this [HttpRoute].
+  void soundboardDefaultSounds() => add(HttpRoutePart('soundboard-default-sounds'));
+
+  /// Adds the [`soundboard-sounds`](https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds) part to this [HttpRoute].
+  void soundboardSounds({String? id}) => add(HttpRoutePart('soundboard-sounds', [if (id != null) HttpRouteParam(id)]));
 }
