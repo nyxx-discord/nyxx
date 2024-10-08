@@ -403,7 +403,8 @@ class MessageManager extends Manager<Message> {
       embeds: parseMany(raw['embeds'] as List, parseEmbed),
       flags: MessageFlags(raw['flags'] as int? ?? 0),
       mentions: parseMany(raw['mentions'] as List, client.users.parse),
-      roleMentionIds: parseMany(raw['mention_roles'] as List, Snowflake.parse),
+      // https://github.com/discord/discord-api-docs/issues/7193
+      roleMentionIds: maybeParseMany(raw['mention_roles'] as List?, Snowflake.parse) ?? [],
       type: MessageType(raw['type'] as int),
     );
   }
