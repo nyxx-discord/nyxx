@@ -297,7 +297,7 @@ void checkForwardedMessage(Message message) {
   expect(message.thread, isNull);
   expect(message.components, equals([]));
   expect(message.stickers, equals([]));
-  expect(message.position, isNull);
+  expect(message.position, equals(0));
   expect(message.roleSubscriptionData, isNull);
   expect(message.resolved, isNull);
   expect(message.poll, isNull);
