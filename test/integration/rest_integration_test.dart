@@ -128,6 +128,21 @@ void main() {
       await expectLater(message.pin(), completes);
       await expectLater(message.unpin(), completes);
 
+      await expectLater(
+        () async => message = await channel.sendMessage(MessageBuilder(
+          referencedMessage: MessageReferenceBuilder.forward(messageId: message.id, channelId: channelId),
+        )),
+        completes,
+      );
+
+      await expectLater(
+        message.reference?.message?.delete(),
+        allOf(
+          isNotNull,
+          completes,
+        ),
+      );
+
       await expectLater(message.delete(), completes);
 
       await expectLater(
