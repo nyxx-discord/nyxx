@@ -1,3 +1,8 @@
+## 6.4.3
+__08.10.2024__
+
+- bug: Handle missing `mention_roles` field in some message snapshots. ([`#709`](https://github.com/nyxx-discord/nyxx/pull/709)) - ([`d458d9c`](https://github.com/nyxx-discord/nyxx/commit/d458d9c82e621ca24044533cd2ce2d66c0a29186))
+
 ## 6.4.2
 __05.10.2024__
 
