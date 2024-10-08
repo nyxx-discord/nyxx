@@ -179,6 +179,131 @@ void checkCrosspostedMessage(Message message) {
   expect(message.roleSubscriptionData, isNull);
 }
 
+final sampleForwardedMessage = {
+  'type': 0,
+  'tts': false,
+  'timestamp': '2024-10-08T09:18:22.532000+00:00',
+  'position': 0,
+  'pinned': false,
+  'nonce': '1293140413896458240',
+  'message_snapshots': [
+    {
+      'message': {
+        'type': 0,
+        'timestamp': '2024-10-08T09:17:26.429000+00:00',
+        'mentions': [],
+        'flags': 0,
+        'embeds': [],
+        'edited_timestamp': null,
+        'content': '<@&786646877335977984> I ping myself for self validation',
+        'components': [],
+        'attachments': []
+      }
+    }
+  ],
+  'message_reference': {
+    'type': 1,
+    'message_id': '1293140188952002611',
+    'guild_id': '786638002399084594',
+    'channel_id': '786638002399084597',
+  },
+  'mentions': [],
+  'mention_roles': [],
+  'mention_everyone': false,
+  'member': {
+    'roles': ['1034762811726901269'],
+    'premium_since': null,
+    'pending': false,
+    'nick': null,
+    'mute': false,
+    'joined_at': '2022-10-23T10:03:13.019000+00:00',
+    'flags': 2,
+    'deaf': false,
+    'communication_disabled_until': null,
+    'banner': null,
+    'avatar': null
+  },
+  'id': '1293140424264781887',
+  'flags': 16384,
+  'embeds': [],
+  'edited_timestamp': null,
+  'content': '',
+  'components': [],
+  'channel_id': '1038831656682930227',
+  'author': {
+    'username': 'abitofevrything',
+    'public_flags': 128,
+    'id': '506759329068613643',
+    'global_name': 'Abitofevrything',
+    'discriminator': '0',
+    'clan': null,
+    'avatar_decoration_data': null,
+    'avatar': 'b591ea8a9d057669ea2a6cd3ab450301'
+  },
+  'attachments': [],
+  'guild_id': '1033681997136146462',
+};
+
+void checkForwardedMessage(Message message) {
+  expect(message.author.id, equals(Snowflake(506759329068613643)));
+  expect(message.content, equals(''));
+  expect(message.timestamp, equals(DateTime.utc(2024, 10, 08, 09, 18, 22, 532)));
+  expect(message.editedTimestamp, isNull);
+  expect(message.isTts, isFalse);
+  expect(message.mentionsEveryone, isFalse);
+  expect(message.mentions, equals([]));
+  expect(message.roleMentionIds, equals([]));
+  expect(message.channelMentions, equals([]));
+  expect(message.attachments, equals([]));
+  expect(message.embeds, equals([]));
+  expect(message.reactions, equals([]));
+  expect(message.nonce, equals('1293140413896458240'));
+  expect(message.isPinned, isFalse);
+  expect(message.webhookId, isNull);
+  expect(message.type, MessageType.normal);
+  expect(message.activity, isNull);
+  expect(message.application, isNull);
+  expect(message.applicationId, isNull);
+  expect(message.reference, isNotNull);
+  expect(message.reference!.type, equals(MessageReferenceType.forward));
+  expect(message.reference!.messageId, equals(Snowflake(1293140188952002611)));
+  expect(message.reference!.channelId, equals(Snowflake(786638002399084597)));
+  expect(message.reference!.guildId, equals(Snowflake(786638002399084594)));
+  expect(
+    message.messageSnapshots,
+    equals([
+      wrapMatcher((MessageSnapshot snapshot) {
+        expect(snapshot.timestamp, equals(DateTime.utc(2024, 10, 08, 09, 17, 26, 429)));
+        expect(snapshot.editedTimestamp, isNull);
+        expect(snapshot.type, MessageType.normal);
+        expect(snapshot.content, equals('<@&786646877335977984> I ping myself for self validation'));
+        expect(snapshot.attachments, equals([]));
+        expect(snapshot.embeds, equals([]));
+        expect(snapshot.flags, equals(MessageFlags(0)));
+        expect(snapshot.mentions, equals([]));
+        expect(
+          snapshot.roleMentionIds,
+          equals([
+            // TODO: Update this once Discord properly populates this field.
+          ]),
+        );
+        return true;
+      }),
+    ]),
+  );
+  expect(message.flags, equals(MessageFlags(16384)));
+  expect(message.referencedMessage, isNull);
+  expect(message.interactionMetadata, isNull);
+  expect(message.thread, isNull);
+  expect(message.components, equals([]));
+  expect(message.stickers, equals([]));
+  expect(message.position, equals(0));
+  expect(message.roleSubscriptionData, isNull);
+  expect(message.resolved, isNull);
+  expect(message.poll, isNull);
+  expect(message.call, isNull);
+}
+
 final sampleMessageInteractionMetadata = {
   "id": "1234567891234567800",
   "type": 2,
@@ -261,8 +386,8 @@ void main() {
     '/channels/0/messages',
     sampleObject: sampleMessage,
     sampleMatches: checkMessage,
-    additionalSampleObjects: [sampleCrosspostedMessage],
-    additionalSampleMatchers: [checkCrosspostedMessage],
+    additionalSampleObjects: [sampleCrosspostedMessage, sampleForwardedMessage],
+    additionalSampleMatchers: [checkCrosspostedMessage, checkForwardedMessage],
     createBuilder: MessageBuilder(),
     updateBuilder: MessageUpdateBuilder(),
     additionalParsingTests: [
