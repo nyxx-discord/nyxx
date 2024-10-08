@@ -287,6 +287,7 @@ void checkForwardedMessage(Message message) {
             // TODO: Update this once Discord properly populates this field.
           ]),
         );
+        return true;
       }),
     ]),
   );
