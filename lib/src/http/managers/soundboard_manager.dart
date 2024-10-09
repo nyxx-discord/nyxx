@@ -93,7 +93,7 @@ class GuildSoundboardManager extends SoundboardManager {
     return soundboard;
   }
 
-  Future<SoundboardSound> update(Snowflake id, UpdateSoundBuilder builder, {String? auditLogReason}) async {
+  Future<SoundboardSound> update(Snowflake id, UpdateSoundboardSoundBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..soundboardSounds(id: id.toString());

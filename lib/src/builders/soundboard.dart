@@ -29,14 +29,14 @@ class SoundboardSoundBuilder extends CreateBuilder<SoundboardSound> {
       };
 }
 
-class UpdateSoundBuilder extends UpdateBuilder<SoundboardSound> {
+class UpdateSoundboardSoundBuilder extends UpdateBuilder<SoundboardSound> {
   String name;
 
-  double volume;
+  double? volume;
 
-  Emoji emoji;
+  Emoji? emoji;
 
-  UpdateSoundBuilder({required this.name, this.volume = sentinelDouble, this.emoji = sentinelEmoji});
+  UpdateSoundboardSoundBuilder({required this.name, this.volume = sentinelDouble, this.emoji = sentinelEmoji});
 
   @override
   Map<String, Object?> build() => {

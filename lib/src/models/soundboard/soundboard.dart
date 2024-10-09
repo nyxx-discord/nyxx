@@ -13,7 +13,7 @@ class PartialSoundboardSound extends ManagedSnowflakeEntity<SoundboardSound> {
   PartialSoundboardSound({required super.id, required this.manager});
 
   /// Update this entity using the provided builder and return the updated entity.
-  Future<SoundboardSound> update(UpdateSoundBuilder builder) {
+  Future<SoundboardSound> update(UpdateSoundboardSoundBuilder builder) {
     assert(manager is GuildSoundboardManager);
 
     return (manager as GuildSoundboardManager).update(id, builder);
