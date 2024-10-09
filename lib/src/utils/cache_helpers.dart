@@ -21,6 +21,7 @@ import 'package:nyxx/src/models/gateway/events/invite.dart';
 import 'package:nyxx/src/models/gateway/events/message.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
+import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
@@ -290,6 +291,10 @@ extension CacheUpdates on NyxxRest {
         EntitlementUpdateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementDeleteEvent(:final entitlement) => entitlement.manager.cache.remove(entitlement.id),
         SoundboardSound(:final user) => updateCacheWith(user),
+        VoiceChannelEffectSendEvent() => null,
+        SoundboardSoundCreateEvent(:final sound) => updateCacheWith(sound),
+        SoundboardSoundUpdateEvent(:final sound) => updateCacheWith(sound),
+        SoundboardSoundDeleteEvent() => null,
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
 
