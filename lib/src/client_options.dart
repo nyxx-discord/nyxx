@@ -195,7 +195,7 @@ class RestClientOptions extends ClientOptions {
     this.skuConfig = _defaultCacheConfig,
     this.subscriptionConfig = _defaultCacheConfig,
     this.globalSoundboardCacheConfig = _smallCacheConfig,
-    this.soundboardCacheConfig = _defaultCacheConfig,
+    this.soundboardCacheConfig = _smallCacheConfig,
   });
 }
 
