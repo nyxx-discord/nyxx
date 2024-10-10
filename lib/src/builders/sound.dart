@@ -13,7 +13,7 @@ class SoundBuilder {
   SoundBuilder.ogg(this.data) : format = 'ogg';
 
   static Future<SoundBuilder> fromFile(File file, {String? format}) async {
-    format ??= p.extension(file.path);
+    format ??= p.extension(file.path).substring(1);
 
     const formats = {
       'mp3': 'mpeg',
