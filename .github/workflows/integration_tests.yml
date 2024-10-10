@@ -2,8 +2,10 @@ name: Integration tests
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
+      - dev
+      - next
+  pull_request:
 
 jobs:
   tests:
