@@ -360,7 +360,16 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
       _currentRateLimitEnd.complete();
       _currentRateLimitEnd = Completer<void>();
     });
-    websocket.done.then((_) => close());
+    websocket.done.then((_) {
+      _rateLimitResetTimer.cancel();
+      if (!_currentRateLimitEnd.isCompleted) {
+        _currentRateLimitEnd
+          // Don't report an uncaught async error for the future.
+          ..future.ignore()
+          ..completeError(StateError('Connection is closed'), StackTrace.current);
+      }
+      _sentController.close();
+    });
   }
 
   static Future<ShardConnection> connect(String gatewayUri, ShardRunner runner) async {
@@ -435,15 +444,9 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   Future<void> close([int code = 1000]) async {
     localCloseCode ??= code;
 
-    _rateLimitResetTimer.cancel();
-    if (!_currentRateLimitEnd.isCompleted) {
-      _currentRateLimitEnd
-        // Install an error handler so the error is not counted as uncaught.
-        ..future.catchError((e) {})
-        ..completeError(StateError('Connection is closed'), StackTrace.current);
-    }
     await websocket.close(code);
-    await _sentController.close();
+
+    return done;
   }
 
   @override
