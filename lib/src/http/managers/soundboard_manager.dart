@@ -75,7 +75,7 @@ class GuildSoundboardManager extends SoundboardManager {
 
     final response = await client.httpHandler.executeSafe(request);
 
-    final raw = response.jsonBody as List<Object?>;
+    final raw = (response.jsonBody as Map<String, Object?>)['items'] as List<Object?>;
 
     final sounds = parseMany(raw, parse);
 
