@@ -406,6 +406,8 @@ class MessageManager extends Manager<Message> {
       // https://github.com/discord/discord-api-docs/issues/7193
       roleMentionIds: maybeParseMany(raw['mention_roles'] as List?, Snowflake.parse) ?? [],
       type: MessageType(raw['type'] as int),
+      stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
+      components: maybeParseMany(raw['components'], parseMessageComponent),
     );
   }
 
