@@ -150,7 +150,7 @@ class MemberFlags extends Flags<MemberFlags> {
   static const automodQuarantinedUsername = Flag<MemberFlags>.fromOffset(7);
 
   // 1 << 8 is AUTOMOD_QUARANTINED_BIO but it's undocumented and deprecated
-  
+
   /// Member has dismissed the DM settings upsell
   static const dmSettingsUpsellAcknowledged = Flag<MemberFlags>.fromOffset(9);
 
