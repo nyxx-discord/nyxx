@@ -37,7 +37,7 @@ void main() {
 
         final bucket = HttpBucket.fromResponse(handler, response);
 
-        expect(bucket, isNot(isNull));
+        expect(bucket, isNotNull);
         expect(bucket?.id, equals('testBucketId'));
         expect(bucket?.remaining, equals(15));
 

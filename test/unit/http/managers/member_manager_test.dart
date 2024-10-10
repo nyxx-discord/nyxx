@@ -12,6 +12,7 @@ final sampleMemberNoUser = {
   "joined_at": "2015-04-26T06:26:56.936000+00:00",
   "deaf": false,
   "mute": false,
+  "banner": "a_coolHashDude",
 
   // These fields are documented as always present but are not in the provided sample
   "flags": 0,
@@ -35,6 +36,7 @@ void checkMemberNoUser(Member member, {Snowflake expectedUserId = const Snowflak
   expect(member.isPending, isFalse);
   expect(member.permissions, isNull);
   expect(member.communicationDisabledUntil, isNull);
+  expect(member.bannerHash, equals('a_coolHashDude'));
 }
 
 void checkMember(Member member, {Snowflake expectedUserId = const Snowflake(80351110224678912)}) {
