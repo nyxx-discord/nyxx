@@ -6,6 +6,7 @@ import 'package:nyxx/src/http/managers/interaction_manager.dart';
 import 'package:nyxx/src/http/managers/invite_manager.dart';
 import 'package:nyxx/src/http/managers/gateway_manager.dart';
 import 'package:nyxx/src/http/managers/guild_manager.dart';
+import 'package:nyxx/src/http/managers/soundboard_manager.dart';
 import 'package:nyxx/src/http/managers/sticker_manager.dart';
 import 'package:nyxx/src/http/managers/user_manager.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
@@ -49,4 +50,7 @@ mixin ManagerMixin implements Nyxx {
       GlobalApplicationCommandManager(options.applicationCommandConfig, this as NyxxRest, applicationId: (this as NyxxRest).application.id);
 
   InteractionManager get interactions => InteractionManager(this as NyxxRest, applicationId: (this as NyxxRest).application.id);
+
+  /// A [GlobalSoundboardManager] that manages global soundboard sounds.
+  GlobalSoundboardManager get soundboard => GlobalSoundboardManager(options.globalSoundboardCacheConfig, this as NyxxRest);
 }

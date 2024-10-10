@@ -16,6 +16,7 @@ import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/sku.dart';
+import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/subscription.dart';
@@ -143,8 +144,14 @@ class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the [Application.skus] manager.
   final CacheConfig<Sku> skuConfig;
 
-  /// Tje [CacheConfig] to use for the [Sku.subscriptions] manager.
+  /// The [CacheConfig] to use for the [Sku.subscriptions] manager.
   final CacheConfig<Subscription> subscriptionConfig;
+
+  /// The [CacheConfig] to use for the [NyxxRest.soundboard] manager.
+  final CacheConfig<SoundboardSound> globalSoundboardCacheConfig;
+
+  /// The [CacheConfig] to use for the [Guild.soundboard] manager.
+  final CacheConfig<SoundboardSound> soundboardCacheConfig;
 
   /// Create a new [RestClientOptions].
   const RestClientOptions({
@@ -187,6 +194,8 @@ class RestClientOptions extends ClientOptions {
     this.entitlementConfig = _defaultCacheConfig,
     this.skuConfig = _defaultCacheConfig,
     this.subscriptionConfig = _defaultCacheConfig,
+    this.globalSoundboardCacheConfig = _smallCacheConfig,
+    this.soundboardCacheConfig = _smallCacheConfig,
   });
 }
 

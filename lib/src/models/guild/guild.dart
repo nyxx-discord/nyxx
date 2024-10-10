@@ -18,6 +18,7 @@ import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
+import 'package:nyxx/src/http/managers/soundboard_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
@@ -74,6 +75,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
+
+  /// A [GuildSoundboardManager] for the soundboard sounds of this guild.
+  GuildSoundboardManager get soundboard => GuildSoundboardManager(manager.client.options.soundboardCacheConfig, manager.client, guildId: id);
 
   /// A [Cache] for [VoiceState]s in this guild.
   Cache<VoiceState> get voiceStates => manager.client.cache.getCache('$id.voiceStates', manager.client.options.voiceStateConfig);
