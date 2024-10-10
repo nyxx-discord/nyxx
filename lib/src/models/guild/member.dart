@@ -137,6 +137,23 @@ class MemberFlags extends Flags<MemberFlags> {
   /// This member has started the guild's onboarding process.
   static const startedOnboarding = Flag<MemberFlags>.fromOffset(3);
 
+  /// Member is a guest and can only access the voice channel they were invited to.
+  static const isGuest = Flag<MemberFlags>.fromOffset(4);
+
+  /// Member has started Server Guide new member actions.
+  static const startedHomeActions = Flag<MemberFlags>.fromOffset(5);
+
+  /// Member has completed Server Guide new member actions.
+  static const completedHomeActions = Flag<MemberFlags>.fromOffset(6);
+
+  /// Member's username, display name, or nickname is blocked by AutoMod.
+  static const automodQuarantinedUsername = Flag<MemberFlags>.fromOffset(7);
+
+  // 1 << 8 is AUTOMOD_QUARANTINED_BIO but it's undocumented and deprecated
+  
+  /// Member has dismissed the DM settings upsell
+  static const dmSettingsUpsellAcknowledged = Flag<MemberFlags>.fromOffset(9);
+
   /// Whether this member has the [didRejoin] flag.
   bool get hasRejoined => has(didRejoin);
 
@@ -148,6 +165,21 @@ class MemberFlags extends Flags<MemberFlags> {
 
   /// Whether this member has the [startedOnboarding] flag.
   bool get didStartOnboarding => has(startedOnboarding);
+
+  /// Whether this member has the [isGuest] flag.
+  bool get isGuestMember => has(isGuest);
+
+  /// Whether this member has the [startedHomeActions] flag.
+  bool get didStartHomeActions => has(startedHomeActions);
+
+  /// Whether this member has the [completedHomeActions] flag.
+  bool get didCompleteHomeActions => has(completedHomeActions);
+
+  /// Whether this member has the [automodQuarantinedUsername] flag.
+  bool get hasAutomodQuarantinedUsername => has(automodQuarantinedUsername);
+
+  /// Whether this member has the [dmSettingsUpsellAcknowledged] flag.
+  bool get didAcknowledgeDmSettingsUpsell => has(dmSettingsUpsellAcknowledged);
 
   /// Create a new [MemberFlags].
   const MemberFlags(super.value);
