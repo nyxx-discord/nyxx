@@ -2,8 +2,9 @@ name: Run unit tests
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
+      - dev
+      - next
   pull_request:
 
 jobs:
