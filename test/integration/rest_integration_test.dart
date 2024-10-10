@@ -448,7 +448,7 @@ void main() {
           SoundboardSoundBuilder(
             name: 'Test sound',
             volume: 0.5,
-            sound: SoundBuilder(data: [79, 103, 103, 83], format: 'ogg'),
+            sound: await SoundBuilder.fromFile(File('test/files/sound.ogg')),
           ),
         ),
         completes,
