@@ -290,7 +290,10 @@ extension CacheUpdates on NyxxRest {
         EntitlementCreateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementUpdateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementDeleteEvent(:final entitlement) => entitlement.manager.cache.remove(entitlement.id),
-        SoundboardSound(:final user) => updateCacheWith(user),
+        SoundboardSound() => () {
+            updateCacheWith(entity.user);
+            entity.manager.cache[entity.id] = entity;
+          }(),
         VoiceChannelEffectSendEvent() => null,
         SoundboardSoundCreateEvent(:final sound) => updateCacheWith(sound),
         SoundboardSoundUpdateEvent(:final sound) => updateCacheWith(sound),

@@ -1,4 +1,3 @@
-import 'package:nyxx/src/builders/soundboard.dart';
 import 'package:nyxx/src/http/managers/soundboard_manager.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -6,25 +5,11 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
-class PartialSoundboardSound extends ManagedSnowflakeEntity<SoundboardSound> {
+class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
   @override
   final SoundboardManager manager;
 
   PartialSoundboardSound({required super.id, required this.manager});
-
-  /// Update this entity using the provided builder and return the updated entity.
-  Future<SoundboardSound> update(UpdateSoundboardSoundBuilder builder) {
-    assert(manager is GuildSoundboardManager);
-
-    return (manager as GuildSoundboardManager).update(id, builder);
-  }
-
-  /// Delete this entity.
-  Future<void> delete() {
-    assert(manager is GuildSoundboardManager);
-
-    return (manager as GuildSoundboardManager).delete(id);
-  }
 }
 
 class SoundboardSound extends PartialSoundboardSound {

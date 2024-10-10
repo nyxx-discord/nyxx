@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/builders/sound.dart';
+import 'package:nyxx/src/builders/soundboard.dart';
+import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:test/test.dart' hide completes;
 
 import '../function_completes.dart';
@@ -431,6 +434,28 @@ void main() {
       }
 
       await expectLater(command.delete(), completes);
+    });
+
+    test('Soundboard', skip: testGuild != null ? false : 'No test guild provided', () async {
+      final guildId = Snowflake.parse(testGuild!);
+      final guild = client.guilds[guildId];
+
+      await expectLater(guild.soundboard.list(), completion(isEmpty));
+
+      late SoundboardSound sound;
+      await expectLater(
+        () async => sound = await guild.soundboard.create(
+          SoundboardSoundBuilder(
+            name: 'Test sound',
+            volume: 0.5,
+            sound: SoundBuilder(data: [79, 103, 103, 83], format: 'ogg'),
+          ),
+        ),
+        completes,
+      );
+
+      await expectLater(sound.update(UpdateSoundboardSoundBuilder(name: 'New name')), completes);
+      await expectLater(sound.delete(), completes);
     });
   });
 }
