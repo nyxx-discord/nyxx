@@ -133,9 +133,12 @@ class GuildSoundboardManager extends SoundboardManager {
   /// Send a soundboard sound to a voice channel the user is connected to. [soundId] is the id of the soundboard sound to play,
   /// while [sourceGuildId] is the id of the guild the soundboard sound is from. (Required to play sounds from different servers.)
   Future<void> sendSoundboardSound(Snowflake channelId, {required Snowflake soundId, Snowflake? sourceGuildId}) async {
-    final route = HttpRoute()..channels(id: channelId.toString())..sendSoundboardSound();
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..sendSoundboardSound();
 
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode({'sound_id': soundId.toString(), 'source_guild_id': (sourceGuildId ?? guildId).toString()}));
+    final request =
+        BasicRequest(route, method: 'POST', body: jsonEncode({'sound_id': soundId.toString(), 'source_guild_id': (sourceGuildId ?? guildId).toString()}));
 
     await client.httpHandler.executeSafe(request);
   }

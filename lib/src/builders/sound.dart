@@ -9,7 +9,7 @@ class SoundBuilder {
   SoundBuilder({required this.data, required this.format});
 
   SoundBuilder.mp3(this.data) : format = 'mpeg';
-  
+
   SoundBuilder.ogg(this.data) : format = 'ogg';
 
   static Future<SoundBuilder> fromFile(File file, {String? format}) async {

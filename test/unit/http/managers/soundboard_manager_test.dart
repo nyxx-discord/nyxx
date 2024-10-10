@@ -80,13 +80,12 @@ void main() {
     additionalParsingTests: [],
     additionalEndpointTests: [
       EndpointTest<GuildSoundboardManager, void, void>(
-        name: 'send-soundboard-sound',
-        source: null,
-        urlMatcher: '/channels/0/send-soundboard-sound',
-        execute: (manager) => manager.sendSoundboardSound(Snowflake.zero, soundId: Snowflake.zero),
-        check: (_) {},
-        method: 'post'
-      ),
+          name: 'send-soundboard-sound',
+          source: null,
+          urlMatcher: '/channels/0/send-soundboard-sound',
+          execute: (manager) => manager.sendSoundboardSound(Snowflake.zero, soundId: Snowflake.zero),
+          check: (_) {},
+          method: 'post'),
     ],
     createBuilder: SoundboardSoundBuilder(
       name: 'cool',
