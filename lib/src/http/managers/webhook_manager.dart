@@ -5,7 +5,6 @@ import 'package:http/http.dart' hide MultipartRequest;
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/webhook.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -15,6 +14,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Webhook]s.
@@ -30,7 +30,7 @@ class WebhookManager extends Manager<Webhook> {
     return Webhook(
       id: Snowflake.parse(raw['id']!),
       manager: this,
-      type: WebhookType.parse(raw['type'] as int),
+      type: WebhookType(raw['type'] as int),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
       user: maybeParse(raw['user'], client.users.parse),
@@ -56,6 +56,7 @@ class WebhookManager extends Manager<Webhook> {
     );
   }
 
+  /// Parse a [WebhookAuthor] from [raw].
   WebhookAuthor parseWebhookAuthor(Map<String, Object?> raw) {
     return WebhookAuthor(
       id: Snowflake.parse(raw['id']!),
@@ -76,36 +77,36 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[webhook.id] = webhook;
+    client.updateCacheWith(webhook);
     return webhook;
   }
 
   @override
-  Future<Webhook> create(WebhookBuilder builder) async {
+  Future<Webhook> create(WebhookBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: builder.channelId.toString())
       ..webhooks();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[webhook.id] = webhook;
+    client.updateCacheWith(webhook);
     return webhook;
   }
 
   @override
-  Future<Webhook> update(Snowflake id, WebhookUpdateBuilder builder, {String? token}) async {
+  Future<Webhook> update(Snowflake id, WebhookUpdateBuilder builder, {String? token, String? auditLogReason}) async {
     final route = HttpRoute()..webhooks(id: id.toString());
     if (token != null) {
       route.add(HttpRoutePart(token));
     }
-    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()), authenticated: token == null);
+    final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()), authenticated: token == null, auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final webhook = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[webhook.id] = webhook;
+    client.updateCacheWith(webhook);
     return webhook;
   }
 
@@ -132,7 +133,7 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhooks = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(webhooks);
+    webhooks.forEach(client.updateCacheWith);
     return webhooks;
   }
 
@@ -146,12 +147,13 @@ class WebhookManager extends Manager<Webhook> {
     final response = await client.httpHandler.executeSafe(request);
     final webhooks = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(webhooks);
+    webhooks.forEach(client.updateCacheWith);
     return webhooks;
   }
 
   /// Execute a webhook.
-  Future<Message?> execute(Snowflake id, MessageBuilder builder, {required String token, bool? wait, Snowflake? threadId}) async {
+  Future<Message?> execute(Snowflake id, MessageBuilder builder,
+      {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags, String? username, String? avatarUrl}) async {
     final route = HttpRoute()
       ..webhooks(id: id.toString())
       ..add(HttpRoutePart(token));
@@ -160,7 +162,13 @@ class WebhookManager extends Manager<Webhook> {
     final HttpRequest request;
     if (!identical(builder.attachments, sentinelList) && builder.attachments?.isNotEmpty == true) {
       final attachments = builder.attachments!;
-      final payload = builder.build();
+      final payload = {
+        ...builder.build(),
+        if (threadName != null) 'thread_name': threadName,
+        if (appliedTags != null) 'applied_tags': appliedTags.map((e) => e.toString()),
+        if (username != null) 'username': username,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
+      };
 
       final files = <MultipartFile>[];
       for (int i = 0; i < attachments.length; i++) {
@@ -185,7 +193,13 @@ class WebhookManager extends Manager<Webhook> {
       request = BasicRequest(
         route,
         method: 'POST',
-        body: jsonEncode(builder.build()),
+        body: jsonEncode({
+          ...builder.build(),
+          if (threadName != null) 'thread_name': threadName,
+          if (appliedTags != null) 'applied_tags': appliedTags.map((e) => e.toString()),
+          if (username != null) 'username': username,
+          if (avatarUrl != null) 'avatar_url': avatarUrl,
+        }),
         queryParameters: queryParameters,
         authenticated: false,
       );
@@ -201,7 +215,7 @@ class WebhookManager extends Manager<Webhook> {
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
-    messageManager.cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -222,7 +236,7 @@ class WebhookManager extends Manager<Webhook> {
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
-    messageManager.cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 
@@ -278,7 +292,7 @@ class WebhookManager extends Manager<Webhook> {
     final messageManager = (client.channels[channelId] as PartialTextChannel).messages;
     final message = messageManager.parse(response.jsonBody as Map<String, Object?>);
 
-    messageManager.cache[message.id] = message;
+    client.updateCacheWith(message);
     return message;
   }
 

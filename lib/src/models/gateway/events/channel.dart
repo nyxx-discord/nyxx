@@ -13,6 +13,7 @@ class ChannelCreateEvent extends DispatchEvent {
   final Channel channel;
 
   /// {@macro channel_create_event}
+  /// @nodoc
   ChannelCreateEvent({required super.gateway, required this.channel});
 }
 
@@ -27,6 +28,7 @@ class ChannelUpdateEvent extends DispatchEvent {
   final Channel channel;
 
   /// {@macro channel_update_event}
+  /// @nodoc
   ChannelUpdateEvent({required super.gateway, required this.oldChannel, required this.channel});
 }
 
@@ -38,6 +40,7 @@ class ChannelDeleteEvent extends DispatchEvent {
   final Channel channel;
 
   /// {@macro channel_delete_event}
+  /// @nodoc
   ChannelDeleteEvent({required super.gateway, required this.channel});
 }
 
@@ -49,6 +52,7 @@ class ThreadCreateEvent extends DispatchEvent {
   final Thread thread;
 
   /// {@macro thread_create_event}
+  /// @nodoc
   ThreadCreateEvent({required super.gateway, required this.thread});
 }
 
@@ -63,6 +67,7 @@ class ThreadUpdateEvent extends DispatchEvent {
   final Thread thread;
 
   /// {@macro thread_update_event}
+  /// @nodoc
   ThreadUpdateEvent({required super.gateway, required this.oldThread, required this.thread});
 }
 
@@ -73,8 +78,12 @@ class ThreadDeleteEvent extends DispatchEvent {
   /// The thread which was deleted.
   final PartialChannel thread;
 
+  /// The thread as it was cached before it was deleted.
+  final Thread? deletedThread;
+
   /// {@macro thread_delete_event}
-  ThreadDeleteEvent({required super.gateway, required this.thread});
+  /// @nodoc
+  ThreadDeleteEvent({required super.gateway, required this.thread, required this.deletedThread});
 }
 
 /// {@template thread_list_sync_event}
@@ -94,6 +103,7 @@ class ThreadListSyncEvent extends DispatchEvent {
   final List<ThreadMember> members;
 
   /// {@macro thread_list_sync_event}
+  /// @nodoc
   ThreadListSyncEvent({
     required super.gateway,
     required this.guildId,
@@ -116,8 +126,15 @@ class ThreadMemberUpdateEvent extends DispatchEvent {
   /// The updated member.
   final ThreadMember member;
 
+  /// The ID of the guild in which the member was updated.
+  final Snowflake guildId;
+
   /// {@macro thread_member_update_event}
-  ThreadMemberUpdateEvent({required super.gateway, required this.member});
+  /// @nodoc
+  ThreadMemberUpdateEvent({required super.gateway, required this.member, required this.guildId});
+
+  /// The guild in which the member was updated.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }
 
 /// {@template thread_members_update_event}
@@ -140,6 +157,7 @@ class ThreadMembersUpdateEvent extends DispatchEvent {
   final List<Snowflake>? removedMemberIds;
 
   /// {@macro thread_members_update_event}
+  /// @nodoc
   ThreadMembersUpdateEvent({
     required super.gateway,
     required this.id,
@@ -170,6 +188,7 @@ class ChannelPinsUpdateEvent extends DispatchEvent {
   final DateTime? lastPinTimestamp;
 
   /// {@macro channel_pins_update_event}
+  /// @nodoc
   ChannelPinsUpdateEvent({required super.gateway, required this.guildId, required this.channelId, required this.lastPinTimestamp});
 
   /// The guild the channel is in.

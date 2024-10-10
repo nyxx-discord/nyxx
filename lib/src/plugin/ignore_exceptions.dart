@@ -13,6 +13,7 @@ class IgnoreExceptions extends NyxxPlugin {
   String get name => 'IgnoreExceptions';
 
   /// The logger used to report the errors.
+  @override
   Logger get logger => Logger('IgnoreExceptions');
 
   static int _clients = 0;

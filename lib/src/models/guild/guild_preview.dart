@@ -37,6 +37,7 @@ class GuildPreview extends PartialGuild {
   final List<GuildSticker> stickerList;
 
   /// {@macro guild_preview}
+  /// @nodoc
   GuildPreview({
     required super.id,
     required super.manager,

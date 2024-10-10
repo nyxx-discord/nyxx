@@ -8,6 +8,7 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [ScheduledEvent].
@@ -16,6 +17,7 @@ class PartialScheduledEvent extends WritableSnowflakeEntity<ScheduledEvent> {
   final ScheduledEventManager manager;
 
   /// Create a new [PartialScheduledEvent].
+  /// @nodoc
   PartialScheduledEvent({required super.id, required this.manager});
 
   /// List the users that have followed this event.
@@ -74,7 +76,11 @@ class ScheduledEvent extends PartialScheduledEvent {
   /// The hash of this event's cover image.
   final String? coverImageHash;
 
+  /// The rule defining how often this event should recur.
+  final RecurrenceRule? recurrenceRule;
+
   /// {@macro scheduled_event}
+  /// @nodoc
   ScheduledEvent({
     required super.id,
     required super.manager,
@@ -93,6 +99,7 @@ class ScheduledEvent extends PartialScheduledEvent {
     required this.creator,
     required this.userCount,
     required this.coverImageHash,
+    required this.recurrenceRule,
   });
 
   /// The guild this event is in.
@@ -115,50 +122,30 @@ class ScheduledEvent extends PartialScheduledEvent {
 }
 
 /// The status of a [ScheduledEvent].
-enum EventStatus {
-  scheduled._(1),
-  active._(2),
-  completed._(3),
-  cancelled._(4);
+final class EventStatus extends EnumLike<int, EventStatus> {
+  static const scheduled = EventStatus(1);
+  static const active = EventStatus(2);
+  static const completed = EventStatus(3);
+  static const cancelled = EventStatus(4);
 
-  /// TThe value of this [EventStatus].
-  final int value;
+  /// @nodoc
+  const EventStatus(super.value);
 
-  const EventStatus._(this.value);
-
-  /// Parse an [EventStatus] from an [int].
-  ///
-  /// The [value] must be a valid event status.
-  factory EventStatus.parse(int value) => EventStatus.values.firstWhere(
-        (status) => status.value == value,
-        orElse: () => throw FormatException('Unknown event status', value),
-      );
-
-  @override
-  String toString() => 'EventStatus($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  EventStatus.parse(int value) : this(value);
 }
 
 /// The type of the entity associated with a [ScheduledEvent].
-enum ScheduledEntityType {
-  stageInstance._(1),
-  voice._(2),
-  external._(3);
+final class ScheduledEntityType extends EnumLike<int, ScheduledEntityType> {
+  static const stageInstance = ScheduledEntityType(1);
+  static const voice = ScheduledEntityType(2);
+  static const external = ScheduledEntityType(3);
 
-  /// The value of this [ScheduledEntityType].
-  final int value;
+  /// @nodoc
+  const ScheduledEntityType(super.value);
 
-  const ScheduledEntityType._(this.value);
-
-  /// Parse a [ScheduledEntityType] from an [int].
-  ///
-  /// The [value] must be a valid scheduled entity type.
-  factory ScheduledEntityType.parse(int value) => ScheduledEntityType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown scheduled entity type', value),
-      );
-
-  @override
-  String toString() => 'ScheduledEntityType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ScheduledEntityType.parse(int value) : this(value);
 }
 
 /// {@template entity_metadata}
@@ -169,6 +156,7 @@ class EntityMetadata with ToStringHelper {
   final String? location;
 
   /// {@macro entity_metadata}
+  /// @nodoc
   EntityMetadata({required this.location});
 }
 
@@ -188,6 +176,7 @@ class ScheduledEventUser with ToStringHelper {
   final Member? member;
 
   /// {@macro scheduled_event_user}
+  /// @nodoc
   ScheduledEventUser({
     required this.manager,
     required this.scheduledEventId,
@@ -197,4 +186,119 @@ class ScheduledEventUser with ToStringHelper {
 
   /// The event the user followed.
   PartialScheduledEvent get scheduledEvent => manager[scheduledEventId];
+}
+
+/// Indicates how often a [ScheduledEvent] should recur.
+///
+/// See also:
+/// * https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object
+class RecurrenceRule with ToStringHelper {
+  /// The start of the interval within which the event recurs.
+  final DateTime start;
+
+  /// The end of the interval within which the event recurs.
+  final DateTime? end;
+
+  /// The frequency this rule applies to.
+  final RecurrenceRuleFrequency frequency;
+
+  /// The spacing between each recurrence of the event, in multiples of [frequency].
+  final int interval;
+
+  /// The specific days within a week the event recurs on.
+  final List<RecurrenceRuleWeekday>? byWeekday;
+
+  /// The specific days within a specific week the event recurs on.
+  final List<RecurrenceRuleNWeekday>? byNWeekday;
+
+  /// The specific months the event recurs on.
+  final List<RecurrenceRuleMonth>? byMonth;
+
+  /// The specific days within a month the event recurs on.
+  final List<int>? byMonthDay;
+
+  /// The specific days within a year the event recurs on.
+  final List<int>? byYearDay;
+
+  /// The total number of times the event is allowed to recur before stopping.
+  final int? count;
+
+  /// @nodoc
+  RecurrenceRule({
+    required this.start,
+    required this.end,
+    required this.frequency,
+    required this.interval,
+    required this.byWeekday,
+    required this.byNWeekday,
+    required this.byMonth,
+    required this.byMonthDay,
+    required this.byYearDay,
+    required this.count,
+  });
+}
+
+/// The frequency with which a [ScheduledEvent] can recur.
+final class RecurrenceRuleFrequency extends EnumLike<int, RecurrenceRuleFrequency> {
+  /// The event recurs at an interval in years.
+  static const yearly = RecurrenceRuleFrequency(0);
+
+  /// The event recurs at an interval in months.
+  static const monthly = RecurrenceRuleFrequency(1);
+
+  /// The event recurs at an interval in weeks.
+  static const weekly = RecurrenceRuleFrequency(2);
+
+  /// The event recurs at an interval in days.
+  static const daily = RecurrenceRuleFrequency(3);
+
+  /// @nodoc
+  const RecurrenceRuleFrequency(super.value);
+}
+
+/// The weekday on which a [ScheduledEvent] recurs.
+final class RecurrenceRuleWeekday extends EnumLike<int, RecurrenceRuleWeekday> {
+  static const monday = RecurrenceRuleWeekday(0);
+  static const tuesday = RecurrenceRuleWeekday(1);
+  static const wednesday = RecurrenceRuleWeekday(2);
+  static const thursday = RecurrenceRuleWeekday(3);
+  static const friday = RecurrenceRuleWeekday(4);
+  static const saturday = RecurrenceRuleWeekday(5);
+  static const sunday = RecurrenceRuleWeekday(6);
+
+  /// @nodoc
+  const RecurrenceRuleWeekday(super.value);
+}
+
+/// The week and weekday on which a [ScheduledEvent] recurs.
+class RecurrenceRuleNWeekday with ToStringHelper {
+  /// The index of the week in which the event recurs.
+  ///
+  /// This will always be at least 1 and at most 5.
+  final int n;
+
+  /// The day in the week on which the event recurs.
+  final RecurrenceRuleWeekday day;
+
+  /// @nodoc
+  RecurrenceRuleNWeekday({required this.n, required this.day});
+}
+
+/// The month on which a [ScheduledEvent] recurs.
+final class RecurrenceRuleMonth extends EnumLike<int, RecurrenceRuleMonth> {
+  static const january = RecurrenceRuleMonth(0);
+  static const february = RecurrenceRuleMonth(1);
+  static const march = RecurrenceRuleMonth(2);
+  static const april = RecurrenceRuleMonth(3);
+  static const may = RecurrenceRuleMonth(4);
+  static const june = RecurrenceRuleMonth(5);
+  static const july = RecurrenceRuleMonth(6);
+  static const august = RecurrenceRuleMonth(7);
+  static const september = RecurrenceRuleMonth(8);
+  static const october = RecurrenceRuleMonth(9);
+  static const november = RecurrenceRuleMonth(10);
+  static const december = RecurrenceRuleMonth(11);
+
+  /// @nodoc
+  const RecurrenceRuleMonth(super.value);
 }

@@ -1,8 +1,10 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -20,11 +22,18 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
 
   Flags<Permissions>? defaultMemberPermissions;
 
+  @Deprecated('Use `contexts`')
   bool? hasDmPermission;
 
   ApplicationCommandType type;
 
   bool? isNsfw;
+
+  /// Installation context(s) where the command is available, only for globally-scoped commands. Defaults to [ApplicationIntegrationType.guildInstall].
+  List<ApplicationIntegrationType>? integrationTypes;
+
+  /// Interaction context(s) where the command can be used, only for globally-scoped commands. By default, all interaction context types included.
+  List<InteractionContextType>? contexts;
 
   ApplicationCommandBuilder({
     required this.name,
@@ -36,6 +45,8 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   });
 
   ApplicationCommandBuilder.chatInput({
@@ -47,6 +58,8 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   }) : type = ApplicationCommandType.chatInput;
 
   ApplicationCommandBuilder.message({
@@ -55,6 +68,8 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   })  : type = ApplicationCommandType.message,
         description = null,
         descriptionLocalizations = null,
@@ -66,6 +81,8 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   })  : type = ApplicationCommandType.user,
         description = null,
         descriptionLocalizations = null,
@@ -80,9 +97,12 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
           'description_localizations': {for (final MapEntry(:key, :value) in descriptionLocalizations!.entries) key.identifier: value},
         if (options != null) 'options': options!.map((e) => e.build()).toList(),
         if (defaultMemberPermissions != null) 'default_member_permissions': defaultMemberPermissions!.value.toString(),
+        // ignore: deprecated_member_use_from_same_package
         if (hasDmPermission != null) 'dm_permission': hasDmPermission,
         'type': type.value,
         if (isNsfw != null) 'nsfw': isNsfw,
+        if (integrationTypes != null) 'integration_types': integrationTypes!.map((type) => type.value).toList(),
+        if (contexts != null) 'contexts': contexts!.map((type) => type.value).toList(),
       };
 }
 
@@ -99,9 +119,16 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
 
   Flags<Permissions>? defaultMemberPermissions;
 
+  @Deprecated('Use `contexts`')
   bool? hasDmPermission;
 
   bool? isNsfw;
+
+  /// Installation context(s) where the command is available, only for globally-scoped commands. Defaults to [ApplicationIntegrationType.guildInstall].
+  List<ApplicationIntegrationType>? integrationTypes;
+
+  /// Interaction context(s) where the command can be used, only for globally-scoped commands. By default, all interaction context types included.
+  List<InteractionContextType>? contexts;
 
   ApplicationCommandUpdateBuilder({
     this.name,
@@ -112,6 +139,8 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
     this.defaultMemberPermissions = sentinelFlags,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   });
 
   ApplicationCommandUpdateBuilder.chatInput({
@@ -123,6 +152,8 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   });
 
   ApplicationCommandUpdateBuilder.message({
@@ -131,6 +162,8 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   })  : description = null,
         descriptionLocalizations = null,
         options = null;
@@ -141,6 +174,8 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
     this.defaultMemberPermissions,
     this.hasDmPermission,
     this.isNsfw,
+    this.integrationTypes,
+    this.contexts,
   })  : description = null,
         descriptionLocalizations = null,
         options = null;
@@ -154,8 +189,11 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
           'description_localizations': descriptionLocalizations?.map((key, value) => MapEntry(key.toString(), value)),
         if (options != null) 'options': options!.map((e) => e.build()).toList(),
         if (!identical(defaultMemberPermissions, sentinelFlags)) 'default_member_permissions': defaultMemberPermissions?.value.toString(),
+        // ignore: deprecated_member_use_from_same_package
         if (hasDmPermission != null) 'dm_permission': hasDmPermission,
         if (isNsfw != null) 'nsfw': isNsfw,
+        if (integrationTypes != null) 'integration_types': integrationTypes!.map((type) => type.value).toList(),
+        if (contexts != null) 'contexts': contexts!.map((type) => type.value).toList(),
       };
 }
 
@@ -388,7 +426,7 @@ class CommandOptionBuilder extends CreateBuilder<CommandOption> {
         if (nameLocalizations != null) 'name_localizations': {for (final MapEntry(:key, :value) in nameLocalizations!.entries) key.identifier: value},
         'description': description,
         if (descriptionLocalizations != null)
-          'description_localizations': {for (final MapEntry(:key, :value) in nameLocalizations!.entries) key.identifier: value},
+          'description_localizations': {for (final MapEntry(:key, :value) in descriptionLocalizations!.entries) key.identifier: value},
         if (isRequired != null) 'required': isRequired,
         if (choices != null) 'choices': choices!.map((e) => e.build()).toList(),
         if (options != null) 'options': options!.map((e) => e.build()).toList(),

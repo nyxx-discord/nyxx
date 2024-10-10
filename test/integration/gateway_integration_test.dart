@@ -14,7 +14,7 @@ void main() {
       late NyxxGateway client;
 
       await expectLater(() async => client = await Nyxx.connectGatewayWithOptions(options), completes);
-      expect(client.gateway.messages.where((event) => event is ErrorReceived), emitsDone);
+      expect(client.gateway.messages, neverEmits(isA<ErrorReceived>()));
       await expectLater(client.onEvent, emits(isA<ReadyEvent>()));
       await expectLater(client.close(), completes);
     }
@@ -68,6 +68,28 @@ void main() {
         payloadFormat: GatewayPayloadFormat.etf,
       )),
     );
+
+    test('Multiple shards', () async {
+      const shardCount = 5;
+
+      late NyxxGateway client;
+
+      await expectLater(
+        () async => client = await Nyxx.connectGatewayWithOptions(
+          GatewayApiOptions(
+            token: testToken!,
+            intents: GatewayIntents.none,
+            totalShards: shardCount,
+          ),
+        ),
+        completes,
+      );
+      expect(client.gateway.messages.where((event) => event is ErrorReceived), emitsDone);
+      for (int i = 0; i < shardCount; i++) {
+        await expectLater(client.onEvent, emits(isA<ReadyEvent>()));
+      }
+      await expectLater(client.close(), completes);
+    });
   });
 
   group('NyxxGateway', skip: testToken != null ? false : 'No test token provided', () {
@@ -79,6 +101,8 @@ void main() {
 
       if (testGuild != null) {
         await client.onGuildCreate.firstWhere((event) => event is GuildCreateEvent && event.guild.id == Snowflake.parse(testGuild));
+      } else {
+        await client.onReady.first;
       }
     });
 
@@ -90,7 +114,7 @@ void main() {
       final guildId = Snowflake.parse(testGuild!);
 
       // We can't list all guild members since we don't have the GUILD_MEMBERS intent, so just search for the current user
-      final currentUser = await client.users.fetchCurrentUser();
+      final currentUser = await client.user.get();
 
       await expectLater(client.gateway.listGuildMembers(guildId, query: currentUser.username).drain(), completes);
     });
@@ -111,6 +135,35 @@ void main() {
 
         expect(client.gateway.latency, greaterThan(Duration.zero));
       });
+    });
+
+    test('buffers messages until shard is ready', () async {
+      // This test needs its own client as we need to send an event before the shard is ready
+      final client = await Nyxx.connectGateway(testToken!, GatewayIntents.none);
+
+      client.gateway.updatePresence(PresenceBuilder(status: CurrentUserStatus.idle, isAfk: false));
+
+      expect(client.gateway.messages, neverEmits(isA<ErrorReceived>()));
+
+      await expectLater(client.close(), completes);
+    });
+
+    test('rate limits gateway events', () async {
+      for (int i = 0; i < 200; i++) {
+        client.gateway.updatePresence(PresenceBuilder(status: CurrentUserStatus.idle, isAfk: false));
+      }
+
+      ErrorReceived? receivedError;
+
+      final errorSubscription = client.gateway.messages.listen((event) {
+        if (event is ErrorReceived) receivedError = event;
+      });
+
+      // Give time for the disconnection to occur, if any.
+      await Future.delayed(Duration(seconds: 10));
+
+      expect(receivedError, isNull);
+      errorSubscription.cancel();
     });
   });
 }

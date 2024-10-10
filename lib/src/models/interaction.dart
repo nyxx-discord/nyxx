@@ -4,6 +4,7 @@ import 'package:nyxx/src/builders/interaction_response.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/interaction_manager.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
@@ -18,7 +19,29 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
+
+/// A context indicating whether command can be used in DMs, groups, or guilds.
+///
+/// External references:
+/// * Discord API Reference: https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types
+final class InteractionContextType extends EnumLike<int, InteractionContextType> {
+  /// Interaction can be used within servers.
+  static const InteractionContextType guild = InteractionContextType(0);
+
+  /// Interaction can be used within DMs with the app's bot user.
+  static const InteractionContextType botDm = InteractionContextType(1);
+
+  /// Interaction can be used within Group DMs and DMs other than the app's bot user.
+  static const InteractionContextType privateChannel = InteractionContextType(2);
+
+  /// @nodoc
+  const InteractionContextType(super.value);
+
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  InteractionContextType.parse(int value) : this(value);
+}
 
 /// {@template interaction}
 /// An interaction sent by Discord when a user interacts with an [ApplicationCommand], a [MessageComponent]
@@ -65,7 +88,7 @@ abstract class Interaction<T> with ToStringHelper {
   final Message? message;
 
   /// The permissions of the application that triggered this interaction.
-  final Permissions? appPermissions;
+  final Permissions appPermissions;
 
   /// The preferred locale of the user that triggered this interaction.
   final Locale? locale;
@@ -76,7 +99,14 @@ abstract class Interaction<T> with ToStringHelper {
   /// The entitlements for the user and guild of this interaction.
   final List<Entitlement> entitlements;
 
+  /// Mapping of installation contexts that the interaction was authorized for to related user or guild IDs.
+  final Map<ApplicationIntegrationType, Snowflake>? authorizingIntegrationOwners;
+
+  /// Context where the interaction was triggered from.
+  final InteractionContextType? context;
+
   /// {@macro interaction}
+  /// @nodoc
   Interaction({
     required this.manager,
     required this.id,
@@ -95,6 +125,8 @@ abstract class Interaction<T> with ToStringHelper {
     required this.locale,
     required this.guildLocale,
     required this.entitlements,
+    required this.authorizingIntegrationOwners,
+    required this.context,
   });
 
   /// The guild in which this interaction was triggered.
@@ -133,6 +165,7 @@ mixin MessageResponse<T> on Interaction<T> {
       await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral));
     } else {
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
+      _didRespond = true;
 
       await manager.createFollowup(token, builder);
     }
@@ -180,6 +213,7 @@ mixin ModalResponse<T> on Interaction<T> {
 /// {@endtemplate}
 class PingInteraction extends Interaction<void> {
   /// {@macro ping_interaction}
+  /// @nodoc
   PingInteraction({
     required super.manager,
     required super.id,
@@ -197,6 +231,8 @@ class PingInteraction extends Interaction<void> {
     required super.locale,
     required super.guildLocale,
     required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
   }) : super(data: null);
 
   /// Send a pong response to this interaction.
@@ -209,6 +245,7 @@ class PingInteraction extends Interaction<void> {
 class ApplicationCommandInteraction extends Interaction<ApplicationCommandInteractionData>
     with MessageResponse<ApplicationCommandInteractionData>, ModalResponse<ApplicationCommandInteractionData> {
   /// {@macro application_command_interaction}
+  /// @nodoc
   ApplicationCommandInteraction({
     required super.manager,
     required super.id,
@@ -227,6 +264,8 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
     required super.locale,
     required super.guildLocale,
     required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
   });
 }
 
@@ -236,6 +275,7 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
 class MessageComponentInteraction extends Interaction<MessageComponentInteractionData>
     with MessageResponse<MessageComponentInteractionData>, ModalResponse<MessageComponentInteractionData> {
   /// {@macro message_component_interaction}
+  /// @nodoc
   MessageComponentInteraction({
     required super.manager,
     required super.id,
@@ -254,17 +294,19 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     required super.locale,
     required super.guildLocale,
     required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
   });
 
   bool? _didUpdateMessage;
 
   @override
   Future<void> acknowledge({bool? updateMessage, bool? isEphemeral}) async {
+    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
+
     if (_didAcknowledge) {
       throw AlreadyAcknowledgedError(this);
     }
-
-    assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
 
     _didAcknowledge = true;
     _didUpdateMessage = updateMessage;
@@ -279,14 +321,15 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 
   @override
   Future<void> respond(Builder<Message> builder, {bool? updateMessage, bool? isEphemeral}) async {
-    assert(updateMessage == null || type == InteractionType.messageComponent, 'Cannot set updateMessage for non-component interactions');
     assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
-    assert(builder is MessageUpdateBuilder == updateMessage, 'builder must be a MessageUpdateBuilder if updateMessage is true');
-    assert(builder is MessageBuilder != updateMessage, 'builder must be a MessageBuilder if updateMessage is null or false');
+    assert(updateMessage != true || builder is MessageUpdateBuilder, 'builder must be a MessageUpdateBuilder if updateMessage is true');
+    assert(updateMessage == true || builder is MessageBuilder, 'builder must be a MessageBuilder if updateMessage is null or false');
+
+    if (_didRespond) {
+      throw AlreadyRespondedError(this);
+    }
 
     if (!_didAcknowledge) {
-      assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
-
       _didAcknowledge = true;
       _didRespond = true;
       _didUpdateMessage = updateMessage;
@@ -295,19 +338,15 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       if (updateMessage == true) {
         await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder));
       } else {
-        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder));
+        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder, isEphemeral: isEphemeral));
       }
     } else {
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
 
-      if (_didRespond) {
-        throw AlreadyRespondedError(this);
-      }
-
       _didRespond = true;
 
-      if (updateMessage == true) {
+      if (_didUpdateMessage == true) {
         await manager.updateOriginalResponse(token, builder as MessageUpdateBuilder);
       } else {
         await manager.createFollowup(token, builder as MessageBuilder);
@@ -321,6 +360,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 /// {@endtemplate}
 class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> with MessageResponse<ModalSubmitInteractionData> {
   /// {@macro modal_submit_interaction}
+  /// @nodoc
   ModalSubmitInteraction({
     required super.manager,
     required super.id,
@@ -339,6 +379,8 @@ class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> wit
     required super.locale,
     required super.guildLocale,
     required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
   });
 }
 
@@ -347,6 +389,7 @@ class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> wit
 /// {@endtemplate}
 class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationCommandInteractionData> {
   /// {@macro application_command_autocomplete_interaction}
+  /// @nodoc
   ApplicationCommandAutocompleteInteraction({
     required super.manager,
     required super.id,
@@ -365,6 +408,8 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
     required super.locale,
     required super.guildLocale,
     required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
   });
 
   /// Send a response to this interaction.
@@ -373,28 +418,18 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
 }
 
 /// The type of an interaction.
-enum InteractionType {
-  ping._(1),
-  applicationCommand._(2),
-  messageComponent._(3),
-  applicationCommandAutocomplete._(4),
-  modalSubmit._(5);
+final class InteractionType extends EnumLike<int, InteractionType> {
+  static const ping = InteractionType(1);
+  static const applicationCommand = InteractionType(2);
+  static const messageComponent = InteractionType(3);
+  static const applicationCommandAutocomplete = InteractionType(4);
+  static const modalSubmit = InteractionType(5);
 
-  /// The value of this [InteractionType].
-  final int value;
+  /// @nodoc
+  const InteractionType(super.value);
 
-  const InteractionType._(this.value);
-
-  /// Parse an [InteractionType] from an [int].
-  ///
-  /// The [value] must be a valid interaction type.
-  factory InteractionType.parse(int value) => InteractionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown interaction type', value),
-      );
-
-  @override
-  String toString() => 'InteractionType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  InteractionType.parse(int value) : this(value);
 }
 
 /// {@template application_command_interaction_data}
@@ -416,13 +451,14 @@ class ApplicationCommandInteractionData with ToStringHelper {
   /// A list of provided options.
   final List<InteractionOption>? options;
 
-  /// The ID of the guild the command was invoked in.
+  /// The ID of the guild the command was registered in, or `null` if it was a global command.
   final Snowflake? guildId;
 
   /// The ID of the entity the command was invoked on.
   final Snowflake? targetId;
 
   /// {@macro application_command_interaction_data}
+  /// @nodoc
   ApplicationCommandInteractionData({
     required this.id,
     required this.name,
@@ -457,6 +493,7 @@ class ResolvedData with ToStringHelper {
   final Map<Snowflake, Attachment>? attachments;
 
   /// {@macro resolved_data}
+  /// @nodoc
   ResolvedData({
     required this.users,
     required this.members,
@@ -487,6 +524,7 @@ class InteractionOption with ToStringHelper {
   final bool? isFocused;
 
   /// {@macro interaction_option}
+  /// @nodoc
   InteractionOption({
     required this.name,
     required this.type,
@@ -513,6 +551,7 @@ class MessageComponentInteractionData with ToStringHelper {
   final ResolvedData? resolved;
 
   /// {@macro message_component_interaction_data}
+  /// @nodoc
   MessageComponentInteractionData({required this.customId, required this.type, required this.values, required this.resolved});
 }
 
@@ -527,5 +566,6 @@ class ModalSubmitInteractionData with ToStringHelper {
   final List<MessageComponent> components;
 
   /// {@macro modal_submit_interaction_data}
+  /// @nodoc
   ModalSubmitInteractionData({required this.customId, required this.components});
 }

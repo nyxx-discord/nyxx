@@ -16,7 +16,9 @@ class InviteWithMetadata extends Invite {
   /// When this invite was created.
   final DateTime createdAt;
 
+  /// @nodoc
   InviteWithMetadata({
+    required super.type,
     required super.code,
     required super.guild,
     required super.channel,

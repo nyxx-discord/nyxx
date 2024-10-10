@@ -21,13 +21,14 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
           tts: message.tts,
           embeds: message.embeds,
           allowedMentions: message.allowedMentions,
-          replyId: message.replyId,
-          requireReplyToExist: message.requireReplyToExist,
+          referencedMessage: message.referencedMessage,
           components: message.components,
           stickerIds: message.stickerIds,
           attachments: message.attachments,
           suppressEmbeds: message.suppressEmbeds,
           suppressNotifications: message.suppressNotifications,
+          enforceNonce: message.enforceNonce,
+          poll: message.poll,
           isEphemeral: isEphemeral,
         ),
       );
@@ -49,11 +50,12 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.autocompleteResult(List<CommandOptionChoiceBuilder<dynamic>> choices) => InteractionResponseBuilder(
         type: InteractionCallbackType.applicationCommandAutocompleteResult,
-        data: choices,
+        data: {'choices': choices.map((e) => e.build()).toList()},
       );
 
   factory InteractionResponseBuilder.modal(ModalBuilder modal) => InteractionResponseBuilder(type: InteractionCallbackType.modal, data: modal);
 
+  @Deprecated('Respond with ButtonStyle.premium button instead')
   factory InteractionResponseBuilder.premiumRequired() => InteractionResponseBuilder(type: InteractionCallbackType.premiumRequired, data: null);
 
   @override
@@ -81,13 +83,14 @@ class _EphemeralMessageBuilder extends MessageBuilder {
     required super.tts,
     required super.embeds,
     required super.allowedMentions,
-    required super.replyId,
-    required super.requireReplyToExist,
     required super.components,
     required super.stickerIds,
     required super.attachments,
     required super.suppressEmbeds,
     required super.suppressNotifications,
+    required super.enforceNonce,
+    required super.poll,
+    required super.referencedMessage,
     required this.isEphemeral,
   });
 
@@ -111,6 +114,7 @@ enum InteractionCallbackType {
   updateMessage._(7),
   applicationCommandAutocompleteResult._(8),
   modal._(9),
+  @Deprecated('Respond with ButtonStyle.premium button instead')
   premiumRequired._(10);
 
   final int value;

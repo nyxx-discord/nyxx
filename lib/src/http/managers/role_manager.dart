@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/role.dart';
-import 'package:nyxx/src/cache/cache.dart';
-import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -10,6 +8,7 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Role]s.
@@ -46,7 +45,10 @@ class RoleManager extends Manager<Role> {
     return RoleTags(
       botId: maybeParse(raw['bot_id'], Snowflake.parse),
       integrationId: maybeParse(raw['integration_id'], Snowflake.parse),
+      isPremiumSubscriber: raw.containsKey('premium_subscriber'),
       subscriptionListingId: maybeParse(raw['subscription_listing_id'], Snowflake.parse),
+      isAvailableForPurchase: raw.containsKey('available_for_purchase'),
+      isLinkedRole: raw.containsKey('guild_connections'),
     );
   }
 
@@ -60,20 +62,22 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final roles = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(roles);
+    roles.forEach(client.updateCacheWith);
     return roles;
   }
 
   @override
   Future<Role> fetch(Snowflake id) async {
-    // There isn't an endpoint to fetch a single role. Re-fetch all the roles to ensure they are up to date,
-    // and return the matching role.
-    final roles = await list();
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..roles(id: id.toString());
 
-    return roles.firstWhere(
-      (role) => role.id == id,
-      orElse: () => throw RoleNotFoundException(guildId, id),
-    );
+    final request = BasicRequest(route);
+    final response = await client.httpHandler.executeSafe(request);
+    final role = parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(role);
+    return role;
   }
 
   @override
@@ -86,7 +90,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final role = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[role.id] = role;
+    client.updateCacheWith(role);
     return role;
   }
 
@@ -100,7 +104,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final role = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[role.id] = role;
+    client.updateCacheWith(role);
     return role;
   }
 
@@ -130,7 +134,7 @@ class RoleManager extends Manager<Role> {
     final response = await client.httpHandler.executeSafe(request);
     final roles = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(roles);
+    roles.forEach(client.updateCacheWith);
     return roles;
   }
 }

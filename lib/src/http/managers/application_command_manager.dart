@@ -4,14 +4,18 @@ import 'package:nyxx/src/builders/application_command.dart';
 import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/response.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/commands/application_command_permissions.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [ApplicationCommand]s.
@@ -34,7 +38,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     return ApplicationCommand(
       id: Snowflake.parse(raw['id']!),
       manager: this,
-      type: ApplicationCommandType.parse(raw['type'] as int? ?? 1),
+      type: ApplicationCommandType(raw['type'] as int? ?? 1),
       applicationId: Snowflake.parse(raw['application_id']!),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       name: raw['name'] as String,
@@ -55,6 +59,8 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       defaultMemberPermissions: maybeParse(raw['default_member_permissions'], (String raw) => Permissions(int.parse(raw))),
       hasDmPermission: raw['dm_permission'] as bool?,
       isNsfw: raw['nsfw'] as bool?,
+      integrationTypes: maybeParseMany(raw['integration_types'], ApplicationIntegrationType.new) ?? [ApplicationIntegrationType.guildInstall],
+      contexts: maybeParseMany(raw['contexts'], InteractionContextType.new),
       version: Snowflake.parse(raw['version']!),
     );
   }
@@ -62,7 +68,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
   /// Parse a [CommandOption] from [raw].
   CommandOption parseApplicationCommandOption(Map<String, Object?> raw) {
     return CommandOption(
-      type: CommandOptionType.parse(raw['type'] as int),
+      type: CommandOptionType(raw['type'] as int),
       name: raw['name'] as String,
       nameLocalizations: maybeParse(
         raw['name_localizations'],
@@ -80,7 +86,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
       isRequired: raw['required'] as bool?,
       choices: maybeParseMany(raw['choices'], parseOptionChoice),
       options: maybeParseMany(raw['options'], parseApplicationCommandOption),
-      channelTypes: maybeParseMany(raw['channel_types'], ChannelType.parse),
+      channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
       minValue: raw['min_value'] as num?,
       maxValue: raw['max_value'] as num?,
       minLength: raw['min_length'] as int?,
@@ -114,7 +120,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final commands = parseMany(response.jsonBody as List, parse);
 
-    cache.addEntities(commands);
+    commands.forEach(client.updateCacheWith);
     return commands;
   }
 
@@ -129,7 +135,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final command = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[command.id] = command;
+    client.updateCacheWith(command);
     return command;
   }
 
@@ -144,7 +150,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final command = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[command.id] = command;
+    client.updateCacheWith(command);
     return command;
   }
 
@@ -159,7 +165,7 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final command = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[command.id] = command;
+    client.updateCacheWith(command);
     return command;
   }
 
@@ -186,9 +192,8 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
     final response = await client.httpHandler.executeSafe(request);
     final commands = parseMany(response.jsonBody as List, parse);
 
-    cache
-      ..clear()
-      ..addEntities(commands);
+    cache.clear();
+    commands.forEach(client.updateCacheWith);
     return commands;
   }
 }
@@ -211,7 +216,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     required super.applicationId,
     required this.guildId,
     required CacheConfig<CommandPermissions> permissionsConfig,
-  })  : permissionsCache = Cache(client, '$guildId.commandPermissions', permissionsConfig),
+  })  : permissionsCache = client.cache.getCache('$guildId.commandPermissions', permissionsConfig),
         super(identifier: '$guildId.commands');
 
   /// Parse a [CommandPermissions] from [raw].
@@ -229,7 +234,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
   CommandPermission parseCommandPermission(Map<String, Object?> raw) {
     return CommandPermission(
       id: Snowflake.parse(raw['id']!),
-      type: CommandPermissionType.parse(raw['type'] as int),
+      type: CommandPermissionType(raw['type'] as int),
       hasPermission: raw['permission'] as bool,
     );
   }
@@ -246,7 +251,7 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
     final response = await client.httpHandler.executeSafe(request);
     final permissions = parseMany(response.jsonBody as List, parseCommandPermissions);
 
-    permissionsCache.addEntities(permissions);
+    permissions.forEach(client.updateCacheWith);
     return permissions;
   }
 
@@ -259,11 +264,21 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
       ..permissions();
     final request = BasicRequest(route);
 
-    final response = await client.httpHandler.executeSafe(request);
-    final permissions = parseCommandPermissions(response.jsonBody as Map<String, Object?>);
+    try {
+      final response = await client.httpHandler.executeSafe(request);
+      final permissions = parseCommandPermissions(response.jsonBody as Map<String, Object?>);
 
-    permissionsCache[permissions.id] = permissions;
-    return permissions;
+      client.updateCacheWith(permissions);
+      return permissions;
+    } on HttpResponseError catch (e) {
+      // 10066 = Unknown application command permissions
+      // Means there are no overrides for this command... why is this an error, Discord?
+      if (e.errorCode == 10066) {
+        return CommandPermissions(manager: this, id: id, applicationId: applicationId, guildId: guildId, permissions: []);
+      }
+
+      rethrow;
+    }
   }
 
   // TODO: Do we add the command permission endpoints?

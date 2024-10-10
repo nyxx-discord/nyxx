@@ -7,6 +7,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Invite]s.
@@ -25,11 +26,12 @@ class InviteManager {
     );
 
     return Invite(
+      type: InviteType(raw['type'] as int),
       code: raw['code'] as String,
       guild: guild,
       channel: PartialChannel(id: Snowflake.parse((raw['channel'] as Map<String, Object?>)['id']!), manager: client.channels),
       inviter: maybeParse(raw['inviter'], client.users.parse),
-      targetType: maybeParse(raw['target_type'], TargetType.parse),
+      targetType: maybeParse(raw['target_type'], TargetType.new),
       targetUser: maybeParse(raw['target_user'], client.users.parse),
       targetApplication: maybeParse(
         raw['target_application'],
@@ -38,14 +40,17 @@ class InviteManager {
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
       approximateMemberCount: raw['approximate_member_count'] as int?,
       expiresAt: maybeParse(raw['expires_at'], DateTime.parse),
-      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], client.guilds[guild?.id ?? Snowflake.zero].scheduledEvents.parse),
+      // Don't use a tearoff so we don't evaluate `guild!.id` unless guild_scheduled_event is set.
+      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], (Map<String, Object?> raw) => client.guilds[guild!.id].scheduledEvents.parse(raw)),
     );
   }
 
+  /// Parse an [InviteWithMetadata] from [raw].
   InviteWithMetadata parseWithMetadata(Map<String, Object?> raw) {
     final invite = parse(raw);
 
     return InviteWithMetadata(
+      type: invite.type,
       code: invite.code,
       guild: invite.guild,
       channel: invite.channel,
@@ -65,7 +70,6 @@ class InviteManager {
     );
   }
 
-  /// Fetch an invite.
   Future<Invite> fetch(String code, {bool? withCounts, bool? withExpiration, Snowflake? scheduledEventId}) async {
     final route = HttpRoute()..invites(id: code);
     final request = BasicRequest(route, queryParameters: {
@@ -75,15 +79,22 @@ class InviteManager {
     });
 
     final response = await client.httpHandler.executeSafe(request);
-    return parse(response.jsonBody as Map<String, Object?>);
+    final invite = parse(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(invite);
+    return invite;
   }
 
   /// Delete an invite.
-  Future<Invite> delete(String code) async {
+  Future<Invite> delete(String code, {String? auditLogReason}) async {
     final route = HttpRoute()..invites(id: code);
-    final request = BasicRequest(route, method: 'DELETE');
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parse(response.jsonBody as Map<String, Object?>);
+    final invite = parse(response.jsonBody as Map<String, Object?>);
+
+    // Invites aren't cached, so we don't need to remove it, but it still contains nested objects we can cache.
+    client.updateCacheWith(invite);
+    return invite;
   }
 }

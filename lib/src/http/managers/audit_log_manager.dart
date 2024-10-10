@@ -1,4 +1,3 @@
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
@@ -6,6 +5,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
@@ -24,12 +24,13 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
       targetId: maybeParse(raw['target_id'], Snowflake.parse),
       changes: maybeParseMany(raw['changes'], parseAuditLogChange),
       userId: maybeParse(raw['user_id'], Snowflake.parse),
-      actionType: AuditLogEvent.parse(raw['action_type'] as int),
+      actionType: AuditLogEvent(raw['action_type'] as int),
       options: maybeParse(raw['options'], parseAuditLogEntryInfo),
       reason: raw['reason'] as String?,
     );
   }
 
+  /// Parse a [AuditLogChange] from [raw].
   AuditLogChange parseAuditLogChange(Map<String, Object?> raw) {
     return AuditLogChange(
       oldValue: raw['old_value'],
@@ -38,6 +39,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  /// Parse a [AuditLogEntryInfo] from [raw].
   AuditLogEntryInfo parseAuditLogEntryInfo(Map<String, Object?> raw) {
     return AuditLogEntryInfo(
       manager: this,
@@ -51,7 +53,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
       membersRemoved: raw['members_removed'] as String?,
       messageId: maybeParse(raw['message_id'], Snowflake.parse),
       roleName: raw['role_name'] as String?,
-      overwriteType: maybeParse(raw['type'], (String raw) => PermissionOverwriteType.parse(int.parse(raw))),
+      overwriteType: maybeParse(raw['type'], (String raw) => PermissionOverwriteType(int.parse(raw))),
       integrationType: raw['integration_type'] as String?,
     );
   }
@@ -67,6 +69,7 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
     );
   }
 
+  // List the audit log in the guild.
   Future<List<AuditLogEntry>> list({Snowflake? userId, AuditLogEvent? type, Snowflake? before, Snowflake? after, int? limit}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
@@ -92,30 +95,24 @@ class AuditLogManager extends ReadOnlyManager<AuditLogEntry> {
 
       return client.guilds[guildId].commands.parse(raw);
     });
-    for (final command in applicationCommands) {
-      if (command.guild == null) {
-        client.commands.cache[command.id] = command;
-      } else {
-        client.guilds[command.guildId!].commands.cache[command.id] = command;
-      }
-    }
+    applicationCommands.forEach(client.updateCacheWith);
 
     final autoModerationRules = parseMany(responseBody['auto_moderation_rules'] as List<Object?>, client.guilds[guildId].autoModerationRules.parse);
-    client.guilds[guildId].autoModerationRules.cache.addEntities(autoModerationRules);
+    autoModerationRules.forEach(client.updateCacheWith);
 
     final scheduledEvents = parseMany(responseBody['guild_scheduled_events'] as List<Object?>, client.guilds[guildId].scheduledEvents.parse);
-    client.guilds[guildId].scheduledEvents.cache.addEntities(scheduledEvents);
+    scheduledEvents.forEach(client.updateCacheWith);
 
     final threads = parseMany(responseBody['threads'] as List<Object?>, client.channels.parse);
-    client.channels.cache.addEntities(threads);
+    threads.forEach(client.updateCacheWith);
 
     final users = parseMany(responseBody['users'] as List<Object?>, client.users.parse);
-    client.users.cache.addEntities(users);
+    users.forEach(client.updateCacheWith);
 
     final webhooks = parseMany(responseBody['webhooks'] as List<Object?>, client.webhooks.parse);
-    client.webhooks.cache.addEntities(webhooks);
+    webhooks.forEach(client.updateCacheWith);
 
-    cache.addEntities(entries);
+    entries.forEach(client.updateCacheWith);
     return entries;
   }
 }

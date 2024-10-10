@@ -40,6 +40,7 @@ class GroupDmChannel extends TextChannel {
   ChannelType get type => ChannelType.groupDm;
 
   /// {@macro group_dm_channel}
+  /// @nodoc
   GroupDmChannel({
     required super.id,
     required super.manager,

@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -17,31 +18,22 @@ class ClientStatus with ToStringHelper {
   final UserStatus? web;
 
   /// {@macro client_status}
+  /// @nodoc
   ClientStatus({required this.desktop, required this.mobile, required this.web});
 }
 
 /// The status of a client.
-enum UserStatus {
-  online._('online'),
-  idle._('idle'),
-  dnd._('dnd'),
-  offline._('offline');
+final class UserStatus extends EnumLike<String, UserStatus> {
+  static const online = UserStatus('online');
+  static const dnd = UserStatus('dnd');
+  static const idle = UserStatus('idle');
+  static const offline = UserStatus('offline');
 
-  /// The value of this [UserStatus].
-  final String value;
+  /// @nodoc
+  const UserStatus(super.value);
 
-  const UserStatus._(this.value);
-
-  /// Parse a [UserStatus] from a [String].
-  ///
-  /// The [value] must be a valid user status.
-  factory UserStatus.parse(String value) => UserStatus.values.firstWhere(
-        (status) => status.value == value,
-        orElse: () => throw FormatException('Unknown user status', value),
-      );
-
-  @override
-  String toString() => 'UserStatus($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  UserStatus.parse(String value) : this(value);
 }
 
 /// {@template activity}
@@ -94,6 +86,7 @@ class Activity with ToStringHelper {
   final List<ActivityButton>? buttons;
 
   /// {@macro activity}
+  /// @nodoc
   Activity({
     required this.name,
     required this.type,
@@ -114,29 +107,18 @@ class Activity with ToStringHelper {
 }
 
 /// The type of an activity.
-enum ActivityType {
-  game._(0),
-  streaming._(1),
-  listening._(2),
-  watching._(3),
-  custom._(4),
-  competing._(5);
+final class ActivityType extends EnumLike<int, ActivityType> {
+  static const game = ActivityType(0);
+  static const streaming = ActivityType(1);
+  static const listening = ActivityType(2);
+  static const watching = ActivityType(3);
+  static const custom = ActivityType(4);
+  static const competing = ActivityType(5);
 
-  /// The value of this [ActivityType].
-  final int value;
+  const ActivityType(super.value);
 
-  const ActivityType._(this.value);
-
-  /// Parse an [ActivityType] from an [int].
-  ///
-  /// The [value] must be a valid activity type.
-  factory ActivityType.parse(int value) => ActivityType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown activity type', value),
-      );
-
-  @override
-  String toString() => 'ActivityType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ActivityType.parse(int value) : this(value);
 }
 
 /// {@template activity_timestamps}
@@ -150,6 +132,7 @@ class ActivityTimestamps with ToStringHelper {
   final DateTime? end;
 
   /// {@macro activity_timestamps}
+  /// @nodoc
   ActivityTimestamps({required this.start, required this.end});
 }
 
@@ -167,6 +150,7 @@ class ActivityParty with ToStringHelper {
   final int? maxSize;
 
   /// {@macro activity_party}
+  /// @nodoc
   ActivityParty({required this.id, required this.currentSize, required this.maxSize});
 }
 
@@ -189,6 +173,7 @@ class ActivityAssets with ToStringHelper {
   final String? smallText;
 
   /// {@macro activity_assets}
+  /// @nodoc
   ActivityAssets({
     required this.largeImage,
     required this.largeText,
@@ -211,6 +196,7 @@ class ActivitySecrets with ToStringHelper {
   final String? match;
 
   /// {@macro activity_secrets}
+  /// @nodoc
   ActivitySecrets({required this.join, required this.spectate, required this.match});
 }
 
@@ -275,5 +261,6 @@ class ActivityButton with ToStringHelper {
   final Uri url;
 
   /// {@macro activity_button}
+  /// @nodoc
   ActivityButton({required this.label, required this.url});
 }

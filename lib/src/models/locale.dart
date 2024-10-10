@@ -9,6 +9,7 @@ enum Locale {
   enGb._('en-GB', 'English, UK', 'English, UK'),
   enUs._('en-US', 'English, US', 'English, US'),
   esEs._('es-ES', 'Spanish', 'Español'),
+  es419._('es-419', 'Spanish, LATAM', 'Español, LATAM'),
   fr._('fr', 'French', 'Français'),
   hr._('hr', 'Croatian', 'Hrvatski'),
   it._('it', 'Italian', 'Italiano'),
@@ -50,11 +51,8 @@ enum Locale {
   ///
   /// [identifier] must be a string containing an identifier matching [Locale.identifier] for one of
   /// the listed locales.
-  factory Locale.parse(String identifier) => Locale.values.firstWhere(
-        (locale) => locale.identifier == identifier,
+  factory Locale.parse(String identifier) => values.firstWhere(
+        (loc) => loc.identifier == identifier,
         orElse: () => throw FormatException('Unknown Locale', identifier),
       );
-
-  @override
-  String toString() => 'Locale($identifier)';
 }

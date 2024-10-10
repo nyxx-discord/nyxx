@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Entitlement].
 class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
@@ -11,7 +12,11 @@ class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
   final EntitlementManager manager;
 
   /// Create a new [PartialEntitlement].
+  /// @nodoc
   PartialEntitlement({required this.manager, required super.id});
+
+  /// Marks a entitlement for the user as consumed.
+  Future<void> consume() => manager.consume(id);
 }
 
 /// {@template entitlement}
@@ -33,6 +38,9 @@ class Entitlement extends PartialEntitlement {
   /// The type of this entitlement.
   final EntitlementType type;
 
+  /// Whether entitlement was deleted.
+  final bool isDeleted;
+
   /// Whether this entitlement is consumed.
   final bool isConsumed;
 
@@ -43,6 +51,7 @@ class Entitlement extends PartialEntitlement {
   final DateTime? endsAt;
 
   /// {@macro entitlement}
+  /// @nodoc
   Entitlement({
     required super.manager,
     required super.id,
@@ -52,6 +61,7 @@ class Entitlement extends PartialEntitlement {
     required this.applicationId,
     required this.type,
     required this.isConsumed,
+    required this.isDeleted,
     required this.startsAt,
     required this.endsAt,
   });
@@ -67,18 +77,33 @@ class Entitlement extends PartialEntitlement {
 }
 
 /// The type of an [Entitlement].
-enum EntitlementType {
-  applicationSubscription._(8);
+final class EntitlementType extends EnumLike<int, EntitlementType> {
+  /// Entitlement was purchased by user.
+  static const EntitlementType purchase = EntitlementType(1);
 
-  final int value;
+  /// Entitlement was granted by Discord Nitro subscription.
+  static const EntitlementType premiumSubscription = EntitlementType(2);
 
-  const EntitlementType._(this.value);
+  /// Entitlement was gifted by developer.
+  static const EntitlementType developerGift = EntitlementType(3);
 
-  factory EntitlementType.parse(int value) => EntitlementType.values.firstWhere(
-        (element) => element.value == value,
-        orElse: () => throw FormatException('Unknown entitlement type', value),
-      );
+  /// Entitlement was purchased by a dev in application test mode.
+  static const EntitlementType testModePurchase = EntitlementType(4);
 
-  @override
-  String toString() => 'EntitlementType($value)';
+  /// Entitlement was granted when the SKU was free.
+  static const EntitlementType freePurchase = EntitlementType(5);
+
+  /// Entitlement was gifted by another user.
+  static const EntitlementType userGift = EntitlementType(6);
+
+  /// Entitlement was claimed by user for free as a Nitro Subscriber.
+  static const EntitlementType premiumPurchase = EntitlementType(7);
+
+  /// Entitlement was purchased as an app subscription.
+  static const EntitlementType applicationSubscription = EntitlementType(8);
+
+  const EntitlementType(super.value);
+
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  EntitlementType.parse(int value) : this(value);
 }

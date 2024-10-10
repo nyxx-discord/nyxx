@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/discord_color.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template embed}
@@ -10,6 +11,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 class Embed {
   /// The title of this embed.
   final String? title;
+
+  /// The type of this embed.
+  final EmbedType type;
 
   /// The description of this embed.
   final String? description;
@@ -45,8 +49,10 @@ class Embed {
   final List<EmbedField>? fields;
 
   /// {@macro embed}
+  /// @nodoc
   Embed({
     required this.title,
+    required this.type,
     required this.description,
     required this.url,
     required this.timestamp,
@@ -59,6 +65,19 @@ class Embed {
     required this.author,
     required this.fields,
   });
+}
+
+/// The type of an embed.
+final class EmbedType extends EnumLike<String, EmbedType> {
+  static const rich = EmbedType('rich');
+  static const image = EmbedType('image');
+  static const video = EmbedType('video');
+  static const gifv = EmbedType('gifv');
+  static const article = EmbedType('article');
+  static const link = EmbedType('link');
+  static const pollResult = EmbedType('poll_result');
+// @nodoc
+  const EmbedType(super.value);
 }
 
 /// {@template embed_footer}
@@ -78,6 +97,7 @@ class EmbedFooter with ToStringHelper {
   final Uri? proxiedIconUrl;
 
   /// {@macro embed_footer}
+  /// @nodoc
   EmbedFooter({
     required this.text,
     required this.iconUrl,
@@ -105,6 +125,7 @@ class EmbedImage with ToStringHelper {
   final int? width;
 
   /// {@macro embed_image}
+  /// @nodoc
   EmbedImage({
     required this.url,
     required this.proxiedUrl,
@@ -133,6 +154,7 @@ class EmbedThumbnail with ToStringHelper {
   final int? width;
 
   /// {@macro embed_thumbnail}
+  /// @nodoc
   EmbedThumbnail({
     required this.url,
     required this.proxiedUrl,
@@ -161,6 +183,7 @@ class EmbedVideo with ToStringHelper {
   final int? width;
 
   /// {@macro embed_video}
+  /// @nodoc
   EmbedVideo({
     required this.url,
     required this.proxiedUrl,
@@ -183,6 +206,7 @@ class EmbedProvider with ToStringHelper {
   final Uri? url;
 
   /// {@macro embed_provider}
+  /// @nodoc
   EmbedProvider({
     required this.name,
     required this.url,
@@ -209,6 +233,7 @@ class EmbedAuthor with ToStringHelper {
   final Uri? proxyIconUrl;
 
   /// {@macro embed_author}
+  /// @nodoc
   EmbedAuthor({
     required this.name,
     required this.url,
@@ -234,6 +259,7 @@ class EmbedField with ToStringHelper {
   final bool inline;
 
   /// {@macro embed_field}
+  /// @nodoc
   EmbedField({
     required this.name,
     required this.value,

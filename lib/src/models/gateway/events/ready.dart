@@ -32,6 +32,7 @@ class ReadyEvent extends DispatchEvent {
   final PartialApplication application;
 
   /// {@macro ready_event}
+  /// @nodoc
   ReadyEvent({
     required super.gateway,
     required this.version,
@@ -50,5 +51,6 @@ class ReadyEvent extends DispatchEvent {
 /// {@endtemplate}
 class ResumedEvent extends DispatchEvent {
   /// {@macro resumed_event}
+  /// @nodoc
   ResumedEvent({required super.gateway});
 }

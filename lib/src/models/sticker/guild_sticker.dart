@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/sticker.dart';
 import 'package:nyxx/src/http/managers/sticker_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
@@ -8,7 +9,24 @@ class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
   @override
   final GuildStickerManager manager;
 
+  /// @nodoc
   PartialGuildSticker({required super.id, required this.manager});
+
+  /// Update this sticker, returning the updated sticker.
+  ///
+  /// External references:
+  /// * [StickerManager.update]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
+  @override
+  Future<GuildSticker> update(StickerUpdateBuilder builder, {String? auditLogReason}) => manager.update(id, builder, auditLogReason: auditLogReason);
+
+  /// Delete this sticker.
+  ///
+  /// External references:
+  /// * [StickerManager.delete]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
+  @override
+  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
 }
 
 /// {@template guild_sticker}
@@ -51,6 +69,7 @@ class GuildSticker extends PartialGuildSticker with Sticker {
   final int? sortValue;
 
   /// {@macro guild_sticker}
+  /// @nodoc
   GuildSticker({
     required super.id,
     required super.manager,

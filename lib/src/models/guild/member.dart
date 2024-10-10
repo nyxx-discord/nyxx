@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/guild/member.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -14,6 +15,7 @@ class PartialMember extends WritableSnowflakeEntity<Member> {
   final MemberManager manager;
 
   /// Create a new [PartialMember].
+  /// @nodoc
   PartialMember({required super.id, required this.manager});
 
   /// Add a role to this member.
@@ -23,10 +25,27 @@ class PartialMember extends WritableSnowflakeEntity<Member> {
   Future<void> removeRole(Snowflake roleId, {String? auditLogReason}) => manager.removeRole(id, roleId);
 
   /// Ban this member.
-  Future<void> ban({String? auditLogReason}) => manager.client.guilds[manager.guildId].createBan(id, auditLogReason: auditLogReason);
+  Future<void> ban({Duration? deleteMessages, String? auditLogReason}) =>
+      manager.client.guilds[manager.guildId].createBan(id, auditLogReason: auditLogReason, deleteMessages: deleteMessages);
 
   /// Unban this member.
   Future<void> unban({String? auditLogReason}) => manager.client.guilds[manager.guildId].deleteBan(id, auditLogReason: auditLogReason);
+
+  /// Update this member, returning the updated member.
+  ///
+  /// External references:
+  /// * [MemberManager.update]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/guild#modify-guild-member
+  @override
+  Future<Member> update(MemberUpdateBuilder builder, {String? auditLogReason}) => manager.update(id, builder, auditLogReason: auditLogReason);
+
+  /// Kick this member.
+  ///
+  /// External references:
+  /// * [MemberManager.delete]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/guild#remove-guild-member
+  @override
+  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
 }
 
 /// {@template member}
@@ -70,6 +89,7 @@ class Member extends PartialMember {
   final DateTime? communicationDisabledUntil;
 
   /// {@macro member}
+  /// @nodoc
   Member({
     required super.id,
     required super.manager,

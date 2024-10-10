@@ -25,6 +25,7 @@ class VoiceRegion with ToStringHelper {
   final bool isCustom;
 
   /// {@macro voice_region}
+  /// @nodoc
   VoiceRegion({
     required this.id,
     required this.name,

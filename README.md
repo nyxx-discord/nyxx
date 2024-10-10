@@ -6,7 +6,7 @@
 
 A complete, robust and efficient wrapper around Discord's API for bots & applications.
 
-To get started using nyxx, follow our [getting started guide](https://nyxx.l7ssha.xyz/docs/guides/writing_your_first_bot) to write your first bot.
+To get started using nyxx, follow our [getting started guide](https://nyxx.l7ssha.xyz/docs/tutorials/writing_your_first_bot) to write your first bot.
 
 If you're already familiar with Discord's API, here's a quick example to get you started:
 ```dart
@@ -31,9 +31,8 @@ void main() async {
 ## Other nyxx packages
 
 - [nyxx_commands](https://pub.dev/packages/nyxx_commands): A command framework for handling both simple & complex commands.
-- [nyxx_pagination](https://pub.dev/packages/nyxx_pagination): Pagination support for nyxx.
+- [nyxx_extensions](https://pub.dev/packages/nyxx_extensions): Pagination, emoji utilities and other miscellaneous helpers for developing bots using nyxx.
 - [nyxx_lavalink](https://pub.dev/packages/nyxx_lavalink): Lavalink support for playing audio in voice channels.
-- [nyxx_extensions](https://pub.dev/packages/nyxx_extensions): Miscellaneous helpers for common situations when developing bots.
 
 ## More examples
 

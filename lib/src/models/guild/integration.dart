@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Integration].
@@ -11,6 +12,7 @@ class PartialIntegration extends ManagedSnowflakeEntity<Integration> {
   final IntegrationManager manager;
 
   /// Create a new [PartialIntegration].
+  /// @nodoc
   PartialIntegration({required super.id, required this.manager});
 
   /// Delete this integration.
@@ -67,6 +69,7 @@ class Integration extends PartialIntegration {
   final List<String>? scopes;
 
   /// {@macro integration}
+  /// @nodoc
   Integration({
     required super.id,
     required super.manager,
@@ -92,25 +95,15 @@ class Integration extends PartialIntegration {
 }
 
 /// The behavior of an integration when a member's subscription expires.
-enum IntegrationExpireBehavior {
-  removeRole._(0),
-  kick._(1);
+final class IntegrationExpireBehavior extends EnumLike<int, IntegrationExpireBehavior> {
+  static const removeRole = IntegrationExpireBehavior(0);
+  static const kick = IntegrationExpireBehavior(1);
 
-  /// TThe value of this [IntegrationExpireBehavior].
-  final int value;
+  /// @nodoc
+  const IntegrationExpireBehavior(super.value);
 
-  const IntegrationExpireBehavior._(this.value);
-
-  /// Parse an [IntegrationExpireBehavior] from an [int].
-  ///
-  /// The [value] must be a valid integration expire behavior.
-  factory IntegrationExpireBehavior.parse(int value) => IntegrationExpireBehavior.values.firstWhere(
-        (behavior) => behavior.value == value,
-        orElse: () => throw FormatException('Unknown integration expire behavior', value),
-      );
-
-  @override
-  String toString() => 'IntegrationExpireBehavior($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  IntegrationExpireBehavior.parse(int value) : this(value);
 }
 
 /// {@template integration_account}
@@ -124,6 +117,7 @@ class IntegrationAccount with ToStringHelper {
   final String name;
 
   /// {@macro integration_account}
+  /// @nodoc
   IntegrationAccount({required this.id, required this.name});
 }
 
@@ -147,6 +141,7 @@ class IntegrationApplication with ToStringHelper {
   final User? bot;
 
   /// {@macro integration_application}
+  /// @nodoc
   IntegrationApplication({
     required this.id,
     required this.name,

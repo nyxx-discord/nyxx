@@ -38,6 +38,8 @@ class ButtonBuilder extends MessageComponentBuilder {
 
   String? customId;
 
+  Snowflake? skuId;
+
   Uri? url;
 
   bool? isDisabled;
@@ -47,6 +49,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.label,
     this.emoji,
     this.customId,
+    this.skuId,
     this.url,
     this.isDisabled,
   }) : super(type: MessageComponentType.button);
@@ -54,7 +57,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.primary({
     this.label,
     this.emoji,
-    required String customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.primary,
         super(type: MessageComponentType.button);
@@ -62,7 +65,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.secondary({
     this.label,
     this.emoji,
-    required String customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.secondary,
         super(type: MessageComponentType.button);
@@ -70,7 +73,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.success({
     this.label,
     this.emoji,
-    required String customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.success,
         super(type: MessageComponentType.button);
@@ -78,7 +81,7 @@ class ButtonBuilder extends MessageComponentBuilder {
   ButtonBuilder.danger({
     this.label,
     this.emoji,
-    required String customId,
+    required String this.customId,
     this.isDisabled,
   })  : style = ButtonStyle.danger,
         super(type: MessageComponentType.button);
@@ -91,6 +94,12 @@ class ButtonBuilder extends MessageComponentBuilder {
   })  : style = ButtonStyle.link,
         super(type: MessageComponentType.button);
 
+  ButtonBuilder.premium({
+    required Snowflake this.skuId,
+    this.isDisabled,
+  })  : style = ButtonStyle.premium,
+        super(type: MessageComponentType.button);
+
   @override
   Map<String, Object?> build() => {
         ...super.build(),
@@ -98,11 +107,12 @@ class ButtonBuilder extends MessageComponentBuilder {
         if (label != null) 'label': label,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id == Snowflake.zero ? null : emoji!.id,
+            'id': emoji!.id == Snowflake.zero ? null : emoji!.id.toString(),
             'name': emoji!.name,
             if (emoji is GuildEmoji) 'animated': (emoji as GuildEmoji).isAnimated == true,
           },
         if (customId != null) 'custom_id': customId,
+        if (skuId != null) 'sku_id': skuId.toString(),
         if (url != null) 'url': url!.toString(),
         if (isDisabled != null) 'disabled': isDisabled,
       };
@@ -223,7 +233,7 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
         if (description != null) 'description': description,
         if (emoji != null)
           'emoji': {
-            'id': emoji!.id.value,
+            'id': emoji!.id.toString(),
             'name': emoji!.name,
             'animated': emoji is GuildEmoji && (emoji as GuildEmoji).isAnimated == true,
           },
@@ -291,6 +301,7 @@ class TextInputBuilder extends MessageComponentBuilder {
         if (minLength != null) 'min_length': minLength,
         if (maxLength != null) 'max_length': maxLength,
         if (isRequired != null) 'required': isRequired,
+        if (value != null) 'value': value,
         if (placeholder != null) 'placeholder': placeholder,
       };
 }

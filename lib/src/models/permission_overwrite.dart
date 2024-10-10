@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template permission_overwrite}
@@ -32,6 +33,7 @@ class PermissionOverwrite with ToStringHelper {
   final Permissions deny;
 
   /// {@macro permission_overwrite}
+  /// @nodoc
   PermissionOverwrite({
     required this.id,
     required this.type,
@@ -41,26 +43,16 @@ class PermissionOverwrite with ToStringHelper {
 }
 
 /// The type of a permission overwrite.
-enum PermissionOverwriteType {
+final class PermissionOverwriteType extends EnumLike<int, PermissionOverwriteType> {
   /// The overwrite applies to a [Role]'s permissions.
-  role._(0),
+  static const role = PermissionOverwriteType(0);
 
   /// The overwrite applies to a [Member]'s permissions.
-  member._(1);
+  static const member = PermissionOverwriteType(1);
 
-  /// The value of this type.
-  final int value;
+  /// @nodoc
+  const PermissionOverwriteType(super.value);
 
-  const PermissionOverwriteType._(this.value);
-
-  /// Parse a [PermissionOverwriteType] from a [value].
-  ///
-  /// The [value] must be a valid [PermissionOverwriteType].
-  factory PermissionOverwriteType.parse(int value) => PermissionOverwriteType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown PermissionOverwriteType', value),
-      );
-
-  @override
-  String toString() => 'PermissionOverwriteType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  PermissionOverwriteType.parse(int value) : this(value);
 }

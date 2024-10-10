@@ -255,4 +255,10 @@ mixin EventMixin implements Nyxx {
   /// A [Stream] of [ApplicationCommandAutocompleteInteraction]s received by this client.
   Stream<InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>> get onApplicationCommandAutocompleteInteraction =>
       onInteractionCreate.whereType<InteractionCreateEvent<ApplicationCommandAutocompleteInteraction>>();
+
+  /// A [Stream] of [MessagePollVoteAddEvent]s received by this client.
+  Stream<MessagePollVoteAddEvent> get onMessagePollVoteAdd => onEvent.whereType<MessagePollVoteAddEvent>();
+
+  /// A [Stream] of [MessagePollVoteRemoveEvent]s received by this client.
+  Stream<MessagePollVoteRemoveEvent> get onMessagePollVoteRemove => onEvent.whereType<MessagePollVoteRemoveEvent>();
 }

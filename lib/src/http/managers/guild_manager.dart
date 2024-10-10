@@ -4,12 +4,12 @@ import 'dart:typed_data';
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
 import 'package:nyxx/src/builders/guild/guild.dart';
+import 'package:nyxx/src/builders/guild/onboarding.dart';
 import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -30,6 +30,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -59,12 +60,12 @@ class GuildManager extends Manager<Guild> {
       afkTimeout: Duration(seconds: raw['afk_timeout'] as int),
       isWidgetEnabled: raw['widget_enabled'] as bool? ?? false,
       widgetChannelId: maybeParse(raw['widget_channel_id'], Snowflake.parse),
-      verificationLevel: VerificationLevel.parse(raw['verification_level'] as int),
-      defaultMessageNotificationLevel: MessageNotificationLevel.parse(raw['default_message_notifications'] as int),
-      explicitContentFilterLevel: ExplicitContentFilterLevel.parse(raw['explicit_content_filter'] as int),
+      verificationLevel: VerificationLevel(raw['verification_level'] as int),
+      defaultMessageNotificationLevel: MessageNotificationLevel(raw['default_message_notifications'] as int),
+      explicitContentFilterLevel: ExplicitContentFilterLevel(raw['explicit_content_filter'] as int),
       roleList: parseMany(raw['roles'] as List, this[id].roles.parse),
       features: parseGuildFeatures(raw['features'] as List),
-      mfaLevel: MfaLevel.parse(raw['mfa_level'] as int),
+      mfaLevel: MfaLevel(raw['mfa_level'] as int),
       applicationId: maybeParse(raw['application_id'], Snowflake.parse),
       systemChannelId: maybeParse(raw['system_channel_id'], Snowflake.parse),
       systemChannelFlags: SystemChannelFlags(raw['system_channel_flags'] as int),
@@ -74,7 +75,7 @@ class GuildManager extends Manager<Guild> {
       vanityUrlCode: raw['vanity_url_code'] as String?,
       description: raw['description'] as String?,
       bannerHash: raw['banner'] as String?,
-      premiumTier: PremiumTier.parse(raw['premium_tier'] as int),
+      premiumTier: PremiumTier(raw['premium_tier'] as int),
       premiumSubscriptionCount: raw['premium_subscription_count'] as int?,
       preferredLocale: Locale.parse(raw['preferred_locale'] as String),
       publicUpdatesChannelId: maybeParse(raw['public_updates_channel_id'], Snowflake.parse),
@@ -83,11 +84,27 @@ class GuildManager extends Manager<Guild> {
       approximateMemberCount: raw['approximate_member_count'] as int?,
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
       welcomeScreen: maybeParse(raw['welcome_screen'], parseWelcomeScreen),
-      nsfwLevel: NsfwLevel.parse(raw['nsfw_level'] as int),
+      nsfwLevel: NsfwLevel(raw['nsfw_level'] as int),
       hasPremiumProgressBarEnabled: raw['premium_progress_bar_enabled'] as bool,
       emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
       stickerList: parseMany(raw['stickers'] as List? ?? [], this[id].stickers.parse),
       safetyAlertsChannelId: maybeParse(raw['safety_alerts_channel_id'], Snowflake.parse),
+    );
+  }
+
+  /// Parse [UserGuild] from [raw].
+  UserGuild parseUserGuild(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id']!);
+    return UserGuild(
+      id: id,
+      manager: this,
+      name: raw['name'] as String,
+      iconHash: raw['icon'] as String?,
+      isOwnedByCurrentUser: raw['owner'] as bool,
+      currentUserPermissions: Permissions(int.parse(raw['permissions'] as String)),
+      features: parseGuildFeatures(raw['features'] as List),
+      approximateMemberCount: raw['approximate_member_count'] as int?,
+      approximatePresenceCount: raw['approximate_presence_count'] as int?,
     );
   }
 
@@ -125,7 +142,7 @@ class GuildManager extends Manager<Guild> {
     for (final entry in _nameToGuildFeature.entries) entry.value: entry.key,
   };
 
-  /// Parse an [GuildFeatures] from [raw]./// Parse [GuildFeatures] from [raw].
+  /// Parse an [GuildFeatures] from [raw].
   GuildFeatures parseGuildFeatures(List<Object?> raw) {
     final featureFlags = parseMany(raw, parseGuildFeature);
 
@@ -194,6 +211,14 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [BulkBanResponse] from [raw].
+  BulkBanResponse parseBulkBanResponse(Map<String, Object?> raw) {
+    return BulkBanResponse(
+      bannedUsers: parseMany(raw['banned_users'] as List, Snowflake.parse),
+      failedUsers: parseMany(raw['failed_users'] as List, Snowflake.parse),
+    );
+  }
+
   /// Parse a [WidgetSettings] from [raw].
   WidgetSettings parseWidgetSettings(Map<String, Object?> raw) {
     return WidgetSettings(
@@ -232,6 +257,7 @@ class GuildManager extends Manager<Guild> {
       prompts: parseMany(raw['prompts'] as List, (Map<String, Object?> raw) => parseOnboardingPrompt(raw, guildId: guildId)),
       defaultChannelIds: parseMany(raw['default_channel_ids'] as List, Snowflake.parse),
       isEnabled: raw['enabled'] as bool,
+      mode: OnboardingMode(raw['mode'] as int),
     );
   }
 
@@ -239,7 +265,7 @@ class GuildManager extends Manager<Guild> {
   OnboardingPrompt parseOnboardingPrompt(Map<String, Object?> raw, {Snowflake? guildId}) {
     return OnboardingPrompt(
       id: Snowflake.parse(raw['id']!),
-      type: OnboardingPromptType.parse(raw['type'] as int),
+      type: OnboardingPromptType(raw['type'] as int),
       options: parseMany(raw['options'] as List, (Map<String, Object?> raw) => parseOnboardingPromptOption(raw, guildId: guildId)),
       title: raw['title'] as String,
       isSingleSelect: raw['single_select'] as bool,
@@ -255,7 +281,7 @@ class GuildManager extends Manager<Guild> {
 
     // Discord passes an "empty" emoji object when unset instead of null
     if (rawEmoji['id'] != null || rawEmoji['name'] != null) {
-      emoji = this[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
+      emoji = client.guilds[guildId ?? Snowflake.zero].emojis.parse(raw['emoji'] as Map<String, Object?>);
     }
 
     return OnboardingPromptOption(
@@ -269,6 +295,7 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [GuildTemplate] from [raw].
   GuildTemplate parseGuildTemplate(Map<String, Object?> raw) {
     final sourceGuildId = Snowflake.parse(raw['source_guild_id']!);
 
@@ -298,6 +325,7 @@ class GuildManager extends Manager<Guild> {
           for (final role in ((raw['serialized_source_guild'] as Map<String, Object?>)['roles'] as List).cast<Map<String, Object?>>())
             {
               'position': 0,
+              'flags': 0,
               ...role,
             },
         ],
@@ -314,7 +342,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -326,7 +354,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -338,7 +366,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -359,7 +387,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildPreview(response.jsonBody as Map<String, Object?>);
+    final preview = parseGuildPreview(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(preview);
+    return preview;
   }
 
   /// Fetch the channels in a guild.
@@ -372,7 +403,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channels = parseMany(response.jsonBody as List, client.channels.parse).cast<GuildChannel>();
 
-    client.channels.cache.addEntities(channels);
+    channels.forEach(client.updateCacheWith);
     return channels;
   }
 
@@ -386,11 +417,11 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as T;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
-  ///Update the positions of channels in a guild.
+  /// Update the positions of channels in a guild.
   Future<void> updateChannelPositions(Snowflake id, List<ChannelPositionBuilder> positions) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -409,9 +440,9 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>);
+    final list = client.channels.parseThreadList(response.jsonBody as Map<String, Object?>, guildId: id);
 
-    client.channels.cache.addEntities(list.threads);
+    client.updateCacheWith(list);
     return list;
   }
 
@@ -420,10 +451,17 @@ class GuildManager extends Manager<Guild> {
     final route = HttpRoute()
       ..guilds(id: id.toString())
       ..bans();
-    final request = BasicRequest(route);
+    final request = BasicRequest(route, queryParameters: {
+      if (limit != null) 'limit': limit.toString(),
+      if (after != null) 'after': after.toString(),
+      if (before != null) 'before': before.toString(),
+    });
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, parseBan);
+    final bans = parseMany(response.jsonBody as List, parseBan);
+
+    bans.forEach(client.updateCacheWith);
+    return bans;
   }
 
   /// Fetch a ban in a guild.
@@ -434,7 +472,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseBan(response.jsonBody as Map<String, Object?>);
+    final ban = parseBan(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(ban);
+    return ban;
   }
 
   /// Create a ban in a guild.
@@ -452,6 +493,24 @@ class GuildManager extends Manager<Guild> {
     );
 
     await client.httpHandler.executeSafe(request);
+  }
+
+  /// Ban up to 200 users from a guild, and optionally delete previous messages sent by the banned users.
+  Future<BulkBanResponse> bulkBan(Snowflake id, List<Snowflake> userIds, {Duration? deleteMessages, String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..bulkBan();
+    final request = BasicRequest(
+      route,
+      method: 'POST',
+      auditLogReason: auditLogReason,
+      body: jsonEncode({
+        'user_ids': userIds.map((s) => s.toString()).toList(),
+        if (deleteMessages != null) 'delete_message_seconds': deleteMessages.inSeconds,
+      }),
+    );
+    final response = await client.httpHandler.executeSafe(request);
+    return parseBulkBanResponse(response.jsonBody as Map<String, Object?>);
   }
 
   /// Delete a ban in a guild.
@@ -477,7 +536,7 @@ class GuildManager extends Manager<Guild> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    return MfaLevel.parse(response.jsonBody as int);
+    return MfaLevel((response.jsonBody as Map<String, Object?>)['level'] as int);
   }
 
   /// Fetch the prune count in a guild.
@@ -539,7 +598,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List, client.invites.parse);
+    final invites = parseMany(response.jsonBody as List, client.invites.parse);
+
+    invites.forEach(client.updateCacheWith);
+    return invites;
   }
 
   /// Fetch a guild's widget settings.
@@ -634,6 +696,17 @@ class GuildManager extends Manager<Guild> {
     return parseOnboarding(response.jsonBody as Map<String, Object?>);
   }
 
+  /// Update a guild's onboarding.
+  Future<Onboarding> updateOnboarding(Snowflake id, OnboardingUpdateBuilder builder, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..guilds(id: id.toString())
+      ..onboarding();
+    final request = BasicRequest(route, method: 'PUT', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseOnboarding(response.jsonBody as Map<String, Object?>);
+  }
+
   /// Update the current user's voice state in a guild.
   Future<void> updateCurrentUserVoiceState(Snowflake id, CurrentUserVoiceStateUpdateBuilder builder) async {
     final route = HttpRoute()
@@ -662,7 +735,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Create a guild from a guild template.
@@ -675,7 +751,7 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
     final guild = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[guild.id] = guild;
+    client.updateCacheWith(guild);
     return guild;
   }
 
@@ -687,10 +763,13 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List<Object?>, parseGuildTemplate);
+    final templates = parseMany(response.jsonBody as List<Object?>, parseGuildTemplate);
+
+    templates.forEach(client.updateCacheWith);
+    return templates;
   }
 
-  /// Create a guild template from a guild.
+  /// Create a guild template.
   Future<GuildTemplate> createGuildTemplate(Snowflake id, GuildTemplateBuilder builder) async {
     final route = HttpRoute()
       ..guilds(id: id.toString())
@@ -698,7 +777,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Sync a guild template to the source guild.
@@ -709,7 +791,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'PUT');
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Update a guild template.
@@ -720,7 +805,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'PATCH', body: jsonEncode(builder.build()));
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(template);
+    return template;
   }
 
   /// Delete a guild template.
@@ -731,6 +819,10 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route, method: 'DELETE');
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+    final template = parseGuildTemplate(response.jsonBody as Map<String, Object?>);
+
+    // Templates aren't cached, so we don't need to remove it from any cache, but it still contains a nested user object we can cache.
+    client.updateCacheWith(template);
+    return template;
   }
 }

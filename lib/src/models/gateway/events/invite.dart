@@ -12,6 +12,7 @@ class InviteCreateEvent extends DispatchEvent {
   final InviteWithMetadata invite;
 
   /// {@macro invite_create_event}
+  /// @nodoc
   InviteCreateEvent({required super.gateway, required this.invite});
 }
 
@@ -29,6 +30,7 @@ class InviteDeleteEvent extends DispatchEvent {
   final String code;
 
   /// {@macro invite_delete_event}
+  /// @nodoc
   InviteDeleteEvent({required super.gateway, required this.channelId, required this.guildId, required this.code});
 
   /// The channel the invite was for.

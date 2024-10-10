@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import '../../../mocks/client.dart';
 import '../../../test_endpoint.dart';
 import '../../../test_manager.dart';
+import 'member_manager_test.dart';
 
 final sampleVoiceState = {
   "channel_id": "157733188964188161",
@@ -16,6 +17,7 @@ final sampleVoiceState = {
   "self_mute": true,
   "suppress": false,
   "request_to_speak_timestamp": "2021-03-31T18:45:31.297561+00:00",
+  "member": sampleMemberNoUser,
 
   // The API reference says this field is always present, but it's missing in the sample
   "self_video": false,
@@ -34,6 +36,8 @@ void checkVoiceState(VoiceState state) {
   expect(state.isVideoEnabled, isFalse);
   expect(state.isSuppressed, isFalse);
   expect(state.requestedToSpeakAt, equals(DateTime.utc(2021, 3, 31, 18, 45, 31, 297, 561)));
+  expect(state.member, isNotNull);
+  checkMemberNoUser(state.member!, expectedUserId: Snowflake(80351110224678912));
 }
 
 final sampleVoiceRegion = {
@@ -88,6 +92,20 @@ void main() {
       '/voice/regions',
       (client) => client.voice.listRegions(),
       response: [sampleVoiceRegion],
+    );
+
+    testEndpoint(
+      name: 'fetchCurrentUserVoiceState',
+      '/guilds/0/voice-states/@me',
+      (client) => client.voice.fetchCurrentUserVoiceState(Snowflake.zero),
+      response: sampleVoiceState,
+    );
+
+    testEndpoint(
+      name: 'fetchVoiceState',
+      '/guilds/0/voice-states/1',
+      (client) => client.voice.fetchVoiceState(Snowflake.zero, Snowflake(1)),
+      response: sampleVoiceState,
     );
   });
 }

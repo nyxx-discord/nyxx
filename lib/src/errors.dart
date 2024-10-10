@@ -81,6 +81,18 @@ class EntitlementNotFoundException extends NyxxException {
   EntitlementNotFoundException(this.applicationId, this.entitlementId) : super('Entitlement $entitlementId not found for application $applicationId');
 }
 
+/// An exception thrown when an SKU is not found for an application.
+class SkuNotFoundException extends NyxxException {
+  /// The ID of the application.
+  final Snowflake applicationId;
+
+  /// The ID of the sku.
+  final Snowflake skuId;
+
+  /// Create a new [skuNotFoundException].
+  SkuNotFoundException(this.applicationId, this.skuId) : super('SKU $skuId not found for application $applicationId');
+}
+
 /// An error thrown when a shard disconnects unexpectedly.
 class ShardDisconnectedError extends Error {
   /// The shard that was disconnected.
@@ -138,4 +150,10 @@ class PluginError extends Error {
 
   @override
   String toString() => message;
+}
+
+/// An error thrown when the client is closed while an operation is pending, or when an already closed client is used.
+class ClientClosedError extends Error {
+  @override
+  String toString() => 'Client is closed';
 }

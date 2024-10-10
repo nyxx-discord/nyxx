@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/http/managers/webhook_manager.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Webhook].
 class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
@@ -18,6 +19,7 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   final WebhookManager manager;
 
   /// Create a new [PartialWebhook].
+  /// @nodoc
   PartialWebhook({required super.id, required this.manager});
 
   /// Update this webhook, returning the updated webhook.
@@ -26,7 +28,8 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   /// * [WebhookManager.update]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#modify-webhook
   @override
-  Future<Webhook> update(WebhookUpdateBuilder builder, {String? token}) => manager.update(id, builder, token: token);
+  Future<Webhook> update(WebhookUpdateBuilder builder, {String? token, String? auditLogReason}) =>
+      manager.update(id, builder, token: token, auditLogReason: auditLogReason);
 
   /// Delete this webhook.
   ///
@@ -45,8 +48,10 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   /// External references:
   /// * [WebhookManager.execute]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#execute-webhook
-  Future<Message?> execute(MessageBuilder builder, {required String token, bool? wait, Snowflake? threadId}) =>
-      manager.execute(id, builder, token: token, wait: wait, threadId: threadId);
+  Future<Message?> execute(MessageBuilder builder,
+          {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags, String? username, String? avatarUrl}) =>
+      manager.execute(id, builder,
+          token: token, wait: wait, threadId: threadId, threadName: threadName, appliedTags: appliedTags, username: username, avatarUrl: avatarUrl);
 
   /// Fetch a message sent by this webhook using its [token].
   ///
@@ -88,6 +93,7 @@ class WebhookAuthor extends PartialWebhook implements MessageAuthor {
   final String username;
 
   /// Create a new [WebhookAuthor].
+  /// @nodoc
   WebhookAuthor({required super.id, required super.manager, required this.avatarHash, required this.username});
 
   @override
@@ -140,6 +146,7 @@ class Webhook extends PartialWebhook {
   final Uri? url;
 
   /// {@macro webhook}
+  /// @nodoc
   Webhook({
     required super.id,
     required super.manager,
@@ -167,29 +174,19 @@ class Webhook extends PartialWebhook {
 }
 
 /// The type of a [Webhook].
-enum WebhookType {
+final class WebhookType extends EnumLike<int, WebhookType> {
   /// A webhook which sends messages to a channel using a [Webhook.token].
-  incoming._(1),
+  static const incoming = WebhookType(1);
 
   /// An internal webhook used to manage Channel Followers.
-  channelFollower._(2),
+  static const channelFollower = WebhookType(2);
 
   /// A webhook for use with interactions.
-  application._(3);
+  static const application = WebhookType(3);
 
-  /// The value of this webhook type.
-  final int value;
+  /// @nodoc
+  const WebhookType(super.value);
 
-  const WebhookType._(this.value);
-
-  /// Parse a [WebhookType] from a [value].
-  ///
-  /// The [value] must be a valid webhook type.
-  factory WebhookType.parse(int value) => WebhookType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown webhook type', value),
-      );
-
-  @override
-  String toString() => 'WebhookType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  WebhookType.parse(int value) : this(value);
 }

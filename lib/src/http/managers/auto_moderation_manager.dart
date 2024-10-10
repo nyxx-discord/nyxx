@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/auto_moderation.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 class AutoModerationManager extends Manager<AutoModerationRule> {
@@ -25,8 +25,8 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
       guildId: Snowflake.parse(raw['guild_id']!),
       name: raw['name'] as String,
       creatorId: Snowflake.parse(raw['creator_id']!),
-      eventType: AutoModerationEventType.parse(raw['event_type'] as int),
-      triggerType: TriggerType.parse(raw['trigger_type'] as int),
+      eventType: AutoModerationEventType(raw['event_type'] as int),
+      triggerType: TriggerType(raw['trigger_type'] as int),
       metadata: parseTriggerMetadata(raw['trigger_metadata'] as Map<String, Object?>),
       actions: parseMany(raw['actions'] as List<Object?>, parseAutoModerationAction),
       isEnabled: raw['enabled'] as bool,
@@ -35,24 +35,27 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     );
   }
 
+  /// Parse a [TriggerMetadata] from [raw].
   TriggerMetadata parseTriggerMetadata(Map<String, Object?> raw) {
     return TriggerMetadata(
       keywordFilter: maybeParseMany(raw['keyword_filter']),
       regexPatterns: maybeParseMany(raw['regex_patterns']),
-      presets: maybeParseMany(raw['presets'], KeywordPresetType.parse),
+      presets: maybeParseMany(raw['presets'], KeywordPresetType.new),
       allowList: maybeParseMany(raw['allow_list']),
       mentionTotalLimit: raw['mention_total_limit'] as int?,
       isMentionRaidProtectionEnabled: raw['mention_raid_protection_enabled'] as bool?,
     );
   }
 
+  /// Parse a [AutoModerationAction] from [raw].
   AutoModerationAction parseAutoModerationAction(Map<String, Object?> raw) {
     return AutoModerationAction(
-      type: ActionType.parse(raw['type'] as int),
+      type: ActionType(raw['type'] as int),
       metadata: maybeParse(raw['metadata'], parseActionMetadata),
     );
   }
 
+  /// Parse a [ActionMetadata] from [raw].
   ActionMetadata parseActionMetadata(Map<String, Object?> raw) {
     return ActionMetadata(
       manager: this,
@@ -73,7 +76,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     final response = await client.httpHandler.executeSafe(request);
     final rule = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[rule.id] = rule;
+    client.updateCacheWith(rule);
     return rule;
   }
 
@@ -87,7 +90,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     final response = await client.httpHandler.executeSafe(request);
     final rules = parseMany(response.jsonBody as List<Object?>, parse);
 
-    cache.addEntities(rules);
+    rules.forEach(client.updateCacheWith);
     return rules;
   }
 
@@ -102,7 +105,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     final response = await client.httpHandler.executeSafe(request);
     final rule = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[rule.id] = rule;
+    client.updateCacheWith(rule);
     return rule;
   }
 
@@ -117,7 +120,7 @@ class AutoModerationManager extends Manager<AutoModerationRule> {
     final response = await client.httpHandler.executeSafe(request);
     final rule = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[rule.id] = rule;
+    client.updateCacheWith(rule);
     return rule;
   }
 

@@ -24,8 +24,13 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// The stream on which events from the runner are received.
   final Stream<dynamic> receiveStream;
 
+  final StreamController<ShardMessage> _rawReceiveController = StreamController();
+  final StreamController<ShardMessage> _transformedReceiveController = StreamController.broadcast();
+
   /// The port on which events are sent to the runner.
   final SendPort sendPort;
+
+  final StreamController<GatewayMessage> _sendController = StreamController();
 
   /// The client this [Shard] is for.
   final NyxxGateway client;
@@ -44,8 +49,28 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
   /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
+    client.initialized.then((_) {
+      final sendStream = client.options.plugins.fold(
+        _sendController.stream,
+        (previousValue, plugin) => plugin.interceptGatewayMessages(this, previousValue),
+      );
+      sendStream.listen(sendPort.send, cancelOnError: false, onDone: close);
+
+      final transformedReceiveStream = client.options.plugins.fold(
+        _rawReceiveController.stream,
+        (previousValue, plugin) => plugin.interceptShardMessages(this, previousValue),
+      );
+      transformedReceiveStream.pipe(_transformedReceiveController);
+    });
+
+    receiveStream.cast<ShardMessage>().pipe(_rawReceiveController);
+
     final subscription = listen((message) {
-      if (message is ErrorReceived) {
+      if (message is Sent) {
+        logger
+          ..fine('Sent payload: ${message.payload.opcode.name}')
+          ..finer('Opcode: ${message.payload.opcode.value}, Data: ${message.payload.data}');
+      } else if (message is ErrorReceived) {
         logger.warning('Error: ${message.error}', message.error, message.stackTrace);
       } else if (message is Disconnecting) {
         logger.info('Disconnecting: ${message.reason}');
@@ -61,7 +86,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
               if (isResumable) {
                 logger.info('Reconnecting: invalid session');
               } else {
-                logger.severe('Unresumable invalid session, disconnecting');
+                logger.warning('Reconnecting: unresumable invalid session');
               }
             case HelloEvent(:final heartbeatInterval):
               logger.finest('Heartbeat Interval: $heartbeatInterval');
@@ -83,6 +108,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
             logger.info('Reconnected to Gateway');
           }
         }
+      } else if (message is RequestingIdentify) {
+        logger.fine('Ready to identify');
       }
     });
 
@@ -99,13 +126,14 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   static Future<Shard> connect(int id, int totalShards, GatewayApiOptions apiOptions, Uri connectionUri, NyxxGateway client) async {
     final logger = Logger('${client.options.loggerName}.Shards[$id]');
 
-    logger.info('Connecting to Gateway');
-
     final receivePort = ReceivePort('Shard #$id message stream (main)');
     final receiveStream = receivePort.asBroadcastStream();
 
+    logger.fine('Spawning shard runner');
+
     final isolate = await Isolate.spawn(
       _isolateMain,
+      debugName: 'Shard #$id runner',
       _IsolateSpawnData(
         totalShards: totalShards,
         id: id,
@@ -126,6 +154,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
     final sendPort = await receiveStream.first as SendPort;
 
+    logger.fine('Shard runner ready');
+
     return Shard(id, isolate, receiveStream, sendPort, client);
   }
 
@@ -141,12 +171,15 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   void add(GatewayMessage event) {
     if (event is Send) {
       logger
-        ..fine('Send: ${event.opcode.name}')
+        ..fine('Sending: ${event.opcode.name}')
         ..finer('Opcode: ${event.opcode.value}, Data: ${event.data}');
     } else if (event is Dispose) {
       logger.info('Disposing');
+    } else if (event is Identify) {
+      logger.info('Connecting to Gateway');
     }
-    sendPort.send(event);
+
+    _sendController.add(event);
   }
 
   @override
@@ -156,7 +189,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     void Function()? onDone,
     bool? cancelOnError,
   }) {
-    return receiveStream.cast<ShardMessage>().listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    return _transformedReceiveController.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   @override
@@ -168,12 +201,14 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     Future<void> doClose() async {
       add(Dispose());
 
-      // Wait for disconnection confirmation
-      await firstWhere((message) => message is Disconnecting);
+      _sendController.close();
+      // _rawReceiveController and _transformedReceiveController are closed by the piped
+      // receive port stream being closed.
 
       // Give the isolate time to shut down cleanly, but kill it if it takes too long.
       try {
-        await drain().timeout(const Duration(seconds: 5));
+        // Wait for disconnection confirmation.
+        await firstWhere((message) => message is Disconnecting).then(drain).timeout(const Duration(seconds: 5));
       } on TimeoutException {
         logger.warning('Isolate took too long to shut down, killing it');
         isolate.kill(priority: Isolate.immediate);

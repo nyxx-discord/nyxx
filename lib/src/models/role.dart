@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/role.dart';
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -15,7 +16,24 @@ class PartialRole extends WritableSnowflakeEntity<Role> {
   final RoleManager manager;
 
   /// Create a new [PartialRole].
+  /// @nodoc
   PartialRole({required super.id, required this.manager});
+
+  /// Update this role, returning the updated role.
+  ///
+  /// External references:
+  /// * [RoleManager.update]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/guild#modify-guild-role
+  @override
+  Future<Role> update(RoleUpdateBuilder builder, {String? auditLogReason}) => manager.update(id, builder, auditLogReason: auditLogReason);
+
+  /// Delete this role.
+  ///
+  /// External references:
+  /// * [RoleManager.delete]
+  /// * Discord API Reference: https://discord.com/developers/docs/resources/guild#delete-guild-role
+  @override
+  Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);
 }
 
 /// {@template role}
@@ -58,6 +76,7 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
   final RoleFlags flags;
 
   /// {@macro role}
+  /// @nodoc
   Role({
     required super.id,
     required super.manager,
@@ -93,14 +112,27 @@ class RoleTags with ToStringHelper {
   /// The ID of the integration this role belongs to.
   final Snowflake? integrationId;
 
+  /// Whether this is the guild's Booster role.
+  final bool isPremiumSubscriber;
+
   /// The ID of this role's subscription sku and listing.
   final Snowflake? subscriptionListingId;
 
+  /// Whether this role is available for purchase.
+  final bool isAvailableForPurchase;
+
+  /// Whether this role is a guild's linked role
+  final bool isLinkedRole;
+
   /// {@macro role_tags}
+  /// @nodoc
   RoleTags({
     required this.botId,
     required this.integrationId,
+    required this.isPremiumSubscriber,
     required this.subscriptionListingId,
+    required this.isAvailableForPurchase,
+    required this.isLinkedRole,
   });
 }
 

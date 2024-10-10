@@ -51,8 +51,8 @@ class GuildBuilder extends CreateBuilder<Guild> {
         'name': name,
         if (icon != null) 'icon': icon!.buildDataString(),
         if (verificationLevel != null) 'verification_level': verificationLevel!.value,
-        if (defaultMessageNotificationLevel != null) 'default_message_notification_level': defaultMessageNotificationLevel!.value,
-        if (explicitContentFilterLevel != null) 'explicit_content_filter_level': explicitContentFilterLevel!.value,
+        if (defaultMessageNotificationLevel != null) 'default_message_notifications': defaultMessageNotificationLevel!.value,
+        if (explicitContentFilterLevel != null) 'explicit_content_filter': explicitContentFilterLevel!.value,
         if (roles != null) 'roles': roles!.map((b) => b.build()).toList(),
         if (channels != null) 'channels': channels!.map((b) => b.build()).toList(),
         if (afkChannelId != null) 'afk_channel_id': afkChannelId!.toString(),
@@ -101,6 +101,8 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
 
   bool? premiumProgressBarEnabled;
 
+  Snowflake? safetyAlertsChannelId;
+
   GuildUpdateBuilder({
     this.name,
     this.verificationLevel,
@@ -113,36 +115,38 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
     this.splash = sentinelImageBuilder,
     this.discoverySplash = sentinelImageBuilder,
     this.banner = sentinelImageBuilder,
-    this.systemChannelId,
+    this.systemChannelId = sentinelSnowflake,
     this.systemChannelFlags,
-    this.rulesChannelId,
-    this.publicUpdatesChannelId,
+    this.rulesChannelId = sentinelSnowflake,
+    this.publicUpdatesChannelId = sentinelSnowflake,
     this.preferredLocale,
     this.features,
     this.description = sentinelString,
     this.premiumProgressBarEnabled,
+    this.safetyAlertsChannelId = sentinelSnowflake,
   });
 
   @override
   Map<String, Object?> build() => {
         if (name != null) 'name': name,
-        if (verificationLevel != null) 'verificationLevel': verificationLevel!.value,
-        if (defaultMessageNotificationLevel != null) 'defaultMessageNotificationLevel': defaultMessageNotificationLevel!.value,
-        if (explicitContentFilterLevel != null) 'explicitContentFilterLevel': explicitContentFilterLevel!.value,
-        if (!identical(afkChannelId, sentinelSnowflake)) 'afkChannelId': afkChannelId?.toString(),
-        if (afkTimeout != null) 'afkTimeout': afkTimeout!.inSeconds,
+        if (verificationLevel != null) 'verification_level': verificationLevel!.value,
+        if (defaultMessageNotificationLevel != null) 'default_message_notifications': defaultMessageNotificationLevel!.value,
+        if (explicitContentFilterLevel != null) 'explicit_content_filter': explicitContentFilterLevel!.value,
+        if (!identical(afkChannelId, sentinelSnowflake)) 'afk_channel_id': afkChannelId?.toString(),
+        if (afkTimeout != null) 'afk_timeout': afkTimeout!.inSeconds,
         if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
-        if (newOwnerId != null) 'newOwnerId': newOwnerId!.toString(),
+        if (newOwnerId != null) 'owner_id': newOwnerId!.toString(),
         if (!identical(splash, sentinelImageBuilder)) 'splash': splash?.buildDataString(),
-        if (!identical(discoverySplash, sentinelImageBuilder)) 'discoverySplash': discoverySplash?.buildDataString(),
+        if (!identical(discoverySplash, sentinelImageBuilder)) 'discovery_splash': discoverySplash?.buildDataString(),
         if (!identical(banner, sentinelImageBuilder)) 'banner': banner?.buildDataString(),
-        if (systemChannelId != null) 'systemChannelId': systemChannelId!.toString(),
-        if (systemChannelFlags != null) 'systemChannelFlags': systemChannelFlags!.value,
-        if (rulesChannelId != null) 'rulesChannelId': rulesChannelId!.toString(),
-        if (publicUpdatesChannelId != null) 'publicUpdatesChannelId': publicUpdatesChannelId!.toString(),
-        if (preferredLocale != null) 'preferredLocale': preferredLocale!.identifier,
+        if (!identical(systemChannelId, sentinelSnowflake)) 'system_channel_id': systemChannelId?.toString(),
+        if (systemChannelFlags != null) 'system_channel_flags': systemChannelFlags!.value,
+        if (!identical(rulesChannelId, sentinelSnowflake)) 'rules_channel_id': rulesChannelId?.toString(),
+        if (!identical(publicUpdatesChannelId, sentinelSnowflake)) 'public_updates_channel_id': publicUpdatesChannelId?.toString(),
+        if (preferredLocale != null) 'preferred_locale': preferredLocale!.identifier,
         if (features != null) 'features': GuildManager.serializeGuildFeatures(features!),
         if (!identical(description, sentinelString)) 'description': description,
-        if (premiumProgressBarEnabled != null) 'premiumProgressBarEnabled': premiumProgressBarEnabled,
+        if (premiumProgressBarEnabled != null) 'premium_progress_bar_enabled': premiumProgressBarEnabled,
+        if (!identical(safetyAlertsChannelId, sentinelSnowflake)) 'safety_alerts_channel_id': safetyAlertsChannelId?.toString(),
       };
 }

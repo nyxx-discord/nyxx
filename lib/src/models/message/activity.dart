@@ -1,3 +1,4 @@
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template message_activity}
@@ -14,6 +15,7 @@ class MessageActivity with ToStringHelper {
   final String? partyId;
 
   /// {@macro message_activity}
+  /// @nodoc
   MessageActivity({
     required this.type,
     required this.partyId,
@@ -24,25 +26,15 @@ class MessageActivity with ToStringHelper {
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-activity-types
-enum MessageActivityType {
-  join._(1),
-  spectate._(2),
-  listen._(3),
-  joinRequest._(5);
+final class MessageActivityType extends EnumLike<int, MessageActivityType> {
+  static const join = MessageActivityType(1);
+  static const spectate = MessageActivityType(2);
+  static const listen = MessageActivityType(3);
+  static const joinRequest = MessageActivityType(5);
 
-  /// The value of this [MessageActivityType].
-  final int value;
+  /// @nodoc
+  const MessageActivityType(super.value);
 
-  const MessageActivityType._(this.value);
-
-  /// Parse a [MessageActivityType] from an [int].
-  ///
-  /// [value] must be a valid message activity type.
-  factory MessageActivityType.parse(int value) => MessageActivityType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown MessageActivityType', value),
-      );
-
-  @override
-  String toString() => 'MessageActivityType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  MessageActivityType.parse(int value) : this(value);
 }

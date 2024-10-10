@@ -21,6 +21,9 @@ void main() {
 
       final builder4 = UserUpdateBuilder();
       expect(builder4.build(), equals({}));
+
+      final builder5 = UserUpdateBuilder(banner: ImageBuilder.png([]));
+      expect(builder5.build(), equals({'banner': 'data:image/png;base64,'}));
     });
   });
 }

@@ -6,6 +6,7 @@ import 'package:nyxx/src/builders/user.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/types/dm.dart';
 import 'package:nyxx/src/models/channel/types/group_dm.dart';
 import 'package:nyxx/src/models/discord_color.dart';
@@ -13,10 +14,12 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/locale.dart';
+import 'package:nyxx/src/models/oauth2.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/application_role_connection.dart';
 import 'package:nyxx/src/models/user/connection.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [User]s.
@@ -49,12 +52,13 @@ class UserManager extends ReadOnlyManager<User> {
       accentColor: hasAccentColor ? DiscordColor(raw['accent_color'] as int) : null,
       locale: hasLocale ? Locale.parse(raw['locale'] as String) : null,
       flags: hasFlags ? UserFlags(raw['flags'] as int) : null,
-      nitroType: hasPremiumType ? NitroType.parse(raw['premium_type'] as int) : NitroType.none,
+      nitroType: hasPremiumType ? NitroType(raw['premium_type'] as int) : NitroType.none,
       publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
       avatarDecorationHash: raw['avatar_decoration'] as String?,
     );
   }
 
+  /// Parse a [Connection] from [raw].
   Connection parseConnection(Map<String, Object?> raw) {
     return Connection(
       id: raw['id'] as String,
@@ -73,10 +77,11 @@ class UserManager extends ReadOnlyManager<User> {
       isFriendSyncEnabled: raw['friend_sync'] as bool,
       showActivity: raw['show_activity'] as bool,
       isTwoWayLink: raw['two_way_link'] as bool,
-      visibility: ConnectionVisibility.parse(raw['visibility'] as int),
+      visibility: ConnectionVisibility(raw['visibility'] as int),
     );
   }
 
+  /// Parse a [ApplicationRoleConnection] from [raw].
   ApplicationRoleConnection parseApplicationRoleConnection(Map<String, Object?> raw) {
     return ApplicationRoleConnection(
       platformName: raw['platform_name'] as String?,
@@ -93,7 +98,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final user = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[user.id] = user;
+    client.updateCacheWith(user);
     return user;
   }
 
@@ -105,7 +110,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final user = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[user.id] = user;
+    client.updateCacheWith(user);
     return user;
   }
 
@@ -121,12 +126,12 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final user = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[user.id] = user;
+    client.updateCacheWith(user);
     return user;
   }
 
   /// List the guilds the current user is a member of.
-  Future<List<PartialGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
+  Future<List<UserGuild>> listCurrentUserGuilds({Snowflake? after, Snowflake? before, int? limit, bool? withCounts}) async {
     final route = HttpRoute()
       ..users(id: '@me')
       ..guilds();
@@ -140,7 +145,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(
       response.jsonBody as List,
-      (Map<String, Object?> raw) => PartialGuild(id: Snowflake.parse(raw['id']!), manager: client.guilds),
+      (Map<String, Object?> raw) => client.guilds.parseUserGuild(raw),
     );
   }
 
@@ -153,7 +158,10 @@ class UserManager extends ReadOnlyManager<User> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    return client.guilds[guildId].members.parse(response.jsonBody as Map<String, Object?>);
+    final member = client.guilds[guildId].members.parse(response.jsonBody as Map<String, Object?>, userId: client.user.id);
+
+    client.updateCacheWith(member);
+    return member;
   }
 
   /// Leave a guild.
@@ -176,7 +184,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as DmChannel;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -199,7 +207,7 @@ class UserManager extends ReadOnlyManager<User> {
     final response = await client.httpHandler.executeSafe(request);
     final channel = client.channels.parse(response.jsonBody as Map<String, Object?>) as GroupDmChannel;
 
-    client.channels.cache[channel.id] = channel;
+    client.updateCacheWith(channel);
     return channel;
   }
 
@@ -241,5 +249,19 @@ class UserManager extends ReadOnlyManager<User> {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseApplicationRoleConnection(response.jsonBody as Map<String, Object?>);
+  }
+
+  Future<OAuth2Information> fetchCurrentOAuth2Information() async {
+    final route = HttpRoute()
+      ..oauth2()
+      ..add(HttpRoutePart('@me'));
+    final request = BasicRequest(route);
+    final response = await client.httpHandler.executeSafe(request);
+    final body = response.jsonBody as Map<String, Object?>;
+    return OAuth2Information(
+        application: PartialApplication(manager: client.applications, id: Snowflake.parse((body['application'] as Map<String, Object?>)['id']!)),
+        scopes: (body['scopes'] as List).cast(),
+        expiresOn: DateTime.parse(body['expires'] as String),
+        user: maybeParse(body['user'], client.users.parse));
   }
 }
