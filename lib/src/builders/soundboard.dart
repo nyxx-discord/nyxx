@@ -13,8 +13,6 @@ class SoundboardSoundBuilder extends CreateBuilder<SoundboardSound> {
 
   double? volume;
 
-  Emoji? emoji;
-
   String? emojiName;
 
   Snowflake? emojiId;
