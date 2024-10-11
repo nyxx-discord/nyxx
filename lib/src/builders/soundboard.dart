@@ -42,6 +42,6 @@ class UpdateSoundboardSoundBuilder extends UpdateBuilder<SoundboardSound> {
   Map<String, Object?> build() => {
         'name': name,
         if (volume != sentinelDouble) 'volume': volume,
-        if (emoji != sentinelEmoji) ..._makeEmojiMap(emoji),
+        if (!identical(emoji, sentinelEmoji)) ..._makeEmojiMap(emoji),
       };
 }
