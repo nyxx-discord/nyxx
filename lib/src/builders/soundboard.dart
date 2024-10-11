@@ -1,7 +1,6 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/sound.dart';
-import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/utils/building_helpers.dart';
