@@ -1,4 +1,4 @@
-import 'package:nyxx/src/models/channel/voice_channel.dart';
+import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
@@ -86,7 +86,7 @@ class VoiceChannelEffectSendEvent extends DispatchEvent {
   });
 
   /// The channel this effect was sent in.
-  VoiceChannel get channel => gateway.client.channels[channelId] as VoiceChannel;
+  PartialChannel get channel => gateway.client.channels[channelId];
 
   /// The guild this effect was sent in.
   PartialGuild get guild => gateway.client.guilds[guildId];
