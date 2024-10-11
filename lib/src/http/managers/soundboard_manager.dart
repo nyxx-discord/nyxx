@@ -20,7 +20,9 @@ abstract class SoundboardManager extends Manager<SoundboardSound> {
 
     Emoji? emoji = maybeParse(raw['emoji_name'], (emoji) => client.guilds[guildId ?? Snowflake.zero].emojis.parse({'id': null, 'name': emoji}));
 
-    emoji ??= client.guilds[guildId ?? Snowflake.zero].emojis.cache[maybeParse(raw['emoji_id'], Snowflake.parse) ?? Snowflake.zero];
+    final emojiId = maybeParse(raw['emoji_id'], Snowflake.parse);
+
+    emoji ??= client.guilds[guildId ?? Snowflake.zero].emojis.cache[emojiId];
 
     return SoundboardSound(
       id: Snowflake.parse(raw['sound_id']!),
@@ -29,7 +31,7 @@ abstract class SoundboardManager extends Manager<SoundboardSound> {
       volume: (raw['volume'] as num).toDouble(),
       emoji: emoji,
       emojiName: raw['emoji_name'] as String?,
-      emojiId: maybeParse(raw['emoji_id'], Snowflake.parse),
+      emojiId: emojiId,
       guildId: guildId,
       isAvailable: raw['available'] as bool,
       user: maybeParse(raw['user'], client.users.parse),
