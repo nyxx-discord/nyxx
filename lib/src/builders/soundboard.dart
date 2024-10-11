@@ -2,12 +2,9 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/builders/sound.dart';
 import 'package:nyxx/src/models/emoji.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/soundboard/soundboard.dart';
-
-Map<String, String> _makeEmojiMap(Emoji? emoji) => {
-      if (emoji case final TextEmoji emoji?) 'emoji_name': emoji.name,
-      if (emoji case final GuildEmoji emoji?) 'emoji_id': emoji.id.toString(),
-    };
+import 'package:nyxx/src/utils/building_helpers.dart';
 
 class SoundboardSoundBuilder extends CreateBuilder<SoundboardSound> {
   String name;
@@ -18,30 +15,36 @@ class SoundboardSoundBuilder extends CreateBuilder<SoundboardSound> {
 
   Emoji? emoji;
 
-  SoundboardSoundBuilder({required this.name, required this.sound, this.volume, this.emoji});
+  String? emojiName;
+
+  Snowflake? emojiId;
+
+  SoundboardSoundBuilder({required this.name, required this.sound, this.volume, this.emojiName, this.emojiId});
 
   @override
   Map<String, Object?> build() => {
         'name': name,
         'sound': sound.buildDataString(),
         if (volume != null) 'volume': volume,
-        ..._makeEmojiMap(emoji),
+        ...makeEmojiMap(emojiId: emojiId, emojiName: emojiName),
       };
 }
 
-class UpdateSoundboardSoundBuilder extends UpdateBuilder<SoundboardSound> {
+class SoundboardSoundUpdateBuilder extends UpdateBuilder<SoundboardSound> {
   String name;
 
   double? volume;
 
-  Emoji? emoji;
+  String? emojiName;
 
-  UpdateSoundboardSoundBuilder({required this.name, this.volume = sentinelDouble, this.emoji = sentinelEmoji});
+  Snowflake? emojiId;
+
+  SoundboardSoundUpdateBuilder({required this.name, this.volume = sentinelDouble, this.emojiName = sentinelString, this.emojiId = sentinelSnowflake});
 
   @override
   Map<String, Object?> build() => {
         'name': name,
         if (volume != sentinelDouble) 'volume': volume,
-        if (!identical(emoji, sentinelEmoji)) ..._makeEmojiMap(emoji),
+        if (!(identical(emojiName, sentinelString) || identical(emojiId, sentinelSnowflake))) ...makeEmojiMap(emojiId: emojiId, emojiName: emojiName),
       };
 }

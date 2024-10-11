@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/channel/types/guild_voice.dart';
 import 'package:nyxx/src/models/channel/voice_channel.dart';
 import 'package:nyxx/src/models/permission_overwrite.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/building_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
@@ -231,12 +232,7 @@ class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
         if (isNsfw != null) 'nsfw': isNsfw,
         if (defaultAutoArchiveDuration != null) 'default_auto_archive_duration': defaultAutoArchiveDuration!.inMinutes,
         if (!identical(defaultReaction, sentinelDefaultReaction))
-          'default_reaction_emoji': defaultReaction == null
-              ? null
-              : {
-                  if (defaultReaction!.emojiId != null) 'emoji_id': defaultReaction!.emojiId!.toString(),
-                  if (defaultReaction!.emojiName != null) 'emoji_name': defaultReaction!.emojiName,
-                },
+          'default_reaction_emoji': defaultReaction == null ? null : makeEmojiMap(emojiId: defaultReaction!.emojiId, emojiName: defaultReaction!.emojiName),
         if (tags != null) 'available_tags': tags!.map((e) => e.build()).toList(),
         if (defaultSortOrder != null) 'default_sort_order': defaultSortOrder!.value,
       };
@@ -293,12 +289,7 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> 
         if (flags != null) 'flags': flags!.value,
         if (tags != null) 'available_tags': tags!.map((e) => e.build()).toList(),
         if (!identical(defaultReaction, sentinelDefaultReaction))
-          'default_reaction_emoji': defaultReaction == null
-              ? null
-              : {
-                  if (defaultReaction!.emojiId != null) 'emoji_id': defaultReaction!.emojiId!.toString(),
-                  if (defaultReaction!.emojiName != null) 'emoji_name': defaultReaction!.emojiName,
-                },
+          'default_reaction_emoji': defaultReaction == null ? null : makeEmojiMap(emojiId: defaultReaction!.emojiId, emojiName: defaultReaction!.emojiName),
         if (defaultThreadRateLimitPerUser != null) 'default_thread_rate_limit_per_user': defaultThreadRateLimitPerUser!.inSeconds,
         if (defaultSortOrder != null) 'default_sort_order': defaultSortOrder!.value,
         if (defaultLayout != null) 'default_forum_layout': defaultLayout!.value,

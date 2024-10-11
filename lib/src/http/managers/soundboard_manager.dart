@@ -102,7 +102,7 @@ class GuildSoundboardManager extends SoundboardManager {
   }
 
   @override
-  Future<SoundboardSound> update(Snowflake id, UpdateSoundboardSoundBuilder builder, {String? auditLogReason}) async {
+  Future<SoundboardSound> update(Snowflake id, SoundboardSoundUpdateBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..guilds(id: guildId.toString())
       ..soundboardSounds(id: id.toString());
@@ -187,6 +187,6 @@ class GlobalSoundboardManager extends SoundboardManager implements ReadOnlyManag
   Future<SoundboardSound> create(SoundboardSoundBuilder builder, {String? auditLogReason}) => throw UnsupportedError('Cannot create a global soundboard sound');
 
   @override
-  Future<SoundboardSound> update(Snowflake id, UpdateSoundboardSoundBuilder builder, {String? auditLogReason}) =>
+  Future<SoundboardSound> update(Snowflake id, SoundboardSoundUpdateBuilder builder, {String? auditLogReason}) =>
       throw UnsupportedError('Cannot update a global soundboard sound');
 }

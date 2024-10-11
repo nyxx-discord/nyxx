@@ -91,8 +91,8 @@ void main() {
       name: 'cool',
       sound: SoundBuilder.ogg([0, 1, 2, 3]),
       volume: .5,
-      emoji: TextEmoji(id: Snowflake.zero, manager: client.application.emojis, name: '😎'),
+      emojiName: '😎',
     ),
-    updateBuilder: UpdateSoundboardSoundBuilder(name: 'cooler', volume: .7),
+    updateBuilder: SoundboardSoundUpdateBuilder(name: 'cooler', volume: .7),
   );
 }

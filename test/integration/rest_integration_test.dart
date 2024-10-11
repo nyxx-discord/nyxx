@@ -454,7 +454,7 @@ void main() {
         completes,
       );
 
-      await expectLater(sound.update(UpdateSoundboardSoundBuilder(name: 'New name')), completes);
+      await expectLater(sound.update(SoundboardSoundUpdateBuilder(name: 'New name')), completes);
       await expectLater(sound.delete(), completes);
     });
   });
