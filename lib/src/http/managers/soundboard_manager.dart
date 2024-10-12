@@ -150,7 +150,7 @@ class GlobalSoundboardManager extends SoundboardManager implements ReadOnlyManag
   GlobalSoundboardManager(super.config, super.client) : super(identifier: 'soundboard');
 
   @override
-  PartialSoundboardSound operator [](Snowflake id) => throw UnsupportedError('Cannot index a global soundboard sound');
+  PartialSoundboardSound operator [](Snowflake id) => PartialSoundboardSound(id: id, manager: this);
 
   @override
   Future<SoundboardSound> fetch(Snowflake id) async {
