@@ -298,6 +298,7 @@ extension CacheUpdates on NyxxRest {
         SoundboardSoundCreateEvent(:final sound) => updateCacheWith(sound),
         SoundboardSoundUpdateEvent(:final sound) => updateCacheWith(sound),
         SoundboardSoundDeleteEvent(:final sound?) => sound.manager.cache.remove(sound.id),
+        SoundboardSoundsUpdateEvent(:final sounds) => sounds.forEach(updateCacheWith),
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
 

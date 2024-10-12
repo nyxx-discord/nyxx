@@ -301,6 +301,7 @@ class Gateway extends GatewayManager with EventParser {
       'GUILD_SOUNDBOARD_SOUND_CREATE': parseSoundboardSoundCreate,
       'GUILD_SOUNDBOARD_SOUND_UPDATE': parseSoundboardSoundUpdate,
       'GUILD_SOUNDBOARD_SOUND_DELETE': parseSoundboardSoundDelete,
+      'GUILD_SOUNDBOARD_SOUNDS_UPDATE': parseSoundboardSoundsUpdate,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -1212,6 +1213,21 @@ class Gateway extends GatewayManager with EventParser {
       sound: client.guilds[guildId].soundboard.cache[soundId],
       guildId: guildId,
       soundId: soundId,
+    );
+  }
+
+  SoundboardSoundsUpdateEvent parseSoundboardSoundsUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
+    final sounds = parseMany(raw['sounds'] as List<Object?>, client.guilds[guildId].soundboard.parse);
+
+    final oldSounds = sounds.map((sound) => client.guilds[guildId].soundboard.cache[sound.id]).toList();
+
+    return SoundboardSoundsUpdateEvent(
+      gateway: this,
+      guildId: guildId,
+      sounds: sounds,
+      oldSounds: oldSounds,
     );
   }
 

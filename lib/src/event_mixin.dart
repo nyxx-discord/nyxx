@@ -272,6 +272,9 @@ mixin EventMixin implements Nyxx {
   /// A [Stream] of [SoundboardSoundCreateEvent]s received by this client.
   Stream<SoundboardSoundCreateEvent> get onSoundboardSoundCreate => onEvent.whereType<SoundboardSoundCreateEvent>();
 
+  /// A [Stream] of [SoundboardSoundsUpdateEvent]s received by this client.
+  Stream<SoundboardSoundsUpdateEvent> get onSoundboardSoundsUpdate => onEvent.whereType<SoundboardSoundsUpdateEvent>();
+
   /// A [Stream] of [VoiceChannelEffectSendEvent]s received by this client.
   Stream<VoiceChannelEffectSendEvent> get onVoiceChannelEffectSend => onEvent.whereType<VoiceChannelEffectSendEvent>();
 }

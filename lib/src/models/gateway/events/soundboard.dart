@@ -49,3 +49,21 @@ class SoundboardSoundDeleteEvent extends DispatchEvent {
 
   PartialGuild get guild => gateway.client.guilds[guildId];
 }
+
+/// {@template soundboard_sounds_update_event}
+/// Emitted when multiple guild soundboard sounds are updated.
+/// {@endtemplate}
+class SoundboardSoundsUpdateEvent extends DispatchEvent {
+  /// The ID of the guild where the sounds were updated.
+  final Snowflake guildId;
+
+  /// The sounds that were updated.
+  final List<SoundboardSound> sounds;
+
+  /// The old sounds.
+  final List<SoundboardSound?> oldSounds;
+
+  /// {@macro soundboard_sounds_update_event}
+  /// @nodoc
+  SoundboardSoundsUpdateEvent({required super.gateway, required this.guildId, required this.sounds, required this.oldSounds});
+}
