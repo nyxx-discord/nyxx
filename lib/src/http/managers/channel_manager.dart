@@ -754,6 +754,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   }
 
   /// List the private archived threads the current user has joined in a channel.
+  // TODO(lexedia): for nyxx v7, this needs to be updated to use `Snowflake` instead of `DateTime`.
   Future<ThreadList> listJoinedPrivateArchivedThreads(Snowflake id, {DateTime? before, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
@@ -764,7 +765,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final request = BasicRequest(
       route,
       queryParameters: {
-        if (before != null) 'before': before.toIso8601String(),
+        if (before != null) 'before': Snowflake.fromDateTime(before).toString(),
         if (limit != null) 'limit': limit.toString(),
       },
     );
