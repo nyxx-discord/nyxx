@@ -122,7 +122,7 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
     this.type,
     this.status,
     this.image,
-    this.recurrenceRule,
+    this.recurrenceRule = sentinelRecurrenceRuleBuilder,
   });
 
   @override
@@ -137,7 +137,7 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
         if (type != null) 'entity_type': type!.value,
         if (status != null) 'status': status!.value,
         if (image != null) 'image': image!.buildDataString(),
-        if (recurrenceRule != null) 'recurrence_rule': recurrenceRule!.build(),
+        if (!identical(recurrenceRule, sentinelRecurrenceRuleBuilder)) 'recurrence_rule': recurrenceRule!.build(),
       };
 }
 
