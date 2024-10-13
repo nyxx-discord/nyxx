@@ -137,7 +137,7 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
         if (type != null) 'entity_type': type!.value,
         if (status != null) 'status': status!.value,
         if (image != null) 'image': image!.buildDataString(),
-        if (!identical(recurrenceRule, sentinelRecurrenceRuleBuilder)) 'recurrence_rule': recurrenceRule!.build(),
+        if (!identical(recurrenceRule, sentinelRecurrenceRuleBuilder)) 'recurrence_rule': recurrenceRule?.build(),
       };
 }
 
