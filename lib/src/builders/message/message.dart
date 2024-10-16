@@ -123,6 +123,9 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
 
   List<AttachmentBuilder>? attachments;
 
+  /// Can only be used when editing a deferred interaction.
+  PollBuilder? poll;
+
   MessageUpdateBuilder({
     this.content = sentinelString,
     this.embeds = sentinelList,
@@ -130,6 +133,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
     this.allowedMentions,
     this.components,
     this.attachments = sentinelList,
+    this.poll,
   });
 
   @override
@@ -140,6 +144,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
         if (components != null) 'components': components!.map((e) => e.build()).toList(),
         if (!identical(attachments, sentinelList)) 'attachments': attachments!.map((e) => e.build()).toList(),
         if (suppressEmbeds != null) 'flags': (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0),
+        if (poll != null) 'poll': poll!.build(),
       };
 }
 
