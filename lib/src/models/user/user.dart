@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/avatar_decoration_data.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -73,6 +74,9 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
   /// The hash of this user's avatar decoration.
   final String? avatarDecorationHash;
 
+  /// The user's avatar deciration data.
+  final AvatarDecorationData? avatarDecorationData;
+
   /// {@macro user}
   /// @nodoc
   User({
@@ -92,6 +96,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
     required this.nitroType,
     required this.publicFlags,
     required this.avatarDecorationHash,
+    required this.avatarDecorationData,
   });
 
   /// This user's banner.
@@ -125,7 +130,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
       ? null
       : CdnAsset(
           client: manager.client,
-          base: HttpRoute()..avatarDecorations(id: id.toString()),
+          base: HttpRoute()..avatarDecorationPresets(),
           hash: avatarDecorationHash!,
         );
 }
