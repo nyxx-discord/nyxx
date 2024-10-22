@@ -31,6 +31,7 @@ class MemberManager extends Manager<Member> {
       user: maybeParse(raw['user'], client.users.parse),
       nick: raw['nick'] as String?,
       avatarHash: raw['avatar'] as String?,
+      bannerHash: raw['banner'] as String?,
       roleIds: parseMany(raw['roles'] as List, Snowflake.parse),
       joinedAt: DateTime.parse(raw['joined_at'] as String),
       premiumSince: maybeParse(raw['premium_since'], DateTime.parse),

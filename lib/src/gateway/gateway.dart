@@ -18,6 +18,7 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/events/entitlement.dart';
+import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
@@ -284,6 +285,7 @@ class Gateway extends GatewayManager with EventParser {
       'PRESENCE_UPDATE': parsePresenceUpdate,
       'TYPING_START': parseTypingStart,
       'USER_UPDATE': parseUserUpdate,
+      'VOICE_CHANNEL_EFFECT_SEND': parseVoiceChannelEffectSend,
       'VOICE_STATE_UPDATE': parseVoiceStateUpdate,
       'VOICE_SERVER_UPDATE': parseVoiceServerUpdate,
       'WEBHOOKS_UPDATE': parseWebhooksUpdate,
@@ -296,6 +298,10 @@ class Gateway extends GatewayManager with EventParser {
       'ENTITLEMENT_DELETE': parseEntitlementDelete,
       'MESSAGE_POLL_VOTE_ADD': parseMessagePollVoteAdd,
       'MESSAGE_POLL_VOTE_REMOVE': parseMessagePollVoteRemove,
+      'GUILD_SOUNDBOARD_SOUND_CREATE': parseSoundboardSoundCreate,
+      'GUILD_SOUNDBOARD_SOUND_UPDATE': parseSoundboardSoundUpdate,
+      'GUILD_SOUNDBOARD_SOUND_DELETE': parseSoundboardSoundDelete,
+      'GUILD_SOUNDBOARD_SOUNDS_UPDATE': parseSoundboardSoundsUpdate,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -984,6 +990,23 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
+  /// Parse a [VoiceChannelEffectSendEvent] from [raw].
+  VoiceChannelEffectSendEvent parseVoiceChannelEffectSend(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
+    return VoiceChannelEffectSendEvent(
+      gateway: this,
+      channelId: Snowflake.parse(raw['channel_id']!),
+      guildId: guildId,
+      userId: Snowflake.parse(raw['user_id']!),
+      emoji: maybeParse(raw['emoji'], client.guilds[guildId].emojis.parse),
+      animationType: maybeParse(raw['animation_type'], AnimationType.new),
+      animationId: raw['animation_id'] as int?,
+      soundId: maybeParse(raw['sound_id'], Snowflake.parse),
+      soundVolume: raw['sound_volume'] as double?,
+    );
+  }
+
   /// Parse a [VoiceStateUpdateEvent] from [raw].
   VoiceStateUpdateEvent parseVoiceStateUpdate(Map<String, Object?> raw) {
     final voiceState = client.voice.parseVoiceState(raw);
@@ -1160,6 +1183,52 @@ class Gateway extends GatewayManager with EventParser {
         break;
       }
     }
+  }
+
+  SoundboardSoundCreateEvent parseSoundboardSoundCreate(Map<String, Object?> raw) {
+    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
+    return SoundboardSoundCreateEvent(
+      gateway: this,
+      sound: client.guilds[guildId ?? Snowflake.zero].soundboard.parse(raw),
+    );
+  }
+
+  SoundboardSoundUpdateEvent parseSoundboardSoundUpdate(Map<String, Object?> raw) {
+    final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
+    return SoundboardSoundUpdateEvent(
+      gateway: this,
+      oldSound: client.guilds[guildId ?? Snowflake.zero].soundboard.cache[Snowflake.parse(raw['sound_id']!)],
+      sound: client.guilds[guildId ?? Snowflake.zero].soundboard.parse(raw),
+    );
+  }
+
+  SoundboardSoundDeleteEvent parseSoundboardSoundDelete(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+    final soundId = Snowflake.parse(raw['sound_id']!);
+
+    return SoundboardSoundDeleteEvent(
+      gateway: this,
+      sound: client.guilds[guildId].soundboard.cache[soundId],
+      guildId: guildId,
+      soundId: soundId,
+    );
+  }
+
+  SoundboardSoundsUpdateEvent parseSoundboardSoundsUpdate(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
+    final sounds = parseMany(raw['sounds'] as List<Object?>, client.guilds[guildId].soundboard.parse);
+
+    final oldSounds = sounds.map((sound) => client.guilds[guildId].soundboard.cache[sound.id]).toList();
+
+    return SoundboardSoundsUpdateEvent(
+      gateway: this,
+      guildId: guildId,
+      sounds: sounds,
+      oldSounds: oldSounds,
+    );
   }
 
   /// Update the client's voice state in the guild with ID [guildId].

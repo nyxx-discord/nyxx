@@ -62,6 +62,9 @@ class Member extends PartialMember {
   /// The hash of this member's avatar image.
   final String? avatarHash;
 
+  /// The hash of this member's banner image.
+  final String? bannerHash;
+
   /// A list of the IDs of the roles this member has.
   final List<Snowflake> roleIds;
 
@@ -103,6 +106,7 @@ class Member extends PartialMember {
     required this.user,
     required this.nick,
     required this.avatarHash,
+    required this.bannerHash,
     required this.roleIds,
     required this.joinedAt,
     required this.premiumSince,
@@ -138,6 +142,15 @@ class Member extends PartialMember {
           base: HttpRoute()..avatarDecorationPresets(),
           hash: avatarDecorationHash!,
         );
+
+  CdnAsset get banner => CdnAsset(
+        client: manager.client,
+        base: HttpRoute()
+          ..guilds(id: manager.guildId.toString())
+          ..users(id: id.toString())
+          ..banners(),
+        hash: bannerHash!,
+      );
 }
 
 /// Flags that can be applied to a [Member].

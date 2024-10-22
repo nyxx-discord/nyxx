@@ -157,3 +157,10 @@ class ClientClosedError extends Error {
   @override
   String toString() => 'Client is closed';
 }
+
+class SoundboardSoundNotFoundException extends NyxxException {
+  /// The ID of the sound.
+  final Snowflake soundId;
+
+  SoundboardSoundNotFoundException(this.soundId) : super('Soundboard sound $soundId not found');
+}
