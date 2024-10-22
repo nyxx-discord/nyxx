@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/avatar_decoration_data.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -91,6 +92,12 @@ class Member extends PartialMember {
   /// The time until which this member is timed out.
   final DateTime? communicationDisabledUntil;
 
+  /// The member's guild avatar decoration data.
+  final AvatarDecorationData? avatarDecorationData;
+
+  /// The member's guild avatar decoration.
+  final String? avatarDecorationHash;
+
   /// {@macro member}
   /// @nodoc
   Member({
@@ -109,6 +116,8 @@ class Member extends PartialMember {
     required this.isPending,
     required this.permissions,
     required this.communicationDisabledUntil,
+    required this.avatarDecorationData,
+    required this.avatarDecorationHash,
   });
 
   /// The roles this member has.
@@ -124,6 +133,14 @@ class Member extends PartialMember {
             ..users(id: id.toString())
             ..avatars(),
           hash: avatarHash!,
+        );
+
+  CdnAsset? get avatarDecoration => avatarDecorationHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..avatarDecorationPresets(),
+          hash: avatarDecorationHash!,
         );
 
   CdnAsset get banner => CdnAsset(
