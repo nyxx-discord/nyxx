@@ -16,7 +16,7 @@ class ImageBuilder {
   ImageBuilder.gif(this.data) : format = 'gif';
 
   static Future<ImageBuilder> fromFile(File file, {String? format}) async {
-    format ??= p.extension(file.path);
+    format ??= p.extension(file.path).substring(1);
 
     const formats = {
       'png': 'png',

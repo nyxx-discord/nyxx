@@ -93,10 +93,10 @@ class MessageManager extends Manager<Message> {
         parseMessageInteractionMetadata,
       ),
       thread: maybeParse(raw['thread'], client.channels.parse) as Thread?,
-      components: maybeParseMany(raw['components'], parseMessageComponent),
+      components: snapshot.components,
       position: raw['position'] as int?,
       roleSubscriptionData: maybeParse(raw['role_subscription_data'], parseRoleSubscriptionData),
-      stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
+      stickers: snapshot.stickers,
       resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => client.interactions.parseResolvedData(raw, guildId: guildId, channelId: channelId)),
       poll: maybeParse(raw['poll'], parsePoll),
       call: maybeParse(raw['call'], parseMessageCall),
@@ -406,6 +406,8 @@ class MessageManager extends Manager<Message> {
       // https://github.com/discord/discord-api-docs/issues/7193
       roleMentionIds: maybeParseMany(raw['mention_roles'] as List?, Snowflake.parse) ?? [],
       type: MessageType(raw['type'] as int),
+      stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
+      components: maybeParseMany(raw['components'], parseMessageComponent),
     );
   }
 

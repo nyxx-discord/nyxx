@@ -13,6 +13,7 @@ import 'package:nyxx/src/models/gateway/events/invite.dart';
 import 'package:nyxx/src/models/gateway/events/message.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
+import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
@@ -261,4 +262,19 @@ mixin EventMixin implements Nyxx {
 
   /// A [Stream] of [MessagePollVoteRemoveEvent]s received by this client.
   Stream<MessagePollVoteRemoveEvent> get onMessagePollVoteRemove => onEvent.whereType<MessagePollVoteRemoveEvent>();
+
+  /// A [Stream] of [SoundboardSoundDeleteEvent]s received by this client.
+  Stream<SoundboardSoundDeleteEvent> get onSoundboardSoundDelete => onEvent.whereType<SoundboardSoundDeleteEvent>();
+
+  /// A [Stream] of [SoundboardSoundUpdateEvent]s received by this client.
+  Stream<SoundboardSoundUpdateEvent> get onSoundboardSoundUpdate => onEvent.whereType<SoundboardSoundUpdateEvent>();
+
+  /// A [Stream] of [SoundboardSoundCreateEvent]s received by this client.
+  Stream<SoundboardSoundCreateEvent> get onSoundboardSoundCreate => onEvent.whereType<SoundboardSoundCreateEvent>();
+
+  /// A [Stream] of [SoundboardSoundsUpdateEvent]s received by this client.
+  Stream<SoundboardSoundsUpdateEvent> get onSoundboardSoundsUpdate => onEvent.whereType<SoundboardSoundsUpdateEvent>();
+
+  /// A [Stream] of [VoiceChannelEffectSendEvent]s received by this client.
+  Stream<VoiceChannelEffectSendEvent> get onVoiceChannelEffectSend => onEvent.whereType<VoiceChannelEffectSendEvent>();
 }

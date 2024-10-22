@@ -1,3 +1,16 @@
+## 6.5.0
+__22.10.2024__
+
+- feature: Add new member flags. ([`#715`](https://github.com/nyxx-discord/nyxx/pull/715)) - ([`e10d0ffb`](https://github.com/nyxx-discord/nyxx/commit/e10d0ffb680e28ed74397875bb6a0a4b2fa411f7))
+- feature: Add new fields on message snapshot. ([`#716`](https://github.com/nyxx-discord/nyxx/pull/716)) - ([`57dc3282`](https://github.com/nyxx-discord/nyxx/commit/57dc32826081d60ec4fd905c939b15afe7dc7abe))
+- bug: Fix serialization of `before` parameter. ([`#717`](https://github.com/nyxx-discord/nyxx/pull/717)) - ([`091c376f`](https://github.com/nyxx-discord/nyxx/commit/091c376fe80456d18e046ea047072d0271bb4384))
+- feature: Recurrence rule can be set to null when updating. ([`#720`](https://github.com/nyxx-discord/nyxx/pull/720)) - ([`aaef80ac`](https://github.com/nyxx-discord/nyxx/commit/aaef80ac469331fa2da06eb776e2708813268b07))
+- feature: Add support for soundboard. ([`#708`](https://github.com/nyxx-discord/nyxx/pull/708)) - ([`d93aa122`](https://github.com/nyxx-discord/nyxx/commit/d93aa122965b6d9b11f51dac377ee3c13eefac97))
+- feature: Allow polls to be constructed in a interation response. ([`#719`](https://github.com/nyxx-discord/nyxx/pull/719)) - ([`db27c54d`](https://github.com/nyxx-discord/nyxx/commit/db27c54d24be1bb4010457041b7b4d09063e701d))
+- feature: Add banner property to member. ([`#676](https://github.com/nyxx-discord/nyxx/pull/676)) - ([`4041b556`](https://github.com/nyxx-discord/nyxx/commit/4041b5569853d8eac6f2a165a3cb03b736e02cef))
+- feature: Fix user avatar decoration, add member avatar decoration. ([`#718`](https://github.com/nyxx-discord/nyxx/pull/718)) - ([`b8e5ba7c`](https://github.com/nyxx-discord/nyxx/commit/b8e5ba7c89dbabd72821b7cd603bdab88cf0e751))
+- maintenance: Update integration_tests.yml. ([`527eed5a`](https://github.com/nyxx-discord/nyxx/commit/527eed5a90c83071f5346273426bd0fd20089a60))
+
 ## 6.4.3
 __08.10.2024__
 

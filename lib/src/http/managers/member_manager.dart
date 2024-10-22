@@ -23,12 +23,15 @@ class MemberManager extends Manager<Member> {
 
   @override
   Member parse(Map<String, Object?> raw, {Snowflake? userId}) {
+    final avatarDecorationData = maybeParse(raw['avatar_decoration_data'], client.users.parseAvatarDecorationData);
+
     return Member(
       id: maybeParse((raw['user'] as Map<String, Object?>?)?['id'], Snowflake.parse) ?? userId ?? Snowflake.zero,
       manager: this,
       user: maybeParse(raw['user'], client.users.parse),
       nick: raw['nick'] as String?,
       avatarHash: raw['avatar'] as String?,
+      bannerHash: raw['banner'] as String?,
       roleIds: parseMany(raw['roles'] as List, Snowflake.parse),
       joinedAt: DateTime.parse(raw['joined_at'] as String),
       premiumSince: maybeParse(raw['premium_since'], DateTime.parse),
@@ -38,6 +41,8 @@ class MemberManager extends Manager<Member> {
       isPending: raw['pending'] as bool? ?? false,
       permissions: maybeParse(raw['permissions'], (String raw) => Permissions(int.parse(raw))),
       communicationDisabledUntil: maybeParse(raw['communication_disabled_until'], DateTime.parse),
+      avatarDecorationData: avatarDecorationData,
+      avatarDecorationHash: avatarDecorationData?.asset,
     );
   }
 
