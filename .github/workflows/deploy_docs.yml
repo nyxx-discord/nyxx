@@ -3,7 +3,6 @@ name: Deploy dev docs to nyxx.l7ssha.xyz
 on:
   push:
     branches:
-      - dev
       - next
 
 jobs:
