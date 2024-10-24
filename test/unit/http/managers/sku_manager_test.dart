@@ -1,5 +1,4 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/http/managers/sku_manager.dart';
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';

@@ -1,9 +1,9 @@
-name: Publish nyxx to pub.dev
+name: Publish package to pub.dev
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - created
 
 jobs:
   nyxx_publish:
@@ -28,22 +28,3 @@ jobs:
           force: true
           suppressBuildRunner: true
           credentialJson: ${{ secrets.CREDENTIAL_JSON }}
-
-      - name: 'Commit release tag'
-        if: steps.publish.outputs.success
-        uses: hole19/git-tag-action@master
-        env:
-          TAG: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
-          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE_TOKEN }}
-
-      - name: 'Create Release'
-        if: steps.publish.outputs.success
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TAG_RELEASE_TOKEN }}
-        with:
-          tag_name: ${{steps.publish.outputs.package}}-${{steps.publish.outputs.localVersion}}
-          release_name: ${{steps.publish.outputs.localVersion}}
-          body: See CHANGELOG.md for the changes in this version.
-          draft: false
-          prerelease: false

@@ -315,6 +315,9 @@ extension RouteHelpers on HttpRoute {
   /// Adds the [`avatar-decorations`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
   void avatarDecorations({String? id}) => add(HttpRoutePart('avatar-decorations', [if (id != null) HttpRouteParam(id)]));
 
+  /// Adds the [`avatar-decoration-presets`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void avatarDecorationPresets() => add(HttpRoutePart('avatar-decoration-presets'));
+
   /// Adds the [`recipients`](https://discord.com/developers/docs/resources/channel#group-dm-add-recipient) part to this [HttpRoute].
   void recipients({String? id}) => add(HttpRoutePart('recipients', [if (id != null) HttpRouteParam(id)]));
 
@@ -332,4 +335,13 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`subscriptions`](https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions) part to this [HttpRoute].
   void subscriptions({String? id}) => add(HttpRoutePart('subscriptions', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`sounboard-default-sounds`](https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds) part to this [HttpRoute].
+  void soundboardDefaultSounds() => add(HttpRoutePart('soundboard-default-sounds'));
+
+  /// Adds the [`soundboard-sounds`](https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds) part to this [HttpRoute].
+  void soundboardSounds({String? id}) => add(HttpRoutePart('soundboard-sounds', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`send-soundboard-sound`](https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound) part to this [HttpRoute].
+  void sendSoundboardSound() => add(HttpRoutePart('send-soundboard-sound'));
 }

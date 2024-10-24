@@ -181,10 +181,10 @@ class Message extends PartialMessage implements MessageSnapshot {
   /// The thread that was started from this message if any, `null` otherwise.
   final Thread? thread;
 
-  /// A list of components in this message.
+  @override
   final List<MessageComponent>? components;
 
-  /// List of sticker attached to message
+  @override
   final List<StickerItem> stickers;
 
   /// A generally increasing integer (there may be gaps or duplicates) that represents the approximate position of this message in a thread.
@@ -492,6 +492,12 @@ class MessageSnapshot with ToStringHelper {
   /// A list of roles mentioned in the message.
   final List<Snowflake> roleMentionIds;
 
+  /// A list of Stickers attached to this message.
+  final List<StickerItem> stickers;
+
+  /// A list of components in this message.
+  final List<MessageComponent>? components;
+
   /// @nodoc
   MessageSnapshot({
     required this.timestamp,
@@ -503,6 +509,8 @@ class MessageSnapshot with ToStringHelper {
     required this.flags,
     required this.mentions,
     required this.roleMentionIds,
+    required this.stickers,
+    required this.components,
   });
 }
 

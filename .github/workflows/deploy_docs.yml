@@ -3,7 +3,6 @@ name: Deploy dev docs to nyxx.l7ssha.xyz
 on:
   push:
     branches:
-      - dev
       - next
 
 jobs:
@@ -39,9 +38,10 @@ jobs:
       - name: Deploy nyxx dev docs
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}
           ARGS: "-rltDzvO"
           SOURCE: "doc/api/"
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/${{ steps.extract_branch.outputs.branch }}/"
+        with:
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
-          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/${{ steps.extract_branch.outputs.branch }}/"
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_SSH_SERVER_KEY }}

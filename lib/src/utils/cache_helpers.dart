@@ -21,6 +21,7 @@ import 'package:nyxx/src/models/gateway/events/invite.dart';
 import 'package:nyxx/src/models/gateway/events/message.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
+import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
@@ -38,6 +39,7 @@ import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/models/sticker/global_sticker.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/sticker/sticker_pack.dart';
@@ -288,6 +290,15 @@ extension CacheUpdates on NyxxRest {
         EntitlementCreateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementUpdateEvent(:final entitlement) => updateCacheWith(entitlement),
         EntitlementDeleteEvent(:final entitlement) => entitlement.manager.cache.remove(entitlement.id),
+        SoundboardSound() => () {
+            updateCacheWith(entity.user);
+            entity.manager.cache[entity.id] = entity;
+          }(),
+        VoiceChannelEffectSendEvent() => null,
+        SoundboardSoundCreateEvent(:final sound) => updateCacheWith(sound),
+        SoundboardSoundUpdateEvent(:final sound) => updateCacheWith(sound),
+        SoundboardSoundDeleteEvent(:final sound?) => sound.manager.cache.remove(sound.id),
+        SoundboardSoundsUpdateEvent(:final sounds) => sounds.forEach(updateCacheWith),
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
 
