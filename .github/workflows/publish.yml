@@ -1,4 +1,4 @@
-name: Publish nyxx to pub.dev
+name: Publish package to pub.dev
 
 on:
   push:

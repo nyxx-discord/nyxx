@@ -1,12 +1,4 @@
 include: package:lints/recommended.yaml
 
-linter:
-  rules:
-    unrelated_type_equality_checks: false
-    implementation_imports: false
-
 analyzer:
   exclude: [build/**]
-  language:
-    strict-casts: true
-    strict-raw-types: true
