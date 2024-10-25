@@ -33,10 +33,9 @@ jobs:
       - name: Deploy nyxx dev docs
         uses: easingthemes/ssh-deploy@v5.1.0
         env:
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
           ARGS: "-rltDzvO"
           SOURCE: "doc/api/"
-          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/${{ env.BRANCH_NAME }}/"
+          TARGET: "${{ secrets.DEPLOY_REMOTE_TARGET }}/dartdocs/nyxx/${{ github.head_ref || github.ref_name }}/"
         with:
           REMOTE_HOST: ${{ secrets.DEPLOY_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.DEPLOY_REMOTE_USER }}
