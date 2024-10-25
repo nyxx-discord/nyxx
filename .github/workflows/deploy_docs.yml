@@ -14,10 +14,10 @@ jobs:
         uses: dart-lang/setup-dart@v1
 
       - name: Checkout
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v4
 
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.pub-cache
           key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.lock') }}
@@ -36,7 +36,7 @@ jobs:
         id: extract_branch
 
       - name: Deploy nyxx dev docs
-        uses: easingthemes/ssh-deploy@v2.1.5
+        uses: easingthemes/ssh-deploy@v5.1.0
         env:
           ARGS: "-rltDzvO"
           SOURCE: "doc/api/"
