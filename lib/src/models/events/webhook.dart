@@ -1,5 +1,5 @@
 import 'package:nyxx/src/models/channel/channel.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -15,11 +15,11 @@ class WebhooksUpdateEvent extends DispatchEvent {
 
   /// {@macro webhooks_update_event}
   /// @nodoc
-  WebhooksUpdateEvent({required super.gateway, required this.guildId, required this.channelId});
+  WebhooksUpdateEvent({required super.client, required this.guildId, required this.channelId});
 
   /// The guild the webhook was updated in.
-  PartialGuild get guild => gateway.client.guilds[guildId];
+  PartialGuild get guild => client.guilds[guildId];
 
   /// The channel the webhook was updated in.
-  PartialChannel get channel => gateway.client.channels[channelId];
+  PartialChannel get channel => client.channels[channelId];
 }

@@ -1,5 +1,5 @@
 import 'package:nyxx/src/models/channel/text_channel.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/presence.dart';
@@ -28,7 +28,7 @@ class PresenceUpdateEvent extends DispatchEvent {
   /// {@macro presence_update_event}
   /// @nodoc
   PresenceUpdateEvent({
-    required super.gateway,
+    required super.client,
     required this.user,
     required this.guildId,
     required this.status,
@@ -37,7 +37,7 @@ class PresenceUpdateEvent extends DispatchEvent {
   });
 
   /// The guild the presence was updated in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 }
 
 /// {@template typing_start_event}
@@ -62,7 +62,7 @@ class TypingStartEvent extends DispatchEvent {
   /// {@macro typing_start_event}
   /// @nodoc
   TypingStartEvent({
-    required super.gateway,
+    required super.client,
     required this.channelId,
     required this.guildId,
     required this.userId,
@@ -71,13 +71,13 @@ class TypingStartEvent extends DispatchEvent {
   });
 
   /// The guild the user started typing in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the user started typing in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The user that started typing.
-  PartialUser get user => gateway.client.users[userId];
+  PartialUser get user => client.users[userId];
 }
 
 /// {@template user_update_event}
@@ -92,5 +92,5 @@ class UserUpdateEvent extends DispatchEvent {
 
   /// {@macro user_update_event}
   /// @nodoc
-  UserUpdateEvent({required super.gateway, required this.oldUser, required this.user});
+  UserUpdateEvent({required super.client, required this.oldUser, required this.user});
 }

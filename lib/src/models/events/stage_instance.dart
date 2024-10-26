@@ -1,5 +1,5 @@
 import 'package:nyxx/src/models/channel/stage_instance.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 
 /// {@template stage_instance_create_event}
 /// Emitted when a stage instance is created.
@@ -10,7 +10,7 @@ class StageInstanceCreateEvent extends DispatchEvent {
 
   /// {@macro stage_instance_create_event}
   /// @nodoc
-  StageInstanceCreateEvent({required super.gateway, required this.instance});
+  StageInstanceCreateEvent({required super.client, required this.instance});
 }
 
 /// {@template stage_instance_update_event}
@@ -25,7 +25,7 @@ class StageInstanceUpdateEvent extends DispatchEvent {
 
   /// {@macro stage_instance_update_event}
   /// @nodoc
-  StageInstanceUpdateEvent({required super.gateway, required this.oldInstance, required this.instance});
+  StageInstanceUpdateEvent({required super.client, required this.oldInstance, required this.instance});
 }
 
 /// {@template stage_instance_delete_event}
@@ -37,5 +37,5 @@ class StageInstanceDeleteEvent extends DispatchEvent {
 
   /// {@macro stage_instance_delete_event}
   /// @nodoc
-  StageInstanceDeleteEvent({required super.gateway, required this.instance});
+  StageInstanceDeleteEvent({required super.client, required this.instance});
 }

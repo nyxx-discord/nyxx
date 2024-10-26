@@ -243,22 +243,13 @@ export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags;
 export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
-export 'src/models/gateway/event.dart'
-    show
-        DispatchEvent,
-        GatewayEvent,
-        HeartbeatAckEvent,
-        HeartbeatEvent,
-        HelloEvent,
-        InvalidSessionEvent,
-        RawDispatchEvent,
-        ReconnectEvent,
-        UnknownDispatchEvent;
+export 'src/models/events/event.dart'
+    show DispatchEvent, Event, HeartbeatAckEvent, HeartbeatEvent, HelloEvent, InvalidSessionEvent, RawDispatchEvent, ReconnectEvent, UnknownDispatchEvent;
 export 'src/models/gateway/opcode.dart' show Opcode;
-export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
-export 'src/models/gateway/events/auto_moderation.dart'
+export 'src/models/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
+export 'src/models/events/auto_moderation.dart'
     show AutoModerationActionExecutionEvent, AutoModerationRuleCreateEvent, AutoModerationRuleDeleteEvent, AutoModerationRuleUpdateEvent;
-export 'src/models/gateway/events/channel.dart'
+export 'src/models/events/channel.dart'
     show
         ChannelCreateEvent,
         ChannelDeleteEvent,
@@ -270,7 +261,7 @@ export 'src/models/gateway/events/channel.dart'
         ThreadMemberUpdateEvent,
         ThreadMembersUpdateEvent,
         ThreadUpdateEvent;
-export 'src/models/gateway/events/guild.dart'
+export 'src/models/events/guild.dart'
     show
         GuildBanAddEvent,
         GuildBanRemoveEvent,
@@ -294,10 +285,10 @@ export 'src/models/gateway/events/guild.dart'
         GuildStickersUpdateEvent,
         GuildUpdateEvent,
         UnavailableGuildCreateEvent;
-export 'src/models/gateway/events/integration.dart' show IntegrationCreateEvent, IntegrationDeleteEvent, IntegrationUpdateEvent;
-export 'src/models/gateway/events/interaction.dart' show InteractionCreateEvent;
-export 'src/models/gateway/events/invite.dart' show InviteCreateEvent, InviteDeleteEvent;
-export 'src/models/gateway/events/message.dart'
+export 'src/models/events/integration.dart' show IntegrationCreateEvent, IntegrationDeleteEvent, IntegrationUpdateEvent;
+export 'src/models/events/interaction.dart' show InteractionCreateEvent;
+export 'src/models/events/invite.dart' show InviteCreateEvent, InviteDeleteEvent;
+export 'src/models/events/message.dart'
     show
         MessageBulkDeleteEvent,
         MessageCreateEvent,
@@ -309,12 +300,12 @@ export 'src/models/gateway/events/message.dart'
         MessageUpdateEvent,
         MessagePollVoteAddEvent,
         MessagePollVoteRemoveEvent;
-export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
-export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
-export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
-export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
-export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
-export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
+export 'src/models/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
+export 'src/models/events/ready.dart' show ReadyEvent, ResumedEvent;
+export 'src/models/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
+export 'src/models/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
+export 'src/models/events/webhook.dart' show WebhooksUpdateEvent;
+export 'src/models/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;

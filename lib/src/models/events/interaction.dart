@@ -1,4 +1,4 @@
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/interaction.dart';
 
 /// {@template interaction_create_event}
@@ -10,5 +10,5 @@ class InteractionCreateEvent<T extends Interaction<dynamic>> extends DispatchEve
 
   /// {@macro interaction_create_event}
   /// @nodoc
-  InteractionCreateEvent({required super.gateway, required this.interaction});
+  InteractionCreateEvent({required super.client, required this.interaction});
 }

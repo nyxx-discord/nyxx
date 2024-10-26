@@ -1,6 +1,6 @@
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/message/message.dart';
@@ -25,10 +25,10 @@ class MessageCreateEvent extends DispatchEvent {
 
   /// {@macro message_create_event}
   /// @nodoc
-  MessageCreateEvent({required super.gateway, required this.guildId, required this.member, required this.mentions, required this.message});
+  MessageCreateEvent({required super.client, required this.guildId, required this.member, required this.mentions, required this.message});
 
   /// The guild the message was sent in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 }
 
 /// {@template message_update_event}
@@ -53,7 +53,7 @@ class MessageUpdateEvent extends DispatchEvent {
   /// {@macro message_update_event}
   /// @nodoc
   MessageUpdateEvent({
-    required super.gateway,
+    required super.client,
     required this.guildId,
     required this.member,
     required this.mentions,
@@ -62,7 +62,7 @@ class MessageUpdateEvent extends DispatchEvent {
   });
 
   /// The guild the message was updated in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 }
 
 /// {@template message_delete_event}
@@ -83,13 +83,13 @@ class MessageDeleteEvent extends DispatchEvent {
 
   /// {@macro message_delete_event}
   /// @nodoc
-  MessageDeleteEvent({required super.gateway, required this.id, required this.channelId, required this.guildId, required this.deletedMessage});
+  MessageDeleteEvent({required super.client, required this.id, required this.channelId, required this.guildId, required this.deletedMessage});
 
   /// The guild the message was deleted in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the message was deleted in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 }
 
 /// {@template message_bulk_delete_event}
@@ -110,13 +110,13 @@ class MessageBulkDeleteEvent extends DispatchEvent {
 
   /// {@macro message_bulk_delete_event}
   /// @nodoc
-  MessageBulkDeleteEvent({required super.gateway, required this.ids, required this.deletedMessages, required this.channelId, required this.guildId});
+  MessageBulkDeleteEvent({required super.client, required this.ids, required this.deletedMessages, required this.channelId, required this.guildId});
 
   /// The guild the messages were deleted in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the messages were deleted in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 }
 
 /// {@template message_reaction_add_event}
@@ -147,7 +147,7 @@ class MessageReactionAddEvent extends DispatchEvent {
   /// {@macro message_reaction_add_event}
   /// @nodoc
   MessageReactionAddEvent({
-    required super.gateway,
+    required super.client,
     required this.userId,
     required this.channelId,
     required this.messageId,
@@ -158,19 +158,19 @@ class MessageReactionAddEvent extends DispatchEvent {
   });
 
   /// The guild the message is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the message is in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The user that added the reaction.
-  PartialUser get user => gateway.client.users[userId];
+  PartialUser get user => client.users[userId];
 
   /// The message the reaction was added to.
   PartialMessage get message => channel.messages[messageId];
 
   /// The user that sent the message the reaction was added to
-  PartialUser? get messageAuthor => messageAuthorId == null ? null : gateway.client.users[messageAuthorId!];
+  PartialUser? get messageAuthor => messageAuthorId == null ? null : client.users[messageAuthorId!];
 }
 
 /// {@template message_reaction_remove_event}
@@ -195,7 +195,7 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   /// {@macro message_reaction_remove_event}
   /// @nodoc
   MessageReactionRemoveEvent({
-    required super.gateway,
+    required super.client,
     required this.userId,
     required this.channelId,
     required this.messageId,
@@ -204,13 +204,13 @@ class MessageReactionRemoveEvent extends DispatchEvent {
   });
 
   /// The guild the message is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the message is in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The user that removed the reaction.
-  PartialUser get user => gateway.client.users[userId];
+  PartialUser get user => client.users[userId];
 
   /// The message the reaction was removed from.
   PartialMessage get message => channel.messages[messageId];
@@ -235,17 +235,17 @@ class MessageReactionRemoveAllEvent extends DispatchEvent {
   /// {@macro message_reaction_remove_all_event}
   /// @nodoc
   MessageReactionRemoveAllEvent({
-    required super.gateway,
+    required super.client,
     required this.channelId,
     required this.messageId,
     required this.guildId,
   });
 
   /// The guild the message is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the message is in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The message the reactions were removed from.
   PartialMessage get message => channel.messages[messageId];
@@ -269,7 +269,7 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
   /// {@macro message_reaction_remove_emoji_event}
   /// @nodoc
   MessageReactionRemoveEmojiEvent({
-    required super.gateway,
+    required super.client,
     required this.channelId,
     required this.messageId,
     required this.guildId,
@@ -277,10 +277,10 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
   });
 
   /// The guild the message is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the message is in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The message the reactions were removed from.
   PartialMessage get message => channel.messages[messageId];
@@ -308,7 +308,7 @@ class MessagePollVoteAddEvent extends DispatchEvent {
   /// {@macro message_poll_vote_add_event}
   /// @nodoc
   MessagePollVoteAddEvent({
-    required super.gateway,
+    required super.client,
     required this.userId,
     required this.channelId,
     required this.messageId,
@@ -317,16 +317,16 @@ class MessagePollVoteAddEvent extends DispatchEvent {
   });
 
   /// The user that voted on a poll.
-  PartialUser get user => gateway.client.users[userId];
+  PartialUser get user => client.users[userId];
 
   /// The channel the message is in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The message where vote added on a poll.
   PartialMessage get message => channel.messages[messageId];
 
   /// The guild the message is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The member that voted on a poll.
   PartialMember? get member => guild?.members[userId];
@@ -354,7 +354,7 @@ class MessagePollVoteRemoveEvent extends DispatchEvent {
   /// {@macro message_poll_vote_remove_event}
   /// @nodoc
   MessagePollVoteRemoveEvent({
-    required super.gateway,
+    required super.client,
     required this.userId,
     required this.channelId,
     required this.messageId,
@@ -363,16 +363,16 @@ class MessagePollVoteRemoveEvent extends DispatchEvent {
   });
 
   /// The user that removed their vote from a poll.
-  PartialUser get user => gateway.client.users[userId];
+  PartialUser get user => client.users[userId];
 
   /// The channel the message is in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 
   /// The message where vote removed from a poll.
   PartialMessage get message => channel.messages[messageId];
 
   /// The guild the message is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The member that removed their vote from a poll.
   PartialMember? get member => guild?.members[userId];

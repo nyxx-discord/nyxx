@@ -188,8 +188,4 @@ class ApplicationManager {
     final response = await client.httpHandler.executeSafe(request);
     return parse(response.jsonBody as Map<String, Object?>);
   }
-
-  /// List this application's SKUs.
-  @Deprecated('Use SkuManager.list')
-  Future<List<Sku>> listSkus(Snowflake id) => client.applications[id].skus.list();
 }

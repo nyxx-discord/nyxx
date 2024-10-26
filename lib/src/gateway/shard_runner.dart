@@ -8,7 +8,7 @@ import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
 import 'package:nyxx/src/gateway/message.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
 
 /// An internal class that contains the logic for running a shard.
@@ -313,7 +313,7 @@ class ShardRunner {
 }
 
 /// Handles parsing/encoding & compression/decompression of events on a [WebSocket] connection to the Gateway.
-class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
+class ShardConnection extends Stream<Event> implements StreamSink<Send> {
   /// The number of messages that can be sent per [rateLimitDuration].
   // https://discord.com/developers/docs/topics/gateway#rate-limiting
   static const rateLimitCount = 120;
@@ -325,7 +325,7 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   final WebSocket websocket;
 
   /// A stream of parsed events received from the Gateway.
-  final Stream<GatewayEvent> events;
+  final Stream<Event> events;
 
   /// The [ShardRunner] that created this connection.
   final ShardRunner runner;
@@ -385,8 +385,8 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   }
 
   @override
-  StreamSubscription<GatewayEvent> listen(
-    void Function(GatewayEvent event)? onData, {
+  StreamSubscription<Event> listen(
+    void Function(Event event)? onData, {
     Function? onError,
     void Function()? onDone,
     bool? cancelOnError,

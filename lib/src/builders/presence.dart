@@ -1,5 +1,5 @@
 import 'package:nyxx/src/builders/builder.dart';
-import 'package:nyxx/src/models/gateway/events/presence.dart';
+import 'package:nyxx/src/models/events/presence.dart';
 import 'package:nyxx/src/models/presence.dart';
 
 class PresenceBuilder extends CreateBuilder<PresenceUpdateEvent> {

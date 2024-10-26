@@ -1,5 +1,5 @@
 import 'package:nyxx/src/models/application.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
@@ -34,7 +34,7 @@ class ReadyEvent extends DispatchEvent {
   /// {@macro ready_event}
   /// @nodoc
   ReadyEvent({
-    required super.gateway,
+    required super.client,
     required this.version,
     required this.user,
     required this.guilds,
@@ -52,5 +52,5 @@ class ReadyEvent extends DispatchEvent {
 class ResumedEvent extends DispatchEvent {
   /// {@macro resumed_event}
   /// @nodoc
-  ResumedEvent({required super.gateway});
+  ResumedEvent({required super.client});
 }

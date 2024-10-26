@@ -44,9 +44,6 @@ class PartialApplication with ToStringHelper {
 
   /// Update and fetch this application's role connection metadata.
   Future<List<ApplicationRoleConnectionMetadata>> updateRoleConnectionMetadata() => manager.updateApplicationRoleConnectionMetadata(id);
-
-  /// List this application's SKUs.
-  Future<List<Sku>> listSkus() => manager.listSkus(id);
 }
 
 class ApplicationIntegrationTypeConfiguration {

@@ -1,6 +1,6 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -19,7 +19,7 @@ class VoiceStateUpdateEvent extends DispatchEvent {
 
   /// {@macro voice_state_update_event}
   /// @nodoc
-  VoiceStateUpdateEvent({required super.gateway, required this.oldState, required this.state});
+  VoiceStateUpdateEvent({required super.client, required this.oldState, required this.state});
 }
 
 /// {@template voice_server_update_event}
@@ -37,10 +37,10 @@ class VoiceServerUpdateEvent extends DispatchEvent {
 
   /// {@macro voice_server_update_event}
   /// @nodoc
-  VoiceServerUpdateEvent({required super.gateway, required this.token, required this.guildId, required this.endpoint});
+  VoiceServerUpdateEvent({required super.client, required this.token, required this.guildId, required this.endpoint});
 
   /// The guild.
-  PartialGuild get guild => gateway.client.guilds[guildId];
+  PartialGuild get guild => client.guilds[guildId];
 }
 
 /// {@template voice_channel_effect_send_event}
@@ -74,7 +74,7 @@ class VoiceChannelEffectSendEvent extends DispatchEvent {
   /// {@macro voice_channel_effect_send_event}
   /// @nodoc
   VoiceChannelEffectSendEvent({
-    required super.gateway,
+    required super.client,
     required this.channelId,
     required this.guildId,
     required this.userId,
@@ -86,13 +86,13 @@ class VoiceChannelEffectSendEvent extends DispatchEvent {
   });
 
   /// The channel this effect was sent in.
-  PartialChannel get channel => gateway.client.channels[channelId];
+  PartialChannel get channel => client.channels[channelId];
 
   /// The guild this effect was sent in.
-  PartialGuild get guild => gateway.client.guilds[guildId];
+  PartialGuild get guild => client.guilds[guildId];
 
   /// The user who sent this effect.
-  PartialUser get user => gateway.client.users[userId];
+  PartialUser get user => client.users[userId];
 }
 
 final class AnimationType extends EnumLike<int, AnimationType> {

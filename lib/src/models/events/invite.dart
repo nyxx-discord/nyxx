@@ -1,5 +1,5 @@
 import 'package:nyxx/src/models/channel/channel.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -13,7 +13,7 @@ class InviteCreateEvent extends DispatchEvent {
 
   /// {@macro invite_create_event}
   /// @nodoc
-  InviteCreateEvent({required super.gateway, required this.invite});
+  InviteCreateEvent({required super.client, required this.invite});
 }
 
 /// {@template invite_delete_event}
@@ -31,11 +31,11 @@ class InviteDeleteEvent extends DispatchEvent {
 
   /// {@macro invite_delete_event}
   /// @nodoc
-  InviteDeleteEvent({required super.gateway, required this.channelId, required this.guildId, required this.code});
+  InviteDeleteEvent({required super.client, required this.channelId, required this.guildId, required this.code});
 
   /// The channel the invite was for.
-  PartialChannel get channel => gateway.client.channels[channelId];
+  PartialChannel get channel => client.channels[channelId];
 
   /// The guild the invite was for.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 }

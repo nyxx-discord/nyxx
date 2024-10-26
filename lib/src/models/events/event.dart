@@ -1,23 +1,22 @@
-import 'package:nyxx/src/gateway/gateway.dart';
-import 'package:nyxx/src/models/gateway/opcode.dart';
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template gateway_event}
 /// The base class for all events received from the Gateway.
 /// {@endtemplate}
-abstract class GatewayEvent with ToStringHelper {
+abstract class Event with ToStringHelper {
   /// The opcode of this event.
   final Opcode opcode;
 
   /// {@macro gateway_event}
   /// @nodoc
-  GatewayEvent({required this.opcode});
+  Event({required this.opcode});
 }
 
 /// {@template raw_dispatch_event}
 /// An unparsed dispatch event.
 /// {@endtemplate}
-class RawDispatchEvent extends GatewayEvent {
+class RawDispatchEvent extends Event {
   /// The sequence number for this event.
   final int seq;
 
@@ -35,13 +34,13 @@ class RawDispatchEvent extends GatewayEvent {
 /// {@template dispatch_event}
 /// The base class for all events sent by dispatch.
 /// {@endtemplate}
-abstract class DispatchEvent extends GatewayEvent {
-  /// The gateway that handled this event.
-  final Gateway gateway;
+abstract class DispatchEvent extends Event {
+  /// The reference to client
+  final NyxxRest client;
 
   /// {@macro dispatch_event}
   /// @nodoc
-  DispatchEvent({required this.gateway}) : super(opcode: Opcode.dispatch);
+  DispatchEvent({required this.client}) : super(opcode: Opcode.dispatch);
 }
 
 /// {@template unknown_dispatch_event}
@@ -55,13 +54,13 @@ class UnknownDispatchEvent extends DispatchEvent {
 
   /// {@macro unknown_dispatch_event}
   /// @nodoc
-  UnknownDispatchEvent({required super.gateway, required this.raw});
+  UnknownDispatchEvent({required super.client, required this.raw});
 }
 
 /// {@template heartbeat_event}
 /// Emitted when the client receives a request to heartbeat.
 /// {@endtemplate}
-class HeartbeatEvent extends GatewayEvent {
+class HeartbeatEvent extends Event {
   /// {@macro heartbeat_event}
   HeartbeatEvent() : super(opcode: Opcode.heartbeat);
 }
@@ -69,7 +68,7 @@ class HeartbeatEvent extends GatewayEvent {
 /// {@template reconnect_event}
 /// Emitted when the client receives a request to reconnect.
 /// {@endtemplate}
-class ReconnectEvent extends GatewayEvent {
+class ReconnectEvent extends Event {
   /// {@macro reconnect_event}
   ReconnectEvent() : super(opcode: Opcode.reconnect);
 }
@@ -77,7 +76,7 @@ class ReconnectEvent extends GatewayEvent {
 /// {@template invalid_session_event}
 /// Emitted when the client's session is invalid.
 /// {@endtemplate}
-class InvalidSessionEvent extends GatewayEvent {
+class InvalidSessionEvent extends Event {
   /// Whether the client can resume the session on a new connection.
   final bool isResumable;
 
@@ -89,7 +88,7 @@ class InvalidSessionEvent extends GatewayEvent {
 /// {@template hello_event}
 /// Emitted when the client first establishes a connection to the gateway.
 /// {@endtemplate}
-class HelloEvent extends GatewayEvent {
+class HelloEvent extends Event {
   /// The interval at which the client should heartbeat.
   final Duration heartbeatInterval;
 
@@ -101,7 +100,7 @@ class HelloEvent extends GatewayEvent {
 /// {@template heartbeat_ack_event}
 /// Emitted when the server acknowledges the client's heartbeat.
 /// {@endtemplate}
-class HeartbeatAckEvent extends GatewayEvent {
+class HeartbeatAckEvent extends Event {
   /// The time taken for this event to be sent in response to the last [Opcode.heartbeat] message.
   final Duration latency;
 

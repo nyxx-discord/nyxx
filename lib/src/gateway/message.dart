@@ -1,5 +1,5 @@
 import 'package:nyxx/src/api_options.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -34,7 +34,7 @@ abstract class ShardMessage with ToStringHelper {}
 /// A shard message sent when an event is received on the Gateway.
 class EventReceived extends ShardMessage {
   /// The event that was received.
-  final GatewayEvent event;
+  final Event event;
 
   /// Create a new [EventReceived].
   EventReceived({required this.event});

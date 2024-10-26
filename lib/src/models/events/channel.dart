@@ -1,7 +1,7 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
-import 'package:nyxx/src/models/gateway/event.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
@@ -14,7 +14,7 @@ class ChannelCreateEvent extends DispatchEvent {
 
   /// {@macro channel_create_event}
   /// @nodoc
-  ChannelCreateEvent({required super.gateway, required this.channel});
+  ChannelCreateEvent({required super.client, required this.channel});
 }
 
 /// {@template channel_update_event}
@@ -29,7 +29,7 @@ class ChannelUpdateEvent extends DispatchEvent {
 
   /// {@macro channel_update_event}
   /// @nodoc
-  ChannelUpdateEvent({required super.gateway, required this.oldChannel, required this.channel});
+  ChannelUpdateEvent({required super.client, required this.oldChannel, required this.channel});
 }
 
 /// {@template channel_delete_event}
@@ -41,7 +41,7 @@ class ChannelDeleteEvent extends DispatchEvent {
 
   /// {@macro channel_delete_event}
   /// @nodoc
-  ChannelDeleteEvent({required super.gateway, required this.channel});
+  ChannelDeleteEvent({required super.client, required this.channel});
 }
 
 /// {@template thread_create_event}
@@ -53,7 +53,7 @@ class ThreadCreateEvent extends DispatchEvent {
 
   /// {@macro thread_create_event}
   /// @nodoc
-  ThreadCreateEvent({required super.gateway, required this.thread});
+  ThreadCreateEvent({required super.client, required this.thread});
 }
 
 /// {@template thread_update_event}
@@ -68,7 +68,7 @@ class ThreadUpdateEvent extends DispatchEvent {
 
   /// {@macro thread_update_event}
   /// @nodoc
-  ThreadUpdateEvent({required super.gateway, required this.oldThread, required this.thread});
+  ThreadUpdateEvent({required super.client, required this.oldThread, required this.thread});
 }
 
 /// {@template thread_delete_event}
@@ -83,7 +83,7 @@ class ThreadDeleteEvent extends DispatchEvent {
 
   /// {@macro thread_delete_event}
   /// @nodoc
-  ThreadDeleteEvent({required super.gateway, required this.thread, required this.deletedThread});
+  ThreadDeleteEvent({required super.client, required this.thread, required this.deletedThread});
 }
 
 /// {@template thread_list_sync_event}
@@ -105,7 +105,7 @@ class ThreadListSyncEvent extends DispatchEvent {
   /// {@macro thread_list_sync_event}
   /// @nodoc
   ThreadListSyncEvent({
-    required super.gateway,
+    required super.client,
     required this.guildId,
     required this.channelIds,
     required this.threads,
@@ -113,10 +113,10 @@ class ThreadListSyncEvent extends DispatchEvent {
   });
 
   /// The guild that the threads are syncing for.
-  PartialGuild get guild => gateway.client.guilds[guildId];
+  PartialGuild get guild => client.guilds[guildId];
 
   /// The channels the threads are syncing for, or `null` if the entire guild is syncing.
-  List<PartialChannel>? get channels => channelIds?.map((e) => gateway.client.channels[e]).toList();
+  List<PartialChannel>? get channels => channelIds?.map((e) => client.channels[e]).toList();
 }
 
 /// {@template thread_member_update_event}
@@ -131,10 +131,10 @@ class ThreadMemberUpdateEvent extends DispatchEvent {
 
   /// {@macro thread_member_update_event}
   /// @nodoc
-  ThreadMemberUpdateEvent({required super.gateway, required this.member, required this.guildId});
+  ThreadMemberUpdateEvent({required super.client, required this.member, required this.guildId});
 
   /// The guild in which the member was updated.
-  PartialGuild get guild => gateway.client.guilds[guildId];
+  PartialGuild get guild => client.guilds[guildId];
 }
 
 /// {@template thread_members_update_event}
@@ -159,7 +159,7 @@ class ThreadMembersUpdateEvent extends DispatchEvent {
   /// {@macro thread_members_update_event}
   /// @nodoc
   ThreadMembersUpdateEvent({
-    required super.gateway,
+    required super.client,
     required this.id,
     required this.guildId,
     required this.memberCount,
@@ -168,10 +168,10 @@ class ThreadMembersUpdateEvent extends DispatchEvent {
   });
 
   /// The thread the members were updated in.
-  PartialChannel get thread => gateway.client.channels[id];
+  PartialChannel get thread => client.channels[id];
 
   /// The guild the thread is in.
-  PartialGuild get guild => gateway.client.guilds[guildId];
+  PartialGuild get guild => client.guilds[guildId];
 }
 
 /// {@template channel_pins_update_event}
@@ -189,11 +189,11 @@ class ChannelPinsUpdateEvent extends DispatchEvent {
 
   /// {@macro channel_pins_update_event}
   /// @nodoc
-  ChannelPinsUpdateEvent({required super.gateway, required this.guildId, required this.channelId, required this.lastPinTimestamp});
+  ChannelPinsUpdateEvent({required super.client, required this.guildId, required this.channelId, required this.lastPinTimestamp});
 
   /// The guild the channel is in.
-  PartialGuild? get guild => guildId == null ? null : gateway.client.guilds[guildId!];
+  PartialGuild? get guild => guildId == null ? null : client.guilds[guildId!];
 
   /// The channel the pins were updated in.
-  PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
+  PartialTextChannel get channel => client.channels[channelId] as PartialTextChannel;
 }

@@ -131,7 +131,7 @@ void main() {
       ParsingTest<GatewayManager, Activity, Map<String, Object?>>(
         name: 'parseActivity',
         source: sampleActivity,
-        parse: (manager) => manager.parseActivity,
+        parse: (manager) => (Map<String, Object?> raw) => manager.parseActivity(raw, client),
         check: checkActivity,
       ).runWithManager(GatewayManager(client));
     });
