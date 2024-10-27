@@ -10,6 +10,7 @@ import 'package:nyxx/src/gateway/shard.dart';
 import 'package:nyxx/src/http/handler.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/response.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:runtime_type/runtime_type.dart';
 
 /// Provides access to the connection and closing process for implementing plugins.
@@ -24,6 +25,8 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
   RuntimeType<ClientType> get clientType => RuntimeType<ClientType>();
 
   late final Expando<NyxxPluginState<ClientType, NyxxPlugin<ClientType>>> _states = Expando('$name plugin states');
+
+  Stream<DispatchEvent> provideEventProvider(ClientType client) => Stream.empty();
 
   /// Perform the connection operation.
   ///

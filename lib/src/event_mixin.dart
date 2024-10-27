@@ -22,9 +22,6 @@ import 'package:nyxx/src/utils/iterable_extension.dart';
 
 /// An internal mixin to add event streams to a NyxxGateway client.
 mixin EventMixin implements Nyxx {
-  /// A [Stream] of gateway dispatch events received by this client.
-  Stream<DispatchEvent> get onEvent => (this as NyxxGateway).gateway.events;
-
   /// A [Stream] of [DispatchEvent]s which are unknown to the current version of nyxx.
   Stream<UnknownDispatchEvent> get onUnknownEvent => onEvent.whereType<UnknownDispatchEvent>();
 

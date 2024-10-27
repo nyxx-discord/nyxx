@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/presence.dart';
@@ -15,6 +16,7 @@ import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/manager_mixin.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/models/application.dart';
+import 'package:nyxx/src/models/events/event.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
@@ -79,6 +81,9 @@ abstract class Nyxx {
 
   Completer<void> get _initializedCompleter;
 
+  /// A [Stream] of gateway dispatch events received by this client.
+  Stream<DispatchEvent> get onEvent;
+
   /// Create an instance of [NyxxRest] that can perform requests to the HTTP API and is
   /// authenticated with a bot token.
   static Future<NyxxRest> connectRest(String token, {RestClientOptions options = const RestClientOptions()}) =>
@@ -96,7 +101,8 @@ abstract class Nyxx {
 
       return client
         .._application = await client.applications.fetchCurrentApplication()
-        .._user = await client.users.fetchCurrentUser();
+        .._user = await client.users.fetchCurrentUser()
+        .._innerOnEvent = StreamGroup.mergeBroadcast(clientOptions.plugins.map((plugin) => plugin.provideEventProvider(client)));
     }, clientOptions.plugins);
   }
 
@@ -122,7 +128,8 @@ abstract class Nyxx {
 
       return client
         .._application = information.application
-        .._user = information.user ?? PartialUser(id: Snowflake.zero, manager: client.users);
+        .._user = information.user ?? PartialUser(id: Snowflake.zero, manager: client.users)
+        .._innerOnEvent = StreamGroup.mergeBroadcast(clientOptions.plugins.map((plugin) => plugin.provideEventProvider(client)));
     }, clientOptions.plugins);
   }
 
@@ -156,7 +163,9 @@ abstract class Nyxx {
       final gatewayManager = GatewayManager(client);
 
       final gatewayBot = await gatewayManager.fetchGatewayBot();
-      return client..gateway = await Gateway.connect(client, gatewayBot);
+      return client
+        ..gateway = await Gateway.connect(client, gatewayBot)
+        .._innerOnEvent = StreamGroup.mergeBroadcast([client.gateway.events, ...clientOptions.plugins.map((plugin) => plugin.provideEventProvider(client))]);
     }, clientOptions.plugins);
   }
 
@@ -166,8 +175,14 @@ abstract class Nyxx {
   Future<void> close();
 }
 
+mixin CommonEventProvider implements Nyxx {
+  @override
+  Stream<DispatchEvent> get onEvent => _innerOnEvent;
+  late final Stream<DispatchEvent> _innerOnEvent;
+}
+
 /// A client that can make requests to the HTTP API and is authenticated with a bot token.
-class NyxxRest with ManagerMixin implements Nyxx {
+class NyxxRest with ManagerMixin, CommonEventProvider implements Nyxx {
   @override
   final RestApiOptions apiOptions;
 
@@ -221,7 +236,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   }
 }
 
-class NyxxOAuth2 with ManagerMixin implements NyxxRest {
+class NyxxOAuth2 with ManagerMixin, CommonEventProvider implements NyxxRest {
   @override
   final OAuth2ApiOptions apiOptions;
 
@@ -272,7 +287,7 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
 }
 
 /// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
-class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
+class NyxxGateway with ManagerMixin, EventMixin, CommonEventProvider implements NyxxRest {
   @override
   final GatewayApiOptions apiOptions;
 
