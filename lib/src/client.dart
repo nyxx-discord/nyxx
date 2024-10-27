@@ -182,7 +182,7 @@ mixin CommonEventProvider implements Nyxx {
 }
 
 /// A client that can make requests to the HTTP API and is authenticated with a bot token.
-class NyxxRest with ManagerMixin, CommonEventProvider implements Nyxx {
+class NyxxRest with ManagerMixin, EventMixin, CommonEventProvider implements Nyxx {
   @override
   final RestApiOptions apiOptions;
 
@@ -236,7 +236,7 @@ class NyxxRest with ManagerMixin, CommonEventProvider implements Nyxx {
   }
 }
 
-class NyxxOAuth2 with ManagerMixin, CommonEventProvider implements NyxxRest {
+class NyxxOAuth2 with ManagerMixin, EventMixin, CommonEventProvider implements NyxxRest {
   @override
   final OAuth2ApiOptions apiOptions;
 
