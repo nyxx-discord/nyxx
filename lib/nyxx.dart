@@ -16,7 +16,8 @@ export 'src/errors.dart'
         AlreadyRespondedError,
         PluginError,
         ClientClosedError,
-        SkuNotFoundException;
+        SkuNotFoundException,
+        SoundboardSoundNotFoundException;
 
 export 'src/builders/builder.dart' show Builder, CreateBuilder, UpdateBuilder;
 export 'src/builders/image.dart' show ImageBuilder;
@@ -73,8 +74,8 @@ export 'src/builders/application_command.dart'
 export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
 export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
 export 'src/builders/application.dart' show ApplicationUpdateBuilder, ApplicationIntegrationTypeConfigurationBuilder;
-export 'src/builders/sound.dart' show SoundBuilder;
 export 'src/builders/soundboard.dart' show SoundboardSoundBuilder, SoundboardSoundUpdateBuilder;
+export 'src/builders/sound.dart' show SoundBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig, CacheManager;
 
@@ -108,10 +109,10 @@ export 'src/http/managers/interaction_manager.dart' show InteractionManager;
 export 'src/http/managers/entitlement_manager.dart' show EntitlementManager;
 export 'src/http/managers/sku_manager.dart' show SkuManager;
 export 'src/http/managers/subscription_manager.dart' show SubscriptionManager;
+export 'src/http/managers/soundboard_manager.dart' show SoundboardManager, GuildSoundboardManager, GlobalSoundboardManager;
 
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/event_parser.dart' show EventParser;
-export 'src/gateway/shard_runner.dart' show ShardRunner, ShardConnection;
 export 'src/gateway/message.dart'
     show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, Sent, ShardData, ShardMessage, Identify, RequestingIdentify, StartShard;
 export 'src/gateway/shard.dart' show Shard;
@@ -125,6 +126,8 @@ export 'src/models/snowflake_entity/snowflake_entity.dart' show SnowflakeEntity,
 export 'src/models/user/application_role_connection.dart' show ApplicationRoleConnection;
 export 'src/models/user/connection.dart' show Connection, ConnectionType, ConnectionVisibility;
 export 'src/models/user/user.dart' show PartialUser, User, UserFlags, NitroType;
+export 'src/models/user/avatar_decoration_data.dart' show AvatarDecorationData;
+export 'src/models/soundboard/soundboard.dart' show SoundboardSound, PartialSoundboardSound;
 export 'src/models/channel/channel.dart' show Channel, ChannelFlags, PartialChannel, ChannelType;
 export 'src/models/channel/followed_channel.dart' show FollowedChannel;
 export 'src/models/channel/guild_channel.dart' show GuildChannel;
@@ -259,6 +262,8 @@ export 'src/models/gateway/event.dart'
         UnknownDispatchEvent;
 export 'src/models/gateway/opcode.dart' show Opcode;
 export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
+export 'src/models/gateway/events/soundboard.dart'
+    show SoundboardSoundCreateEvent, SoundboardSoundUpdateEvent, SoundboardSoundDeleteEvent, SoundboardSoundsUpdateEvent;
 export 'src/models/gateway/events/auto_moderation.dart'
     show AutoModerationActionExecutionEvent, AutoModerationRuleCreateEvent, AutoModerationRuleDeleteEvent, AutoModerationRuleUpdateEvent;
 export 'src/models/gateway/events/channel.dart'
