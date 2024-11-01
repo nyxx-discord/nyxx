@@ -2,13 +2,22 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// A Stage Instance holds information about a live stage.
 class StageInstanceBuilder extends CreateBuilder<StageInstance> {
+  /// {@template stage_instance_topic}
+  /// The topic of the Stage instance (1-120 characters).
+  /// {@endtemplate}
   String topic;
 
+  /// {@template stage_instance_privacy_level}
+  /// The privacy level of the Stage instance.
+  /// {@endtemplate}
   PrivacyLevel? privacyLevel;
 
+  /// Notify @everyone that a Stage instance has started.
   bool? sendStartNotification;
 
+  /// The guild scheduled event associated with this Stage instance.
   Snowflake? guildScheduledEventId;
 
   StageInstanceBuilder({
@@ -28,8 +37,10 @@ class StageInstanceBuilder extends CreateBuilder<StageInstance> {
 }
 
 class StageInstanceUpdateBuilder extends UpdateBuilder<StageInstance> {
+  /// {@macro stage_instance_topic}
   String? topic;
 
+  /// {@macro stage_instance_privacy_level}
   PrivacyLevel? privacyLevel;
 
   StageInstanceUpdateBuilder({this.topic, this.privacyLevel});

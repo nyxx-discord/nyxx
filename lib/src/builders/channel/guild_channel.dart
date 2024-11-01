@@ -15,12 +15,24 @@ import 'package:nyxx/src/utils/building_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
+  /// {@template channel_name}
+  /// The name of the channel (1-100 characters)
+  /// {@endtemplate}
   String name;
 
+  /// {@template channel_type}
+  /// The type of the channel.
+  /// {@endtemplate}
   ChannelType type;
 
+  /// {@template channel_position}
+  /// The sorting position of the channel.
+  /// {@endtemplate}
   int? position;
 
+  /// {@template channel_permission_overwrites}
+  /// The explicit permission overwrites for members and roles.
+  /// {@endtemplate}
   List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
 
   GuildChannelBuilder({
@@ -40,10 +52,13 @@ class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
 }
 
 class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T> {
+  /// {@macro channel_name}
   String? name;
 
+  /// {@macro channel_position}
   int? position;
 
+  /// {@macro channel_permission_overwrites}
   List<CreateBuilder<PermissionOverwrite>>? permissionOverwrites;
 
   GuildChannelUpdateBuilder({this.name, this.position = sentinelInteger, this.permissionOverwrites});
@@ -57,14 +72,30 @@ class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T>
 }
 
 class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
+  /// {@template channel_topic}
+  /// The channel topic (0-4096 characters for [ChannelType.guildForum] and [ChannelType.guildMedia] channels, 0-1024 characters for all others)
+  /// {@endtemplate}
   String? topic;
 
+  /// {@template channel_rate_limit_per_user}
+  /// The duration after which the user will be able to send another message (0-21600 seconds). Members with the [Permissions.manageMessages]
+  /// or [Permissions.manageChannel] permission are unaffected.
+  /// {@endtemplate}
   Duration? rateLimitPerUser;
 
+  /// {@template channel_parent_id}
+  /// The parent channel's id for a [ChannelType.guildText] channel.
+  /// {@endtemplate}
   Snowflake? parentId;
 
+  /// {@template channel_nsfw}
+  /// Whether the channel is nsfw.
+  /// {@endtemplate}
   bool? isNsfw;
 
+  /// {@template channel_default_auto_archive_duration}
+  /// Default duration, copied onto newly created threads, in minutes, threads will stop showing in the channel list after the specified period of inactivity.
+  /// {@endtemplate}
   Duration? defaultAutoArchiveDuration;
 
   GuildTextChannelBuilder({
@@ -90,18 +121,26 @@ class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
 }
 
 class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextChannel> {
+  /// {@macro channel_type}
   ChannelType? type;
 
+  /// {@macro channel_topic}
   String? topic;
 
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@macro channel_rate_limit_per_user}
   Duration? rateLimitPerUser;
 
+  /// {@macro channel_parent_id}
   Snowflake? parentId;
 
+  /// {@macro channel_default_auto_archive_duration}
   Duration? defaultAutoArchiveDuration;
 
+  /// The initial rate_limit_per_user to set on newly created threads in a channel.
+  /// This field is copied to the thread at creation time and does not live update.
   Duration? defaultThreadRateLimitPerUser;
 
   GuildTextChannelUpdateBuilder({
@@ -131,12 +170,16 @@ class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextC
 }
 
 class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncementChannel> {
+  /// {@macro channel_topic}
   String? topic;
 
+  /// {@macro channel_parent_id}
   Snowflake? parentId;
 
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@macro channel_default_auto_archive_duration}
   Duration? defaultAutoArchiveDuration;
 
   GuildAnnouncementChannelBuilder({
@@ -160,14 +203,19 @@ class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncem
 }
 
 class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildAnnouncementChannel> {
+  /// {@macro channel_type}
   ChannelType? type;
 
+  /// {@macro channel_topic}
   String? topic;
 
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@macro channel_parent_id}
   Snowflake? parentId;
 
+  /// {@macro channel_default_auto_archive_duration}
   Duration? defaultAutoArchiveDuration;
 
   GuildAnnouncementChannelUpdateBuilder({
@@ -193,20 +241,35 @@ class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<Gu
 }
 
 class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
+  /// {@macro channel_topic}
   String? topic;
 
+  /// {@macro channel_rate_limit_per_user}
   Duration? rateLimitPerUser;
 
+  /// {@macro channel_parent_id}
   Snowflake? parentId;
 
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@macro channel_default_auto_archive_duration}
   Duration? defaultAutoArchiveDuration;
 
+  /// {@template default_reaction}
+  /// The emoji to show in the add reaction button on a thread in a [ChannelType.guildForum] or a [ChannelType.guildMedia] channel.
+  /// {@endtemplate}
   DefaultReaction? defaultReaction;
 
+  /// {@template tags}
+  /// The set of tags that can be used in a [ChannelType.guildForum] or a [ChannelType.guildMedia] channel.
+  /// {@endtemplate}
   List<CreateBuilder<ForumTag>>? tags;
 
+  /// {@template default_sort_order}
+  /// The default sort order type used to order posts in [ChannelType.guildForum] and [ChannelType.guildMedia] channels.
+  /// Defaults to null, which indicates a preferred sort order hasn't been set by a channel admin.
+  /// {@endtemplate}
   ForumSort? defaultSortOrder;
 
   ForumChannelBuilder({
@@ -239,26 +302,40 @@ class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
 }
 
 class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> {
+  /// {@macro channel_type}
   String? topic;
 
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@macro channel_rate_limit_per_user}
   Duration? rateLimitPerUser;
 
+  /// {@macro channel_parent_id}
   Snowflake? parentId;
 
+  /// {@macro channel_default_auto_archive_duration}
   Duration? defaultAutoArchiveDuration;
 
+  /// {@template channel_flags}
+  /// Channel flags combined.
+  /// {@endtemplate}
   Flags<ChannelFlags>? flags;
 
+  /// {@macro tags}
   List<CreateBuilder<ForumTag>>? tags;
 
+  /// {@macro default_reaction}
   DefaultReaction? defaultReaction;
 
+  /// {@macro default_thread_rate_limit_per_user}
   Duration? defaultThreadRateLimitPerUser;
 
+  /// {@macro default_sort_order}
   ForumSort? defaultSortOrder;
 
+  /// The default forum layout view used to display posts in [ChannelType.guildForum] channels. Defaults to [ForumLayout.notSet],
+  /// which indicates a layout view has not been set by a channel admin.
   ForumLayout? defaultLayout;
 
   ForumChannelUpdateBuilder({
@@ -297,16 +374,32 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> 
 }
 
 abstract class _GuildVoiceOrStageChannelBuilder<T extends GuildChannel> extends GuildChannelBuilder<T> {
+  /// {@template channel_bitrate}
+  /// The bitrate (in bits) of the voice or stage channel; min 8000.
+  /// {@endtemplate}
   int? bitRate;
 
+  /// {@template channel_user_limit}
+  /// The user limit of the voice or stage channel; min 0, max 99 for voice channels, max 10,000 for stage channels.
+  /// {@endtemplate}
   int? userLimit;
 
+  /// {@template voice_channel_parent_id}
+  /// The parent channel's id for a [ChannelType.guildVoice] or a [ChannelType.guildStageVoice] channel.
+  /// {@endtemplate}
   Snowflake? parentId;
 
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@template rtc_region}
+  /// Channel voice region id, automatic when set to null.
+  /// {@endtemplate}
   String? rtcRegion;
 
+  /// {@template video_quality_mode}
+  /// The camera video quality mode of the voice channel.
+  /// {@endtemplate}
   VideoQualityMode? videoQualityMode;
 
   _GuildVoiceOrStageChannelBuilder({
@@ -363,16 +456,22 @@ class GuildStageChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildSta
 }
 
 class _GuildVoiceOrStageChannelUpdateBuilder<T extends GuildChannel> extends GuildChannelUpdateBuilder<T> {
+  /// {@macro channel_nsfw}
   bool? isNsfw;
 
+  /// {@macro channel_bitrate}
   int? bitRate;
 
+  /// {@macro channel_user_limit}
   int? userLimit;
 
+  /// {@macro voice_channel_parent_id}
   Snowflake? parentId;
 
+  /// {@macro rtc_region}
   String? rtcRegion;
 
+  /// {@macro video_quality_mode}
   VideoQualityMode? videoQualityMode;
 
   _GuildVoiceOrStageChannelUpdateBuilder({
