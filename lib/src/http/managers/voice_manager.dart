@@ -5,6 +5,7 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [VoiceState]s.
@@ -18,18 +19,19 @@ class VoiceManager {
 
   /// Create a new [VoiceManager].
   // ignore: deprecated_member_use_from_same_package
-  VoiceManager(this.client) : cache = Cache(client, 'voiceStates', client.options.voiceStateConfig);
+  VoiceManager(this.client) : cache = client.cache.getCache('voiceStates', client.options.voiceStateConfig);
 
   /// Parse a [VoiceState] from a [Map].
   VoiceState parseVoiceState(Map<String, Object?> raw, {Snowflake? guildId}) {
     guildId ??= maybeParse(raw['guild_id'], Snowflake.parse);
+    final userId = Snowflake.parse(raw['user_id']!);
 
     return VoiceState(
       manager: this,
       guildId: guildId,
       channelId: maybeParse(raw['channel_id'], Snowflake.parse),
-      userId: Snowflake.parse(raw['user_id']!),
-      member: maybeParse(raw['member'], client.guilds[guildId ?? Snowflake.zero].members.parse),
+      userId: userId,
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId ?? Snowflake.zero].members.parse(raw, userId: userId)),
       sessionId: raw['session_id'] as String,
       isServerDeafened: raw['deaf'] as bool,
       isServerMuted: raw['mute'] as bool,
@@ -62,5 +64,31 @@ class VoiceManager {
 
     final response = await client.httpHandler.executeSafe(request);
     return parseMany(response.jsonBody as List, parseVoiceRegion);
+  }
+
+  Future<VoiceState> fetchCurrentUserVoiceState(Snowflake guildId) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..voiceStates(id: '@me');
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final state = parseVoiceState(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(state);
+    return state;
+  }
+
+  Future<VoiceState> fetchVoiceState(Snowflake guildId, Snowflake userId) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..voiceStates(id: userId.toString());
+    final request = BasicRequest(route);
+
+    final response = await client.httpHandler.executeSafe(request);
+    final state = parseVoiceState(response.jsonBody as Map<String, Object?>);
+
+    client.updateCacheWith(state);
+    return state;
   }
 }

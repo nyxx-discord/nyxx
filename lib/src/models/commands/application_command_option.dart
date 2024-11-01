@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template command_option}
@@ -50,6 +51,7 @@ class CommandOption with ToStringHelper {
   final bool? hasAutocomplete;
 
   /// {@macro command_option}
+  /// @nodoc
   CommandOption({
     required this.type,
     required this.name,
@@ -69,34 +71,24 @@ class CommandOption with ToStringHelper {
 }
 
 /// The type of a [CommandOption].
-enum CommandOptionType {
-  subCommand._(1),
-  subCommandGroup._(2),
-  string._(3),
-  integer._(4),
-  boolean._(5),
-  user._(6),
-  channel._(7),
-  role._(8),
-  mentionable._(9),
-  number._(10),
-  attachment._(11);
+final class CommandOptionType extends EnumLike<int, CommandOptionType> {
+  static const subCommand = CommandOptionType(1);
+  static const subCommandGroup = CommandOptionType(2);
+  static const string = CommandOptionType(3);
+  static const integer = CommandOptionType(4);
+  static const boolean = CommandOptionType(5);
+  static const user = CommandOptionType(6);
+  static const channel = CommandOptionType(7);
+  static const role = CommandOptionType(8);
+  static const mentionable = CommandOptionType(9);
+  static const number = CommandOptionType(10);
+  static const attachment = CommandOptionType(11);
 
-  /// The value of this [CommandOptionType].
-  final int value;
+  /// @nodoc
+  const CommandOptionType(super.value);
 
-  const CommandOptionType._(this.value);
-
-  /// Parse a [CommandOptionType] from an [int].
-  ///
-  /// The [value] must be a valid command option type.
-  factory CommandOptionType.parse(int value) => CommandOptionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown command option type', value),
-      );
-
-  @override
-  String toString() => 'CommandOptionType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  CommandOptionType.parse(int value) : this(value);
 }
 
 /// {@template command_option_choice}
@@ -113,6 +105,7 @@ class CommandOptionChoice {
   final dynamic value;
 
   /// {@macro command_option_choice}
+  /// @nodoc
   CommandOptionChoice({required this.name, required this.nameLocalizations, required this.value});
 }
 

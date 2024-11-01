@@ -11,7 +11,7 @@ mixin class EventParser {
       Opcode.reconnect.value: parseReconnect,
       Opcode.invalidSession.value: parseInvalidSession,
       Opcode.hello.value: parseHello,
-      Opcode.heartbeatAck.value: (Map<String, Object?> raw) => parseHeartbeatAck(raw, heartbeatLatency: heartbeatLatency!),
+      Opcode.heartbeatAck.value: (Map<String, Object?> raw) => parseHeartbeatAck(raw, heartbeatLatency: heartbeatLatency ?? Duration.zero),
     };
 
     return mapping[raw['op'] as int]!(raw);

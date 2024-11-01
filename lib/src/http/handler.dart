@@ -5,9 +5,11 @@ import 'package:http/http.dart' hide MultipartRequest;
 import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/bucket.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/response.dart';
+import 'package:nyxx/src/plugin/plugin.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 
 extension on HttpRequest {
@@ -93,10 +95,39 @@ class HttpHandler {
   /// If no requests have been completed, this getter returns [Duration.zero].
   Duration get realLatency => _realLatencies.isEmpty ? Duration.zero : (_realLatencies.reduce((a, b) => a + b) ~/ _realLatencies.length);
 
+  final Set<Completer<void>> _pendingRateLimits = {};
+
   /// Create a new [HttpHandler].
   ///
   /// {@macro http_handler}
-  HttpHandler(this.client);
+  HttpHandler(this.client) {
+    if (client.options.rateLimitWarningThreshold case final threshold?) {
+      onRateLimit.listen((info) {
+        final (:request, :delay, :isGlobal, :isAnticipated) = info;
+        final requestStopwatch = _latencyStopwatches[request];
+        if (requestStopwatch == null) return;
+
+        final totalDelay = requestStopwatch.elapsed + delay;
+
+        // Prevent warnings being emitted too often. This limits warnings to once per [threshold].
+        if (totalDelay.inMicroseconds ~/ threshold.inMicroseconds <= requestStopwatch.elapsedMicroseconds ~/ threshold.inMicroseconds) return;
+
+        if (totalDelay > threshold) {
+          logger.warning(
+            '${request.loggingId} has been pending for ${requestStopwatch.elapsed} and will be sent in $delay due to rate limiting.'
+            ' The request will have been pending for $totalDelay.',
+          );
+          if (isAnticipated) {
+            logger.info('This is a predicted rate limit and was anticipated based on previous responses');
+          } else if (isGlobal) {
+            logger.info('This is a global rate limit and will apply to all requests for the next $delay');
+          } else {
+            logger.info('This rate limit was returned by the API');
+          }
+        }
+      });
+    }
+  }
 
   /// Send [request] to the API and return the response.
   ///
@@ -111,7 +142,17 @@ class HttpHandler {
   /// that of the second request.
   ///
   /// Otherwise, this method returns a [HttpResponseError].
+  ///
+  /// This method calls [NyxxPlugin.interceptRequest] on all plugins registered to the [client] which may intercept the [request].
   Future<HttpResponse> execute(HttpRequest request) async {
+    final executeFn = client.options.plugins.fold(
+      _execute,
+      (previousValue, plugin) => (request) => plugin.interceptRequest(client, request, previousValue),
+    );
+    return await executeFn(request);
+  }
+
+  Future<HttpResponse> _execute(HttpRequest request) async {
     logger
       ..fine(request.loggingId)
       ..finer(
@@ -166,7 +207,19 @@ class HttpHandler {
       if (waitTime > Duration.zero) {
         logger.finer('Holding ${request.loggingId} for $waitTime');
         _onRateLimitController.add((request: request, delay: waitTime, isGlobal: isGlobal, isAnticipated: true));
-        await Future.delayed(waitTime);
+
+        // Don't use Future.delayed so that we can exit early if close() is called.
+        // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+        // This is roughly equivalent to `await Future.delayed(waitTime)`
+        final completer = Completer<void>();
+        final timer = Timer(waitTime, completer.complete);
+        _pendingRateLimits.add(completer);
+        try {
+          await completer.future;
+        } finally {
+          _pendingRateLimits.remove(completer);
+          timer.cancel();
+        }
       }
     } while (waitTime > Duration.zero);
 
@@ -243,7 +296,20 @@ class HttpHandler {
         }
 
         _onRateLimitController.add((request: request, delay: retryAfter, isGlobal: isGlobal, isAnticipated: false));
-        return Future.delayed(retryAfter, () => execute(request));
+
+        // Don't use Future.delayed so that we can exit early if close() is called.
+        // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+        // This is roughly equivalent to `return Future.delayed(retryAfter, () => execute(request))`
+        final completer = Completer<void>();
+        final timer = Timer(retryAfter, completer.complete);
+        _pendingRateLimits.add(completer);
+        try {
+          await completer.future;
+          return execute(request);
+        } finally {
+          _pendingRateLimits.remove(completer);
+          timer.cancel();
+        }
       } on TypeError {
         logger.shout('Invalid rate limit body for ${request.loggingId}! Your client is probably cloudflare banned!');
       }
@@ -264,9 +330,19 @@ class HttpHandler {
   }
 
   void close() {
+    // Timers associated with these completers will be cancelled in
+    // the finally block from the try/catch that the completer is awaited in.
+    for (final completer in _pendingRateLimits) {
+      completer.completeError(
+        ClientClosedError(),
+        StackTrace.current,
+      );
+    }
+
     httpClient.close();
     _onRequestController.close();
     _onResponseController.close();
+    _onRateLimitController.close();
   }
 }
 
@@ -279,11 +355,11 @@ class Oauth2HttpHandler extends HttpHandler {
   Oauth2HttpHandler(NyxxOAuth2 super.client) : apiOptions = client.apiOptions;
 
   @override
-  Future<HttpResponse> execute(HttpRequest request) async {
+  Future<HttpResponse> _execute(HttpRequest request) async {
     if (apiOptions.credentials.isExpired && request.authenticated) {
       apiOptions.credentials = await apiOptions.credentials.refresh();
     }
 
-    return await super.execute(request);
+    return await super._execute(request);
   }
 }

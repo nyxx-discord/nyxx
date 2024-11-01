@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/message/channel_mention.dart';
 import 'package:nyxx/src/models/message/component.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/author.dart';
+import 'package:nyxx/src/models/message/poll.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
@@ -20,6 +21,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -34,6 +36,7 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
   Snowflake get channelId => manager.channelId;
 
   /// {@macro partial_message}
+  /// @nodoc
   PartialMessage({required super.id, required this.manager});
 
   /// The channel this message was sent in.
@@ -73,6 +76,15 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 
   /// Deletes reaction the current user has made on this message.
   Future<void> deleteOwnReaction(ReactionBuilder emoji) => manager.deleteOwnReaction(id, emoji);
+
+  /// Get a list of users that reacted with a given emoji on a message.
+  Future<List<User>> fetchReactions(ReactionBuilder emoji, {Snowflake? after, int? limit}) => manager.fetchReactions(id, emoji, after: after, limit: limit);
+
+  /// Get a list of users that voted for this specific answer.
+  Future<List<User>> fetchAnswerVoters(int answerId, {Snowflake? after, int? limit}) => manager.fetchAnswerVoters(id, answerId, after: after, limit: limit);
+
+  /// Immediately ends the poll.
+  Future<Message> endPoll() => manager.endPoll(id);
 }
 
 /// {@template message}
@@ -84,23 +96,19 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object
 /// {@endtemplate}
-class Message extends PartialMessage {
+class Message extends PartialMessage implements MessageSnapshot {
   /// The author of this message.
   ///
-  /// This could be a [User] or a [Webhook].
+  /// This could be a [User] or a [WebhookAuthor].
   final MessageAuthor author;
 
-  /// The content of the message.
-  ///
-  /// {@template message_content_intent_required}
-  /// The message content intent is needed for this field to be non-empty.
-  /// {@endtemplate}
+  @override
   final String content;
 
-  /// The time when this message was sent.
+  @override
   final DateTime timestamp;
 
-  /// The time when this message was last edited, or `null` if the message was never edited.
+  @override
   final DateTime? editedTimestamp;
 
   /// Whether this was a TTS message.
@@ -109,22 +117,19 @@ class Message extends PartialMessage {
   /// Whether this message mentions everyone.
   final bool mentionsEveryone;
 
-  /// A list of users specifically mentioned in this message.
+  @override
   final List<User> mentions;
 
+  @override
   final List<Snowflake> roleMentionIds;
 
   /// A list of channels specifically mentioned in this message.
   final List<ChannelMention> channelMentions;
 
-  /// A list of files attached to this message.
-  ///
-  /// {@macro message_content_intent_required}
+  @override
   final List<Attachment> attachments;
 
-  /// A list of embeds in this message.
-  ///
-  /// {@macro message_content_intent_required}
+  @override
   final List<Embed> embeds;
 
   /// A list of reactions to this message.
@@ -141,7 +146,7 @@ class Message extends PartialMessage {
   /// The ID of the webhook that sent this message if it was sent by a webhook, `null` otherwise.
   final Snowflake? webhookId;
 
-  /// The type of this message.
+  @override
   final MessageType type;
 
   /// Activity information if this message is related to Rich Presence, `null` otherwise.
@@ -156,22 +161,30 @@ class Message extends PartialMessage {
   /// Data showing the source of a crosspost, channel follow add, pin, or reply message.
   final MessageReference? reference;
 
-  /// Any flags applied to this message.
+  /// The messages associated with [reference].
+  final List<MessageSnapshot>? messageSnapshots;
+
+  @override
   final MessageFlags flags;
 
   /// The message associated with [reference].
   final Message? referencedMessage;
 
   /// Information about the interaction related to this message.
+  final MessageInteractionMetadata? interactionMetadata;
+
+  /// Information about the interaction related to this message.
+  // ignore: deprecated_member_use_from_same_package
+  @Deprecated('Use `interactionMetadata`')
   final MessageInteraction? interaction;
 
   /// The thread that was started from this message if any, `null` otherwise.
   final Thread? thread;
 
-  /// A list of components in this message.
+  @override
   final List<MessageComponent>? components;
 
-  /// List of sticker attached to message
+  @override
   final List<StickerItem> stickers;
 
   /// A generally increasing integer (there may be gaps or duplicates) that represents the approximate position of this message in a thread.
@@ -185,7 +198,14 @@ class Message extends PartialMessage {
   /// Data about entities in this message's auto-populated select menus.
   final ResolvedData? resolved;
 
+  /// A poll.
+  final Poll? poll;
+
+  /// Information about a call in a DM channel.
+  final MessageCall? call;
+
   /// {@macro message}
+  /// @nodoc
   Message({
     required super.id,
     required super.manager,
@@ -209,8 +229,10 @@ class Message extends PartialMessage {
     required this.application,
     required this.applicationId,
     required this.reference,
+    required this.messageSnapshots,
     required this.flags,
     required this.referencedMessage,
+    required this.interactionMetadata,
     required this.interaction,
     required this.thread,
     required this.components,
@@ -218,6 +240,8 @@ class Message extends PartialMessage {
     required this.roleSubscriptionData,
     required this.stickers,
     required this.resolved,
+    required this.poll,
+    required this.call,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
@@ -230,54 +254,50 @@ class Message extends PartialMessage {
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-types
-enum MessageType {
-  normal._(0),
-  recipientAdd._(1),
-  recipientRemove._(2),
-  call._(3),
-  channelNameChange._(4),
-  channelIconChange._(5),
-  channelPinnedMessage._(6),
-  userJoin._(7),
-  guildBoost._(8),
-  guildBoostTier1._(9),
-  guildBoostTier2._(10),
-  guildBoostTier3._(11),
-  channelFollowAdd._(12),
-  guildDiscoveryDisqualified._(14),
-  guildDiscoveryRequalified._(15),
-  guildDiscoveryGracePeriodInitialWarning._(16),
-  guildDiscoveryGracePeriodFinalWarning._(17),
-  threadCreated._(18),
-  reply._(19),
-  chatInputCommand._(20),
-  threadStarterMessage._(21),
-  guildInviteReminder._(22),
-  contextMenuCommand._(23),
-  autoModerationAction._(24),
-  roleSubscriptionPurchase._(25),
-  interactionPremiumUpsell._(26),
-  stageStart._(27),
-  stageEnd._(28),
-  stageSpeaker._(29),
-  stageTopic._(31),
-  guildApplicationPremiumSubscription._(32);
+final class MessageType extends EnumLike<int, MessageType> {
+  static const normal = MessageType(0);
+  static const recipientAdd = MessageType(1);
+  static const recipientRemove = MessageType(2);
+  static const call = MessageType(3);
+  static const channelNameChange = MessageType(4);
+  static const channelIconChange = MessageType(5);
+  static const channelPinnedMessage = MessageType(6);
+  static const userJoin = MessageType(7);
+  static const guildBoost = MessageType(8);
+  static const guildBoostTier1 = MessageType(9);
+  static const guildBoostTier2 = MessageType(10);
+  static const guildBoostTier3 = MessageType(11);
+  static const channelFollowAdd = MessageType(12);
+  static const guildDiscoveryDisqualified = MessageType(14);
+  static const guildDiscoveryRequalified = MessageType(15);
+  static const guildDiscoveryGracePeriodInitialWarning = MessageType(16);
+  static const guildDiscoveryGracePeriodFinalWarning = MessageType(17);
+  static const threadCreated = MessageType(18);
+  static const reply = MessageType(19);
+  static const chatInputCommand = MessageType(20);
+  static const threadStarterMessage = MessageType(21);
+  static const guildInviteReminder = MessageType(22);
+  static const contextMenuCommand = MessageType(23);
+  static const autoModerationAction = MessageType(24);
+  static const roleSubscriptionPurchase = MessageType(25);
+  static const interactionPremiumUpsell = MessageType(26);
+  static const stageStart = MessageType(27);
+  static const stageEnd = MessageType(28);
+  static const stageSpeaker = MessageType(29);
+  static const stageTopic = MessageType(31);
+  static const guildApplicationPremiumSubscription = MessageType(32);
+  static const guildIncidentAlertModeEnabled = MessageType(36);
+  static const guildIncidentAlertModeDisabled = MessageType(37);
+  static const guildIncidentReportRaid = MessageType(38);
+  static const guildIncidentReportFalseAlarm = MessageType(39);
+  static const purchaseNotification = MessageType(44);
+  static const pollResult = MessageType(46);
 
-  /// The value of this [MessageType].
-  final int value;
+  /// @nodoc
+  const MessageType(super.value);
 
-  const MessageType._(this.value);
-
-  /// Parse a [MessageType] from an [int].
-  ///
-  /// [value] must be a valid [MessageType].
-  factory MessageType.parse(int value) => MessageType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown MessageType', value),
-      );
-
-  @override
-  String toString() => 'MessageType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  MessageType.parse(int value) : this(value);
 }
 
 /// Flags that can be applied to a [Message].
@@ -355,6 +375,8 @@ class MessageFlags extends Flags<MessageFlags> {
   const MessageFlags(super.value);
 }
 
+@Deprecated('Use MessageInteractionMetadata')
+
 /// {@template message_interaction}
 /// Information about an interaction associated with a message.
 /// {@endtemplate}
@@ -375,6 +397,7 @@ class MessageInteraction with ToStringHelper {
   final PartialMember? member;
 
   /// {@macro message_interaction}
+  /// @nodoc
   MessageInteraction({
     required this.id,
     required this.type,
@@ -382,4 +405,135 @@ class MessageInteraction with ToStringHelper {
     required this.user,
     required this.member,
   });
+}
+
+/// {@template message_interaction_metadata}
+/// Metadata about the interaction, including the source of the interaction and relevant server and user IDs.
+/// {@endtemplate}
+class MessageInteractionMetadata with ToStringHelper {
+  /// The ID of the interaction.
+  final Snowflake id;
+
+  /// The type of the interaction.
+  final InteractionType type;
+
+  /// The user that triggered the interaction.
+  final User user;
+
+  /// IDs for installation context(s) related to an interaction.
+  final Map<ApplicationIntegrationType, Snowflake> authorizingIntegrationOwners;
+
+  /// ID of the original response message, present only on follow-up messages.
+  final Snowflake? originalResponseMessageId;
+
+  /// ID of the message that contained interactive component, present only on messages created from component interactions.
+  final Snowflake? interactedMessageId;
+
+  /// Metadata for the interaction that was used to open the modal, present only on modal submit interactions
+  final MessageInteractionMetadata? triggeringInteractionMetadata;
+
+  /// {@macro message_interaction_metadata}
+  /// @nodoc
+  MessageInteractionMetadata({
+    required this.id,
+    required this.type,
+    required this.user,
+    required this.authorizingIntegrationOwners,
+    required this.originalResponseMessageId,
+    required this.interactedMessageId,
+    required this.triggeringInteractionMetadata,
+  });
+
+  /// ID of the user that triggered the interaction.
+  @Deprecated('Use user.id instead.')
+  Snowflake get userId => user.id;
+}
+
+/// A limited set of fields of a [Message].
+// Technically this class should contain a single `message` field, of type
+// `PartialMessage`. However, partials in nyxx require the ID of the object to
+// be known, and the id field is not included in the nested partial message
+// object. Since this object would then be useless as it cannot contain any
+// useful data using existing nyxx types, we instead forward the field of the
+// nested object into this type.
+class MessageSnapshot with ToStringHelper {
+  /// The time when this message was sent.
+  final DateTime timestamp;
+
+  /// The time when this message was last edited, or `null` if the message was never edited.
+  final DateTime? editedTimestamp;
+
+  /// The type of this message.
+  final MessageType type;
+
+  /// The content of the message.
+  ///
+  /// {@template message_content_intent_required}
+  /// The message content intent is needed for this field to be non-empty.
+  /// {@endtemplate}
+  final String content;
+
+  /// A list of files attached to this message.
+  ///
+  /// {@macro message_content_intent_required}
+  final List<Attachment> attachments;
+
+  /// A list of embeds in this message.
+  ///
+  /// {@macro message_content_intent_required}
+  final List<Embed> embeds;
+
+  /// Any flags applied to this message.
+  final MessageFlags flags;
+
+  /// A list of users specifically mentioned in this message.
+  final List<User> mentions;
+
+  /// A list of roles mentioned in the message.
+  final List<Snowflake> roleMentionIds;
+
+  /// A list of Stickers attached to this message.
+  final List<StickerItem> stickers;
+
+  /// A list of components in this message.
+  final List<MessageComponent>? components;
+
+  /// @nodoc
+  MessageSnapshot({
+    required this.timestamp,
+    required this.editedTimestamp,
+    required this.type,
+    required this.content,
+    required this.attachments,
+    required this.embeds,
+    required this.flags,
+    required this.mentions,
+    required this.roleMentionIds,
+    required this.stickers,
+    required this.components,
+  });
+}
+
+/// Information about a call in a private channel.
+class MessageCall with ToStringHelper {
+  /// The manager for this [MessageCall].
+  final MessageManager manager;
+
+  /// The IDs of the users in the call.
+  final List<Snowflake> participantIds;
+
+  /// The time at which the call ended.
+  final DateTime? endedAt;
+
+  /// @nodoc
+  MessageCall({
+    required this.manager,
+    required this.participantIds,
+    required this.endedAt,
+  });
+
+  /// The users in the call.
+  List<PartialUser> get participants => [
+        for (final participantId in participantIds) manager.client.users[participantId],
+      ];
 }

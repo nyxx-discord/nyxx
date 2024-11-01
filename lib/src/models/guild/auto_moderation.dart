@@ -1,3 +1,4 @@
+import 'package:nyxx/src/builders/guild/auto_moderation.dart';
 import 'package:nyxx/src/http/managers/auto_moderation_manager.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
@@ -7,6 +8,7 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [AutoModerationRule].
@@ -15,6 +17,7 @@ class PartialAutoModerationRule extends WritableSnowflakeEntity<AutoModerationRu
   final AutoModerationManager manager;
 
   /// Create a new [PartialAutoModerationRule].
+  /// @nodoc
   PartialAutoModerationRule({required super.id, required this.manager});
 }
 
@@ -53,6 +56,7 @@ class AutoModerationRule extends PartialAutoModerationRule {
   final List<Snowflake> exemptChannelIds;
 
   /// {@macro auto_moderation_rule}
+  /// @nodoc
   AutoModerationRule({
     required super.id,
     required super.manager,
@@ -80,74 +84,70 @@ class AutoModerationRule extends PartialAutoModerationRule {
 }
 
 /// The type of event on which an [AutoModerationRule] triggers.
-enum AutoModerationEventType {
-  messageSend._(1);
+final class AutoModerationEventType extends EnumLike<int, AutoModerationEventType> {
+  /// When a member sends or edits a message in the guild.
+  static const messageSend = AutoModerationEventType(1);
 
-  /// The value of this [AutoModerationEventType].
-  final int value;
+  /// When a member edits their profile.
+  static const memberUpdate = AutoModerationEventType(2);
 
-  const AutoModerationEventType._(this.value);
+  /// @nodoc
+  const AutoModerationEventType(super.value);
 
-  /// Parse an [AutoModerationEventType] from an [int].
-  ///
-  /// The [value] must be a valid auto moderation event type.
-  factory AutoModerationEventType.parse(int value) => AutoModerationEventType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown auto moderation event type', value),
-      );
-
-  @override
-  String toString() => 'AutoModerationEventType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  AutoModerationEventType.parse(int value) : this(value);
 }
 
 /// The type of a trigger for an [AutoModerationRule]
-enum TriggerType {
-  keyword._(1),
-  spam._(2),
-  keywordPreset._(4),
-  mentionSpam._(5);
+final class TriggerType extends EnumLike<int, TriggerType> {
+  /// Check if content contains words from a user defined list of keywords.
+  static const keyword = TriggerType(1);
 
-  /// The value of this [TriggerType].
-  final int value;
+  /// Check if content represents generic spam.
+  static const spam = TriggerType(3);
 
-  const TriggerType._(this.value);
+  /// Check if content contains words from internal pre-defined wordsets.
+  static const keywordPreset = TriggerType(4);
 
-  /// Parse an [TriggerType] from an [int].
-  ///
-  /// The [value] must be a valid trigger type.
-  factory TriggerType.parse(int value) => TriggerType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown trigger type', value),
-      );
+  /// Check if content contains more unique mentions than allowed.
+  static const mentionSpam = TriggerType(5);
 
-  @override
-  String toString() => 'TriggerType($value)';
+  /// Check if member profile contains words from a user defined list of keywords.
+  static const memberProfile = TriggerType(6);
+
+  /// @nodoc
+  const TriggerType(super.value);
+
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  TriggerType.parse(int value) : this(value);
 }
 
 /// {@template trigger_metadata}
 /// Additional metadata associated with the trigger for an [AutoModerationRule].
 /// {@endtemplate}
-class TriggerMetadata with ToStringHelper {
-  /// A list of words that trigger the rule.
+// TODO(abitofevrything): Remove `implements TriggerMetadataBuilder`
+class TriggerMetadata with ToStringHelper implements TriggerMetadataBuilder {
+  @override
   final List<String>? keywordFilter;
 
-  /// A list of regex patterns that trigger the rule.
   // TODO: Do we want to parse these as RegExp objects?
+  @override
   final List<String>? regexPatterns;
 
-  /// A list of preset keyword types that trigger the rule.
+  @override
   final List<KeywordPresetType>? presets;
 
-  /// A list of words allowed to bypass the rule.
+  @override
   final List<String>? allowList;
 
-  /// The maximum number of mentions in a message.
+  @override
   final int? mentionTotalLimit;
 
-  /// Whether mention raid protection is enabled.
+  @override
   final bool? isMentionRaidProtectionEnabled;
 
   /// {@macro trigger_metadata}
+  /// @nodoc
   TriggerMetadata({
     required this.keywordFilter,
     required this.regexPatterns,
@@ -156,87 +156,90 @@ class TriggerMetadata with ToStringHelper {
     required this.mentionTotalLimit,
     required this.isMentionRaidProtectionEnabled,
   });
+
+  @override
+  @Deprecated('Use TriggerMetadataBuilder instead')
+  Map<String, Object?> build() => {
+        'keyword_filter': keywordFilter,
+        'regex_patterns': regexPatterns,
+        'presets': presets?.map((type) => type.value).toList(),
+        'allow_list': allowList,
+        'mention_total_limit': mentionTotalLimit,
+        'mention_raid_protection_enabled': isMentionRaidProtectionEnabled,
+      };
 }
 
 /// A preset list of trigger keywords for an [AutoModerationRule].
-enum KeywordPresetType {
-  profanity._(1),
-  sexualContent._(2),
-  slurs._(3);
+final class KeywordPresetType extends EnumLike<int, KeywordPresetType> {
+  static const profanity = KeywordPresetType(1);
+  static const sexualContent = KeywordPresetType(2);
+  static const slurs = KeywordPresetType(3);
 
-  /// The value of this [KeywordPresetType].
-  final int value;
+  /// @nodoc
+  const KeywordPresetType(super.value);
 
-  const KeywordPresetType._(this.value);
-
-  /// Parse an [KeywordPresetType] from an [int].
-  ///
-  /// The [value] must be a valid keyword preset type.
-  factory KeywordPresetType.parse(int value) => KeywordPresetType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown keyword preset type', value),
-      );
-
-  @override
-  String toString() => 'KeywordPresetType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  KeywordPresetType.parse(int value) : this(value);
 }
 
 /// {@template auto_moderation_action}
 /// Describes an action to take when an [AutoModerationRule] is triggered.
 /// {@endtemplate}
-class AutoModerationAction with ToStringHelper {
-  /// The type of action to perform.
+// TODO(abitofevrything): Remove `implements AutoModerationActionBuilder`
+class AutoModerationAction with ToStringHelper implements AutoModerationActionBuilder {
+  @override
   final ActionType type;
 
-  /// Metadata needed to perform the action.
+  @override
   final ActionMetadata? metadata;
 
   /// {@macro auto_moderation_action}
+  /// @nodoc
   AutoModerationAction({
     required this.type,
     required this.metadata,
   });
+
+  @override
+  @Deprecated('Use AutoModerationActionBuilder instead')
+  Map<String, Object?> build() => {
+        'type': type.value,
+        if (metadata != null) 'metadata': metadata!.build(),
+      };
 }
 
 /// The type of action for an [AutoModerationAction].
-enum ActionType {
-  blockMessage._(1),
-  sendAlertMessage._(2),
-  timeout._(3);
+final class ActionType extends EnumLike<int, ActionType> {
+  static const blockMessage = ActionType(1);
+  static const sendAlertMessage = ActionType(2);
+  static const timeout = ActionType(3);
+  static const blockMemberInteraction = ActionType(4);
 
-  /// The value of this [ActionType].
-  final int value;
+  /// @nodoc
+  const ActionType(super.value);
 
-  const ActionType._(this.value);
-
-  /// Parse an [ActionType] from an [int].
-  ///
-  /// The [value] must be a valid action type.
-  factory ActionType.parse(int value) => ActionType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown action type', value),
-      );
-
-  @override
-  String toString() => 'ActionType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ActionType.parse(int value) : this(value);
 }
 
 /// {@template action_metadata}
 /// Additional metadata associated with an [AutoModerationAction].
 /// {@endtemplate}
-class ActionMetadata with ToStringHelper {
+// TODO(abitofevrything): Remove `implements ActionMetadataBuilder`
+class ActionMetadata with ToStringHelper implements ActionMetadataBuilder {
   final AutoModerationManager manager;
 
-  /// The ID of the channel to send the alert message to.
+  @override
   final Snowflake? channelId;
 
-  /// The duration of time to time the user out for.
+  @override
   final Duration? duration;
 
-  /// A custom message to send to the user.
+  @override
   final String? customMessage;
 
   /// {@macro action_metadata}
+  /// @nodoc
   ActionMetadata({
     required this.manager,
     required this.channelId,
@@ -246,4 +249,12 @@ class ActionMetadata with ToStringHelper {
 
   /// The channel to send the alert message to.
   PartialTextChannel? get channel => channelId == null ? null : manager.client.channels[channelId!] as PartialTextChannel?;
+
+  @override
+  @Deprecated('Use ActionMetadataBuilder instead')
+  Map<String, Object?> build() => {
+        'channel_id': channelId?.toString(),
+        'duration_seconds': duration?.inSeconds,
+        'custom_message': customMessage,
+      };
 }

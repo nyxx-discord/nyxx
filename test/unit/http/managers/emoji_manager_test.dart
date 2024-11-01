@@ -39,7 +39,7 @@ void checkTextEmoji(Emoji emoji) {
 void main() {
   testManager<Emoji, EmojiManager>(
     'EmojiManager',
-    (config, client) => EmojiManager(config, client, guildId: Snowflake(1)),
+    (config, client) => GuildEmojiManager(config, client, guildId: Snowflake(1)),
     RegExp(r'/guilds/1/emojis/\d+'),
     '/guilds/1/emojis',
     sampleObject: sampleGuildEmoji,
@@ -53,7 +53,7 @@ void main() {
       ),
     ],
     additionalEndpointTests: [
-      EndpointTest<EmojiManager, List<Emoji>, List<Object?>>(
+      EndpointTest<GuildEmojiManager, List<Emoji>, List<Object?>>(
         name: 'list',
         source: [sampleGuildEmoji],
         urlMatcher: '/guilds/1/emojis',

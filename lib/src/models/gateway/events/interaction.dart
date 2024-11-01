@@ -9,5 +9,6 @@ class InteractionCreateEvent<T extends Interaction<dynamic>> extends DispatchEve
   final T interaction;
 
   /// {@macro interaction_create_event}
+  /// @nodoc
   InteractionCreateEvent({required super.gateway, required this.interaction});
 }

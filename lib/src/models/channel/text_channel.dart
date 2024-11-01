@@ -10,6 +10,7 @@ class PartialTextChannel extends PartialChannel {
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
 
   /// Create a new [PartialTextChannel].
+  /// @nodoc
   PartialTextChannel({required super.id, required super.manager});
 
   /// Send a message to this channel.
@@ -46,6 +47,7 @@ abstract class TextChannel extends PartialTextChannel implements Channel {
   /// The time at which the last message was pinned, or `null` if no messages have been pinned.
   DateTime? get lastPinTimestamp;
 
+  /// @nodoc
   TextChannel({required super.id, required super.manager});
 
   /// The last message sent in this channel, or `null` if no messages have been sent.

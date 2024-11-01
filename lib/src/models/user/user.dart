@@ -6,6 +6,8 @@ import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/user/avatar_decoration_data.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [User] object.
@@ -14,6 +16,7 @@ class PartialUser extends ManagedSnowflakeEntity<User> {
   final UserManager manager;
 
   /// Create a new [PartialUser].
+  /// @nodoc
   PartialUser({required super.id, required this.manager});
 }
 
@@ -71,7 +74,11 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
   /// The hash of this user's avatar decoration.
   final String? avatarDecorationHash;
 
+  /// The user's avatar deciration data.
+  final AvatarDecorationData? avatarDecorationData;
+
   /// {@macro user}
+  /// @nodoc
   User({
     required super.manager,
     required super.id,
@@ -89,6 +96,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
     required this.nitroType,
     required this.publicFlags,
     required this.avatarDecorationHash,
+    required this.avatarDecorationData,
   });
 
   /// This user's banner.
@@ -122,7 +130,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
       ? null
       : CdnAsset(
           client: manager.client,
-          base: HttpRoute()..avatarDecorations(id: id.toString()),
+          base: HttpRoute()..avatarDecorationPresets(),
           hash: avatarDecorationHash!,
         );
 }
@@ -225,25 +233,15 @@ class UserFlags extends Flags<UserFlags> {
 }
 
 /// The types of Discord Nitro subscription a user can have.
-enum NitroType {
-  none._(0),
-  classic._(1),
-  nitro._(2),
-  basic._(3);
+final class NitroType extends EnumLike<int, NitroType> {
+  static const none = NitroType(0);
+  static const classic = NitroType(1);
+  static const nitro = NitroType(2);
+  static const basic = NitroType(3);
 
-  /// The value of this [NitroType].
-  final int value;
+  /// @nodoc
+  const NitroType(super.value);
 
-  const NitroType._(this.value);
-
-  /// Parse an integer from the API to a [NitroType].
-  ///
-  /// The [value] must be a valid nitro type.
-  factory NitroType.parse(int value) => NitroType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown NitroType', value),
-      );
-
-  @override
-  String toString() => 'NitroType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  NitroType.parse(int value) : this(value);
 }

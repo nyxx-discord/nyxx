@@ -1,11 +1,15 @@
+import 'package:nyxx/src/builders/guild/scheduled_event.dart';
 import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/models/channel/types/forum.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 // ASCII encoded "nyxx"
 const sentinelInteger = 0x6E797878;
+
+const sentinelDouble = sentinelInteger * 1.0;
 
 // ESC-"nyxx"
 const sentinelString = '\u{1B}nyxx';
@@ -90,3 +94,30 @@ class _SentinelFlags implements Flags<Never> {
   @override
   void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+const sentinelUri = _SentinelUri();
+
+class _SentinelUri implements Uri {
+  const _SentinelUri();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _SentinelEmoji implements Emoji {
+  const _SentinelEmoji();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelEmoji = _SentinelEmoji();
+
+class _SentinelRecurrenceRuleBuilder implements RecurrenceRuleBuilder {
+  const _SentinelRecurrenceRuleBuilder();
+
+  @override
+  void noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+const sentinelRecurrenceRuleBuilder = _SentinelRecurrenceRuleBuilder();

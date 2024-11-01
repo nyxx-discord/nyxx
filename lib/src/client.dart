@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:logging/logging.dart';
+import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
+import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/event_mixin.dart';
@@ -29,10 +33,14 @@ Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions client
     }
   }
 
+  final originalConnect = connect;
+
   connect = plugins.fold(
-    connect,
+    () async => await originalConnect()
+      .._initializedCompleter.complete(),
     (previousConnect, plugin) => () async => actualClientType.castInstance(await plugin.doConnect(apiOptions, clientOptions, previousConnect)),
   );
+
   return connect();
 }
 
@@ -43,6 +51,13 @@ Future<void> _doClose(Nyxx client, Future<void> Function() close, List<NyxxPlugi
     (previousClose, plugin) => () => plugin.doClose(client, previousClose),
   );
   return close();
+}
+
+@internal
+extension InternalReady on Nyxx {
+  /// A future that completes when this client is initialized and can be passed to user defined callbacks.
+  @internal
+  Future<void> get initialized => _initializedCompleter.future;
 }
 
 /// The base class for clients interacting with the Discord API.
@@ -58,6 +73,11 @@ abstract class Nyxx {
 
   /// The logger for this client.
   Logger get logger;
+
+  /// The cache manager for this client.
+  CacheManager get cache;
+
+  Completer<void> get _initializedCompleter;
 
   /// Create an instance of [NyxxRest] that can perform requests to the HTTP API and is
   /// authenticated with a bot token.
@@ -82,10 +102,14 @@ abstract class Nyxx {
 
   /// Create an instance of [NyxxOAuth2] that can perform requests to the HTTP API and is
   /// authenticated with OAuth2 [Credentials].
+  ///
+  /// Note that `client.user.id` will contain [Snowflake.zero] if there no `identify` scope.
   static Future<NyxxOAuth2> connectOAuth2(Credentials credentials, {RestClientOptions options = const RestClientOptions()}) =>
       connectOAuth2WithOptions(OAuth2ApiOptions(credentials: credentials), options);
 
   /// Create an instance of [NyxxOAuth2] using the provided options.
+  ///
+  /// Note that `client.user.id` will contain [Snowflake.zero] if there no `identify` scope.
   static Future<NyxxOAuth2> connectOAuth2WithOptions(OAuth2ApiOptions apiOptions, [RestClientOptions clientOptions = const RestClientOptions()]) async {
     clientOptions.logger
       ..info('Connecting to the REST API via OAuth2')
@@ -94,10 +118,11 @@ abstract class Nyxx {
 
     return _doConnect(apiOptions, clientOptions, () async {
       final client = NyxxOAuth2._(apiOptions, clientOptions);
+      final information = await client.users.fetchCurrentOAuth2Information();
 
       return client
-        .._application = await client.applications.fetchCurrentApplication()
-        .._user = await client.users.fetchCurrentUser();
+        .._application = information.application
+        .._user = information.user ?? PartialUser(id: Snowflake.zero, manager: client.users);
     }, clientOptions.plugins);
   }
 
@@ -163,6 +188,12 @@ class NyxxRest with ManagerMixin implements Nyxx {
   @override
   Logger get logger => options.logger;
 
+  @override
+  final Completer<void> _initializedCompleter = Completer();
+
+  @override
+  late final CacheManager cache = CacheManager(this);
+
   NyxxRest._(this.apiOptions, this.options);
 
   /// Add the current user to the thread with the ID [id].
@@ -180,7 +211,7 @@ class NyxxRest with ManagerMixin implements Nyxx {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   /// List the guilds the current user is a member of.
-  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+  Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   @override
@@ -215,6 +246,12 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
   @override
   late final PartialUser _user;
 
+  @override
+  final Completer<void> _initializedCompleter = Completer();
+
+  @override
+  late final CacheManager cache = CacheManager(this);
+
   NyxxOAuth2._(this.apiOptions, this.options);
 
   @override
@@ -224,7 +261,7 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   @override
-  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+  Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   @override
@@ -265,6 +302,12 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   Logger get logger => options.logger;
 
+  @override
+  final Completer<void> _initializedCompleter = Completer();
+
+  @override
+  late final CacheManager cache = CacheManager(this);
+
   NyxxGateway._(this.apiOptions, this.options);
 
   @override
@@ -274,7 +317,7 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   Future<void> leaveThread(Snowflake id) => channels.leaveThread(id);
 
   @override
-  Future<List<PartialGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
+  Future<List<UserGuild>> listGuilds({Snowflake? before, Snowflake? after, int? limit}) =>
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   /// Update the client's voice state in the guild with the ID [guildId].

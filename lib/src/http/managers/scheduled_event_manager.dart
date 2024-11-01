@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/guild/scheduled_event.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [ScheduledEvent]s.
@@ -32,14 +32,15 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
       description: raw['description'] as String?,
       scheduledStartTime: DateTime.parse(raw['scheduled_start_time'] as String),
       scheduledEndTime: maybeParse(raw['scheduled_end_time'], DateTime.parse),
-      privacyLevel: PrivacyLevel.parse(raw['privacy_level'] as int),
-      status: EventStatus.parse(raw['status'] as int),
-      type: ScheduledEntityType.parse(raw['entity_type'] as int),
+      privacyLevel: PrivacyLevel(raw['privacy_level'] as int),
+      status: EventStatus(raw['status'] as int),
+      type: ScheduledEntityType(raw['entity_type'] as int),
       entityId: maybeParse(raw['entity_id'], Snowflake.parse),
       metadata: maybeParse(raw['entity_metadata'], parseEntityMetadata),
       creator: maybeParse(raw['creator'], client.users.parse),
       userCount: raw['user_count'] as int?,
       coverImageHash: raw['image'] as String?,
+      recurrenceRule: maybeParse(raw['recurrence_rule'], parseRecurrenceRule),
     );
   }
 
@@ -50,11 +51,35 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
   }
 
   ScheduledEventUser parseScheduledEventUser(Map<String, Object?> raw) {
+    final user = client.users.parse(raw['user'] as Map<String, Object?>);
+
     return ScheduledEventUser(
       manager: this,
       scheduledEventId: Snowflake.parse(raw['guild_scheduled_event_id']!),
-      user: client.users.parse(raw['user'] as Map<String, Object?>),
-      member: maybeParse(raw['member'], client.guilds[guildId].members.parse),
+      user: user,
+      member: maybeParse(raw['member'], (Map<String, Object?> raw) => client.guilds[guildId].members.parse(raw, userId: user.id)),
+    );
+  }
+
+  RecurrenceRule parseRecurrenceRule(Map<String, Object?> raw) {
+    return RecurrenceRule(
+      start: DateTime.parse(raw['start'] as String),
+      end: maybeParse(raw['end'], DateTime.parse),
+      frequency: RecurrenceRuleFrequency(raw['frequency'] as int),
+      interval: raw['interval'] as int,
+      byWeekday: maybeParseMany(raw['by_weekday'], RecurrenceRuleWeekday.new),
+      byNWeekday: maybeParseMany(raw['by_n_weekday'], parseRecurrenceRuleNWeekday),
+      byMonth: maybeParseMany(raw['by_month'], RecurrenceRuleMonth.new),
+      byMonthDay: maybeParseMany(raw['by_month_day']),
+      byYearDay: maybeParseMany(raw['by_year_day']),
+      count: raw['count'] as int?,
+    );
+  }
+
+  RecurrenceRuleNWeekday parseRecurrenceRuleNWeekday(Map<String, Object?> raw) {
+    return RecurrenceRuleNWeekday(
+      n: raw['n'] as int,
+      day: RecurrenceRuleWeekday(raw['day'] as int),
     );
   }
 
@@ -68,7 +93,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final event = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[event.id] = event;
+    client.updateCacheWith(event);
     return event;
   }
 
@@ -82,7 +107,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final events = parseMany(response.jsonBody as List<Object?>, parse);
 
-    cache.addEntities(events);
+    events.forEach(client.updateCacheWith);
     return events;
   }
 
@@ -96,7 +121,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final event = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[event.id] = event;
+    client.updateCacheWith(event);
     return event;
   }
 
@@ -110,7 +135,7 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     final response = await client.httpHandler.executeSafe(request);
     final event = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[event.id] = event;
+    client.updateCacheWith(event);
     return event;
   }
 
@@ -140,6 +165,9 @@ class ScheduledEventManager extends Manager<ScheduledEvent> {
     });
 
     final response = await client.httpHandler.executeSafe(request);
-    return parseMany(response.jsonBody as List<Object?>, parseScheduledEventUser);
+    final users = parseMany(response.jsonBody as List<Object?>, parseScheduledEventUser);
+
+    users.forEach(client.updateCacheWith);
+    return users;
   }
 }

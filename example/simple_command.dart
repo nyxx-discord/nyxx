@@ -28,7 +28,7 @@ void main() async {
       // we received.
       await event.message.channel.sendMessage(MessageBuilder(
         content: 'Pong!',
-        replyId: event.message.id,
+        referencedMessage: MessageReferenceBuilder.reply(messageId: event.message.id),
       ));
     }
   });

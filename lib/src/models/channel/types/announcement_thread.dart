@@ -77,6 +77,7 @@ class AnnouncementThread extends TextChannel implements Thread {
   @override
   ChannelType get type => ChannelType.announcementThread;
 
+  /// @nodoc
   AnnouncementThread({
     required super.id,
     required super.manager,

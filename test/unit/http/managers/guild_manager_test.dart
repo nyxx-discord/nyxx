@@ -395,7 +395,10 @@ final sampleOnboarding = {
     "998678683592171602",
     "998678699715067986"
   ],
-  "enabled": true
+  "enabled": true,
+
+  // The docs say these fields are present, but they aren't in the sample onboarding Discord provides
+  "mode": 0,
 };
 
 void checkOnboarding(Onboarding onboarding) {
@@ -640,10 +643,10 @@ void main() {
         execute: (manager) => manager.deleteBan(Snowflake.zero, Snowflake.zero),
         check: (_) {},
       ),
-      EndpointTest<GuildManager, MfaLevel, int>(
+      EndpointTest<GuildManager, MfaLevel, Map<String, Object?>>(
         name: 'updateMfaLevel',
         method: 'POST',
-        source: 0,
+        source: {'level': 0},
         urlMatcher: '/guilds/0/mfa',
         execute: (manager) => manager.updateMfaLevel(Snowflake.zero, MfaLevel.none),
         check: (level) => expect(level, equals(MfaLevel.none)),
@@ -728,6 +731,22 @@ void main() {
         source: sampleOnboarding,
         urlMatcher: '/guilds/0/onboarding',
         execute: (manager) => manager.fetchOnboarding(Snowflake.zero),
+        check: checkOnboarding,
+      ),
+      EndpointTest<GuildManager, Onboarding, Map<String, Object?>>(
+        name: 'updateOnboarding',
+        source: sampleOnboarding,
+        urlMatcher: '/guilds/0/onboarding',
+        method: 'PUT',
+        execute: (manager) => manager.updateOnboarding(
+          Snowflake.zero,
+          OnboardingUpdateBuilder(
+            prompts: [],
+            defaultChannelIds: [],
+            isEnabled: true,
+            mode: OnboardingMode.defaultMode,
+          ),
+        ),
         check: checkOnboarding,
       ),
       EndpointTest<GuildManager, void, void>(

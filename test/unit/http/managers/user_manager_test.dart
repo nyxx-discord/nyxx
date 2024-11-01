@@ -1,6 +1,8 @@
+import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
+import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
 import 'channel_manager_test.dart';
 import 'member_manager_test.dart';
@@ -102,24 +104,49 @@ void main() {
         execute: (manager) => manager.updateCurrentUser(UserUpdateBuilder()),
         check: checkSampleUser,
       ),
-      EndpointTest<UserManager, List<PartialGuild>, List<Object?>>(
+      EndpointTest<UserManager, List<UserGuild>, List<Object?>>(
         name: 'listCurrentUserGuilds',
         source: [
-          {'id': '0'}
+          {
+            'id': '1',
+            'name': 'nyxx',
+            'icon': null,
+            'owner': false,
+            'permissions': '533130099674816',
+            'features': ['COMMUNITY', 'INVITE_SPLASH', 'DISCOVERABLE', 'WELCOME_SCREEN_ENABLED', 'VERIFIED', 'VANITY_URL', 'NEWS']
+          }
         ],
         urlMatcher: '/users/@me/guilds',
         execute: (manager) => manager.listCurrentUserGuilds(),
         check: (list) {
           expect(list, hasLength(1));
-          expect(list.single.id, equals(Snowflake.zero));
+          final guild = list.single;
+          expect(guild.id, equals(Snowflake(1)));
+          expect(guild.name, 'nyxx');
+          expect(guild.icon, isNull);
+          expect(guild.isOwnedByCurrentUser, isFalse);
+          expect(guild.currentUserPermissions, isNotNull);
+          final features = guild.features;
+          expect(features.hasCommunity, isTrue);
+          expect(features.hasInviteSplash, isTrue);
+          expect(features.isDiscoverable, isTrue);
+          expect(features.hasWelcomeScreenEnabled, isTrue);
+          expect(features.isVerified, isTrue);
+          expect(features.hasVanityUrl, isTrue);
+          expect(features.hasNews, isTrue);
         },
       ),
       EndpointTest<UserManager, Member, Map<String, Object?>>(
         name: 'fetchCurrentUserMember',
-        source: sampleMember,
+        source: sampleMemberNoUser,
         urlMatcher: '/users/@me/guilds/0/member',
         execute: (manager) => manager.fetchCurrentUserMember(Snowflake.zero),
-        check: checkMember,
+        check: (member) {
+          final client = MockNyxx();
+          when(() => client.options).thenReturn(RestClientOptions());
+
+          checkMemberNoUser(member, expectedUserId: client.user.id);
+        },
       ),
       EndpointTest<UserManager, void, void>(
         name: 'leaveGuild',

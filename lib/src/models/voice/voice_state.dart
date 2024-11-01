@@ -25,6 +25,7 @@ class VoiceState with ToStringHelper {
   /// The ID of the user this state is for.
   final Snowflake userId;
 
+  /// The member this voice state is for.
   final Member? member;
 
   /// This state's session ID.
@@ -55,6 +56,7 @@ class VoiceState with ToStringHelper {
   final DateTime? requestedToSpeakAt;
 
   /// {@macro voice_state}
+  /// @nodoc
   VoiceState({
     required this.manager,
     required this.guildId,

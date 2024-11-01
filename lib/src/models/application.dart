@@ -1,7 +1,10 @@
 import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/application_manager.dart';
+import 'package:nyxx/src/http/managers/emoji_manager.dart';
 import 'package:nyxx/src/http/managers/entitlement_manager.dart';
+import 'package:nyxx/src/http/managers/sku_manager.dart';
 import 'package:nyxx/src/http/route.dart';
+import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
@@ -9,6 +12,7 @@ import 'package:nyxx/src/models/sku.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/team.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -25,7 +29,14 @@ class PartialApplication with ToStringHelper {
   /// An [EntitlementManager] for this application's [Entitlement]s.
   EntitlementManager get entitlements => EntitlementManager(manager.client.options.entitlementConfig, manager.client, applicationId: id);
 
+  /// An [ApplicationEmojiManager] for this application's [Emoji]s.
+  ApplicationEmojiManager get emojis => ApplicationEmojiManager(manager.client.options.emojiCacheConfig, manager.client, applicationId: id);
+
+  /// An [SkuManager] for this application's [Sku]s.
+  SkuManager get skus => SkuManager(manager.client.options.skuConfig, manager.client, applicationId: id);
+
   /// Create a new [PartialApplication].
+  /// @nodoc
   PartialApplication({required this.id, required this.manager});
 
   /// Fetch this application's role connection metadata.
@@ -36,6 +47,14 @@ class PartialApplication with ToStringHelper {
 
   /// List this application's SKUs.
   Future<List<Sku>> listSkus() => manager.listSkus(id);
+}
+
+class ApplicationIntegrationTypeConfiguration {
+  /// Install params for each installation context's default in-app authorization link.
+  final InstallationParameters? oauth2InstallParameters;
+
+  /// @nodoc
+  ApplicationIntegrationTypeConfiguration({required this.oauth2InstallParameters});
 }
 
 /// {@template application}
@@ -111,6 +130,9 @@ class Application extends PartialApplication {
   /// Settings for this application's default authorization link.
   final InstallationParameters? installationParameters;
 
+  /// Default scopes and permissions for each supported installation context.
+  final Map<ApplicationIntegrationType, ApplicationIntegrationTypeConfiguration>? integrationTypesConfig;
+
   /// The custom authorization link for this application.
   final Uri? customInstallUrl;
 
@@ -119,7 +141,11 @@ class Application extends PartialApplication {
   /// When configured, this will render the app as a verification method in the guild role verification configuration.
   final Uri? roleConnectionsVerificationUrl;
 
+  /// The approximate number of users that have installed this application.
+  final int? approximateUserInstallCount;
+
   /// {@macro application}
+  /// @nodoc
   Application({
     required super.id,
     required super.manager,
@@ -146,8 +172,10 @@ class Application extends PartialApplication {
     required this.interactionsEndpointUrl,
     required this.tags,
     required this.installationParameters,
+    required this.integrationTypesConfig,
     required this.customInstallUrl,
     required this.roleConnectionsVerificationUrl,
+    required this.approximateUserInstallCount,
   });
 
   /// This application's icon.
@@ -167,6 +195,20 @@ class Application extends PartialApplication {
           base: HttpRoute()..appIcons(id: id.toString()),
           hash: coverImageHash!,
         );
+}
+
+final class ApplicationIntegrationType extends EnumLike<int, ApplicationIntegrationType> {
+  /// App is installable to servers.
+  static const guildInstall = ApplicationIntegrationType(0);
+
+  /// App is installable to users.
+  static const userInstall = ApplicationIntegrationType(1);
+
+  /// @nodoc
+  const ApplicationIntegrationType(super.value);
+
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ApplicationIntegrationType.parse(int value) : this(value);
 }
 
 /// Flags for an [Application].
@@ -246,6 +288,7 @@ class InstallationParameters with ToStringHelper {
   final Permissions permissions;
 
   /// {@macro installation_parameters}
+  /// @nodoc
   InstallationParameters({
     required this.scopes,
     required this.permissions,
@@ -275,6 +318,7 @@ class ApplicationRoleConnectionMetadata with ToStringHelper {
   final Map<Locale, String>? localizedDescriptions;
 
   /// {@macro application_role_connection_metadata}
+  /// @nodoc
   ApplicationRoleConnectionMetadata({
     required this.type,
     required this.key,
@@ -286,29 +330,19 @@ class ApplicationRoleConnectionMetadata with ToStringHelper {
 }
 
 /// The type of an [ApplicationRoleConnectionMetadata].
-enum ConnectionMetadataType {
-  integerLessThanOrEqual._(1),
-  integerGreaterThanOrEqual._(2),
-  integerEqual._(3),
-  integerNotEqual._(4),
-  dateTimeLessThanOrEqual._(5),
-  dateTimeGreaterThanOrEqual._(6),
-  booleanEqual._(7),
-  booleanNotEqual._(8);
+final class ConnectionMetadataType extends EnumLike<int, ConnectionMetadataType> {
+  static const integerLessThanOrEqual = ConnectionMetadataType(1);
+  static const integerGreaterThanOrEqual = ConnectionMetadataType(2);
+  static const integerEqual = ConnectionMetadataType(3);
+  static const integerNotEqual = ConnectionMetadataType(4);
+  static const dateTimeLessThanOrEqual = ConnectionMetadataType(5);
+  static const dateTimeGreaterThanOrEqual = ConnectionMetadataType(6);
+  static const booleanEqual = ConnectionMetadataType(7);
+  static const booleanNotEqual = ConnectionMetadataType(8);
 
-  /// The value of this [ConnectionMetadataType].
-  final int value;
+  /// @nodoc
+  const ConnectionMetadataType(super.value);
 
-  const ConnectionMetadataType._(this.value);
-
-  /// Parse a [ConnectionMetadataType] from an [int].
-  ///
-  /// The [value] must be a valid connection metadata type.
-  factory ConnectionMetadataType.parse(int value) => ConnectionMetadataType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown connection metadata type', value),
-      );
-
-  @override
-  String toString() => 'ConnectionMetadataType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ConnectionMetadataType.parse(int value) : this(value);
 }

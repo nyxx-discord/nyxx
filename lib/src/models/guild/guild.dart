@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:nyxx/src/builders/channel/channel_position.dart';
 import 'package:nyxx/src/builders/channel/guild_channel.dart';
+import 'package:nyxx/src/builders/guild/onboarding.dart';
 import 'package:nyxx/src/builders/guild/template.dart';
 import 'package:nyxx/src/builders/guild/welcome_screen.dart';
 import 'package:nyxx/src/builders/guild/widget.dart';
@@ -17,6 +18,7 @@ import 'package:nyxx/src/http/managers/integration_manager.dart';
 import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
+import 'package:nyxx/src/http/managers/soundboard_manager.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
@@ -42,6 +44,7 @@ import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Guild].
@@ -64,8 +67,8 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// An [IntegrationManager] for the integrations of this guild.
   IntegrationManager get integrations => IntegrationManager(manager.client.options.integrationConfig, manager.client, guildId: id);
 
-  /// An [EmojiManager] for the emojis of this guild.
-  EmojiManager get emojis => EmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
+  /// A [GuildEmojiManager] for the emojis of this guild.
+  GuildEmojiManager get emojis => GuildEmojiManager(manager.client.options.emojiCacheConfig, manager.client, guildId: id);
 
   /// An [GuildStickerManager] for the stickers of this guild.
   GuildStickerManager get stickers => GuildStickerManager(manager.client.options.stickerCacheConfig, manager.client, guildId: id);
@@ -73,8 +76,11 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// An [AuditLogManager] for the audit log of this guild.
   AuditLogManager get auditLogs => AuditLogManager(manager.client.options.auditLogEntryConfig, manager.client, guildId: id);
 
+  /// A [GuildSoundboardManager] for the soundboard sounds of this guild.
+  GuildSoundboardManager get soundboard => GuildSoundboardManager(manager.client.options.soundboardCacheConfig, manager.client, guildId: id);
+
   /// A [Cache] for [VoiceState]s in this guild.
-  Cache<VoiceState> get voiceStates => Cache(manager.client, '$id.voiceStates', manager.client.options.voiceStateConfig);
+  Cache<VoiceState> get voiceStates => manager.client.cache.getCache('$id.voiceStates', manager.client.options.voiceStateConfig);
 
   /// A [GuildApplicationCommandManager] for the application commands of this guild.
   GuildApplicationCommandManager get commands => GuildApplicationCommandManager(
@@ -86,6 +92,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
       );
 
   /// Create a new [PartialGuild].
+  /// @nodoc
   PartialGuild({required super.id, required this.manager});
 
   @override
@@ -108,17 +115,21 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   Future<ThreadList> listActiveThreads() => manager.listActiveThreads(id);
 
   /// List the bans in this guild.
-  Future<List<Ban>> listBans() => manager.listBans(id);
+  Future<List<Ban>> listBans({int? limit, Snowflake? after, Snowflake? before}) => manager.listBans(id, limit: limit, after: after, before: before);
 
-  /// Ban a member in this guild.
+  /// Ban a user in this guild.
   Future<void> createBan(Snowflake userId, {Duration? deleteMessages, String? auditLogReason}) =>
       manager.createBan(id, userId, auditLogReason: auditLogReason, deleteMessages: deleteMessages);
 
-  /// Unban a member in this guild.
+  /// Ban up to 200 users from a guild, and optionally delete previous messages sent by the banned users.
+  Future<BulkBanResponse> bulkBan(List<Snowflake> userIds, {Duration? deleteMessages, String? auditLogReason}) =>
+      manager.bulkBan(id, userIds, deleteMessages: deleteMessages, auditLogReason: auditLogReason);
+
+  /// Unban a user in this guild.
   Future<void> deleteBan(Snowflake userId, {String? auditLogReason}) => manager.deleteBan(id, userId, auditLogReason: auditLogReason);
 
-  /// Fetch the MFA level for this guild.
-  Future<void> updateMfaLevel(MfaLevel level, {String? auditLogReason}) => manager.updateMfaLevel(id, level, auditLogReason: auditLogReason);
+  /// Update a guild's MFA level.
+  Future<MfaLevel> updateMfaLevel(MfaLevel level, {String? auditLogReason}) => manager.updateMfaLevel(id, level, auditLogReason: auditLogReason);
 
   /// Fetch the member prune count for the given [days] and [roleIds].
   Future<int> fetchPruneCount({int? days, List<Snowflake>? roleIds}) => manager.fetchPruneCount(id, days: days, roleIds: roleIds);
@@ -162,6 +173,10 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   /// Fetch the onboarding information for this guild.
   Future<Onboarding> fetchOnboarding() => manager.fetchOnboarding(id);
 
+  /// Update this guild's onboarding.
+  Future<Onboarding> updateOnboarding(OnboardingUpdateBuilder builder, {String? auditLogReason}) =>
+      manager.updateOnboarding(id, builder, auditLogReason: auditLogReason);
+
   /// Update the current user's voice state in this guild.
   Future<void> updateCurrentUserVoiceState(CurrentUserVoiceStateUpdateBuilder builder) => manager.updateCurrentUserVoiceState(id, builder);
 
@@ -196,38 +211,73 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   Future<String?> fetchVanityCode() => manager.fetchVanityCode(id);
 }
 
-/// {@template guild}
-/// A collection of channels & users.
-///
-/// Guilds are often referred to as servers.
-/// {@endtemplate}
-class Guild extends PartialGuild {
+/// {@macro guild}
+class UserGuild extends PartialGuild {
   /// This guild's name.
   final String name;
 
   /// The hash of this guild's icon.
   final String? iconHash;
 
+  /// Whether this guild is owned by the current user.
+  final bool? isOwnedByCurrentUser;
+
+  /// The current user's permissions.
+  final Permissions? currentUserPermissions;
+
+  /// A set of features enabled in this guild.
+  final GuildFeatures features;
+
+  /// An approximate number of members in this guild.
+  ///
+  /// {@template fetch_with_counts_only}
+  /// This is only returned when fetching this guild with `withCounts` set to `true`.
+  /// {@endtemplate}
+  final int? approximateMemberCount;
+
+  /// An approximate number of presences in this guild.
+  ///
+  /// {@macro fetch_with_counts_only}
+  final int? approximatePresenceCount;
+
+  /// {@macro guild}
+  /// @nodoc
+  UserGuild({
+    required super.id,
+    required super.manager,
+    required this.name,
+    required this.iconHash,
+    required this.isOwnedByCurrentUser,
+    required this.currentUserPermissions,
+    required this.features,
+    required this.approximateMemberCount,
+    required this.approximatePresenceCount,
+  });
+
+  /// This guild's icon.
+  CdnAsset? get icon => iconHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..icons(id: id.toString()),
+          hash: iconHash!,
+        );
+}
+
+/// {@template guild}
+/// A collection of channels & users.
+///
+/// Guilds are often referred to as servers.
+/// {@endtemplate}
+class Guild extends UserGuild {
   /// The hash of this guild's splash image.
   final String? splashHash;
 
   /// The hash of this guild's discovery splash image.
   final String? discoverySplashHash;
 
-  /// Whether this guild is owned by the current user.
-  ///
-  /// {@template get_current_user_guilds_only}
-  /// This field is only present when fetching the current user's guilds.
-  /// {@endtemplate}
-  final bool? isOwnedByCurrentUser;
-
   /// The ID of this guild's owner.
   final Snowflake ownerId;
-
-  /// The current user's permissions.
-  ///
-  /// {@macro get_current_user_guilds_only}
-  final Permissions? currentUserPermissions;
 
   /// The ID of this guild's AFK channel.
   final Snowflake? afkChannelId;
@@ -257,9 +307,6 @@ class Guild extends PartialGuild {
   /// A list of emojis in this guild.
   // Renamed to avoid conflict with the emojis manager.
   final List<Emoji> emojiList;
-
-  /// A set of features enabled in this guild.
-  final GuildFeatures features;
 
   /// This guild's MFA level.
   final MfaLevel mfaLevel;
@@ -309,18 +356,6 @@ class Guild extends PartialGuild {
   /// The maximum number of users in a stage video channel.
   final int? maxStageChannelUsers;
 
-  /// An approximate number of members in this guild.
-  ///
-  /// {@template fetch_with_counts_only}
-  /// This is only returned when fetching this guild with `withCounts` set to `true`.
-  /// {@endtemplate}
-  final int? approximateMemberCount;
-
-  /// An approximate number of presences in this guild.
-  ///
-  /// {@macro fetch_with_counts_only}
-  final int? approximatePresenceCount;
-
   /// This guild's welcome screen.
   final WelcomeScreen? welcomeScreen;
 
@@ -338,16 +373,17 @@ class Guild extends PartialGuild {
   final Snowflake? safetyAlertsChannelId;
 
   /// {@macro guild}
+  /// @nodoc
   Guild({
     required super.id,
     required super.manager,
-    required this.name,
-    required this.iconHash,
+    required super.name,
+    required super.iconHash,
     required this.splashHash,
     required this.discoverySplashHash,
-    required this.isOwnedByCurrentUser,
+    required super.isOwnedByCurrentUser,
     required this.ownerId,
-    required this.currentUserPermissions,
+    required super.currentUserPermissions,
     required this.afkChannelId,
     required this.afkTimeout,
     required this.isWidgetEnabled,
@@ -356,7 +392,7 @@ class Guild extends PartialGuild {
     required this.defaultMessageNotificationLevel,
     required this.explicitContentFilterLevel,
     required this.roleList,
-    required this.features,
+    required super.features,
     required this.mfaLevel,
     required this.applicationId,
     required this.systemChannelId,
@@ -373,8 +409,8 @@ class Guild extends PartialGuild {
     required this.publicUpdatesChannelId,
     required this.maxVideoChannelUsers,
     required this.maxStageChannelUsers,
-    required this.approximateMemberCount,
-    required this.approximatePresenceCount,
+    required super.approximateMemberCount,
+    required super.approximatePresenceCount,
     required this.welcomeScreen,
     required this.nsfwLevel,
     required this.hasPremiumProgressBarEnabled,
@@ -411,15 +447,6 @@ class Guild extends PartialGuild {
   /// The channel safety alerts are sent to.
   PartialTextChannel? get safetyAlertsChannel => safetyAlertsChannelId == null ? null : manager.client.channels[safetyAlertsChannelId!] as PartialTextChannel;
 
-  /// This guild's icon.
-  CdnAsset? get icon => iconHash == null
-      ? null
-      : CdnAsset(
-          client: manager.client,
-          base: HttpRoute()..icons(id: id.toString()),
-          hash: iconHash!,
-        );
-
   /// This guild's splash image.
   CdnAsset? get splash => splashHash == null
       ? null
@@ -449,73 +476,43 @@ class Guild extends PartialGuild {
 }
 
 /// The verification level for a guild.
-enum VerificationLevel {
-  none._(0),
-  low._(1),
-  medium._(2),
-  high._(3),
-  veryHigh._(4);
+final class VerificationLevel extends EnumLike<int, VerificationLevel> {
+  static const none = VerificationLevel(0);
+  static const low = VerificationLevel(1);
+  static const medium = VerificationLevel(2);
+  static const high = VerificationLevel(3);
+  static const veryHigh = VerificationLevel(4);
 
-  /// The value of this verification level.
-  final int value;
+  /// @nodoc
+  const VerificationLevel(super.value);
 
-  const VerificationLevel._(this.value);
-
-  /// Parses a [VerificationLevel] from an [int].
-  ///
-  /// The [value] must be a valid verification level.
-  factory VerificationLevel.parse(int value) => VerificationLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid verification level', value),
-      );
-
-  @override
-  String toString() => 'VerificationLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  VerificationLevel.parse(int value) : this(value);
 }
 
 /// The level at which message notifications are sent in a guild.
-enum MessageNotificationLevel {
-  allMessages._(0),
-  onlyMentions._(1);
+final class MessageNotificationLevel extends EnumLike<int, MessageNotificationLevel> {
+  static const allMessages = MessageNotificationLevel(0);
+  static const onlyMentions = MessageNotificationLevel(1);
 
-  /// The value of this message notification level.
-  final int value;
+  /// @nodoc
+  const MessageNotificationLevel(super.value);
 
-  const MessageNotificationLevel._(this.value);
-
-  /// Parses a [MessageNotificationLevel] from an [int].
-  ///
-  /// The [value] must be a valid message notification level.
-  factory MessageNotificationLevel.parse(int value) => MessageNotificationLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid message notification level', value),
-      );
-
-  @override
-  String toString() => 'MessageNotificationLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  MessageNotificationLevel.parse(int value) : this(value);
 }
 
 /// The level of explicit content filtering in a guild.
-enum ExplicitContentFilterLevel {
-  disabled._(0),
-  membersWithoutRoles._(1),
-  allMembers._(2);
+final class ExplicitContentFilterLevel extends EnumLike<int, ExplicitContentFilterLevel> {
+  static const disabled = ExplicitContentFilterLevel(0);
+  static const membersWithoutRoles = ExplicitContentFilterLevel(1);
+  static const allMembers = ExplicitContentFilterLevel(2);
 
-  /// The value of this explicit content filter level.
-  final int value;
+  /// @nodoc
+  const ExplicitContentFilterLevel(super.value);
 
-  const ExplicitContentFilterLevel._(this.value);
-
-  /// Parses an [ExplicitContentFilterLevel] from an [int].
-  ///
-  /// The [value] must be a valid explicit content filter level.
-  factory ExplicitContentFilterLevel.parse(int value) => ExplicitContentFilterLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid explicit content filter level', value),
-      );
-
-  @override
-  String toString() => 'ExplicitContentFilterLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ExplicitContentFilterLevel.parse(int value) : this(value);
 }
 
 /// Features that can be enabled in certain guilds.
@@ -688,25 +685,15 @@ class GuildFeatures extends Flags<GuildFeatures> {
 }
 
 /// The MFA level required for moderators of a guild.
-enum MfaLevel {
-  none._(0),
-  elevated._(1);
+final class MfaLevel extends EnumLike<int, MfaLevel> {
+  static const none = MfaLevel(0);
+  static const elevated = MfaLevel(1);
 
-  /// The value of this MFA level.
-  final int value;
+  /// @nodoc
+  const MfaLevel(super.value);
 
-  const MfaLevel._(this.value);
-
-  /// Parses an [MfaLevel] from an [int].
-  ///
-  /// The [value] must be a valid mfa level.
-  factory MfaLevel.parse(int value) => MfaLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid mfa level', value),
-      );
-
-  @override
-  String toString() => 'MfaLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  MfaLevel.parse(int value) : this(value);
 }
 
 /// The configuration of a guild's system channel.
@@ -752,49 +739,29 @@ class SystemChannelFlags extends Flags<SystemChannelFlags> {
 }
 
 /// The premium tier of a guild.
-enum PremiumTier {
-  none._(0),
-  one._(1),
-  two._(2),
-  three._(3);
+final class PremiumTier extends EnumLike<int, PremiumTier> {
+  static const none = PremiumTier(0);
+  static const one = PremiumTier(1);
+  static const two = PremiumTier(2);
+  static const three = PremiumTier(3);
 
-  /// The value of this tier.
-  final int value;
+  /// nodoc
+  const PremiumTier(super.value);
 
-  const PremiumTier._(this.value);
-
-  /// Parses a [PremiumTier] from an [int].
-  ///
-  /// The [value] must be a valid premium tier.
-  factory PremiumTier.parse(int value) => PremiumTier.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid premium tier', value),
-      );
-
-  @override
-  String toString() => 'PremiumTier($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  PremiumTier.parse(int value) : this(value);
 }
 
 /// The NSFW level of a guild.
-enum NsfwLevel {
-  unset._(0),
-  explicit._(1),
-  safe._(2),
-  ageRestricted._(3);
+final class NsfwLevel extends EnumLike<int, NsfwLevel> {
+  static const unset = NsfwLevel(0);
+  static const explicit = NsfwLevel(1);
+  static const safe = NsfwLevel(2);
+  static const ageRestricted = NsfwLevel(3);
 
-  /// The value of this NSFW level.
-  final int value;
+  /// nodoc
+  const NsfwLevel(super.value);
 
-  const NsfwLevel._(this.value);
-
-  /// Parses an [NsfwLevel] from an [int].
-  ///
-  /// The [value] must be a valid nsfw level.
-  factory NsfwLevel.parse(int value) => NsfwLevel.values.firstWhere(
-        (level) => level.value == value,
-        orElse: () => throw FormatException('Invalid nsfw level', value),
-      );
-
-  @override
-  String toString() => 'NsfwLevel($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  NsfwLevel.parse(int value) : this(value);
 }

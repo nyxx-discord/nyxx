@@ -27,9 +27,9 @@ void main() {
     group('execute', () {
       test('can make basic requests', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         final interceptor = nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test')..reply(200, jsonEncode({'message': 'success'}));
 
@@ -46,9 +46,9 @@ void main() {
 
       test('returns the correct response type', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         final scope = nock('https://discord.com/api/v${client.apiOptions.apiVersion}');
         final successInterceptor = scope.get('/succeed')..reply(200, jsonEncode({'message': 'success'}));
@@ -70,9 +70,9 @@ void main() {
 
     test('executeSafe throws on request failure', () async {
       final client = MockNyxx();
-      final handler = HttpHandler(client);
       when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
       when(() => client.options).thenReturn(RestClientOptions());
+      final handler = HttpHandler(client);
 
       nock('https://discord.com/api/v${client.apiOptions.apiVersion}')
         ..get('/succeed').reply(200, jsonEncode({'message': 'success'}))
@@ -88,9 +88,9 @@ void main() {
     group('rate limits', () {
       test('creates buckets from headers', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           200,
@@ -114,9 +114,9 @@ void main() {
 
       test('hold requests when rate limit might be exceeded', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           200,
@@ -155,9 +155,9 @@ void main() {
 
       test('update on 429 response', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           429,
@@ -204,9 +204,9 @@ void main() {
 
       test('handles global rate limit', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         nock('https://discord.com/api/v${client.apiOptions.apiVersion}').get('/test').reply(
           429,
@@ -253,9 +253,9 @@ void main() {
 
       test('handles batch request rate limits', () async {
         final client = MockNyxx();
-        final handler = HttpHandler(client);
         when(() => client.apiOptions).thenReturn(RestApiOptions(token: 'test token'));
         when(() => client.options).thenReturn(RestClientOptions());
+        final handler = HttpHandler(client);
 
         for (final duration in [Duration.zero, Duration(seconds: 4), Duration(seconds: 9)]) {
           Timer(duration, () {

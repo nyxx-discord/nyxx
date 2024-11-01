@@ -67,7 +67,7 @@ class HttpRoutePart {
 
 /// A parameter in a [HttpRoutePart].
 ///
-/// {@template http_route_part}
+/// {@template http_route_param}
 /// This is not a query parameter, it is a parameter encoded in the path of the request itself, such
 /// as the id of a guild in `/guilds/0123456789`.
 /// {@endtemplate}
@@ -307,8 +307,41 @@ extension RouteHelpers on HttpRoute {
   void entitlements({String? id}) => add(HttpRoutePart('entitlements', [if (id != null) HttpRouteParam(id)]));
 
   /// Adds the [`skus`](https://discord.com/developers/docs/monetization/skus#list-skus) part to this [HttpRoute].
-  void skus() => add(HttpRoutePart('skus'));
+  void skus({String? id}) => add(HttpRoutePart('skus', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`consume`](https://discord.com/developers/docs/monetization/entitlements#consume-an-entitlement) part to this [HttpRoute].
+  void consume() => add(HttpRoutePart('consume'));
 
   /// Adds the [`avatar-decorations`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
   void avatarDecorations({String? id}) => add(HttpRoutePart('avatar-decorations', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`avatar-decoration-presets`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
+  void avatarDecorationPresets() => add(HttpRoutePart('avatar-decoration-presets'));
+
+  /// Adds the [`recipients`](https://discord.com/developers/docs/resources/channel#group-dm-add-recipient) part to this [HttpRoute].
+  void recipients({String? id}) => add(HttpRoutePart('recipients', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`polls`](https://discord.com/developers/docs/resources/poll#get-answer-voters) part to this [HttpRoute].
+  void polls({String? id}) => add(HttpRoutePart('polls', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`answers`](https://discord.com/developers/docs/resources/poll#get-answer-voters) part to this [HttpRoute].
+  void answers({int? id}) => add(HttpRoutePart('answers', [if (id != null) HttpRouteParam(id.toString())]));
+
+  /// Adds the [`expire`](https://discord.com/developers/docs/resources/poll#expire-poll) part to this [HttpRoute].
+  void expire() => add(HttpRoutePart('expire'));
+
+  /// Adds the [`bulk-ban`](https://discord.com/developers/docs/resources/guild#bulk-guild-ban) part to this [HttpRoute].
+  void bulkBan() => add(HttpRoutePart('bulk-ban'));
+
+  /// Adds the [`subscriptions`](https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions) part to this [HttpRoute].
+  void subscriptions({String? id}) => add(HttpRoutePart('subscriptions', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`sounboard-default-sounds`](https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds) part to this [HttpRoute].
+  void soundboardDefaultSounds() => add(HttpRoutePart('soundboard-default-sounds'));
+
+  /// Adds the [`soundboard-sounds`](https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds) part to this [HttpRoute].
+  void soundboardSounds({String? id}) => add(HttpRoutePart('soundboard-sounds', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`send-soundboard-sound`](https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound) part to this [HttpRoute].
+  void sendSoundboardSound() => add(HttpRoutePart('send-soundboard-sound'));
 }

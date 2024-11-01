@@ -3,10 +3,12 @@ import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/commands/application_command_permissions.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [ApplicationCommand].
 class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationCommand> {
@@ -14,6 +16,7 @@ class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationComma
   final ApplicationCommandManager manager;
 
   /// Create a new [PartialApplicationCommand].
+  /// @nodoc
   PartialApplicationCommand({required super.id, required this.manager});
 
   /// Fetch the permissions for this command in a given guild.
@@ -54,15 +57,23 @@ class ApplicationCommand extends PartialApplicationCommand {
   final Permissions? defaultMemberPermissions;
 
   /// Whether this command can be ran in DMs.
+  @Deprecated('Use `contexts`')
   final bool? hasDmPermission;
 
   /// Whether this command is NSFW.
   final bool? isNsfw;
 
+  /// Installation context(s) where the command is available, only for globally-scoped commands. Defaults to [InteractionContextType.guildInstall].
+  final List<ApplicationIntegrationType> integrationTypes;
+
+  /// Interaction context(s) where the command can be used, only for globally-scoped commands. By default, all interaction context types included for new commands.
+  final List<InteractionContextType>? contexts;
+
   /// An auto-incrementing version number.
   final Snowflake version;
 
   /// {@macro application_command}
+  /// @nodoc
   ApplicationCommand({
     required super.id,
     required super.manager,
@@ -77,6 +88,8 @@ class ApplicationCommand extends PartialApplicationCommand {
     required this.defaultMemberPermissions,
     required this.hasDmPermission,
     required this.isNsfw,
+    required this.integrationTypes,
+    required this.contexts,
     required this.version,
   });
 
@@ -88,24 +101,19 @@ class ApplicationCommand extends PartialApplicationCommand {
 }
 
 /// The type of an [ApplicationCommand].
-enum ApplicationCommandType {
-  chatInput._(1),
-  user._(2),
-  message._(3);
+final class ApplicationCommandType extends EnumLike<int, ApplicationCommandType> {
+  /// A chat input command.
+  static const chatInput = ApplicationCommandType(1);
 
-  /// The value of this [ApplicationCommandType].
-  final int value;
+  /// A user command.
+  static const user = ApplicationCommandType(2);
 
-  const ApplicationCommandType._(this.value);
+  /// A message command.
+  static const message = ApplicationCommandType(3);
 
-  /// Parse an [ApplicationCommandType] from an [int].
-  ///
-  /// The [value] must be a valid application command type.
-  factory ApplicationCommandType.parse(int value) => ApplicationCommandType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown application command type', value),
-      );
+  /// @nodoc
+  const ApplicationCommandType(super.value);
 
-  @override
-  String toString() => 'ApplicationCommandType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ApplicationCommandType.parse(int value) : this(value);
 }

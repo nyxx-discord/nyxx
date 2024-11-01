@@ -35,6 +35,7 @@ class GuildCategory extends Channel implements GuildChannel {
   ChannelType get type => ChannelType.guildCategory;
 
   /// {@macro guild_category}
+  /// @nodoc
   GuildCategory({
     required super.id,
     required super.manager,

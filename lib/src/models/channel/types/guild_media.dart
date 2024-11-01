@@ -70,6 +70,7 @@ class GuildMediaChannel extends Channel implements GuildChannel, ThreadsOnlyChan
   ChannelType get type => ChannelType.guildForum;
 
   /// {@macro guild_media_channel}
+  /// @nodoc
   GuildMediaChannel({
     required super.id,
     required super.manager,

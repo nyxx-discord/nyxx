@@ -9,6 +9,7 @@ class EntitlementCreateEvent extends DispatchEvent {
   final Entitlement entitlement;
 
   /// {@macro entitlement_create_event}
+  /// @nodoc
   EntitlementCreateEvent({required super.gateway, required this.entitlement});
 }
 
@@ -23,6 +24,7 @@ class EntitlementUpdateEvent extends DispatchEvent {
   final Entitlement? oldEntitlement;
 
   /// {@macro entitlement_update_event}
+  /// @nodoc
   EntitlementUpdateEvent({required super.gateway, required this.entitlement, required this.oldEntitlement});
 }
 
@@ -30,8 +32,13 @@ class EntitlementUpdateEvent extends DispatchEvent {
 /// Emitted when an entitlement is deleted.
 /// {@endtemplate}
 class EntitlementDeleteEvent extends DispatchEvent {
-  // TODO: What is the payload here?
+  /// The entitlement that was deleted.
+  final Entitlement entitlement;
+
+  /// The entitlement as it was cached before it was deleted.
+  final Entitlement? deletedEntitlement;
 
   /// {@macro entitlement_delete_event}
-  EntitlementDeleteEvent({required super.gateway});
+  /// @nodoc
+  EntitlementDeleteEvent({required super.gateway, required this.entitlement, required this.deletedEntitlement});
 }

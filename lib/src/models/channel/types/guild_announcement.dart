@@ -59,6 +59,7 @@ class GuildAnnouncementChannel extends TextChannel implements GuildChannel, HasT
   ChannelType get type => ChannelType.guildAnnouncement;
 
   /// {@macro guild_announcement_channel}
+  /// @nodoc
   GuildAnnouncementChannel({
     required super.id,
     required super.manager,

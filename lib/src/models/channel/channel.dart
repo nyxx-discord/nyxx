@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/http/managers/channel_manager.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Channel] object.
@@ -10,6 +11,7 @@ class PartialChannel extends ManagedSnowflakeEntity<Channel> {
   final ChannelManager manager;
 
   /// Create a new [PartialChannel].
+  /// @nodoc
   PartialChannel({required super.id, required this.manager});
 
   /// Update this channel.
@@ -31,7 +33,7 @@ class PartialChannel extends ManagedSnowflakeEntity<Channel> {
   /// External references:
   /// * [ChannelManager.followChannel]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#follow-announcement-channel
-  Future<void> follow(Snowflake id) => manager.followChannel(this.id, id);
+  Future<void> follow(Snowflake id, {String? auditLogReason}) => manager.followChannel(this.id, id, auditLogReason: auditLogReason);
 }
 
 /// {@template channel}
@@ -42,65 +44,56 @@ abstract class Channel extends PartialChannel {
   ChannelType get type;
 
   /// {@macro channel}
+  /// @nodoc
   Channel({required super.id, required super.manager});
 }
 
 /// The type of a channel.
-enum ChannelType {
+final class ChannelType extends EnumLike<int, ChannelType> {
   /// A text channel in a [Guild].
-  guildText._(0),
+  static const guildText = ChannelType(0);
 
   /// A DM channel with a single other recipient.
-  dm._(1),
+  static const dm = ChannelType(1);
 
   /// A voice channel in a [Guild].
-  guildVoice._(2),
+  static const guildVoice = ChannelType(2);
 
   /// A DM channel with multiple recipients.
-  groupDm._(3),
+  static const groupDm = ChannelType(3);
 
   /// A category in a [Guild].
-  guildCategory._(4),
+  static const guildCategory = ChannelType(4);
 
   /// An announcement channel in a [Guild].
-  guildAnnouncement._(5),
+  static const guildAnnouncement = ChannelType(5);
 
   /// A [Thread] in an announcement channel.
-  announcementThread._(10),
+  static const announcementThread = ChannelType(10);
 
   /// A public thread.
-  publicThread._(11),
+  static const publicThread = ChannelType(11);
 
   /// A private thread.
-  privateThread._(12),
+  static const privateThread = ChannelType(12);
 
   /// A stage channel in a [Guild].
-  guildStageVoice._(13),
+  static const guildStageVoice = ChannelType(13);
 
   /// A [Guild] directory.
-  guildDirectory._(14),
+  static const guildDirectory = ChannelType(14);
 
   /// A forum channel in a [Guild].
-  guildForum._(15),
+  static const guildForum = ChannelType(15);
 
   /// A media channel in a [Guild].
-  guildMedia._(16);
+  static const guildMedia = ChannelType(16);
 
-  /// The value of this [ChannelType].
-  final int value;
+  /// @nodoc
+  const ChannelType(super.value);
 
-  const ChannelType._(this.value);
-
-  /// Parse a [ChannelType] from a [value].
-  ///
-  /// The [value] must be a valid channel type.
-  factory ChannelType.parse(int value) => ChannelType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown channel type', value),
-      );
-
-  @override
-  String toString() => 'ChannelType($value)';
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  ChannelType.parse(int value) : this(value);
 }
 
 /// A set of flags applied to channels.

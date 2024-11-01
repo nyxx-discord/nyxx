@@ -95,8 +95,12 @@ class Permissions extends Flags<Permissions> {
   /// Allows management and editing of webhooks.
   static const manageWebhooks = Flag<Permissions>.fromOffset(29);
 
-  /// Allows management and editing of emojis, stickers, and soundboard sounds.
+  /// Allows for editing and deleting emojis, stickers, and soundboard sounds created by all users.
+  @Deprecated('Use manageGuildExpressions instead')
   static const manageEmojisAndStickers = Flag<Permissions>.fromOffset(30);
+
+  /// Allows for editing and deleting emojis, stickers, and soundboard sounds created by all users.
+  static const manageGuildExpressions = Flag<Permissions>.fromOffset(30);
 
   /// Allows members to use application commands, including slash commands and context menu commands..
   static const useApplicationCommands = Flag<Permissions>.fromOffset(31);
@@ -104,7 +108,7 @@ class Permissions extends Flags<Permissions> {
   /// Allows for requesting to speak in stage channels. (This permission is under active development and may be changed or removed.).
   static const requestToSpeak = Flag<Permissions>.fromOffset(32);
 
-  /// Allows for creating, editing, and deleting scheduled events.
+  /// Allows for editing and deleting scheduled events created by all users.
   static const manageEvents = Flag<Permissions>.fromOffset(33);
 
   /// Allows for deleting and archiving threads, and viewing all private threads.
@@ -134,8 +138,31 @@ class Permissions extends Flags<Permissions> {
   /// Allows for using soundboard in a voice channel.
   static const useSoundboard = Flag<Permissions>.fromOffset(42);
 
+  /// Allows for creating emojis, stickers, and soundboard sounds, and editing and deleting those created by the current user.
+  @Deprecated('Use createGuildExpressions instead')
+  static const createEmojiAndStickers = Flag<Permissions>.fromOffset(43);
+
+  /// Allows for creating emojis, stickers, and soundboard sounds, and editing and deleting those created by the current user.
+  static const createGuildExpressions = Flag<Permissions>.fromOffset(43);
+
+  /// Allows for creating scheduled events, and editing and deleting those created by the current user.
+  static const createEvents = Flag<Permissions>.fromOffset(44);
+
+  /// Allows the usage of custom soundboard sounds from other servers.
+  static const useExternalSounds = Flag<Permissions>.fromOffset(45);
+
+  /// Allows sending voice messages.
+  static const sendVoiceMessages = Flag<Permissions>.fromOffset(46);
+
+  /// Allows sending polls.
+  static const sendPolls = Flag<Permissions>.fromOffset(49);
+
+  /// Allows user-installed apps to send public responses. When disabled, users will still be allowed to use their apps but the responses will be ephemeral.
+  /// This only applies to apps not also installed to the server.
+  static const useExternalApps = Flag<Permissions>.fromOffset(50);
+
   /// A [Permissions] with all permissions enabled.
-  static const allPermissions = Permissions(1099511627775);
+  static const allPermissions = Permissions(1829587348619263);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
@@ -228,7 +255,11 @@ class Permissions extends Flags<Permissions> {
   bool get canManageWebhooks => has(manageWebhooks);
 
   /// Whether this set of permissions has the [manageEmojisAndStickers] permission.
+  @Deprecated('Use canManageGuildExpressions instead')
   bool get canManageEmojisAndStickers => has(manageEmojisAndStickers);
+
+  /// Whether this set of permissions has the [manageGuildExpressions] permission.
+  bool get canManageGuildExpressions => has(manageGuildExpressions);
 
   /// Whether this set of permissions has the [useApplicationCommands] permission.
   bool get canUseApplicationCommands => has(useApplicationCommands);
@@ -265,6 +296,28 @@ class Permissions extends Flags<Permissions> {
 
   /// Whether this set of permissions has the [useSoundboard] permission.
   bool get canUseSoundboard => has(useSoundboard);
+
+  /// Whether this set of permissions has the [createEmojiAndStickers] permission.
+  @Deprecated('Use canCreateGuildExpressions instead')
+  bool get canCreateEmojiAndStickers => has(createEmojiAndStickers);
+
+  /// Whether this set of permissions has the [createGuildExpressions] permission.
+  bool get canCreateGuildExpressions => has(createGuildExpressions);
+
+  /// Whether this set of permissions has the [createEvents] permission.
+  bool get canCreateEvents => has(createEvents);
+
+  /// Whether this set of permissions has the [useExternalSounds] permission.
+  bool get canUseExternalSounds => has(useExternalSounds);
+
+  /// Whether this set of permissions has the [sendVoiceMessages] permission.
+  bool get canSendVoiceMessages => has(sendVoiceMessages);
+
+  /// Whether this set of permissions has the [sendPolls] permission.
+  bool get canSendPolls => has(sendPolls);
+
+  /// Whether this set of permissions has the [useExternalApps] permission.
+  bool get canUseExternalApps => has(useExternalApps);
 
   /// Create a new [Permissions] from a permissions value.
   const Permissions(super.value);

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:nyxx/src/builders/entitlement.dart';
-import 'package:nyxx/src/cache/cache.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/entitlement.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [Entitlement]s.
@@ -30,8 +30,9 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
       userId: maybeParse(raw['user_id'], Snowflake.parse),
       guildId: maybeParse(raw['guild_id'], Snowflake.parse),
       applicationId: Snowflake.parse(raw['application_id']!),
-      type: EntitlementType.parse(raw['type'] as int),
-      isConsumed: raw['consumed'] as bool,
+      type: EntitlementType(raw['type'] as int),
+      isConsumed: raw['consumed'] as bool? ?? false,
+      isDeleted: raw['deleted'] as bool? ?? false,
       startsAt: maybeParse(raw['starts_at'], DateTime.parse),
       endsAt: maybeParse(raw['ends_at'], DateTime.parse),
     );
@@ -63,7 +64,7 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
     final response = await client.httpHandler.executeSafe(request);
     final entitlements = parseMany(response.jsonBody as List<Object?>, parse);
 
-    cache.addEntities(entitlements);
+    entitlements.forEach(client.updateCacheWith);
     return entitlements;
   }
 
@@ -87,7 +88,7 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
     final response = await client.httpHandler.executeSafe(request);
     final entitlement = parse(response.jsonBody as Map<String, Object?>);
 
-    cache[entitlement.id] = entitlement;
+    client.updateCacheWith(entitlement);
     return entitlement;
   }
 
@@ -100,5 +101,16 @@ class EntitlementManager extends ReadOnlyManager<Entitlement> {
 
     await client.httpHandler.executeSafe(request);
     cache.remove(id);
+  }
+
+  /// Marks a entitlement for the user as consumed.
+  Future<void> consume(Snowflake id) async {
+    final route = HttpRoute()
+      ..applications(id: applicationId.toString())
+      ..entitlements(id: id.toString())
+      ..consume();
+    final request = BasicRequest(route, method: 'POST');
+
+    await client.httpHandler.executeSafe(request);
   }
 }

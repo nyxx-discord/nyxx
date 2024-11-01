@@ -4,22 +4,27 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 import 'user_manager_test.dart';
 
-final sampleMember = {
-  "user": sampleUser,
+final sampleMemberNoUser = {
+  "user": null,
   "nick": "NOT API SUPPORT",
   "avatar": null,
   "roles": [],
   "joined_at": "2015-04-26T06:26:56.936000+00:00",
   "deaf": false,
   "mute": false,
+  "banner": "a_coolHashDude",
 
   // These fields are documented as always present but are not in the provided sample
   "flags": 0,
 };
 
-void checkMember(Member member) {
-  expect(member.id, equals(Snowflake(80351110224678912)));
-  expect(member.user, isNotNull);
+final sampleMember = {
+  ...sampleMemberNoUser,
+  "user": sampleUser,
+};
+
+void checkMemberNoUser(Member member, {Snowflake expectedUserId = const Snowflake(80351110224678912)}) {
+  expect(member.id, equals(expectedUserId));
   expect(member.nick, equals('NOT API SUPPORT'));
   expect(member.avatarHash, isNull);
   expect(member.roleIds, equals([]));
@@ -31,6 +36,11 @@ void checkMember(Member member) {
   expect(member.isPending, isFalse);
   expect(member.permissions, isNull);
   expect(member.communicationDisabledUntil, isNull);
+  expect(member.bannerHash, equals('a_coolHashDude'));
+}
+
+void checkMember(Member member, {Snowflake expectedUserId = const Snowflake(80351110224678912)}) {
+  checkMemberNoUser(member, expectedUserId: expectedUserId);
 
   expect(member.user, isNotNull);
   checkSampleUser(member.user!);

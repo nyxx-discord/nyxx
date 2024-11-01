@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/user/user.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template invite}
@@ -10,6 +11,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// If the invite is to a [Channel], this will be a [GroupDmChannel].
 /// {@endtemplate}
 class Invite with ToStringHelper {
+  /// The type of this invite.
+  final InviteType type;
+
   /// The invite's code. This is a unique identifier.
   final String code;
 
@@ -52,7 +56,9 @@ class Invite with ToStringHelper {
   final ScheduledEvent? guildScheduledEvent;
 
   /// {@macro invite}
+  /// @nodoc
   Invite({
+    required this.type,
     required this.code,
     required this.guild,
     required this.channel,
@@ -68,26 +74,23 @@ class Invite with ToStringHelper {
 }
 
 /// The type of an [Invite]'s target.
-enum TargetType {
-  /// The invite is targeting a stream.
-  stream._(1),
+final class TargetType extends EnumLike<int, TargetType> {
+  static const stream = TargetType(1);
+  static const embeddedApplication = TargetType(2);
 
-  /// The invite is targeting an embedded application.
-  embeddedApplication._(2);
+  /// @nodoc
+  const TargetType(super.value);
 
-  /// The value of this [TargetType].
-  final int value;
+  @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
+  TargetType.parse(int value) : this(value);
+}
 
-  /// Parse a [TargetType] from an [int].
-  ///
-  /// The [value] must be a valid target type.
-  factory TargetType.parse(int value) => TargetType.values.firstWhere(
-        (type) => type.value == value,
-        orElse: () => throw FormatException('Unknown TargetType', value),
-      );
+/// The type of an [Invite].
+final class InviteType extends EnumLike<int, InviteType> {
+  static const guild = InviteType(0);
+  static const groupDm = InviteType(1);
+  static const friend = InviteType(3);
 
-  const TargetType._(this.value);
-
-  @override
-  String toString() => 'TargetType($value)';
+  /// @nodoc
+  const InviteType(super.value);
 }

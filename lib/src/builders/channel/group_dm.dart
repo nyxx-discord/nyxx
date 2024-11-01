@@ -18,3 +18,17 @@ class GroupDmUpdateBuilder extends UpdateBuilder<GroupDmChannel> {
         if (icon != null) 'icon': base64Encode(icon!),
       };
 }
+
+class DmRecipientBuilder extends CreateBuilder<DmRecipientBuilder> {
+  String accessToken;
+
+  String nick;
+
+  DmRecipientBuilder({required this.accessToken, required this.nick});
+
+  @override
+  Map<String, Object?> build() => {
+        'access_token': accessToken,
+        'nick': nick,
+      };
+}

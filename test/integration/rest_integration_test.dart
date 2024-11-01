@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/builders/sound.dart';
+import 'package:nyxx/src/builders/soundboard.dart';
+import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:test/test.dart' hide completes;
 
 import '../function_completes.dart';
@@ -49,6 +52,9 @@ void main() {
     });
 
     tearDownAll(() async {
+      // Reset commands state in case we failed a test without deleting them.
+      await client.commands.bulkOverride([]);
+
       await client.close();
     });
 
@@ -64,14 +70,26 @@ void main() {
       late Application application;
 
       await expectLater(() async => application = await client.applications.fetchCurrentApplication(), completes);
-      await expectLater(application.listSkus(), completes);
       await expectLater(client.applications.updateCurrentApplication(ApplicationUpdateBuilder(description: application.description)), completes);
+    });
+
+    test('skus', () async {
+      await expectLater(client.application.skus.list(), completes);
     });
 
     test('users', () async {
       await expectLater(client.users.fetchCurrentUser(), completes);
       await expectLater(client.users.listCurrentUserGuilds(), completes);
       await expectLater(client.users.fetchCurrentUserConnections(), completes);
+
+      final avatar = (await client.user.get()).avatar;
+
+      await expectLater(
+        client.users.updateCurrentUser(UserUpdateBuilder(
+          avatar: ImageBuilder(data: await avatar.fetch(), format: avatar.defaultFormat.extension),
+        )),
+        completes,
+      );
     });
 
     test('channels', skip: testTextChannel != null ? false : 'No test channel provided', () async {
@@ -113,6 +131,21 @@ void main() {
       await expectLater(message.pin(), completes);
       await expectLater(message.unpin(), completes);
 
+      await expectLater(
+        () async => message = await channel.sendMessage(MessageBuilder(
+          referencedMessage: MessageReferenceBuilder.forward(messageId: message.id, channelId: channelId),
+        )),
+        completes,
+      );
+
+      await expectLater(
+        message.reference?.message?.delete(),
+        allOf(
+          isNotNull,
+          completes,
+        ),
+      );
+
       await expectLater(message.delete(), completes);
 
       await expectLater(
@@ -130,7 +163,18 @@ void main() {
       await expectLater(message.attachments.first.fetch(), completes);
       await expectLater(message.attachments.first.fetchStreamed().drain(), completes);
 
-      await expectLater(message.delete(), completes);
+      late Message message2;
+      await expectLater(
+        () async => message2 = await channel.sendMessage(MessageBuilder(
+          attachments: [
+            await AttachmentBuilder.fromFile(File('test/files/2.png')),
+            await AttachmentBuilder.fromFile(File('test/files/3.png')),
+          ],
+        )),
+        completes,
+      );
+
+      await expectLater(channel.messages.bulkDelete([message.id, message2.id]), completes);
 
       await expectLater(
         () async => message = await channel.sendMessage(
@@ -176,6 +220,35 @@ void main() {
         completes,
       );
 
+      await expectLater(message.delete(), completes);
+
+      await expectLater(
+        () async => message = await channel.sendMessage(
+          MessageBuilder(
+            content: 'Polls test',
+            poll: PollBuilder(
+                question: PollMediaBuilder(text: 'Question'),
+                answers: [
+                  PollAnswerBuilder(pollMedia: PollMediaBuilder(text: 'Answer 1')),
+                  PollAnswerBuilder(
+                      pollMedia:
+                          PollMediaBuilder(text: 'Answer 2', emoji: TextEmoji(id: Snowflake.zero, manager: client.guilds[Snowflake.zero].emojis, name: '👽'))),
+                  PollAnswerBuilder.text('Answer 3'),
+                  PollAnswerBuilder.text('Answer 4', TextEmoji(id: Snowflake.zero, manager: client.guilds[Snowflake.zero].emojis, name: '👽'))
+                ],
+                duration: Duration(hours: 5)),
+          ),
+        ),
+        completes,
+      );
+
+      expect(message.poll, isNotNull);
+      final poll = message.poll!;
+
+      expect(poll.answers, hasLength(4));
+
+      await expectLater(message.fetchAnswerVoters(poll.answers[0].id), completes);
+      await expectLater(message.endPoll(), completes);
       await expectLater(message.delete(), completes);
     });
 
@@ -226,7 +299,7 @@ void main() {
       );
 
       await expectLater(
-        webhook.delete(),
+        webhook.delete(auditLogReason: 'Testing Unicode in audit log reason 😀'),
         completes,
       );
     });
@@ -333,6 +406,56 @@ void main() {
           await expectLater(member.avatar!.fetch(), completes);
         }
       }
+    });
+
+    test('commands', () async {
+      late ApplicationCommand command;
+
+      await expectLater(
+        () async => command = await client.commands.create(ApplicationCommandBuilder.chatInput(name: 'test', description: 'A test command', options: [])),
+        completes,
+      );
+
+      await expectLater(command.fetch(), completes);
+      await expectLater(command.update(ApplicationCommandUpdateBuilder.chatInput(name: 'new_name')), completes);
+      await expectLater(client.commands.list(), completion(contains(command)));
+      await expectLater(
+        () async => command =
+            (await client.commands.bulkOverride([ApplicationCommandBuilder.chatInput(name: 'test_2', description: 'A test command', options: [])])).single,
+        completes,
+      );
+
+      if (testGuild != null) {
+        final testGuildId = Snowflake.parse(testGuild);
+        final guild = client.guilds[testGuildId];
+
+        await expectLater(guild.commands.listPermissions(), completes);
+        await expectLater(guild.commands.fetchPermissions(command.id), completes);
+      }
+
+      await expectLater(command.delete(), completes);
+    });
+
+    test('Soundboard', skip: testGuild != null ? false : 'No test guild provided', () async {
+      final guildId = Snowflake.parse(testGuild!);
+      final guild = client.guilds[guildId];
+
+      await expectLater(guild.soundboard.list(), completion(isEmpty));
+
+      late SoundboardSound sound;
+      await expectLater(
+        () async => sound = await guild.soundboard.create(
+          SoundboardSoundBuilder(
+            name: 'Test sound',
+            volume: 0.5,
+            sound: await SoundBuilder.fromFile(File('test/files/sound.ogg')),
+          ),
+        ),
+        completes,
+      );
+
+      await expectLater(sound.update(SoundboardSoundUpdateBuilder(name: 'New name')), completes);
+      await expectLater(sound.delete(), completes);
     });
   });
 }
