@@ -267,7 +267,7 @@ class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
   List<CreateBuilder<ForumTag>>? tags;
 
   /// {@template default_sort_order}
-  /// The default sort order type used to order posts in [ChannelType.guildForum] and [ChannelType.guildMedia] channels. 
+  /// The default sort order type used to order posts in [ChannelType.guildForum] and [ChannelType.guildMedia] channels.
   /// Defaults to null, which indicates a preferred sort order hasn't been set by a channel admin.
   /// {@endtemplate}
   ForumSort? defaultSortOrder;
@@ -334,7 +334,7 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> 
   /// {@macro default_sort_order}
   ForumSort? defaultSortOrder;
 
-  /// The default forum layout view used to display posts in [ChannelType.guildForum] channels. Defaults to [ForumLayout.notSet], 
+  /// The default forum layout view used to display posts in [ChannelType.guildForum] channels. Defaults to [ForumLayout.notSet],
   /// which indicates a layout view has not been set by a channel admin.
   ForumLayout? defaultLayout;
 

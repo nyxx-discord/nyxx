@@ -136,7 +136,7 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
   /// The id of the rules channel.
   Snowflake? rulesChannelId;
 
-  /// The id of the public updates channel. 
+  /// The id of the public updates channel.
   Snowflake? publicUpdatesChannelId;
 
   /// The preferred locale of the guild.

@@ -8,7 +8,7 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
   /// {@endtemplate}
   String name;
 
-  /// {@ŧemplate auto_moderation_rule_event_type}
+  /// {@template auto_moderation_rule_event_type}
   /// The event type that will trigger this rule.
   /// {@endtemplate}
   AutoModerationEventType eventType;
