@@ -73,6 +73,8 @@ export 'src/builders/application_command.dart'
 export 'src/builders/interaction_response.dart' show InteractionResponseBuilder, ModalBuilder, InteractionCallbackType;
 export 'src/builders/entitlement.dart' show TestEntitlementBuilder, TestEntitlementType;
 export 'src/builders/application.dart' show ApplicationUpdateBuilder, ApplicationIntegrationTypeConfigurationBuilder;
+export 'src/builders/sound.dart' show SoundBuilder;
+export 'src/builders/soundboard.dart' show SoundboardSoundBuilder, SoundboardSoundUpdateBuilder;
 
 export 'src/cache/cache.dart' show Cache, CacheConfig, CacheManager;
 
@@ -151,6 +153,7 @@ export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
 export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
+export 'src/models/soundboard/soundboard.dart' show PartialSoundboardSound, SoundboardSound;
 
 export 'src/models/message/message.dart'
     show
@@ -312,7 +315,8 @@ export 'src/models/gateway/events/message.dart'
 export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
 export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
-export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent;
+export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent, VoiceChannelEffectSendEvent, AnimationType;
+export 'src/models/gateway/events/soundboard.dart' show SoundboardSoundCreateEvent, SoundboardSoundDeleteEvent, SoundboardSoundUpdateEvent, SoundboardSoundsUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
 export 'src/models/presence.dart'
