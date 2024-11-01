@@ -2,9 +2,6 @@ import 'dart:io';
 
 import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/builders/sound.dart';
-import 'package:nyxx/src/builders/soundboard.dart';
-import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:test/test.dart' hide completes;
 
 import '../function_completes.dart';

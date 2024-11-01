@@ -2,7 +2,7 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 format: ## Run dart format
-	dart format -l120 .
+	dart format -l 160 .
 
 fix: ## Run dart fix
 	dart fix --apply
