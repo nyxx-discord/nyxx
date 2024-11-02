@@ -143,14 +143,16 @@ class Member extends PartialMember {
           hash: avatarDecorationHash!,
         );
 
-  CdnAsset get banner => CdnAsset(
-        client: manager.client,
-        base: HttpRoute()
-          ..guilds(id: manager.guildId.toString())
-          ..users(id: id.toString())
-          ..banners(),
-        hash: bannerHash!,
-      );
+  CdnAsset? get banner => bannerHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()
+            ..guilds(id: manager.guildId.toString())
+            ..users(id: id.toString())
+            ..banners(),
+          hash: bannerHash!,
+        );
 }
 
 /// Flags that can be applied to a [Member].
