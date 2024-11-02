@@ -1,7 +1,12 @@
+## 6.5.2
+__02.11.2024__
+
+- hotfix: Handle `null` member banner ([`#729`](https://github.com/nyxx-discord/nyxx/pull/729)) - ([`7f837e4`](https://github.com/nyxx-discord/nyxx/commit/7f837e492a3c2c25c5f34a6c52d4145caabd3b64))
+
 ## 6.5.1
 __02.11.2024__
 
-- maintenance: Update github actions([`#723`](https://github.com/nyxx-discord/nyxx/pull/723)) - ([`5d60dcc3`](https://github.com/nyxx-discord/nyxx/commit/5d60dcc35b26edadfa22f7919df74ece448f85ce))
+- maintenance: Update github actions ([`#723`](https://github.com/nyxx-discord/nyxx/pull/723)) - ([`5d60dcc3`](https://github.com/nyxx-discord/nyxx/commit/5d60dcc35b26edadfa22f7919df74ece448f85ce))
 - bug: Properly expose soundboard ([`#727`](https://github.com/nyxx-discord/nyxx/pull/727)) - ([`f8be20f1`](https://github.com/nyxx-discord/nyxx/commit/f8be20f1c90a2bd52c149fb36b68515d69b44565))
 - bug: Fix missing imports ([`#728`](https://github.com/nyxx-discord/nyxx/pull/728)) - ([`8ba1f41a`](https://github.com/nyxx-discord/nyxx/commit/8ba1f41a00106d0dc470f6ad1e098a3564908875))
 - docs: More docs and typos ([`#724`](https://github.com/nyxx-discord/nyxx/pull/724)) - ([`b3c242bd`](https://github.com/nyxx-discord/nyxx/commit/b3c242bd86c9bbf0a3cb285741070349bb848380))
@@ -16,7 +21,7 @@ __22.10.2024__
 - feature: Recurrence rule can be set to null when updating. ([`#720`](https://github.com/nyxx-discord/nyxx/pull/720)) - ([`aaef80ac`](https://github.com/nyxx-discord/nyxx/commit/aaef80ac469331fa2da06eb776e2708813268b07))
 - feature: Add support for soundboard. ([`#708`](https://github.com/nyxx-discord/nyxx/pull/708)) - ([`d93aa122`](https://github.com/nyxx-discord/nyxx/commit/d93aa122965b6d9b11f51dac377ee3c13eefac97))
 - feature: Allow polls to be constructed in a interation response. ([`#719`](https://github.com/nyxx-discord/nyxx/pull/719)) - ([`db27c54d`](https://github.com/nyxx-discord/nyxx/commit/db27c54d24be1bb4010457041b7b4d09063e701d))
-- feature: Add banner property to member. ([`#676](https://github.com/nyxx-discord/nyxx/pull/676)) - ([`4041b556`](https://github.com/nyxx-discord/nyxx/commit/4041b5569853d8eac6f2a165a3cb03b736e02cef))
+- feature: Add banner property to member. ([`#676`](https://github.com/nyxx-discord/nyxx/pull/676)) - ([`4041b556`](https://github.com/nyxx-discord/nyxx/commit/4041b5569853d8eac6f2a165a3cb03b736e02cef))
 - feature: Fix user avatar decoration, add member avatar decoration. ([`#718`](https://github.com/nyxx-discord/nyxx/pull/718)) - ([`b8e5ba7c`](https://github.com/nyxx-discord/nyxx/commit/b8e5ba7c89dbabd72821b7cd603bdab88cf0e751))
 - maintenance: Update integration_tests.yml. ([`527eed5a`](https://github.com/nyxx-discord/nyxx/commit/527eed5a90c83071f5346273426bd0fd20089a60))
 
