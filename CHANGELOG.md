@@ -1,3 +1,12 @@
+## 6.5.1
+__02.11.2024__
+
+- maintenance: Update github actions([`#723`](https://github.com/nyxx-discord/nyxx/pull/723)) - ([`5d60dcc3`](https://github.com/nyxx-discord/nyxx/commit/5d60dcc35b26edadfa22f7919df74ece448f85ce))
+- bug: Properly expose soundboard ([`#727`](https://github.com/nyxx-discord/nyxx/pull/727)) - ([`f8be20f1`](https://github.com/nyxx-discord/nyxx/commit/f8be20f1c90a2bd52c149fb36b68515d69b44565))
+- bug: Fix missing imports ([`#728`](https://github.com/nyxx-discord/nyxx/pull/728)) - ([`8ba1f41a`](https://github.com/nyxx-discord/nyxx/commit/8ba1f41a00106d0dc470f6ad1e098a3564908875))
+- docs: More docs and typos ([`#724`](https://github.com/nyxx-discord/nyxx/pull/724)) - ([`b3c242bd`](https://github.com/nyxx-discord/nyxx/commit/b3c242bd86c9bbf0a3cb285741070349bb848380))
+- bug: Move logging when connecting ([`#726`](https://github.com/nyxx-discord/nyxx/pull/726)) - ([`3cd8c773`](https://github.com/nyxx-discord/nyxx/commit/3cd8c773d774bd957d7517fa817146045678c4ea))
+
 ## 6.5.0
 __22.10.2024__
 
