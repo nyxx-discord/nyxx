@@ -99,7 +99,8 @@ class GatewayApiOptions extends RestApiOptions {
   Map<String, String> get gatewayConnectionOptions => {
         'v': apiVersion.toString(),
         'encoding': payloadFormat.value,
-        if (compression == GatewayCompression.transport) 'compress': 'zlib-stream',
+        if (compression == GatewayCompression.transportZLib) 'compress': 'zlib-stream',
+        if (compression == GatewayCompression.transportZStd) 'compress': 'zstd-stream',
       };
 
   /// Create a new [GatewayApiOptions].
@@ -108,7 +109,7 @@ class GatewayApiOptions extends RestApiOptions {
     super.userAgent,
     required this.intents,
     this.payloadFormat = GatewayPayloadFormat.json,
-    this.compression = GatewayCompression.transport,
+    this.compression = GatewayCompression.transportZLib,
     this.shards,
     this.totalShards,
     this.largeThreshold,
@@ -138,11 +139,17 @@ enum GatewayCompression {
   /// No compression is used.
   none,
 
-  /// The entire connection is compressed.
-  transport,
+  /// The entire connection is compressed with ZLib.
+  transportZLib,
+
+  /// The entire connection is compressed with ZStd
+  transportZStd,
 
   /// Each packet is individually compressed.
   ///
   /// Cannot be used if [GatewayPayloadFormat.etf] is used.
-  payload,
+  payload;
+
+  @Deprecated('Use GatewayCompression.transportZLib for ZLib transport compression.')
+  static const transport = GatewayCompression.transportZLib;
 }
