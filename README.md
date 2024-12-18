@@ -21,7 +21,7 @@ void main() async {
     if (event.mentions.contains(botUser)) {
       await event.message.channel.sendMessage(MessageBuilder(
         content: 'You mentioned me!',
-        replyId: event.message.id,
+        referencedMessage: MessageReferenceBuilder.reply(messageId: event.message.id),
       ));
     }
   });
