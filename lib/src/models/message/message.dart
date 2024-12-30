@@ -338,6 +338,9 @@ class MessageFlags extends Flags<MessageFlags> {
   /// This message is a voice message.
   static const isVoiceMessage = Flag<MessageFlags>.fromOffset(13);
 
+  /// This message has a snapshot.
+  static const hasSnapshot = Flag<MessageFlags>.fromOffset(14);
+
   /// Whether this set of flags has the [crossposted] flag set.
   bool get wasCrossposted => has(crossposted);
 
@@ -370,6 +373,9 @@ class MessageFlags extends Flags<MessageFlags> {
 
   /// Whether this set of flags has the [isVoiceMessage] flag set.
   bool get isAVoiceMessage => has(isVoiceMessage);
+
+  /// Whether this set of flags has the [hasSnapshot] flag set.
+  bool get hasASnapshot => has(hasSnapshot);
 
   /// Create a new [MessageFlags].
   const MessageFlags(super.value);
