@@ -24,6 +24,7 @@ class SubscriptionManager extends ReadOnlyManager<Subscription> {
       userId: Snowflake.parse(raw['user_id']!),
       skuIds: parseMany(raw['sku_ids'] as List, Snowflake.parse),
       entitlementIds: parseMany(raw['entitlement_ids'] as List, Snowflake.parse),
+      renewalSkuIds: maybeParse(raw['renewal_sku_ids'], (raw) => parseMany(raw as List, Snowflake.parse)),
       currentPeriodStart: DateTime.parse(raw['current_period_start'] as String),
       currentPeriodEnd: DateTime.parse(raw['current_period_end'] as String),
       status: SubscriptionStatus(raw['status'] as int),

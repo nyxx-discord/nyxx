@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:nyxx/nyxx.dart';
 import 'package:test/test.dart';
 
@@ -8,6 +10,7 @@ final sampleSubscription = {
   "user_id": "1088605110638227537",
   "sku_ids": ["1158857122189168803"],
   "entitlement_ids": [],
+  "renewal_sku_ids": null,
   "current_period_start": "2024-08-27T19:48:44.406602+00:00",
   "current_period_end": "2024-09-27T19:48:44.406602+00:00",
   "status": 0,
@@ -19,6 +22,7 @@ void checkSubscription(Subscription subscription) {
   expect(subscription.userId, equals(Snowflake(1088605110638227537)));
   expect(subscription.skuIds, equals([Snowflake(1158857122189168803)]));
   expect(subscription.entitlementIds, equals([]));
+  expect(subscription.renewalSkuIds, isNull);
   expect(subscription.currentPeriodStart, equals(DateTime.utc(2024, 08, 27, 19, 48, 44, 406, 602)));
   expect(subscription.currentPeriodEnd, equals(DateTime.utc(2024, 09, 27, 19, 48, 44, 406, 602)));
   expect(subscription.status, equals(SubscriptionStatus.active));

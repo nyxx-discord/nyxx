@@ -26,6 +26,9 @@ class Subscription extends PartialSubscription {
   /// The IDs of the entitlements this subscription grants.
   final List<Snowflake> entitlementIds;
 
+  /// The list of SKUs that this user will be subscribed to at renewal.
+  final List<Snowflake>? renewalSkuIds;
+
   /// The start of the current subscription period.
   final DateTime currentPeriodStart;
 
@@ -50,6 +53,7 @@ class Subscription extends PartialSubscription {
     required this.userId,
     required this.skuIds,
     required this.entitlementIds,
+    required this.renewalSkuIds,
     required this.currentPeriodStart,
     required this.currentPeriodEnd,
     required this.status,
@@ -69,6 +73,9 @@ class Subscription extends PartialSubscription {
   List<PartialEntitlement> get entitlements => [
         for (final entitlementId in entitlementIds) manager.client.applications[manager.applicationId].entitlements[entitlementId],
       ];
+
+  /// The list of SKUs that this user will be subscribed to at renewal.
+  List<PartialSku>? get renewalSkus => renewalSkuIds?.map((skuId) => manager.client.applications[manager.applicationId].skus[skuId]).toList();
 }
 
 /// The status of a [Subscription].
