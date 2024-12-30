@@ -61,6 +61,7 @@ enum ConnectionType {
   battleNet._('battlenet', 'Battle.net'),
   bungieNet._('bungie', 'Bungie.net'),
   bluesky._('bluesky', 'Bluesky'),
+  crunchyroll._('crunchyroll', 'Crunchyroll'),
   domain._('domain', 'Domain'),
   ebay._('ebay', 'eBay'),
   epicGames._('epicgames', 'Epic Games'),
