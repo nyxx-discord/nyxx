@@ -344,4 +344,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`send-soundboard-sound`](https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound) part to this [HttpRoute].
   void sendSoundboardSound() => add(HttpRoutePart('send-soundboard-sound'));
+
+  /// Adds the [`clan-badges`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)
+  void clanBadges({String? id}) => add(HttpRoutePart('clan-badges', [if (id != null) HttpRouteParam(id)]));
 }
