@@ -110,7 +110,7 @@ class UserManager extends ReadOnlyManager<User> {
       isIdentityEnabled: raw['identity_enabled'] as bool,
       tag: raw['tag'] as String,
       badgeHash: raw['badge'] as String,
-      client: client,
+      manager: this,
     );
   }
 
