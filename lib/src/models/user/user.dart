@@ -7,6 +7,7 @@ import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/avatar_decoration_data.dart';
+import 'package:nyxx/src/models/user/user_clan.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
@@ -77,6 +78,9 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
   /// The user's avatar deciration data.
   final AvatarDecorationData? avatarDecorationData;
 
+  /// The user's clan data.
+  final UserClan? clan;
+
   /// {@macro user}
   /// @nodoc
   User({
@@ -97,6 +101,7 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
     required this.publicFlags,
     required this.avatarDecorationHash,
     required this.avatarDecorationData,
+    required this.clan,
   });
 
   /// This user's banner.
