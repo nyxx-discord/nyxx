@@ -18,6 +18,7 @@ import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/message/role_subscription_data.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
+import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
@@ -204,6 +205,9 @@ class Message extends PartialMessage implements MessageSnapshot {
   /// Information about a call in a DM channel.
   final MessageCall? call;
 
+  @override
+  final List<SoundboardSound>? soundboardSounds;
+
   /// {@macro message}
   /// @nodoc
   Message({
@@ -242,6 +246,7 @@ class Message extends PartialMessage implements MessageSnapshot {
     required this.resolved,
     required this.poll,
     required this.call,
+    required this.soundboardSounds,
   });
 
   /// The webhook that sent this message if it was sent by a webhook, `null` otherwise.
@@ -498,6 +503,9 @@ class MessageSnapshot with ToStringHelper {
   /// A list of components in this message.
   final List<MessageComponent>? components;
 
+  /// A list of soundmojis sent.
+  final List<SoundboardSound>? soundboardSounds;
+
   /// @nodoc
   MessageSnapshot({
     required this.timestamp,
@@ -511,6 +519,7 @@ class MessageSnapshot with ToStringHelper {
     required this.roleMentionIds,
     required this.stickers,
     required this.components,
+    required this.soundboardSounds,
   });
 }
 
