@@ -129,6 +129,9 @@ class MessageManager extends Manager<Message> {
       duration: maybeParse(raw['duration_secs'], (double value) => Duration(microseconds: (value * Duration.microsecondsPerSecond).floor())),
       waveform: maybeParse(raw['waveform'], base64.decode),
       flags: maybeParse(raw['flags'], AttachmentFlags.new),
+      application: maybeParse(raw['application'], client.applications.parse),
+      clipCreatedAt: maybeParse(raw['clip_created_at'], DateTime.parse),
+      clipParticipants: maybeParseMany(raw['clip_participants'], client.users.parse),
     );
   }
 
@@ -147,6 +150,7 @@ class MessageManager extends Manager<Message> {
       provider: maybeParse(raw['provider'], parseEmbedProvider),
       author: maybeParse(raw['author'], parseEmbedAuthor),
       fields: maybeParseMany(raw['fields'], parseEmbedField),
+      flags: maybeParse(raw['flags'], EmbedFlags.new),
     );
   }
 
@@ -164,6 +168,7 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
     );
   }
 
@@ -173,6 +178,7 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
     );
   }
 
