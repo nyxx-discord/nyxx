@@ -344,4 +344,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`send-soundboard-sound`](https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound) part to this [HttpRoute].
   void sendSoundboardSound() => add(HttpRoutePart('send-soundboard-sound'));
+
+  /// Adds the [`incident-actions`](https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions) part to this [HttpRoute].
+  void incidentActions() => add(HttpRoutePart('incident-actions'));
 }
