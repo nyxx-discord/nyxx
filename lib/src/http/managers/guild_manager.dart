@@ -850,7 +850,7 @@ class GuildManager extends Manager<Guild> {
     );
 
     final response = await client.httpHandler.executeSafe(request);
-    
+
     return parseIncidentsData(response.jsonBody as Map<String, Object?>);
   }
 }

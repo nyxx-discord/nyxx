@@ -215,9 +215,7 @@ class GuildIncidentsUpdateBuilder extends UpdateBuilder<IncidentsData> {
 
   @override
   Map<String, Object?> build() => {
-    if (!identical(invitesDisabledUntil, sentinelDateTime))
-      'invites_disabled_until': invitesDisabledUntil?.toIso8601String(),
-    if (!identical(dmsDisabledUntil, sentinelDateTime))
-      'dms_disabled_until': dmsDisabledUntil?.toIso8601String(),
-  };
+        if (!identical(invitesDisabledUntil, sentinelDateTime)) 'invites_disabled_until': invitesDisabledUntil?.toIso8601String(),
+        if (!identical(dmsDisabledUntil, sentinelDateTime)) 'dms_disabled_until': dmsDisabledUntil?.toIso8601String(),
+      };
 }
