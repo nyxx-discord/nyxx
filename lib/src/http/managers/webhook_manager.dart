@@ -153,12 +153,24 @@ class WebhookManager extends Manager<Webhook> {
 
   /// Execute a webhook.
   Future<Message?> execute(Snowflake id, MessageBuilder builder,
-      {required String token, bool? wait, Snowflake? threadId, String? threadName, List<Snowflake>? appliedTags, String? username, String? avatarUrl}) async {
+      {required String token,
+      bool? wait,
+      Snowflake? threadId,
+      String? threadName,
+      List<Snowflake>? appliedTags,
+      String? username,
+      String? avatarUrl,
+      bool? withComponents}) async {
     final route = HttpRoute()
       ..webhooks(id: id.toString())
       ..add(HttpRoutePart(token));
 
-    final queryParameters = {if (wait != null) 'wait': wait.toString(), if (threadId != null) 'thread_id': threadId.toString()};
+    final queryParameters = {
+      if (wait != null) 'wait': wait.toString(),
+      if (threadId != null) 'thread_id': threadId.toString(),
+      if (withComponents != null) 'with_components': withComponents.toString()
+    };
+
     final HttpRequest request;
     if (!identical(builder.attachments, sentinelList) && builder.attachments?.isNotEmpty == true) {
       final attachments = builder.attachments!;
