@@ -24,7 +24,12 @@ enum CdnFormat {
   /// The Lottie format.
   ///
   /// This is only available to sticker endpoints where [Sticker.formatType] is [StickerFormatType.lottie].
-  lottie._('lottie');
+  lottie._('lottie'),
+
+  /// The mp3/ogg format.
+  ///
+  /// This is only available to soundboard endpoints.
+  mp3._('');
 
   /// The extension to use on the CDN endpoint for this format.
   final String extension;
@@ -75,7 +80,11 @@ class CdnAsset {
     for (final part in base.parts) {
       route.add(part);
     }
-    route.add(HttpRoutePart('$hash.${format.extension}'));
+
+    // Soundboard assets don't have any extension.
+    final ext = format == CdnFormat.mp3 ? '' : '.${format.extension}';
+
+    route.add(HttpRoutePart('$hash$ext'));
 
     return CdnRequest(route, queryParameters: {if (size != null) 'size': size.toString()});
   }

@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/soundboard_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -10,6 +12,16 @@ class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
   final SoundboardManager manager;
 
   PartialSoundboardSound({required super.id, required this.manager});
+
+  /// The sound asset for this soundboard sound.
+  CdnAsset get sound => CdnAsset(
+        client: manager.client,
+        base: HttpRoute()..soundboardSounds(),
+        // We can't use .soundboardSounds(id: id.toString()) because hash would be empty, adding an empty string will populate 
+        // `route.segments` which will join it with a trailing slash and Discord doesn't handle trailing slashes.
+        hash: id.toString(),
+        defaultFormat: CdnFormat.mp3,
+      );
 }
 
 class SoundboardSound extends PartialSoundboardSound {
