@@ -48,7 +48,7 @@ class MessageManager extends Manager<Message> {
 
     final webhookId = maybeParse(raw['webhook_id'], Snowflake.parse);
 
-    final snapshot = parseMessageSnapshot(raw, guildId: guildId);
+    final snapshot = parseMessageSnapshot(raw);
 
     return Message(
       id: Snowflake.parse(raw['id']!),
@@ -395,7 +395,7 @@ class MessageManager extends Manager<Message> {
   ///
   /// [raw] must be the inner `message` field from the actual message snapshot
   /// object. See the comment on [MessageReference] for why.
-  MessageSnapshot parseMessageSnapshot(Map<String, Object?> raw, {Snowflake? guildId}) {
+  MessageSnapshot parseMessageSnapshot(Map<String, Object?> raw) {
     return MessageSnapshot(
       content: raw['content'] as String,
       timestamp: DateTime.parse(raw['timestamp'] as String),
@@ -409,7 +409,11 @@ class MessageManager extends Manager<Message> {
       type: MessageType(raw['type'] as int),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
       components: maybeParseMany(raw['components'], parseMessageComponent),
-      soundboardSounds: maybeParseMany(raw['soundboard_sounds'] as List?, client.guilds[guildId ?? Snowflake.zero].soundboard.parse),
+      soundboardSounds: maybeParseMany(raw['soundboard_sounds'] as List?, (Map<String, Object?> raw) {
+        final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
+        return client.guilds[guildId ?? Snowflake.zero].soundboard.parse(raw);
+      }),
     );
   }
 
