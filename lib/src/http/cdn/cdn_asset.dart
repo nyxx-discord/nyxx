@@ -48,6 +48,7 @@ class CdnAsset {
   final Nyxx client;
 
   /// The hash of the asset.
+  // TODO(lexedia): make it nullable next major version.
   final String hash;
 
   /// The base URL of the asset.

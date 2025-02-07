@@ -16,10 +16,8 @@ class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
   /// The sound asset for this soundboard sound.
   CdnAsset get sound => CdnAsset(
         client: manager.client,
-        base: HttpRoute()..soundboardSounds(),
-        // We can't use .soundboardSounds(id: id.toString()) because hash would be empty, adding an empty string will populate
-        // `route.segments` which will join it with a trailing slash and Discord doesn't handle trailing slashes.
-        hash: id.toString(),
+        base: HttpRoute()..soundboardSounds(id: id.toString()),
+        hash: '',
         defaultFormat: CdnFormat.mp3,
       );
 }
