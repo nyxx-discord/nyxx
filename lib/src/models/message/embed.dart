@@ -292,7 +292,7 @@ class EmbedFlags extends Flags<EmbedFlags> {
   static const isContentInventoryEntry = Flag<EmbedFlags>.fromOffset(5);
 
   /// Whether this set of flags has the [containsSentitiveMedia] flag set.
-  bool get doContainsSensitiveMedia => has(containsSensitiveMedia);
+  bool get hasContainsSensitiveMedia => has(containsSensitiveMedia);
 
   /// Whether this set of flags has the [isContentInventoryEntry] flag set.
   bool get isAContentInventoryEntry => has(isContentInventoryEntry);
