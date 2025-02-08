@@ -200,3 +200,22 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
         if (!identical(safetyAlertsChannelId, sentinelSnowflake)) 'safety_alerts_channel_id': safetyAlertsChannelId?.toString(),
       };
 }
+
+class GuildIncidentsUpdateBuilder extends UpdateBuilder<IncidentsData> {
+  /// When invites will be enabled again
+  DateTime? invitesDisabledUntil;
+
+  /// When direct messages will be enabled again
+  DateTime? dmsDisabledUntil;
+
+  GuildIncidentsUpdateBuilder({
+    this.invitesDisabledUntil = sentinelDateTime,
+    this.dmsDisabledUntil = sentinelDateTime,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        if (!identical(invitesDisabledUntil, sentinelDateTime)) 'invites_disabled_until': invitesDisabledUntil?.toIso8601String(),
+        if (!identical(dmsDisabledUntil, sentinelDateTime)) 'dms_disabled_until': dmsDisabledUntil?.toIso8601String(),
+      };
+}

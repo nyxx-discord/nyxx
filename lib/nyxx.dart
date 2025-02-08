@@ -52,7 +52,7 @@ export 'src/builders/message/component.dart'
     show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
-export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
+export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
@@ -204,7 +204,8 @@ export 'src/models/guild/guild.dart'
         NsfwLevel,
         PremiumTier,
         VerificationLevel,
-        UserGuild;
+        UserGuild,
+        IncidentsData;
 export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType, OnboardingMode;
