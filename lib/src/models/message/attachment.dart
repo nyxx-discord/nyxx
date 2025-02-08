@@ -168,7 +168,7 @@ class AttachmentFlags extends Flags<AttachmentFlags> {
   bool get isASpoiler => has(isSpoiler);
 
   /// Whether this set of flags has the [containsExplicitMedia] flag.
-  bool get doContainsExplicitMedia => has(containsExplicitMedia);
+  bool get hasContainsExplicitMedia => has(containsExplicitMedia);
 
   /// Whether this set of flags has the [isAnimated] flag.
   bool get hasIsAnimated => has(isAnimated);
