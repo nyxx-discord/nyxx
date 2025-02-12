@@ -242,6 +242,17 @@ final sampleForwardedMessage = {
   },
   'attachments': [],
   'guild_id': '1033681997136146462',
+  'soundboard_sounds': [
+    {
+      'name': 'User Banned',
+      'sound_id': '1143974146414481529',
+      'volume': .85,
+      'emoji_id': null,
+      'emoji_name': '💥',
+      'guild_id': '1234567891234567890',
+      'available': true
+    }
+  ],
 };
 
 void checkForwardedMessage(Message message) {
@@ -302,6 +313,19 @@ void checkForwardedMessage(Message message) {
   expect(message.resolved, isNull);
   expect(message.poll, isNull);
   expect(message.call, isNull);
+  expect(message.soundboardSounds, [
+    wrapMatcher((SoundboardSound soundboardSound) {
+      expect(soundboardSound.emoji, isA<TextEmoji>());
+      expect(soundboardSound.emoji!.name, '💥');
+      expect(soundboardSound.name, 'User Banned');
+      expect(soundboardSound.guildId, equals(const Snowflake(1234567891234567890)));
+      expect(soundboardSound.volume, equals(0.85));
+      expect(soundboardSound.isAvailable, equals(true));
+      expect(soundboardSound.id, equals(const Snowflake(1143974146414481529)));
+
+      return true;
+    })
+  ]);
 }
 
 final sampleMessageInteractionMetadata = {
