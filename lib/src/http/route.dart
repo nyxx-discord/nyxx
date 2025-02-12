@@ -17,8 +17,8 @@ class HttpRoute {
 
   /// The segments of this route.
   ///
-  /// This includes the names and parameters of this [parts].
-  Iterable<String> get segments => parts.expand((part) => part.segments);
+  /// This includes the names and parameters of this [parts]. This also filters out empty [HttpRoutePart.segments].
+  Iterable<String> get segments => parts.expand((part) => part.segments).where((part) => part.isNotEmpty);
 
   /// The path this [HttpRoute] represents, relative to Discord's root API URL.
   String get path => '/${segments.join('/')}';

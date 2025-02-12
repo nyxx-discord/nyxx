@@ -1,4 +1,6 @@
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
 import 'package:nyxx/src/http/managers/soundboard_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -10,6 +12,14 @@ class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
   final SoundboardManager manager;
 
   PartialSoundboardSound({required super.id, required this.manager});
+
+  /// The sound asset for this soundboard sound.
+  CdnAsset get sound => CdnAsset(
+        client: manager.client,
+        base: HttpRoute()..soundboardSounds(id: id.toString()),
+        hash: '',
+        defaultFormat: CdnFormat.mp3,
+      );
 }
 
 class SoundboardSound extends PartialSoundboardSound {
