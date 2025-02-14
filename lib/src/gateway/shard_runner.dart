@@ -214,7 +214,7 @@ class ShardRunner {
           // Check if we can resume based on close code if the connection was closed by Discord.
           if (connection!.localCloseCode == null) {
             // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
-            const resumableCodes = [null, 4000, 4001, 4002, 4003, 4005, 4008];
+            const newSessionCodes = [4007, 4009];
             const errorCodes = [4004, 4010, 4011, 4012, 4013, 4014];
 
             if (errorCodes.contains(connection!.remoteCloseCode)) {
@@ -222,7 +222,7 @@ class ShardRunner {
               return;
             }
 
-            canResume = resumableCodes.contains(connection!.remoteCloseCode);
+            canResume = !newSessionCodes.contains(connection!.remoteCloseCode);
 
             controller.add(ErrorReceived(
               error: 'Connection was closed with code ${connection!.remoteCloseCode}',
