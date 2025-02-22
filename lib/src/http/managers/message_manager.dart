@@ -257,46 +257,146 @@ class MessageManager extends Manager<Message> {
     final type = MessageComponentType(raw['type'] as int);
 
     return switch (type) {
-      MessageComponentType.actionRow => ActionRowComponent(
-          components: parseMany(raw['components'] as List, parseMessageComponent),
-        ),
-      MessageComponentType.button => ButtonComponent(
-          style: ButtonStyle(raw['style'] as int),
-          label: raw['label'] as String?,
-          emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
-          customId: raw['custom_id'] as String?,
-          skuId: maybeParse(raw['sku_id'], Snowflake.parse),
-          url: maybeParse(raw['url'], Uri.parse),
-          isDisabled: raw['disabled'] as bool?,
-        ),
-      MessageComponentType.textInput => TextInputComponent(
-          customId: raw['custom_id'] as String,
-          style: maybeParse(raw['style'], TextInputStyle.new),
-          label: raw['label'] as String?,
-          minLength: raw['min_length'] as int?,
-          maxLength: raw['max_length'] as int?,
-          isRequired: raw['required'] as bool?,
-          value: raw['value'] as String?,
-          placeholder: raw['placeholder'] as String?,
-        ),
+      MessageComponentType.actionRow => parseActionRowComponent(raw),
+      MessageComponentType.button => parseButtonComponent(raw),
+      MessageComponentType.textInput => parseTextInputComponent(raw),
       MessageComponentType.stringSelect ||
       MessageComponentType.userSelect ||
       MessageComponentType.roleSelect ||
       MessageComponentType.mentionableSelect ||
       MessageComponentType.channelSelect =>
-        SelectMenuComponent(
-          type: type,
-          customId: raw['custom_id'] as String,
-          options: maybeParseMany(raw['options'], parseSelectMenuOption),
-          channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
-          placeholder: raw['placeholder'] as String?,
-          defaultValues: maybeParseMany(raw['default_values'], parseSelectMenuDefaultValue),
-          minValues: raw['min_values'] as int?,
-          maxValues: raw['max_values'] as int?,
-          isDisabled: raw['disabled'] as bool?,
-        ),
+        parseSelectMenuComponent(raw, type),
+      MessageComponentType.section => parseSectionComponent(raw),
+      MessageComponentType.textDisplay => parseTextDisplayComponent(raw),
+      MessageComponentType.thumbnail => parseThumbnailComponent(raw),
+      MessageComponentType.mediaGallery => parseMediaGalleryComponent(raw),
+      MessageComponentType.file => parseFileComponent(raw),
+      MessageComponentType.separator => parseSeparatorComponent(raw),
+      MessageComponentType.container => parseContainerComponent(raw),
       MessageComponentType() => throw StateError('Unknown message component type: $type'),
     };
+  }
+
+  ContainerComponent parseContainerComponent(Map<String, Object?> raw) {
+    return ContainerComponent(
+      id: raw['id'] as int,
+      accentColor: maybeParse(raw['accent_color'], DiscordColor.new),
+      isSpoiler: raw['spoiler'] as bool?,
+      components: parseMany(raw['components'] as List, parseMessageComponent),
+    );
+  }
+
+  SeparatorComponent parseSeparatorComponent(Map<String, Object?> raw) {
+    return SeparatorComponent(
+      id: raw['id'] as int,
+      isDivider: raw['divider'] as bool?,
+      spacing: maybeParse(raw['spacing'], SeparatorSpacingSize.new),
+    );
+  }
+
+  FileComponent parseFileComponent(Map<String, Object?> raw) {
+    return FileComponent(
+      id: raw['id'] as int,
+      file: parseUnfurledMediaItem(raw['file'] as Map<String, Object?>),
+      isSpoiler: raw['spoiler'] as bool?,
+    );
+  }
+
+  MediaGalleryComponent parseMediaGalleryComponent(Map<String, Object?> raw) {
+    return MediaGalleryComponent(
+      id: raw['id'] as int,
+      items: parseMany(raw['items'] as List, parseMediaGalleryItem),
+    );
+  }
+
+  UnfurledMediaItem parseUnfurledMediaItem(Map<String, Object?> raw) {
+    return UnfurledMediaItem(
+      url: Uri.parse(raw['url'] as String),
+      proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
+      height: raw['height'] as int?,
+      width: raw['width'] as int?,
+    );
+  }
+
+  MediaGalleryItem parseMediaGalleryItem(Map<String, Object?> raw) {
+    return MediaGalleryItem(
+      media: parseUnfurledMediaItem(raw['media'] as Map<String, Object?>),
+      description: raw['description'] as String?,
+      isSpoiler: raw['spoiler'] as bool?,
+    );
+  }
+
+  ThumbnailComponent parseThumbnailComponent(Map<String, Object?> raw) {
+    return ThumbnailComponent(
+      id: raw['id'] as int,
+      media: parseUnfurledMediaItem(raw['media'] as Map<String, Object?>),
+      description: raw['description'] as String?,
+      isSpoiler: raw['spoiler'] as bool?,
+    );
+  }
+
+  TextDisplayComponent parseTextDisplayComponent(Map<String, Object?> raw) {
+    return TextDisplayComponent(
+      id: raw['id'] as int,
+      content: raw['content'] as String,
+    );
+  }
+
+  SectionComponent parseSectionComponent(Map<String, Object?> raw) {
+    return SectionComponent(
+      id: raw['id'] as int,
+      accessory: parseMessageComponent(raw['accessory'] as Map<String, Object?>),
+      components: parseMany(raw['components'] as List, parseTextDisplayComponent),
+    );
+  }
+
+  SelectMenuComponent parseSelectMenuComponent(Map<String, Object?> raw, MessageComponentType type) {
+    return SelectMenuComponent(
+      id: raw['id'] as int,
+      type: type,
+      customId: raw['custom_id'] as String,
+      options: maybeParseMany(raw['options'], parseSelectMenuOption),
+      channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
+      placeholder: raw['placeholder'] as String?,
+      defaultValues: maybeParseMany(raw['default_values'], parseSelectMenuDefaultValue),
+      minValues: raw['min_values'] as int?,
+      maxValues: raw['max_values'] as int?,
+      isDisabled: raw['disabled'] as bool?,
+    );
+  }
+
+  TextInputComponent parseTextInputComponent(Map<String, Object?> raw) {
+    return TextInputComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      style: maybeParse(raw['style'], TextInputStyle.new),
+      label: raw['label'] as String?,
+      minLength: raw['min_length'] as int?,
+      maxLength: raw['max_length'] as int?,
+      isRequired: raw['required'] as bool?,
+      value: raw['value'] as String?,
+      placeholder: raw['placeholder'] as String?,
+    );
+  }
+
+  ActionRowComponent parseActionRowComponent(Map<String, Object?> raw) {
+    return ActionRowComponent(
+      id: raw['id'] as int,
+      components: parseMany(raw['components'] as List, parseMessageComponent),
+    );
+  }
+
+  ButtonComponent parseButtonComponent(Map<String, Object?> raw) {
+    return ButtonComponent(
+      id: raw['id'] as int,
+      style: ButtonStyle(raw['style'] as int),
+      label: raw['label'] as String?,
+      emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
+      customId: raw['custom_id'] as String?,
+      skuId: maybeParse(raw['sku_id'], Snowflake.parse),
+      url: maybeParse(raw['url'], Uri.parse),
+      isDisabled: raw['disabled'] as bool?,
+    );
   }
 
   SelectMenuOption parseSelectMenuOption(Map<String, Object?> raw) {
