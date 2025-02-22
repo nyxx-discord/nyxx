@@ -73,6 +73,13 @@ class Sent extends ShardMessage {
 /// A shard message sent when the shard is waiting to identify on the Gateway.
 class RequestingIdentify extends ShardMessage {}
 
+/// A shard message sent when the shard needs to reconnect to the Gateway.
+class Reconnecting extends ShardMessage {
+  final String reason;
+
+  Reconnecting({required this.reason});
+}
+
 /// The base class for all control messages sent from the client to the shard.
 abstract class GatewayMessage with ToStringHelper {}
 
