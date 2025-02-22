@@ -30,6 +30,9 @@ class ShardRunner {
   /// The current active connection.
   ShardConnection? connection;
 
+  // Add messages to this controller for them to be sent back to the main isolate.
+  final StreamController<ShardMessage> controller = StreamController();
+
   /// Whether the last heartbeat was ACKed.
   bool lastHeartbeatAcked = true;
 
@@ -58,9 +61,6 @@ class ShardRunner {
 
   /// Run the shard runner.
   Stream<ShardMessage> run(Stream<GatewayMessage> messages) async* {
-    // Add messages to this controller for them to be sent back to the main isolate.
-    final controller = StreamController<ShardMessage>();
-
     // sendHandler is responsible for handling requests for this shard to send messages to the Gateway.
     // It is paused whenever this shard isn't ready to send messages.
     final sendController = StreamController<Send>();
@@ -186,6 +186,7 @@ class ShardRunner {
                 sendHandler.resume();
               }
             } else if (event is ReconnectEvent) {
+              controller.add(Reconnecting(reason: 'Reconnect requested'));
               connection!.close(4000);
             } else if (event is InvalidSessionEvent) {
               if (!event.isResumable) {
@@ -193,6 +194,7 @@ class ShardRunner {
                 gatewayUri = originalGatewayUri;
               }
 
+              controller.add(Reconnecting(reason: 'Session invalidated'));
               connection!.close(4000);
             } else if (event is HeartbeatAckEvent) {
               lastHeartbeatAcked = true;
@@ -213,26 +215,29 @@ class ShardRunner {
 
           // Check if we can resume based on close code if the connection was closed by Discord.
           if (connection!.localCloseCode == null) {
-            // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
-            const newSessionCodes = [4007, 4009];
-            const errorCodes = [4004, 4010, 4011, 4012, 4013, 4014];
+            if (connection!.remoteCloseCode == WebSocketStatus.noStatusReceived) {
+              controller.add(Reconnecting(reason: 'Gateway connection was closed'));
+            } else {
+              // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
+              const newSessionCodes = [4007, 4009];
+              const errorCodes = [4004, 4010, 4011, 4012, 4013, 4014];
 
-            if (errorCodes.contains(connection!.remoteCloseCode)) {
-              controller.add(Disconnecting(reason: 'Received error close code: ${connection!.remoteCloseCode}'));
-              return;
+              if (errorCodes.contains(connection!.remoteCloseCode)) {
+                controller.add(Disconnecting(reason: 'Received error close code: ${connection!.remoteCloseCode}'));
+                return;
+              }
+
+              canResume = !newSessionCodes.contains(connection!.remoteCloseCode);
+
+              controller.add(Reconnecting(reason: 'Connection was closed with code ${connection!.remoteCloseCode}'));
             }
-
-            canResume = !newSessionCodes.contains(connection!.remoteCloseCode);
-
-            controller.add(ErrorReceived(
-              error: 'Connection was closed with code ${connection!.remoteCloseCode}',
-              stackTrace: StackTrace.current,
-            ));
           }
         } catch (error, stackTrace) {
           controller.add(ErrorReceived(error: error, stackTrace: stackTrace));
           // Prevents the while-true loop from looping too often when no internet is available.
           await Future.delayed(Duration(milliseconds: 100));
+
+          controller.add(Reconnecting(reason: 'Error on Gateway connection'));
         } finally {
           // Pause the send subscription until we are connected again.
           // The handler may already be paused if the error occurred before we had identified.
@@ -264,6 +269,7 @@ class ShardRunner {
 
   void heartbeat() {
     if (!lastHeartbeatAcked) {
+      controller.add(Reconnecting(reason: 'Missed heartbeat'));
       connection!.close(4000);
       return;
     }
