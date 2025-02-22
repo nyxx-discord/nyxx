@@ -341,6 +341,8 @@ class MessageFlags extends Flags<MessageFlags> {
   /// This message has a snapshot.
   static const hasSnapshot = Flag<MessageFlags>.fromOffset(14);
 
+  static const isComponentsV2 = Flag<MessageFlags>.fromOffset(15);
+
   /// Whether this set of flags has the [crossposted] flag set.
   bool get wasCrossposted => has(crossposted);
 
@@ -376,6 +378,8 @@ class MessageFlags extends Flags<MessageFlags> {
 
   /// Whether this set of flags has the [hasSnapshot] flag set.
   bool get hasASnapshot => has(hasSnapshot);
+
+  bool get hasComponentsV2 => has(isComponentsV2);
 
   /// Create a new [MessageFlags].
   const MessageFlags(super.value);
