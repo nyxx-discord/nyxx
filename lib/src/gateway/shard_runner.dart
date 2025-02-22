@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:es_compression/zstd.dart';
 import 'package:eterl/eterl.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/errors.dart';
@@ -382,7 +383,8 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
     final connection = await WebSocket.connect(gatewayUri);
 
     final uncompressedStream = switch (runner.data.apiOptions.compression) {
-      GatewayCompression.transport => decompressTransport(connection.cast<List<int>>()),
+      GatewayCompression.transportZLib => decompressZLibTransport(connection.cast<List<int>>()),
+      GatewayCompression.transportZStd => decompressZStdTransport(connection.cast<List<int>>()),
       GatewayCompression.payload => decompressPayloads(connection),
       GatewayCompression.none => connection,
     };
@@ -459,7 +461,7 @@ class ShardConnection extends Stream<GatewayEvent> implements StreamSink<Send> {
   Future<void> get done => websocket.done.then((_) => _sentController.done);
 }
 
-Stream<dynamic> decompressTransport(Stream<List<int>> raw) {
+Stream<dynamic> decompressZLibTransport(Stream<List<int>> raw) {
   final filter = RawZLibFilter.inflateFilter();
 
   return raw.map((chunk) {
@@ -473,6 +475,9 @@ Stream<dynamic> decompressTransport(Stream<List<int>> raw) {
     return buffer;
   });
 }
+
+// See https://github.com/instantiations/es_compression/issues/52 for why the isNotEmpty check is needed.
+Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) => raw.transform(zstd.decoder).where((message) => message.isNotEmpty);
 
 Stream<dynamic> decompressPayloads(Stream<dynamic> raw) => raw.map((message) {
       if (message is String) {
