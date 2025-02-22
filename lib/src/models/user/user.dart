@@ -109,13 +109,18 @@ class User extends PartialUser implements MessageAuthor, CommandOptionMentionabl
         );
 
   /// This user's default avatar.
-  CdnAsset get defaultAvatar => CdnAsset(
-        client: manager.client,
-        base: HttpRoute()
-          ..embed()
-          ..avatars(),
-        hash: ((id.value >> 22) % 6).toString(),
-      );
+  CdnAsset get defaultAvatar {
+    final parsedDiscriminator = int.tryParse(discriminator);
+    final hash = parsedDiscriminator == null || parsedDiscriminator == 0 ? (id.value >> 22) % 6 : parsedDiscriminator % 5;
+
+    return CdnAsset(
+      client: manager.client,
+      base: HttpRoute()
+        ..embed()
+        ..avatars(),
+      hash: hash.toString(),
+    );
+  }
 
   @override
   CdnAsset get avatar => avatarHash == null
