@@ -1,3 +1,15 @@
+## 6.6.0
+__23.02.2025__
+
+- feat Make `SoundboardSound` have a CDN asset ([`#740`](https://github.com/nyxx-discord/nyxx/pull/740)) - ([`a8650288`](https://github.com/nyxx-discord/nyxx/commit/a8650288))
+- feat: Add new connections services ([`#735`](https://github.com/nyxx-discord/nyxx/pull/735)) - ([`afe90236`](https://github.com/nyxx-discord/nyxx/commit/afe90236))
+- feat: Add `has_snapshot` message flag ([`#734`](https://github.com/nyxx-discord/nyxx/pull/734)) - ([`385a9667`](https://github.com/nyxx-discord/nyxx/commit/385a9667))
+- feat: Add `withComponents` param on webhooks ([`#738`](https://github.com/nyxx-discord/nyxx/pull/738)) - ([`2b8f229c`](https://github.com/nyxx-discord/nyxx/commit/2b8f229c))
+- feat: Add incidents data ([`#737`](https://github.com/nyxx-discord/nyxx/pull/737)) - ([`538935b7`](https://github.com/nyxx-discord/nyxx/commit/538935b7))
+- chore: Unclutter the pull request template ([`#732`](https://github.com/nyxx-discord/nyxx/pull/732)) - ([`7dc8bae1`](https://github.com/nyxx-discord/nyxx/commit/7dc8bae1))
+- fix: Fix the readme example ([`#731`](https://github.com/nyxx-discord/nyxx/pull/731)) - ([`e2ab8081`](https://github.com/nyxx-discord/nyxx/commit/e2ab8081))
+- fix: Fix legacy accounts default avatar ([`06d2aee4`](https://github.com/nyxx-discord/nyxx/commit/06d2aee4))
+
 ## 6.5.2
 __02.11.2024__
 
