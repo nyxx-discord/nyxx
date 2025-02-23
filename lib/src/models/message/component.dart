@@ -1,4 +1,5 @@
 import 'package:nyxx/src/models/channel/channel.dart';
+import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
@@ -14,6 +15,13 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   static const roleSelect = MessageComponentType(6);
   static const mentionableSelect = MessageComponentType(7);
   static const channelSelect = MessageComponentType(8);
+  static const section = MessageComponentType(9);
+  static const textDisplay = MessageComponentType(10);
+  static const thumbnail = MessageComponentType(11);
+  static const mediaGallery = MessageComponentType(12);
+  static const file = MessageComponentType(13);
+  static const separator = MessageComponentType(14);
+  static const container = MessageComponentType(17);
 
   /// @nodoc
   const MessageComponentType(super.value);
@@ -22,10 +30,36 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   MessageComponentType.parse(int value) : this(value);
 }
 
+class UnfurledMediaItem with ToStringHelper {
+  /// The URL of this media item.
+  final Uri url;
+
+  /// A proxied URL of this media item.
+  final Uri? proxiedUrl;
+
+  /// The height of this media item if it is an image.
+  final int? height;
+
+  /// The width of this media item if it is an image.
+  final int? width;
+
+  /// @nodoc
+  UnfurledMediaItem({
+    required this.url,
+    required this.proxiedUrl,
+    required this.height,
+    required this.width,
+  });
+}
+
 /// A component in a [Message].
 abstract class MessageComponent with ToStringHelper {
   /// The type of this component.
   MessageComponentType get type;
+
+  final int id;
+
+  MessageComponent({required this.id});
 }
 
 /// A [MessageComponent] that contains multiple child [MessageComponent]s.
@@ -38,7 +72,7 @@ class ActionRowComponent extends MessageComponent {
 
   /// Create a new [ActionRowComponent].
   /// @nodoc
-  ActionRowComponent({required this.components});
+  ActionRowComponent({required this.components, required super.id});
 }
 
 /// A clickable button.
@@ -77,6 +111,7 @@ class ButtonComponent extends MessageComponent {
     required this.skuId,
     required this.url,
     required this.isDisabled,
+    required super.id,
   });
 }
 
@@ -141,6 +176,7 @@ class SelectMenuComponent extends MessageComponent {
     required this.minValues,
     required this.maxValues,
     required this.isDisabled,
+    required super.id,
   });
 }
 
@@ -238,6 +274,7 @@ class TextInputComponent extends MessageComponent {
     required this.isRequired,
     required this.value,
     required this.placeholder,
+    required super.id,
   });
 }
 
@@ -251,4 +288,98 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
 
   @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TextInputStyle.parse(int value) : this(value);
+}
+
+class SectionComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.section;
+
+  final List<TextDisplayComponent> components;
+
+  final MessageComponent accessory;
+
+  SectionComponent({required super.id, required this.components, required this.accessory});
+}
+
+class TextDisplayComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.textDisplay;
+
+  final String content;
+
+  TextDisplayComponent({required super.id, required this.content});
+}
+
+class ThumbnailComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.thumbnail;
+
+  final UnfurledMediaItem media;
+
+  final String? description;
+
+  final bool? isSpoiler;
+
+  ThumbnailComponent({required super.id, required this.media, required this.description, required this.isSpoiler});
+}
+
+class MediaGalleryItem with ToStringHelper {
+  final UnfurledMediaItem media;
+
+  final String? description;
+
+  final bool? isSpoiler;
+
+  MediaGalleryItem({required this.media, required this.description, required this.isSpoiler});
+}
+
+class MediaGalleryComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.mediaGallery;
+
+  final List<MediaGalleryItem> items;
+
+  MediaGalleryComponent({required super.id, required this.items});
+}
+
+final class SeparatorSpacingSize extends EnumLike<int, SeparatorSpacingSize> {
+  static const small = SeparatorSpacingSize(1);
+  static const large = SeparatorSpacingSize(2);
+
+  const SeparatorSpacingSize(super.value);
+}
+
+class SeparatorComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.separator;
+
+  final bool? isDivider;
+
+  final SeparatorSpacingSize? spacing;
+
+  SeparatorComponent({required super.id, required this.isDivider, required this.spacing});
+}
+
+class FileComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.file;
+
+  final UnfurledMediaItem file;
+
+  final bool? isSpoiler;
+
+  FileComponent({required super.id, required this.file, required this.isSpoiler});
+}
+
+class ContainerComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.container;
+
+  final DiscordColor? accentColor;
+
+  final bool? isSpoiler;
+
+  final List<MessageComponent> components;
+
+  ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
