@@ -19,55 +19,21 @@ void main() {
       await expectLater(client.close(), completes);
     }
 
-    test(
-      'JSON (uncompressed)',
-      () => testClient(GatewayApiOptions(
-        token: testToken!,
-        intents: GatewayIntents.none,
-        compression: GatewayCompression.none,
-        payloadFormat: GatewayPayloadFormat.json,
-      )),
-    );
+    for (final compression in GatewayCompression.values) {
+      for (final payloadFormat in GatewayPayloadFormat.values) {
+        if (payloadFormat != GatewayPayloadFormat.json && compression == GatewayCompression.payload) continue;
 
-    test(
-      'JSON (payload compression)',
-      () => testClient(GatewayApiOptions(
-        token: testToken!,
-        intents: GatewayIntents.none,
-        compression: GatewayCompression.payload,
-        payloadFormat: GatewayPayloadFormat.json,
-      )),
-    );
-
-    test(
-      'JSON (transport compression)',
-      () => testClient(GatewayApiOptions(
-        token: testToken!,
-        intents: GatewayIntents.none,
-        compression: GatewayCompression.transport,
-        payloadFormat: GatewayPayloadFormat.json,
-      )),
-    );
-
-    test(
-      'ETF (uncompressed)',
-      () => testClient(GatewayApiOptions(
-        token: testToken!,
-        intents: GatewayIntents.none,
-        compression: GatewayCompression.none,
-        payloadFormat: GatewayPayloadFormat.etf,
-      )),
-    );
-
-    test(
-      'ETF (transport compression)',
-      () => testClient(GatewayApiOptions(
-        token: testToken!,
-        intents: GatewayIntents.none,
-        compression: GatewayCompression.transport,
-        payloadFormat: GatewayPayloadFormat.etf,
-      )),
-    );
+        test(
+          '${payloadFormat.value.toUpperCase()} (${compression.name})',
+          () => testClient(GatewayApiOptions(
+            token: testToken!,
+            intents: GatewayIntents.none,
+            compression: compression,
+            payloadFormat: payloadFormat,
+          )),
+        );
+      }
+    }
 
     test('Multiple shards', () async {
       const shardCount = 5;
