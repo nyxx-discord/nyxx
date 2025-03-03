@@ -311,6 +311,7 @@ class MessageManager extends Manager<Message> {
 
   UnfurledMediaItem parseUnfurledMediaItem(Map<String, Object?> raw) {
     return UnfurledMediaItem(
+      manager: this,
       url: Uri.parse(raw['url'] as String),
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
