@@ -31,7 +31,9 @@ void main() {
       ],
       nonce: '1234',
       stickerIds: [Snowflake.zero],
+      // ignore: deprecated_member_use_from_same_package
       suppressEmbeds: false,
+      // ignore: deprecated_member_use_from_same_package
       suppressNotifications: true,
       tts: false,
     );
