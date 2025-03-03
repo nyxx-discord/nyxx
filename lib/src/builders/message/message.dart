@@ -24,7 +24,7 @@ class MessageBuilder extends CreateBuilder<Message> {
 
   MessageReferenceBuilder? referencedMessage;
 
-  List<ActionRowBuilder>? components;
+  List<MessageComponentBuilder>? components;
 
   List<Snowflake>? stickerIds;
 
