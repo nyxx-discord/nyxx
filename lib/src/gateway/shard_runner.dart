@@ -215,7 +215,7 @@ class ShardRunner {
 
           // Check if we can resume based on close code if the connection was closed by Discord.
           if (connection!.localCloseCode == null) {
-            if (connection!.remoteCloseCode == WebSocketStatus.noStatusReceived) {
+            if (connection!.remoteCloseCode == WebSocketStatus.noStatusReceived || connection!.remoteCloseCode == WebSocketStatus.abnormalClosure) {
               controller.add(Reconnecting(reason: 'Gateway connection was closed'));
             } else {
               // https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
