@@ -65,11 +65,11 @@ class MessageBuilder extends CreateBuilder<Message> {
       );
     }
 
-    if (suppressEmbeds != null) {
+    if (suppressEmbeds == true) {
       flags = (flags ?? MessageFlags(0)) | MessageFlags.suppressEmbeds;
     }
 
-    if (suppressNotifications != null) {
+    if (suppressNotifications == true) {
       flags = (flags ?? MessageFlags(0)) | MessageFlags.suppressNotifications;
     }
   }
