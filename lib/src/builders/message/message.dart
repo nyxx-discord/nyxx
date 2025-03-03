@@ -8,6 +8,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/utils/flags.dart';
 
 // TODO(abitofevrything): Remove replyId and requireReplyToExist properties.
 class MessageBuilder extends CreateBuilder<Message> {
@@ -29,9 +30,7 @@ class MessageBuilder extends CreateBuilder<Message> {
 
   List<AttachmentBuilder>? attachments;
 
-  bool? suppressEmbeds;
-
-  bool? suppressNotifications;
+  Flags<MessageFlags>? flags;
 
   /// If true and nonce is present, it will be checked for uniqueness in the past few minutes. If another message was created by the same author with the same nonce,
   /// that message will be returned and no new message will be created.
@@ -51,8 +50,9 @@ class MessageBuilder extends CreateBuilder<Message> {
     this.components,
     this.stickerIds,
     this.attachments,
-    this.suppressEmbeds,
-    this.suppressNotifications,
+    @Deprecated('Use flags instead') bool? suppressEmbeds,
+    @Deprecated('Use flags instead') bool? suppressNotifications,
+    this.flags,
     this.enforceNonce,
     this.poll,
   }) {
@@ -63,6 +63,14 @@ class MessageBuilder extends CreateBuilder<Message> {
         messageId: replyId,
         failIfInexistent: requireReplyToExist,
       );
+    }
+
+    if (suppressEmbeds != null) {
+      flags = (flags ?? MessageFlags(0)) | MessageFlags.suppressEmbeds;
+    }
+
+    if (suppressNotifications != null) {
+      flags = (flags ?? MessageFlags(0)) | MessageFlags.suppressNotifications;
     }
   }
 
@@ -91,6 +99,30 @@ class MessageBuilder extends CreateBuilder<Message> {
     }
   }
 
+  @Deprecated('Use flags instead')
+  bool? get suppressEmbeds => MessageFlags(flags?.value ?? 0).suppressesEmbeds;
+
+  @Deprecated('Use flags instead')
+  set suppressEmbeds(bool? suppressEmbeds) {
+    if (suppressEmbeds == true) {
+      flags = (flags ?? MessageFlags(0)) | MessageFlags.suppressEmbeds;
+    } else {
+      flags = (flags ?? MessageFlags(0)) & ~MessageFlags.suppressEmbeds;
+    }
+  }
+
+  @Deprecated('Use flags instead')
+  bool? get suppressNotifications => MessageFlags(flags?.value ?? 0).suppressesNotifications;
+
+  @Deprecated('Use flags instead')
+  set suppressNotifications(bool? suppressNotifications) {
+    if (suppressNotifications == true) {
+      flags = (flags ?? MessageFlags(0)) | MessageFlags.suppressNotifications;
+    } else {
+      flags = (flags ?? MessageFlags(0)) & ~MessageFlags.suppressNotifications;
+    }
+  }
+
   @override
   Map<String, Object?> build() => {
         if (content != null) 'content': content,
@@ -102,9 +134,7 @@ class MessageBuilder extends CreateBuilder<Message> {
         if (components != null) 'components': components!.map((e) => e.build()).toList(),
         if (stickerIds != null) 'sticker_ids': stickerIds!.map((e) => e.toString()).toList(),
         if (attachments != null) 'attachments': attachments!.map((e) => e.build()).toList(),
-        if (suppressEmbeds != null || suppressNotifications != null)
-          'flags':
-              (suppressEmbeds == true ? MessageFlags.suppressEmbeds.value : 0) | (suppressNotifications == true ? MessageFlags.suppressNotifications.value : 0),
+        if (flags != null) 'flags': flags!.value,
         if (enforceNonce != null) 'enforce_nonce': enforceNonce,
         if (poll != null) 'poll': poll!.build(),
       };
