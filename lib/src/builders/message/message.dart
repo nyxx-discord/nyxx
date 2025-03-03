@@ -149,7 +149,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
 
   AllowedMentions? allowedMentions;
 
-  List<ActionRowBuilder>? components;
+  List<MessageComponentBuilder>? components;
 
   List<AttachmentBuilder>? attachments;
 
