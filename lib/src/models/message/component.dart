@@ -1,3 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:http/http.dart';
+import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/http/cdn/cdn_asset.dart';
+import 'package:nyxx/src/http/managers/message_manager.dart';
+import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/emoji.dart';
@@ -30,8 +37,15 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   MessageComponentType.parse(int value) : this(value);
 }
 
-class UnfurledMediaItem with ToStringHelper {
+class UnfurledMediaItem with ToStringHelper implements CdnAsset {
+  /// The manager for this [UnfurledMediaItem].
+  final MessageManager manager;
+
+  @override
+  Nyxx get client => manager.client;
+
   /// The URL of this media item.
+  @override
   final Uri url;
 
   /// A proxied URL of this media item.
@@ -45,11 +59,44 @@ class UnfurledMediaItem with ToStringHelper {
 
   /// @nodoc
   UnfurledMediaItem({
+    required this.manager,
     required this.url,
     required this.proxiedUrl,
     required this.height,
     required this.width,
   });
+
+  @override
+  HttpRoute get base => throw UnsupportedError('Cannot get the base URL for a media item');
+
+  @override
+  CdnFormat get defaultFormat => throw UnsupportedError('Cannot get the default format for a media item');
+
+  @override
+  String get hash => throw UnsupportedError('Cannot get the hash for a media item');
+
+  @override
+  bool get isAnimated => false;
+
+  @override
+  Future<Uint8List> fetch({CdnFormat? format, int? size}) async {
+    if (format != null || size != null) {
+      throw UnsupportedError('Cannot specify attachment format or size');
+    }
+
+    final response = await client.httpHandler.httpClient.get(url);
+    return response.bodyBytes;
+  }
+
+  @override
+  Stream<List<int>> fetchStreamed({CdnFormat? format, int? size}) async* {
+    if (format != null || size != null) {
+      throw UnsupportedError('Cannot specify attachment format or size');
+    }
+
+    final response = await client.httpHandler.httpClient.send(Request('GET', url));
+    yield* response.stream;
+  }
 }
 
 /// A component in a [Message].
@@ -290,96 +337,131 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
   TextInputStyle.parse(int value) : this(value);
 }
 
+/// A section in a message, with small accessory component.
 class SectionComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.section;
 
+  /// The components in this section.
   final List<TextDisplayComponent> components;
 
+  /// A small component displayed at the top of the section.
   final MessageComponent accessory;
 
+  /// @nodoc
   SectionComponent({required super.id, required this.components, required this.accessory});
 }
 
+/// A component that displays text.
 class TextDisplayComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.textDisplay;
 
+  /// The content of this section.
   final String content;
 
+  /// @nodoc
   TextDisplayComponent({required super.id, required this.content});
 }
 
+/// A component that shows a small image.
 class ThumbnailComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.thumbnail;
 
+  /// The image that is shown.
   final UnfurledMediaItem media;
 
+  /// A description of the image.
   final String? description;
 
+  /// Whether the image should be spoilered.
   final bool? isSpoiler;
 
+  /// @nodoc
   ThumbnailComponent({required super.id, required this.media, required this.description, required this.isSpoiler});
 }
 
+/// An item in a [MediaGalleryComponent].
 class MediaGalleryItem with ToStringHelper {
+  /// The item to display.
   final UnfurledMediaItem media;
 
+  /// A description of the item.
   final String? description;
 
+  /// Whether the item should be spoilered.
   final bool? isSpoiler;
 
+  /// @nodoc
   MediaGalleryItem({required this.media, required this.description, required this.isSpoiler});
 }
 
+/// A component that displays several child media items.
 class MediaGalleryComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.mediaGallery;
 
+  /// The items to display.
   final List<MediaGalleryItem> items;
 
+  /// @nodoc
   MediaGalleryComponent({required super.id, required this.items});
 }
 
+/// The size of the spacing introduced by a [SeparatorComponent].
 final class SeparatorSpacingSize extends EnumLike<int, SeparatorSpacingSize> {
   static const small = SeparatorSpacingSize(1);
   static const large = SeparatorSpacingSize(2);
 
+  /// @nodoc
   const SeparatorSpacingSize(super.value);
 }
 
+/// A component that introduces space between two other components.
 class SeparatorComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.separator;
 
+  /// Whether this component should render a divider line.
   final bool? isDivider;
 
+  /// The size of the space introduced by this component.
   final SeparatorSpacingSize? spacing;
 
+  /// @nodoc
   SeparatorComponent({required super.id, required this.isDivider, required this.spacing});
 }
 
+/// A component that displays a downloadable file.
 class FileComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.file;
 
+  /// The file that can be downloaded.
   final UnfurledMediaItem file;
 
+  /// Whether the file should be spoilered.
   final bool? isSpoiler;
 
+  /// @nodoc
   FileComponent({required super.id, required this.file, required this.isSpoiler});
 }
 
+/// A component that contains several other components.
 class ContainerComponent extends MessageComponent {
   @override
   MessageComponentType get type => MessageComponentType.container;
 
+  /// The accent color for this container.
   final DiscordColor? accentColor;
 
+  /// Whether this container should be spoilered.
   final bool? isSpoiler;
 
+  /// The components in this container.
   final List<MessageComponent> components;
 
+  /// @nodoc
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
