@@ -10,7 +10,7 @@ import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
-// TODO(abitofevrything): Remove replyId and requireReplyToExist properties.
+// TODO(abitofevrything): Remove replyId, requireReplyToExist, suppressEmbeds and suppressNotifications.
 class MessageBuilder extends CreateBuilder<Message> {
   String? content;
 
