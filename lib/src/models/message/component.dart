@@ -104,8 +104,10 @@ abstract class MessageComponent with ToStringHelper {
   /// The type of this component.
   MessageComponentType get type;
 
+  /// An identifier for this component.
   final int id;
 
+  /// @nodoc
   MessageComponent({required this.id});
 }
 
