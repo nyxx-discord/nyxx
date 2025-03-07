@@ -5,7 +5,9 @@ class GatewayIntents extends Flags<GatewayIntents> {
   static const guilds = Flag<GatewayIntents>.fromOffset(0);
   static const guildMembers = Flag<GatewayIntents>.fromOffset(1);
   static const guildModeration = Flag<GatewayIntents>.fromOffset(2);
-  static const guildEmojisAndStickers = Flag<GatewayIntents>.fromOffset(3);
+  static const guildExpressions = Flag<GatewayIntents>.fromOffset(3);
+  @Deprecated('Use GatewayIntents.guildExpressions instead')
+  static const guildEmojisAndStickers = guildExpressions;
   static const guildIntegrations = Flag<GatewayIntents>.fromOffset(4);
   static const guildWebhooks = Flag<GatewayIntents>.fromOffset(5);
   static const guildInvites = Flag<GatewayIntents>.fromOffset(6);
