@@ -11,6 +11,7 @@ class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
   @override
   final SoundboardManager manager;
 
+  /// @nodoc
   PartialSoundboardSound({required super.id, required this.manager});
 
   /// The sound asset for this soundboard sound.
@@ -47,6 +48,7 @@ class SoundboardSound extends PartialSoundboardSound {
   /// The user who created this sound.
   final User? user;
 
+  /// @nodoc
   SoundboardSound({
     required super.id,
     required super.manager,

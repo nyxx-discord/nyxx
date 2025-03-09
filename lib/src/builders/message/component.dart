@@ -1,6 +1,8 @@
+import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
+import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/message/component.dart';
 import 'package:nyxx/src/models/role.dart';
@@ -8,16 +10,19 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
-abstract class MessageComponentBuilder extends CreateBuilder<MessageComponent> {
+abstract class MessageComponentBuilder<T extends MessageComponent> extends CreateBuilder<T> {
   MessageComponentType type;
 
-  MessageComponentBuilder({required this.type});
+  int? id;
+
+  MessageComponentBuilder({required this.type, this.id});
 
   @override
-  Map<String, Object?> build() => {'type': type.value};
+  @mustBeOverridden
+  Map<String, Object?> build() => {'type': type.value, 'id': id};
 }
 
-class ActionRowBuilder extends MessageComponentBuilder {
+class ActionRowBuilder extends MessageComponentBuilder<ActionRowComponent> {
   List<MessageComponentBuilder> components;
 
   ActionRowBuilder({required this.components}) : super(type: MessageComponentType.actionRow);
@@ -29,7 +34,7 @@ class ActionRowBuilder extends MessageComponentBuilder {
       };
 }
 
-class ButtonBuilder extends MessageComponentBuilder {
+class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
   ButtonStyle style;
 
   String? label;
@@ -52,6 +57,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.skuId,
     this.url,
     this.isDisabled,
+    super.id,
   }) : super(type: MessageComponentType.button);
 
   ButtonBuilder.primary({
@@ -59,6 +65,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.emoji,
     required String this.customId,
     this.isDisabled,
+    super.id,
   })  : style = ButtonStyle.primary,
         super(type: MessageComponentType.button);
 
@@ -67,6 +74,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.emoji,
     required String this.customId,
     this.isDisabled,
+    super.id,
   })  : style = ButtonStyle.secondary,
         super(type: MessageComponentType.button);
 
@@ -75,6 +83,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.emoji,
     required String this.customId,
     this.isDisabled,
+    super.id,
   })  : style = ButtonStyle.success,
         super(type: MessageComponentType.button);
 
@@ -83,6 +92,7 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.emoji,
     required String this.customId,
     this.isDisabled,
+    super.id,
   })  : style = ButtonStyle.danger,
         super(type: MessageComponentType.button);
 
@@ -91,12 +101,14 @@ class ButtonBuilder extends MessageComponentBuilder {
     this.emoji,
     required Uri this.url,
     this.isDisabled,
+    super.id,
   })  : style = ButtonStyle.link,
         super(type: MessageComponentType.button);
 
   ButtonBuilder.premium({
     required Snowflake this.skuId,
     this.isDisabled,
+    super.id,
   })  : style = ButtonStyle.premium,
         super(type: MessageComponentType.button);
 
@@ -118,7 +130,7 @@ class ButtonBuilder extends MessageComponentBuilder {
       };
 }
 
-class SelectMenuBuilder extends MessageComponentBuilder {
+class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
   String customId;
 
   List<SelectMenuOptionBuilder>? options;
@@ -145,6 +157,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.minValues,
     this.maxValues,
     this.isDisabled,
+    super.id,
   });
 
   SelectMenuBuilder.stringSelect({
@@ -154,6 +167,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.minValues,
     this.maxValues,
     this.isDisabled,
+    super.id,
   }) : super(type: MessageComponentType.stringSelect);
 
   SelectMenuBuilder.userSelect({
@@ -163,6 +177,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.minValues,
     this.maxValues,
     this.isDisabled,
+    super.id,
   }) : super(type: MessageComponentType.userSelect);
 
   SelectMenuBuilder.roleSelect({
@@ -172,6 +187,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.minValues,
     this.maxValues,
     this.isDisabled,
+    super.id,
   }) : super(type: MessageComponentType.roleSelect);
 
   SelectMenuBuilder.mentionableSelect({
@@ -182,6 +198,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.minValues,
     this.maxValues,
     this.isDisabled,
+    super.id,
   }) : super(type: MessageComponentType.mentionableSelect);
 
   SelectMenuBuilder.channelSelect({
@@ -191,6 +208,7 @@ class SelectMenuBuilder extends MessageComponentBuilder {
     this.minValues,
     this.maxValues,
     this.isDisabled,
+    super.id,
   }) : super(type: MessageComponentType.channelSelect);
 
   @override
@@ -264,7 +282,7 @@ class DefaultValue<T extends SnowflakeEntity<T>> extends CreateBuilder<DefaultVa
       };
 }
 
-class TextInputBuilder extends MessageComponentBuilder {
+class TextInputBuilder extends MessageComponentBuilder<TextInputComponent> {
   String customId;
 
   TextInputStyle style;
@@ -290,6 +308,7 @@ class TextInputBuilder extends MessageComponentBuilder {
     this.isRequired,
     this.value,
     this.placeholder,
+    super.id,
   }) : super(type: MessageComponentType.textInput);
 
   @override
@@ -303,5 +322,136 @@ class TextInputBuilder extends MessageComponentBuilder {
         if (isRequired != null) 'required': isRequired,
         if (value != null) 'value': value,
         if (placeholder != null) 'placeholder': placeholder,
+      };
+}
+
+class SectionComponentBuilder extends MessageComponentBuilder<SectionComponent> {
+  List<TextDisplayComponentBuilder> components;
+
+  MessageComponentBuilder accessory;
+
+  SectionComponentBuilder({super.id, required this.components, required this.accessory}) : super(type: MessageComponentType.section);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'components': [for (final component in components) component.build()],
+        'accessory': accessory.build(),
+      };
+}
+
+class TextDisplayComponentBuilder extends MessageComponentBuilder<TextDisplayComponent> {
+  final String content;
+
+  TextDisplayComponentBuilder({required this.content, super.id}) : super(type: MessageComponentType.textDisplay);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'content': content,
+      };
+}
+
+class UnfurledMediaItemBuilder extends CreateBuilder<UnfurledMediaItem> {
+  Uri url;
+
+  UnfurledMediaItemBuilder({required this.url});
+
+  @override
+  Map<String, Object?> build() => {'url': url.toString()};
+}
+
+class ThumbnailComponentBuilder extends MessageComponentBuilder<ThumbnailComponent> {
+  UnfurledMediaItemBuilder media;
+
+  String? description;
+
+  bool? isSpoiler;
+
+  ThumbnailComponentBuilder({required this.media, this.description, this.isSpoiler, super.id}) : super(type: MessageComponentType.thumbnail);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'media': media.build(),
+        if (description != null) 'description': description,
+        if (isSpoiler != null) 'spoiler': isSpoiler,
+      };
+}
+
+class MediaGalleryItemBuilder extends CreateBuilder<MediaGalleryItem> {
+  UnfurledMediaItemBuilder media;
+
+  String? description;
+
+  bool? isSpoiler;
+
+  MediaGalleryItemBuilder({required this.media, this.description, this.isSpoiler});
+
+  @override
+  Map<String, Object?> build() => {
+        'media': media.build(),
+        if (description != null) 'description': description,
+        if (isSpoiler != null) 'spoiler': isSpoiler,
+      };
+}
+
+class MediaGalleryComponentBuilder extends MessageComponentBuilder<MediaGalleryComponent> {
+  List<MediaGalleryItemBuilder> items;
+
+  MediaGalleryComponentBuilder({required this.items, super.id}) : super(type: MessageComponentType.mediaGallery);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'items': items.map((e) => e.build()).toList(),
+      };
+}
+
+class SeparatorComponentBuilder extends MessageComponentBuilder<SeparatorComponent> {
+  bool? isDivider;
+
+  SeparatorSpacingSize? spacing;
+
+  SeparatorComponentBuilder({this.isDivider, this.spacing, super.id}) : super(type: MessageComponentType.separator);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        if (isDivider != null) 'divider': isDivider,
+        if (spacing != null) 'spacing': spacing!.value,
+      };
+}
+
+class FileComponentBuilder extends MessageComponentBuilder<FileComponent> {
+  UnfurledMediaItemBuilder file;
+
+  bool? isSpoiler;
+
+  FileComponentBuilder({required this.file, this.isSpoiler, super.id}) : super(type: MessageComponentType.file);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'file': file.build(),
+        if (isSpoiler != null) 'spoiler': isSpoiler,
+      };
+}
+
+class ContainerComponentBuilder extends MessageComponentBuilder<ContainerComponent> {
+  DiscordColor? accentColor;
+
+  bool? isSpoiler;
+
+  List<MessageComponentBuilder> components;
+
+  ContainerComponentBuilder({required this.components, this.accentColor, this.isSpoiler, super.id}) : super(type: MessageComponentType.container);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        if (accentColor != null) 'accent_color': accentColor!.value,
+        if (isSpoiler != null) 'spoiler': isSpoiler,
+        'components': components.map((e) => e.build()).toList(),
       };
 }

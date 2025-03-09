@@ -49,7 +49,23 @@ export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder, MessageReferenceBuilder;
 export 'src/builders/message/component.dart'
-    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
+    show
+        ActionRowBuilder,
+        ButtonBuilder,
+        MessageComponentBuilder,
+        SelectMenuBuilder,
+        SelectMenuOptionBuilder,
+        TextInputBuilder,
+        DefaultValue,
+        ContainerComponentBuilder,
+        FileComponentBuilder,
+        MediaGalleryComponentBuilder,
+        MediaGalleryItemBuilder,
+        SectionComponentBuilder,
+        SeparatorComponentBuilder,
+        TextDisplayComponentBuilder,
+        ThumbnailComponentBuilder,
+        UnfurledMediaItemBuilder;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
@@ -114,7 +130,20 @@ export 'src/http/managers/soundboard_manager.dart' show SoundboardManager, Guild
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/event_parser.dart' show EventParser;
 export 'src/gateway/message.dart'
-    show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, Sent, ShardData, ShardMessage, Identify, RequestingIdentify, StartShard;
+    show
+        Disconnecting,
+        Dispose,
+        ErrorReceived,
+        EventReceived,
+        GatewayMessage,
+        Send,
+        Sent,
+        ShardData,
+        ShardMessage,
+        Identify,
+        RequestingIdentify,
+        StartShard,
+        Reconnecting;
 export 'src/gateway/shard.dart' show Shard;
 
 export 'src/models/discord_color.dart' show DiscordColor;
@@ -185,7 +214,17 @@ export 'src/models/message/component.dart'
         TextInputComponent,
         ButtonStyle,
         MessageComponentType,
-        TextInputStyle;
+        TextInputStyle,
+        ContainerComponent,
+        FileComponent,
+        MediaGalleryComponent,
+        MediaGalleryItem,
+        SectionComponent,
+        SeparatorComponent,
+        SeparatorSpacingSize,
+        TextDisplayComponent,
+        ThumbnailComponent,
+        UnfurledMediaItem;
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;

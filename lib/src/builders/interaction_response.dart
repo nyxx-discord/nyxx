@@ -13,25 +13,15 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.pong() => InteractionResponseBuilder(type: InteractionCallbackType.pong, data: null);
 
-  factory InteractionResponseBuilder.channelMessage(MessageBuilder message, {bool? isEphemeral}) => InteractionResponseBuilder(
-        type: InteractionCallbackType.channelMessageWithSource,
-        data: _EphemeralMessageBuilder(
-          content: message.content,
-          nonce: message.nonce,
-          tts: message.tts,
-          embeds: message.embeds,
-          allowedMentions: message.allowedMentions,
-          referencedMessage: message.referencedMessage,
-          components: message.components,
-          stickerIds: message.stickerIds,
-          attachments: message.attachments,
-          suppressEmbeds: message.suppressEmbeds,
-          suppressNotifications: message.suppressNotifications,
-          enforceNonce: message.enforceNonce,
-          poll: message.poll,
-          isEphemeral: isEphemeral,
-        ),
-      );
+  factory InteractionResponseBuilder.channelMessage(MessageBuilder message, {@Deprecated('Use message.flags') bool? isEphemeral}) {
+    final builder = InteractionResponseBuilder(type: InteractionCallbackType.channelMessageWithSource, data: message);
+
+    if (isEphemeral == true) {
+      message.flags = (message.flags ?? MessageFlags(0)) | MessageFlags.ephemeral;
+    }
+
+    return builder;
+  }
 
   factory InteractionResponseBuilder.deferredChannelMessage({bool? isEphemeral}) => InteractionResponseBuilder(
         type: InteractionCallbackType.deferredChannelMessageWithSource,
@@ -71,38 +61,6 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
       'type': type.value,
       'data': builtData,
     };
-  }
-}
-
-class _EphemeralMessageBuilder extends MessageBuilder {
-  bool? isEphemeral;
-
-  _EphemeralMessageBuilder({
-    required super.content,
-    required super.nonce,
-    required super.tts,
-    required super.embeds,
-    required super.allowedMentions,
-    required super.components,
-    required super.stickerIds,
-    required super.attachments,
-    required super.suppressEmbeds,
-    required super.suppressNotifications,
-    required super.enforceNonce,
-    required super.poll,
-    required super.referencedMessage,
-    required this.isEphemeral,
-  });
-
-  @override
-  Map<String, Object?> build() {
-    final built = super.build();
-
-    if (isEphemeral != null) {
-      built['flags'] = (built['flags'] as int? ?? 0) | (isEphemeral == true ? MessageFlags.ephemeral.value : 0);
-    }
-
-    return built;
   }
 }
 
