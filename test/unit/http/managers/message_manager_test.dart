@@ -304,6 +304,255 @@ void checkForwardedMessage(Message message) {
   expect(message.call, isNull);
 }
 
+final sampleComponentsV2Message = {
+  "type": 20,
+  "content": "",
+  "mentions": [],
+  "mention_roles": [],
+  "attachments": [],
+  "embeds": [],
+  "timestamp": "2025-02-24T21:01:48.409000+00:00",
+  "edited_timestamp": null,
+  "flags": 32768,
+  "components": [
+    {
+      "type": 17,
+      "id": 1,
+      "accent_color": null,
+      "components": [
+        {
+          "type": 9,
+          "id": 2,
+          "components": [
+            {"type": 10, "id": 3, "content": "Hey there,"},
+            {"type": 10, "id": 4, "content": "This is delightful, no?"}
+          ],
+          "accessory": {
+            "type": 11,
+            "id": 5,
+            "media": {
+              "url": "https://i.imgur.com/SpCbHBI.jpeg",
+              "proxy_url": "https://images-ext-1.discordapp.net/external/JnxJ6nc07YuYZoa1zhTq2JW6oHVNJh4fDcTKElOG1F8/https/i.imgur.com/SpCbHBI.jpeg",
+              "width": 640,
+              "height": 640,
+              "placeholder": "GSkKFwQ7d3dgiXiHeKZXWJd2eL+Y94wK",
+              "placeholder_version": 1,
+              "content_scan_metadata": {"version": 1, "flags": 0},
+              "content_type": "image/jpeg",
+              "loading_state": 2,
+              "flags": 0
+            },
+            "description": "Meow meow meow meow meow, cat picture kanged.",
+            "spoiler": false
+          }
+        },
+        {
+          "type": 12,
+          "id": 6,
+          "items": [
+            {
+              "media": {
+                "url": "https://i.imgur.com/JOKsNeT.jpeg",
+                "proxy_url": "https://images-ext-1.discordapp.net/external/oCSJtivfxPV1p3Al4__kvn8gU8K6j7RmAR6Ko0biOZs/https/i.imgur.com/JOKsNeT.jpeg",
+                "width": 455,
+                "height": 759,
+                "placeholder": "GCkKJAZpi6t7h2X1logwUgZUZQ==",
+                "placeholder_version": 1,
+                "content_scan_metadata": {"version": 1, "flags": 0},
+                "content_type": "image/jpeg",
+                "loading_state": 2,
+                "flags": 0
+              },
+              "description": "Meow meow meeow meeooow... Meow meow meow meeeeemeow.....",
+              "spoiler": true
+            },
+            {
+              "media": {
+                "url": "https://i.imgur.com/ujAO1Dl.mp4",
+                "proxy_url": "https://images-ext-1.discordapp.net/external/uNxJUvhDjfQJhhgf9Kb2_qHA1gVTpCr4_vrpv57sZVk/https/i.imgur.com/ujAO1Dl.mp4",
+                "width": 575,
+                "height": 1024,
+                "placeholder": "nAgGDAIYAok4d2qqKFkwuwVlWg==",
+                "placeholder_version": 1,
+                "content_scan_metadata": {"version": 1, "flags": 0},
+                "content_type": "image/jpeg",
+                "loading_state": 2,
+                "flags": 0
+              },
+              "description": "The fun never ends, cozy and cuddly [...]",
+              "spoiler": false
+            }
+          ]
+        },
+        {
+          "type": 13,
+          "id": 7,
+          "file": {
+            "url":
+                "https://cdn.discordapp.com/attachments/1317207732318900244/1343689362105176104/file.txt?ex=67c6c17c&is=67c56ffc&hm=925fdd61fd515ba4c6710f5440fdd4e3fef1ab278e4da1f3df9cbc05b90e7a2e&",
+            "proxy_url":
+                "https://media.discordapp.net/attachments/1317207732318900244/1343689362105176104/file.txt?ex=67c6c17c&is=67c56ffc&hm=925fdd61fd515ba4c6710f5440fdd4e3fef1ab278e4da1f3df9cbc05b90e7a2e&",
+            "width": 0,
+            "height": 0,
+            "placeholder": null,
+            "placeholder_version": null,
+            "content_scan_metadata": {"version": 1, "flags": 0},
+            "content_type": "text/plain; charset=utf-8",
+            "loading_state": 2,
+            "flags": 0
+          },
+          "name": "file.txt",
+          "size": 67,
+          "spoiler": false
+        },
+        {"type": 10, "id": 8, "content": "HELP THIS JSON IS BIG :sob:"},
+        {"type": 14, "id": 9, "spacing": 2, "divider": true},
+        {"type": 10, "id": 10, "content": "Finally it's over"}
+      ],
+      "spoiler": false
+    }
+  ],
+  "resolved": {"users": <String, dynamic>{}, "members": <String, dynamic>{}, "channels": <String, dynamic>{}, "roles": <String, dynamic>{}},
+  "id": "1343689361862168628",
+  "channel_id": "1317207732318900244",
+  "author": {
+    "id": "925720548477136917",
+    "username": "Cogmaster",
+    "avatar": "2e84c5cbae01b86253d2b6bf29c5c9f5",
+    "discriminator": "8910",
+    "public_flags": 0,
+    "flags": 0,
+    "bot": true,
+    "banner": null,
+    "accent_color": null,
+    "global_name": null,
+    "avatar_decoration_data": null,
+    "banner_color": null,
+    "clan": null,
+    "primary_guild": null
+  },
+  "pinned": false,
+  "mention_everyone": false,
+  "tts": false,
+  "application_id": "925720548477136917",
+  "interaction": {
+    "id": "1343689360519725056",
+    "type": 2,
+    "name": "test",
+    "user": {
+      "id": "739575055503327324",
+      "username": "the.furry",
+      "avatar": "f5d94aa59dc42ec02bf357dc87811d39",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "Pedro.js",
+      "avatar_decoration_data": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    }
+  },
+  "webhook_id": "925720548477136917",
+  "position": 0,
+  "interaction_metadata": {
+    "id": "1343689360519725056",
+    "type": 2,
+    "user": {
+      "id": "739575055503327324",
+      "username": "the.furry",
+      "avatar": "f5d94aa59dc42ec02bf357dc87811d39",
+      "discriminator": "0",
+      "public_flags": 128,
+      "flags": 128,
+      "banner": null,
+      "accent_color": null,
+      "global_name": "Pedro.js",
+      "avatar_decoration_data": null,
+      "banner_color": null,
+      "clan": null,
+      "primary_guild": null
+    },
+    "authorizing_integration_owners": {"0": "1317206872763404478"},
+    "name": "test",
+    "command_type": 1
+  }
+};
+
+void checkComponentsV2Message(Message message) {
+  expect(message.author, (MessageAuthor author) {
+    expect(author, isA<WebhookAuthor>());
+    author as WebhookAuthor;
+
+    expect(author.id, equals(Snowflake(925720548477136917)));
+    return true;
+  });
+  expect(message.content, isEmpty);
+  expect(message.timestamp, equals(DateTime.utc(2025, 02, 24, 21, 01, 48, 409)));
+  expect(message.editedTimestamp, isNull);
+  expect(message.isTts, isFalse);
+  expect(message.mentionsEveryone, isFalse);
+  expect(message.mentions, isEmpty);
+  expect(message.roleMentionIds, isEmpty);
+  expect(message.channelMentions, isEmpty);
+  expect(message.attachments, isEmpty);
+  expect(message.embeds, isEmpty);
+  expect(message.reactions, isEmpty);
+  expect(message.nonce, isNull);
+  expect(message.isPinned, isFalse);
+  expect(message.webhookId, equals(Snowflake(925720548477136917)));
+  expect(message.type, equals(MessageType.chatInputCommand));
+  expect(message.activity, isNull);
+  expect(message.application, isNull);
+  expect(message.applicationId, equals(Snowflake(925720548477136917)));
+  expect(message.reference, isNull);
+  expect(message.messageSnapshots, isNull);
+  expect(message.flags, (MessageFlags flags) {
+    expect(flags.hasComponentsV2, isTrue);
+    return true;
+  });
+  expect(message.referencedMessage, isNull);
+  expect(message.components, (List<MessageComponent>? components) {
+    expect(components, isNotNull);
+    expect(components, hasLength(1));
+
+    expect(components!.single, isA<ContainerComponent>());
+    expect(components.single, (ContainerComponent component) {
+      expect(component.id, equals(1));
+      expect(component.accentColor, isNull);
+
+      expect(component.components, hasLength(6));
+      expect(component.components.first, isA<SectionComponent>());
+      expect(component.components.first, (SectionComponent component) {
+        expect(component.id, equals(2));
+
+        expect(component.components, everyElement(isA<TextDisplayComponent>()));
+        expect(component.accessory, isA<ThumbnailComponent>());
+        expect(component.accessory, (ThumbnailComponent component) {
+          expect(component.description, equals('Meow meow meow meow meow, cat picture kanged.'));
+          expect(component.isSpoiler, isFalse);
+          expect(component.media.url, Uri.https('i.imgur.com', '/SpCbHBI.jpeg'));
+
+          return true;
+        });
+
+        return true;
+      });
+      return true;
+    });
+
+    return true;
+  });
+  expect(message.stickers, isEmpty);
+  expect(message.position, isZero);
+  expect(message.roleSubscriptionData, isNull);
+  expect(message.resolved, isNotNull);
+  expect(message.poll, isNull);
+  expect(message.call, isNull);
+}
+
 final sampleMessageInteractionMetadata = {
   "id": "1234567891234567800",
   "type": 2,
@@ -386,8 +635,8 @@ void main() {
     '/channels/0/messages',
     sampleObject: sampleMessage,
     sampleMatches: checkMessage,
-    additionalSampleObjects: [sampleCrosspostedMessage, sampleForwardedMessage],
-    additionalSampleMatchers: [checkCrosspostedMessage, checkForwardedMessage],
+    additionalSampleObjects: [sampleCrosspostedMessage, sampleForwardedMessage, sampleComponentsV2Message],
+    additionalSampleMatchers: [checkCrosspostedMessage, checkForwardedMessage, checkComponentsV2Message],
     createBuilder: MessageBuilder(),
     updateBuilder: MessageUpdateBuilder(),
     additionalParsingTests: [

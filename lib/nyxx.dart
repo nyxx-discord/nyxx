@@ -49,7 +49,23 @@ export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder, MessageReferenceBuilder;
 export 'src/builders/message/component.dart'
-    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
+    show
+        ActionRowBuilder,
+        ButtonBuilder,
+        MessageComponentBuilder,
+        SelectMenuBuilder,
+        SelectMenuOptionBuilder,
+        TextInputBuilder,
+        DefaultValue,
+        ContainerComponentBuilder,
+        FileComponentBuilder,
+        MediaGalleryComponentBuilder,
+        MediaGalleryItemBuilder,
+        SectionComponentBuilder,
+        SeparatorComponentBuilder,
+        TextDisplayComponentBuilder,
+        ThumbnailComponentBuilder,
+        UnfurledMediaItemBuilder;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
@@ -199,7 +215,17 @@ export 'src/models/message/component.dart'
         ButtonStyle,
         MessageComponentType,
         TextInputStyle,
-        UnknownComponent;
+        UnknownComponent,
+        ContainerComponent,
+        FileComponent,
+        MediaGalleryComponent,
+        MediaGalleryItem,
+        SectionComponent,
+        SeparatorComponent,
+        SeparatorSpacingSize,
+        TextDisplayComponent,
+        ThumbnailComponent,
+        UnfurledMediaItem;
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
