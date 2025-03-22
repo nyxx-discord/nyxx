@@ -569,3 +569,28 @@ class ModalSubmitInteractionData with ToStringHelper {
   /// @nodoc
   ModalSubmitInteractionData({required this.customId, required this.components});
 }
+
+/// An unknown interaction.
+class UnknownInteraction extends Interaction<void> {
+  /// @nodoc
+  UnknownInteraction({
+    required super.manager,
+    required super.id,
+    required super.applicationId,
+    required super.type,
+    required super.guildId,
+    required super.channel,
+    required super.channelId,
+    required super.member,
+    required super.user,
+    required super.token,
+    required super.version,
+    required super.message,
+    required super.appPermissions,
+    required super.locale,
+    required super.guildLocale,
+    required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
+  }) : super(data: null);
+}

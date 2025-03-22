@@ -252,3 +252,12 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
   @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   TextInputStyle.parse(int value) : this(value);
 }
+
+/// An unknown component.
+class UnknownComponent extends MessageComponent {
+  @override
+  final MessageComponentType type;
+
+  /// @nodoc
+  UnknownComponent({required this.type});
+}

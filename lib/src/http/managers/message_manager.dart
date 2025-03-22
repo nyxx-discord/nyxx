@@ -295,7 +295,7 @@ class MessageManager extends Manager<Message> {
           maxValues: raw['max_values'] as int?,
           isDisabled: raw['disabled'] as bool?,
         ),
-      MessageComponentType() => throw StateError('Unknown message component type: $type'),
+      _ => UnknownComponent(type: type),
     };
   }
 
