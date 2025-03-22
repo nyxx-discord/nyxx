@@ -1,3 +1,8 @@
+## 6.6.1
+__22.03.2025__
+
+- feat: Properly handle unknown union types.
+
 ## 6.6.0
 __23.02.2025__
 
