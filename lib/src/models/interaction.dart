@@ -105,6 +105,9 @@ abstract class Interaction<T> with ToStringHelper {
   /// Context where the interaction was triggered from.
   final InteractionContextType? context;
 
+  /// Represents the maximun allowed size per-attachment for the given interaction
+  final int attachmentSizeLimit;
+
   /// {@macro interaction}
   /// @nodoc
   Interaction({
@@ -127,6 +130,7 @@ abstract class Interaction<T> with ToStringHelper {
     required this.entitlements,
     required this.authorizingIntegrationOwners,
     required this.context,
+    required this.attachmentSizeLimit,
   });
 
   /// The guild in which this interaction was triggered.
@@ -152,7 +156,7 @@ mixin MessageResponse<T> on Interaction<T> {
   }
 
   /// Send a response to this interaction.
-  Future<void> respond(MessageBuilder builder, {bool? isEphemeral}) async {
+  Future<void> respond(MessageBuilder builder, {@Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral}) async {
     if (_didRespond) {
       throw AlreadyRespondedError(this);
     }
@@ -162,6 +166,7 @@ mixin MessageResponse<T> on Interaction<T> {
       _didRespond = true;
       _wasEphemeral = isEphemeral;
 
+      // ignore: deprecated_member_use_from_same_package
       await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral));
     } else {
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
@@ -233,6 +238,7 @@ class PingInteraction extends Interaction<void> {
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   }) : super(data: null);
 
   /// Send a pong response to this interaction.
@@ -266,6 +272,7 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 }
 
@@ -296,6 +303,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 
   bool? _didUpdateMessage;
@@ -320,7 +328,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
   }
 
   @override
-  Future<void> respond(Builder<Message> builder, {bool? updateMessage, bool? isEphemeral}) async {
+  Future<void> respond(Builder<Message> builder, {bool? updateMessage, @Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral}) async {
     assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
     assert(updateMessage != true || builder is MessageUpdateBuilder, 'builder must be a MessageUpdateBuilder if updateMessage is true');
     assert(updateMessage == true || builder is MessageBuilder, 'builder must be a MessageBuilder if updateMessage is null or false');
@@ -338,6 +346,7 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       if (updateMessage == true) {
         await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder));
       } else {
+        // ignore: deprecated_member_use_from_same_package
         await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder, isEphemeral: isEphemeral));
       }
     } else {
@@ -381,6 +390,7 @@ class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> wit
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 }
 
@@ -410,6 +420,7 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 
   /// Send a response to this interaction.
@@ -592,5 +603,6 @@ class UnknownInteraction extends Interaction<void> {
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   }) : super(data: null);
 }
