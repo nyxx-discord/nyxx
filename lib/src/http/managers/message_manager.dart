@@ -100,6 +100,7 @@ class MessageManager extends Manager<Message> {
       resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => client.interactions.parseResolvedData(raw, guildId: guildId, channelId: channelId)),
       poll: maybeParse(raw['poll'], parsePoll),
       call: maybeParse(raw['call'], parseMessageCall),
+      soundboardSounds: snapshot.soundboardSounds,
     );
   }
 
@@ -509,6 +510,11 @@ class MessageManager extends Manager<Message> {
       type: MessageType(raw['type'] as int),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
       components: maybeParseMany(raw['components'], parseMessageComponent),
+      soundboardSounds: maybeParseMany(raw['soundboard_sounds'] as List?, (Map<String, Object?> raw) {
+        final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
+
+        return client.guilds[guildId ?? Snowflake.zero].soundboard.parse(raw);
+      }),
     );
   }
 
