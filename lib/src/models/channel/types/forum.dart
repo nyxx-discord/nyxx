@@ -104,13 +104,13 @@ class ForumChannel extends Channel implements GuildChannel, ThreadsOnlyChannel {
   PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
-  Future<Thread> createForumThread(ForumThreadBuilder builder) => manager.createForumThread(id, builder);
+  Future<Thread> createForumThread(ForumThreadBuilder builder, {String? auditLogReason}) => manager.createForumThread(id, builder, auditLogReason: auditLogReason);
 
   @override
-  Future<Thread> createThread(ThreadBuilder builder) => throw UnsupportedError('Cannot create a non forum thread in a forum channel');
+  Future<Thread> createThread(ThreadBuilder builder, {String? auditLogReason}) => throw UnsupportedError('Cannot create a non forum thread in a forum channel');
 
   @override
-  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder) =>
+  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder, {String? auditLogReason}) =>
       throw UnsupportedError('Cannot create a non forum thread in a forum channel');
 
   @override
