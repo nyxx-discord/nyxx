@@ -33,5 +33,5 @@ abstract class ThreadsOnlyChannel implements HasThreadsChannel {
   /// External references:
   /// * [ChannelManager.createForumThread]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel
-  Future<Thread> createForumThread(ForumThreadBuilder builder);
+  Future<Thread> createForumThread(ForumThreadBuilder builder, {String? auditLogReason});
 }

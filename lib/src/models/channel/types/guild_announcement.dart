@@ -87,10 +87,11 @@ class GuildAnnouncementChannel extends TextChannel implements GuildChannel, HasT
   PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
 
   @override
-  Future<Thread> createThread(ThreadBuilder builder) => manager.createThread(id, builder);
+  Future<Thread> createThread(ThreadBuilder builder, {String? auditLogReason}) => manager.createThread(id, builder, auditLogReason: auditLogReason);
 
   @override
-  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder) => manager.createThreadFromMessage(id, messageId, builder);
+  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder, {String? auditLogReason}) =>
+      manager.createThreadFromMessage(id, messageId, builder, auditLogReason: auditLogReason);
 
   @override
   Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
