@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/message/component.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/models/message/message.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilder> {
   InteractionCallbackType type;
@@ -64,20 +65,37 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
   }
 }
 
-enum InteractionCallbackType {
-  pong._(1),
-  channelMessageWithSource._(4),
-  deferredChannelMessageWithSource._(5),
-  deferredUpdateMessage._(6),
-  updateMessage._(7),
-  applicationCommandAutocompleteResult._(8),
-  modal._(9),
+final class InteractionCallbackType extends EnumLike<int, InteractionCallbackType> {
+  /// ACK a `Ping`
+  static const pong = InteractionCallbackType(1);
+
+  /// Respond to an interaction with a message.
+  static const channelMessageWithSource = InteractionCallbackType(4);
+
+  /// ACK an interaction and edit a response later, the user sees a loading state.
+  static const deferredChannelMessageWithSource = InteractionCallbackType(5);
+
+  /// For components, ACK an interaction and edit the original message later; the user does not see a loading state.
+  static const deferredUpdateMessage = InteractionCallbackType(6);
+
+  /// For components, edit the message the component was attached to.
+  static const updateMessage = InteractionCallbackType(7);
+
+  /// Respond to an autocomplete interaction with suggested choices.
+  static const applicationCommandAutocompleteResult = InteractionCallbackType(8);
+
+  /// Respond to an interaction with a popup modal.
+  static const modal = InteractionCallbackType(9);
+
+  /// [Deprecated](https://discord.com/developers/docs/change-log#premium-apps-new-premium-button-style-deep-linking-url-schemes); respond to an interaction with an upgrade button,
+  /// only available for apps with [monetization](https://discord.com/developers/docs/monetization/overview) enabled.
   @Deprecated('Respond with ButtonStyle.premium button instead')
-  premiumRequired._(10);
+  static const premiumRequired = InteractionCallbackType(10);
 
-  final int value;
+  /// Launch the Activity associated with the app. Only available for apps with [Activities](https://discord.com/developers/docs/activities/overview) enabled.
+  static const launchActivity = InteractionCallbackType(12);
 
-  const InteractionCallbackType._(this.value);
+  const InteractionCallbackType(super.value);
 }
 
 class ModalBuilder extends CreateBuilder<ModalBuilder> {
