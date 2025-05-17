@@ -363,11 +363,15 @@ class InteractionManager {
 
     final response = await client.httpHandler.executeSafe(request);
 
-    if (withResponse == null || withResponse == false) {
+    if (withResponse != true) {
       return null;
     }
 
-    return parseInteractionCallbackResponse(response.jsonBody);
+    final interactionCallback = parseInteractionCallbackResponse(response.jsonBody);
+
+    client.updateCacheWith(interactionCallback);
+
+    return interactionCallback;
   }
 
   /// Fetch an interaction's original response.

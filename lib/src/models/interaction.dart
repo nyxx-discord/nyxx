@@ -162,7 +162,7 @@ mixin MessageResponse<T> on Interaction<T> {
       _didRespond = true;
       _wasEphemeral = isEphemeral;
 
-      return manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral));
+      return manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral), withResponse: withResponse);
     } else {
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
       _didRespond = true;
