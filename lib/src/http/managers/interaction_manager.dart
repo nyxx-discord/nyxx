@@ -62,6 +62,7 @@ class InteractionManager {
       },
     );
     final context = maybeParse(raw['context'], InteractionContextType.new);
+    final attachmentSizeLimit = raw['attachment_size_limit'] as int;
 
     final mapping = <InteractionType, Interaction Function()>{
       InteractionType.ping: () => PingInteraction(
@@ -83,6 +84,7 @@ class InteractionManager {
             entitlements: entitlements,
             authorizingIntegrationOwners: authorizingIntegrationOwners,
             context: context,
+            attachmentSizeLimit: attachmentSizeLimit,
           ),
       InteractionType.applicationCommand: () => ApplicationCommandInteraction(
             manager: this,
@@ -104,6 +106,7 @@ class InteractionManager {
             entitlements: entitlements,
             authorizingIntegrationOwners: authorizingIntegrationOwners,
             context: context,
+            attachmentSizeLimit: attachmentSizeLimit,
           ),
       InteractionType.messageComponent: () => MessageComponentInteraction(
             manager: this,
@@ -125,6 +128,7 @@ class InteractionManager {
             entitlements: entitlements,
             authorizingIntegrationOwners: authorizingIntegrationOwners,
             context: context,
+            attachmentSizeLimit: attachmentSizeLimit,
           ),
       InteractionType.modalSubmit: () => ModalSubmitInteraction(
             manager: this,
@@ -146,6 +150,7 @@ class InteractionManager {
             entitlements: entitlements,
             authorizingIntegrationOwners: authorizingIntegrationOwners,
             context: context,
+            attachmentSizeLimit: attachmentSizeLimit,
           ),
       InteractionType.applicationCommandAutocomplete: () => ApplicationCommandAutocompleteInteraction(
             manager: this,
@@ -167,6 +172,7 @@ class InteractionManager {
             entitlements: entitlements,
             authorizingIntegrationOwners: authorizingIntegrationOwners,
             context: context,
+            attachmentSizeLimit: attachmentSizeLimit,
           ),
     };
 
@@ -190,6 +196,7 @@ class InteractionManager {
           entitlements: entitlements,
           authorizingIntegrationOwners: authorizingIntegrationOwners,
           context: context,
+          attachmentSizeLimit: attachmentSizeLimit,
         );
   }
 
