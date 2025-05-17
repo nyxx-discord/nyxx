@@ -45,7 +45,7 @@ class MessageUpdateEvent extends DispatchEvent {
   final List<User>? mentions;
 
   /// The updated message.
-  final PartialMessage message;
+  final Message message;
 
   /// The message as it was cached before the update.
   final Message? oldMessage;

@@ -862,7 +862,7 @@ class Gateway extends GatewayManager with EventParser {
         ),
       ),
       mentions: maybeParseMany(raw['mentions'], client.users.parse),
-      message: (client.channels[channelId] as PartialTextChannel).messages[id],
+      message: (client.channels[channelId] as PartialTextChannel).messages.parse(raw, guildId: guildId),
       oldMessage: (client.channels[channelId] as PartialTextChannel).messages.cache[id],
     );
   }
