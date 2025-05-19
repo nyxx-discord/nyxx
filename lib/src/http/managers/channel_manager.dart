@@ -562,12 +562,12 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   }
 
   /// Create a thread from a message in a channel.
-  Future<Thread> createThreadFromMessage(Snowflake id, Snowflake messageId, ThreadFromMessageBuilder builder) async {
+  Future<Thread> createThreadFromMessage(Snowflake id, Snowflake messageId, ThreadFromMessageBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..messages(id: messageId.toString())
       ..threads();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
@@ -577,11 +577,11 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   }
 
   /// Create a thread in a channel.
-  Future<Thread> createThread(Snowflake id, ThreadBuilder builder) async {
+  Future<Thread> createThread(Snowflake id, ThreadBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..threads();
-    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+    final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
 
     final response = await client.httpHandler.executeSafe(request);
     final thread = parse(response.jsonBody as Map<String, Object?>) as Thread;
@@ -591,7 +591,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   }
 
   /// Create a thread in a forum channel.
-  Future<Thread> createForumThread(Snowflake id, ForumThreadBuilder builder) async {
+  Future<Thread> createForumThread(Snowflake id, ForumThreadBuilder builder, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..threads();
@@ -617,9 +617,10 @@ class ChannelManager extends ReadOnlyManager<Channel> {
         method: 'POST',
         jsonPayload: jsonEncode(payload),
         files: files,
+        auditLogReason: auditLogReason,
       );
     } else {
-      request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
+      request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()), auditLogReason: auditLogReason);
     }
 
     final response = await client.httpHandler.executeSafe(request);

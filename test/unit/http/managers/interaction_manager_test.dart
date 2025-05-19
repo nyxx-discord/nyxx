@@ -49,6 +49,7 @@ final sampleCommandInteraction = {
   // Fields not present in the example but documented
   "application_id": "0",
   "version": 1,
+  "attachment_size_limit": 4096
 };
 
 void checkCommandInteraction(Interaction<dynamic> interaction) {
@@ -77,6 +78,7 @@ void checkCommandInteraction(Interaction<dynamic> interaction) {
         ApplicationIntegrationType.userInstall: Snowflake(302359032612651009),
       }));
   expect(interaction.context, equals(InteractionContextType.guild));
+  expect(interaction.attachmentSizeLimit, equals(4096));
 }
 
 final sampleCommandInteraction2 = {
@@ -175,6 +177,7 @@ final sampleCommandInteraction2 = {
     "0": "846136758470443069",
     "1": "302359032612651009",
   },
+  'attachment_size_limit': 4096
 };
 
 final interactionCallbackResponseObject = {
