@@ -174,6 +174,9 @@ extension CacheUpdates on NyxxRest {
             updateCacheWith(member);
           }(),
         StickerPack(:final stickers) => stickers.forEach(updateCacheWith),
+        // the interaction has nothing interesting to cache
+        InteractionCallbackResponse(:final resource) => updateCacheWith(resource),
+        InteractionResource(:final message?) => updateCacheWith(message),
 
         // Events
 

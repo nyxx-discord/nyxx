@@ -1,9 +1,11 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:nyxx/nyxx.dart';
+import 'package:nyxx/src/models/interaction.dart';
 import 'package:test/test.dart';
 
 import '../../../mocks/client.dart';
 import '../../../test_manager.dart';
+import 'message_manager_test.dart';
 
 final sampleCommandInteraction = {
   "type": 2,
@@ -178,8 +180,43 @@ final sampleCommandInteraction2 = {
   'attachment_size_limit': 4096
 };
 
+final interactionCallbackResponseObject = {
+  'interaction': {
+    'id': 123456789123456789,
+    'type': 2,
+    'activity_instance_id': 'SomeRandomId',
+    'response_message_loading': true,
+    'response_message_ephemeral': true,
+  },
+  'resource': {
+    'type': 4,
+    'activity_instance': {
+      'id': 'AnotherRandomId',
+    },
+    'message': sampleMessage,
+  }
+};
+
 void checkCommandInteraction2(Interaction<dynamic> interaction) {
   expect(interaction, isA<ApplicationCommandInteraction>());
+}
+
+void checkInteractionCallbackResponse(InteractionCallbackResponse interactionCallbackResponse) {
+  checkInteractionCallback(interactionCallbackResponse.interaction);
+}
+
+void checkInteractionCallback(InteractionCallback interactionCallback) {
+  expect(interactionCallback.activityInstanceId, equals('SomeRandomId'));
+  expect(interactionCallback.id, equals(const Snowflake(123456789123456789)));
+  expect(interactionCallback.responseMessageEphemeral, equals(true));
+  expect(interactionCallback.responseMessageLoading, equals(true));
+}
+
+void checkInteractionResource(InteractionResource resource) {
+  checkMessage(resource.message!);
+  expect(resource.type, equals(InteractionCallbackType.channelMessageWithSource));
+  expect(resource.activityInstance, isA<InteractionCallbackActivityInstanceResource>());
+  expect(resource.activityInstance!.id, equals('AnotherRandomId'));
 }
 
 void main() {
@@ -201,6 +238,13 @@ void main() {
         source: sampleCommandInteraction2,
         parse: (manager) => manager.parse,
         check: checkCommandInteraction2,
+      ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
+
+      ParsingTest<InteractionManager, InteractionCallbackResponse, Map<String, Object?>>(
+        name: 'parse interaction callback response',
+        source: interactionCallbackResponseObject,
+        check: checkInteractionCallbackResponse,
+        parse: (manager) => manager.parseInteractionCallbackResponse,
       ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
     });
 

@@ -292,8 +292,44 @@ class InteractionManager {
     );
   }
 
+  InteractionCallbackResponse parseInteractionCallbackResponse(Map<String, Object?> raw) {
+    return InteractionCallbackResponse(
+      interaction: parseInteractionCallback(raw['interaction'] as Map<String, Object?>),
+      resource: maybeParse(raw['resource'], parseInteractionResource),
+    );
+  }
+
+  InteractionCallback parseInteractionCallback(Map<String, Object?> raw) {
+    return InteractionCallback(
+      id: Snowflake.parse(raw['id']!),
+      type: InteractionType(raw['type'] as int),
+      activityInstanceId: raw['activity_instance_id'] as String?,
+      responseMessageId: maybeParse(raw['response_message_id'], Snowflake.parse),
+      responseMessageLoading: raw['response_message_loading'] as bool?,
+      responseMessageEphemeral: raw['response_message_ephemeral'] as bool?,
+    );
+  }
+
+  InteractionResource parseInteractionResource(Map<String, Object?> raw) {
+    return InteractionResource(
+      type: InteractionCallbackType(raw['type'] as int),
+      activityInstance: maybeParse(raw['activity_instance'], parseInteractionCallbackActivityInstanceResource),
+      message: maybeParse(raw['message'], (Map<String, Object?> m) {
+        final rawChannelId = m['channel_id'];
+
+        final channelId = maybeParse(rawChannelId, Snowflake.parse) ?? Snowflake.zero;
+
+        return (client.channels[channelId] as PartialTextChannel).messages.parse(m);
+      }),
+    );
+  }
+
+  InteractionCallbackActivityInstanceResource parseInteractionCallbackActivityInstanceResource(Map<String, Object?> raw) {
+    return InteractionCallbackActivityInstanceResource(id: raw['id'] as String);
+  }
+
   /// Create a response to an interaction.
-  Future<void> createResponse(Snowflake id, String token, InteractionResponseBuilder builder) async {
+  Future<InteractionCallbackResponse?> createResponse(Snowflake id, String token, InteractionResponseBuilder builder, {bool? withResponse}) async {
     final route = HttpRoute()
       ..interactions(id: id.toString(), token: token)
       ..callback();
@@ -320,6 +356,7 @@ class InteractionManager {
         jsonPayload: jsonEncode(payload),
         files: files,
         applyGlobalRateLimit: false,
+        queryParameters: withResponse != null ? {'with_response': withResponse.toString()} : {},
       );
     } else {
       request = BasicRequest(
@@ -327,10 +364,21 @@ class InteractionManager {
         method: 'POST',
         body: jsonEncode(builder.build()),
         applyGlobalRateLimit: false,
+        queryParameters: withResponse != null ? {'with_response': withResponse.toString()} : {},
       );
     }
 
-    await client.httpHandler.executeSafe(request);
+    final response = await client.httpHandler.executeSafe(request);
+
+    if (withResponse != true) {
+      return null;
+    }
+
+    final interactionCallback = parseInteractionCallbackResponse(response.jsonBody);
+
+    client.updateCacheWith(interactionCallback);
+
+    return interactionCallback;
   }
 
   /// Fetch an interaction's original response.
