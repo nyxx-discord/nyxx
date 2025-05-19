@@ -156,7 +156,11 @@ mixin MessageResponse<T> on Interaction<T> {
   }
 
   /// Send a response to this interaction.
-  Future<InteractionCallbackResponse?> respond(MessageBuilder builder, {@Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral, bool? withResponse}) async {
+  Future<InteractionCallbackResponse?> respond(
+    MessageBuilder builder, {
+    @Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral,
+    bool? withResponse,
+  }) async {
     if (_didRespond) {
       throw AlreadyRespondedError(this);
     }
@@ -330,7 +334,12 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
   }
 
   @override
-  Future<InteractionCallbackResponse?> respond(Builder<Message> builder, {bool? updateMessage, @Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral, bool? withResponse}) async {
+  Future<InteractionCallbackResponse?> respond(
+    Builder<Message> builder, {
+    bool? updateMessage,
+    @Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral,
+    bool? withResponse,
+  }) async {
     assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
     assert(updateMessage != true || builder is MessageUpdateBuilder, 'builder must be a MessageUpdateBuilder if updateMessage is true');
     assert(updateMessage == true || builder is MessageBuilder, 'builder must be a MessageBuilder if updateMessage is null or false');
