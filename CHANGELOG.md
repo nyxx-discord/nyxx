@@ -1,3 +1,8 @@
+## 6.7.0
+__30.05.20205__
+
+- See the changelog for 6.7.0-dev.1 for details.
+
 ## 6.7.0-dev.1
 __11.03.2025__
 
