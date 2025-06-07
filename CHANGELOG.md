@@ -1,7 +1,10 @@
 ## 6.7.0
 __30.05.20205__
 
-- See the changelog for 6.7.0-dev.1 for details.
+- feat: Implement interaction callback response ([`#748`](https://github.com/nyxx-discord/nyxx/pull/748)) - ([`830bfbb`](https://github.com/nyxx-discord/nyxx/commit/830bfbb941a7ef578db6b365e365c37c3991046d))
+- feat: Add `attachmentSizeLimit` field to `Interaction` ([`#747`](https://github.com/nyxx-discord/nyxx/pull/747)) - ([`8e3c53e7`](https://github.com/nyxx-discord/nyxx/commit/8e3c53e7))
+- feat: Add full message update payload ([`#750`](https://github.com/nyxx-discord/nyxx/pull/750)) - ([`63850dcd`](https://github.com/nyxx-discord/nyxx/commit/63850dcd))
+- feat: Add audit log parameter for thread creation ([`#749`](https://github.com/nyxx-discord/nyxx/pull/749)) - ([`a131c1c7`](https://github.com/nyxx-discord/nyxx/commit/a131c1c7))
 
 ## 6.7.0-dev.1
 __11.03.2025__
