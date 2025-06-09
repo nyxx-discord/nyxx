@@ -38,7 +38,7 @@ class PollMedia with ToStringHelper {
 }
 
 /// {@template poll_answer}
-/// The [PollAnswer.answerId] is a number that labels each answer.
+/// The [PollAnswer.id] is a number that labels each answer.
 /// As an implementation detail, it currently starts at 1 for the first answer and goes up sequentially.
 /// We recommend against depending on this sequence.
 ///
