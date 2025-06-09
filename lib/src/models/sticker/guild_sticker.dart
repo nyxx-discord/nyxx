@@ -15,7 +15,7 @@ class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
   /// Update this sticker, returning the updated sticker.
   ///
   /// External references:
-  /// * [StickerManager.update]
+  /// * [GuildStickerManager.update]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
   @override
   Future<GuildSticker> update(StickerUpdateBuilder builder, {String? auditLogReason}) => manager.update(id, builder, auditLogReason: auditLogReason);
@@ -23,7 +23,7 @@ class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
   /// Delete this sticker.
   ///
   /// External references:
-  /// * [StickerManager.delete]
+  /// * [GuildStickerManager.delete]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
   @override
   Future<void> delete({String? auditLogReason}) => manager.delete(id, auditLogReason: auditLogReason);

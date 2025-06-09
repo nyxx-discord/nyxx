@@ -63,7 +63,7 @@ class ApplicationCommand extends PartialApplicationCommand {
   /// Whether this command is NSFW.
   final bool? isNsfw;
 
-  /// Installation context(s) where the command is available, only for globally-scoped commands. Defaults to [InteractionContextType.guildInstall].
+  /// Installation context(s) where the command is available, only for globally-scoped commands. Defaults to [InteractionContextType.guild].
   final List<ApplicationIntegrationType> integrationTypes;
 
   /// Interaction context(s) where the command can be used, only for globally-scoped commands. By default, all interaction context types included for new commands.
