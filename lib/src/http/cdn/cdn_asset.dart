@@ -110,7 +110,7 @@ class CdnAsset {
     final rawResponse = await client.httpHandler.httpClient.send(rawRequest);
 
     if (rawResponse.statusCode < 200 || rawResponse.statusCode >= 300) {
-      throw HttpResponseError.fromResponse(request, rawResponse);
+      throw await HttpResponseError.fromResponse(request, rawResponse);
     }
 
     yield* rawResponse.stream;

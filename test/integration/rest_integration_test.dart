@@ -89,7 +89,7 @@ void main() {
           completes,
         );
       } on HttpResponseError catch (e) {
-        if (e.errorCode == 50053 && e.errorData?.fieldErrors['avatar']?.errorCode == 'AVATAR_RATE_LIMIT') {
+        if (e.errorCode == 50035 && e.errorData?.fieldErrors['avatar']?.errorCode == 'AVATAR_RATE_LIMIT') {
           markTestSkipped('Avatar changes rate limited');
         } else {
           rethrow;
