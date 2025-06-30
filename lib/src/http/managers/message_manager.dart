@@ -726,14 +726,13 @@ class MessageManager extends Manager<Message> {
 
   /// Retrieves the list of pins in a channel. Requires the [Permissions.viewChannel] permission.
   /// If the user is missing the [Permissions.readMessageHistory] permission in the channel, then no pins will be returned.
-  /// 
+  ///
   /// Optionally, you can specify a [before] timestamp to get pins before that time, and a [limit] to limit the number of pins returned (min 1, max 50).
   Future<PinList> getPaginatedPins({DateTime? before, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages()
       ..pins();
-
 
     final request = BasicRequest(
       route,
