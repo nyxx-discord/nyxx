@@ -301,10 +301,11 @@ extension CacheUpdates on NyxxRest {
         SoundboardSoundUpdateEvent(:final sound) => updateCacheWith(sound),
         SoundboardSoundDeleteEvent(:final sound?) => sound.manager.cache.remove(sound.id),
         SoundboardSoundsUpdateEvent(:final sounds) => sounds.forEach(updateCacheWith),
-        MessagePollVoteAddEvent() => null,
-        MessagePollVoteRemoveEvent() => null,
+        MessagePin(:final message) => updateCacheWith(message),
 
         // null and unhandled entity types
+        MessagePollVoteAddEvent() => null,
+        MessagePollVoteRemoveEvent() => null,
         WebhookAuthor() => null,
         UnknownDispatchEvent() => null,
         null => null,

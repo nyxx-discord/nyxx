@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:test/test.dart';
 import 'package:nyxx/nyxx.dart';
 
@@ -627,6 +628,16 @@ void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
   expect(metadata2.triggeringInteractionMetadata, isNull);
 }
 
+final samplePinList = {
+  'items': [
+    {
+      'pinned_at': '2024-10-08T09:18:22.532000+00:00',
+      'message': sampleMessage,
+    },
+  ],
+  'has_more': false,
+};
+
 void main() {
   testManager<Message, MessageManager>(
     'MessageManager',
@@ -698,6 +709,32 @@ void main() {
         source: null,
         urlMatcher: '/channels/0/pins/1',
         execute: (manager) => manager.unpin(Snowflake(1)),
+        check: (_) {},
+      ),
+      EndpointTest<MessageManager, PinList, Map<String, Object?>>(
+        name: 'getPinList',
+        source: samplePinList,
+        urlMatcher: '/channels/0/messages/pins',
+        execute: (manager) => manager.getPaginatedPins(),
+        check: (pinList) {
+          expect(pinList.items, hasLength(1));
+          checkMessage(pinList.items.single.message);
+          expect(pinList.hasMore, isFalse);
+        },
+      ),
+      EndpointTest<MessageManager, void, void>(
+        name: 'pinMessage',
+        source: null,
+        urlMatcher: '/channels/0/messages/pins/1',
+        execute: (manager) => manager.pinMessage(Snowflake(1)),
+        check: (_) {},
+      ),
+      EndpointTest<MessageManager, void, void>(
+        name: 'unpinMessage',
+        method: 'delete',
+        source: null,
+        urlMatcher: '/channels/0/messages/pins/1',
+        execute: (manager) => manager.unpinMessage(Snowflake(1)),
         check: (_) {},
       ),
     ],

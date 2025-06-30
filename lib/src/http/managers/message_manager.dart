@@ -520,6 +520,14 @@ class MessageManager extends Manager<Message> {
     );
   }
 
+  MessagePin parseMessagePin(Map<String, Object?> raw) {
+    return MessagePin(message: parse(raw['message'] as Map<String, Object?>), pinnedAt: DateTime.parse(raw['pinned_at'] as String));
+  }
+
+  PinList parsePinList(Map<String, Object?> raw) {
+    return PinList(items: parseMany(raw['items'] as List, parseMessagePin), hasMore: raw['has_more'] as bool);
+  }
+
   @override
   Future<Message> create(MessageBuilder builder) async {
     final route = HttpRoute()
@@ -680,6 +688,7 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Get the pinned messages in the channel.
+  @Deprecated('Use `getPaginatedPins` instead.')
   Future<List<Message>> getPins() async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -694,6 +703,7 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Pin a message in the channel.
+  @Deprecated('Use `pinMessage` instead.')
   Future<void> pin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -704,9 +714,58 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Unpin a message in the channel.
+  @Deprecated('Use `unpinMessage` instead.')
   Future<void> unpin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
+      ..pins(id: id.toString());
+    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  /// Retrieves the list of pins in a channel. Requires the [Permissions.viewChannel] permission.
+  /// If the user is missing the [Permissions.readMessageHistory] permission in the channel, then no pins will be returned.
+  /// 
+  /// Optionally, you can specify a [before] timestamp to get pins before that time, and a [limit] to limit the number of pins returned (min 1, max 50).
+  Future<PinList> getPaginatedPins({DateTime? before, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages()
+      ..pins();
+
+
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (before != null) 'before': before.toIso8601String(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    final pinList = parsePinList(response.jsonBody as Map<String, Object?>);
+
+    pinList.items.forEach(client.updateCacheWith);
+
+    return pinList;
+  }
+
+  Future<void> pinMessage(Snowflake id, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages()
+      ..pins(id: id.toString());
+    final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason);
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<void> unpinMessage(Snowflake id, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages()
       ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
