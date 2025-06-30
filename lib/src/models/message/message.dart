@@ -586,7 +586,7 @@ class PinList {
   /// The pins this channel has.
   final List<MessagePin> items;
 
-  /// Whether mroe results can be queried.
+  /// Whether more results can be queried.
   final bool hasMore;
 
   /// {@macro pin_list}
