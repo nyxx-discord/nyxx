@@ -688,7 +688,7 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Get the pinned messages in the channel.
-  @Deprecated('Use `getPaginatedPins` instead.')
+  @Deprecated('Use `listPins` instead.')
   Future<List<Message>> getPins() async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
