@@ -241,6 +241,9 @@ class UserGuild extends PartialGuild {
   /// {@macro fetch_with_counts_only}
   final int? approximatePresenceCount;
 
+  /// The hash of this guild's banner.
+  final String? bannerHash;
+
   /// {@macro guild}
   /// @nodoc
   UserGuild({
@@ -253,6 +256,7 @@ class UserGuild extends PartialGuild {
     required this.features,
     required this.approximateMemberCount,
     required this.approximatePresenceCount,
+    required this.bannerHash,
   });
 
   /// This guild's icon.
@@ -262,6 +266,15 @@ class UserGuild extends PartialGuild {
           client: manager.client,
           base: HttpRoute()..icons(id: id.toString()),
           hash: iconHash!,
+        );
+
+  /// This guild's banner.
+  CdnAsset? get banner => bannerHash == null
+      ? null
+      : CdnAsset(
+          client: manager.client,
+          base: HttpRoute()..banners(id: id.toString()),
+          hash: bannerHash!,
         );
 }
 
@@ -336,9 +349,6 @@ class Guild extends UserGuild {
   /// This guild's description.
   final String? description;
 
-  /// The hash of this guild's banner.
-  final String? bannerHash;
-
   /// The current premium tier of this guild.
   final PremiumTier premiumTier;
 
@@ -406,7 +416,7 @@ class Guild extends UserGuild {
     required this.maxMembers,
     required this.vanityUrlCode,
     required this.description,
-    required this.bannerHash,
+    required super.bannerHash,
     required this.premiumTier,
     required this.premiumSubscriptionCount,
     required this.preferredLocale,
@@ -468,15 +478,6 @@ class Guild extends UserGuild {
           client: manager.client,
           base: HttpRoute()..discoverySplashes(id: id.toString()),
           hash: discoverySplashHash!,
-        );
-
-  /// This guild's banner.
-  CdnAsset? get banner => bannerHash == null
-      ? null
-      : CdnAsset(
-          client: manager.client,
-          base: HttpRoute()..banners(id: id.toString()),
-          hash: bannerHash!,
         );
 }
 
