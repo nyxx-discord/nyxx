@@ -237,7 +237,12 @@ final sampleForwardedMessage = {
     'id': '506759329068613643',
     'global_name': 'Abitofevrything',
     'discriminator': '0',
-    'clan': null,
+    'primary_guild': {
+      'identity_guild_id': '1234647491267808778',
+      'identity_enabled': true,
+      'tag': 'DISC',
+      'badge': '7d1734ae5a615e82bc7a4033b98fade8',
+    },
     'avatar_decoration_data': null,
     'avatar': 'b591ea8a9d057669ea2a6cd3ab450301'
   },

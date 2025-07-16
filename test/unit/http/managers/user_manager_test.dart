@@ -23,7 +23,7 @@ final sampleUser = {
     "sku_id": "1144058844004233369",
     "asset": "a_fed43ab12698df65902ba06727e20c0e"
   },
-  "clan": {
+  "primary_guild": {
     "identity_guild_id": "80351110224678912",
     "identity_enabled": true,
     "tag": "CUTE",
@@ -48,10 +48,10 @@ void checkSampleUser(User user) {
   expect(user.publicFlags, equals(UserFlags(64)));
   expect(user.avatarDecorationHash, equals('a_fed43ab12698df65902ba06727e20c0e'));
   expect(user.avatarDecorationData!.skuId, equals(Snowflake(1144058844004233369)));
-  expect(user.clan!.identityGuildId, equals(Snowflake(80351110224678912)));
-  expect(user.clan!.isIdentityEnabled, isTrue);
-  expect(user.clan!.tag, equals('CUTE'));
-  expect(user.clan!.badgeHash, equals('0fcf9a436df1a4b0de5644d3d42188e2'));
+  expect(user.primaryGuild!.identityGuildId, equals(Snowflake(80351110224678912)));
+  expect(user.primaryGuild!.isIdentityEnabled, isTrue);
+  expect(user.primaryGuild!.tag, equals('CUTE'));
+  expect(user.primaryGuild!.badgeHash, equals('0fcf9a436df1a4b0de5644d3d42188e2'));
 }
 
 final sampleConnection = {

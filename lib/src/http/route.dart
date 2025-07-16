@@ -348,6 +348,6 @@ extension RouteHelpers on HttpRoute {
   /// Adds the [`incident-actions`](https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions) part to this [HttpRoute].
   void incidentActions() => add(HttpRoutePart('incident-actions'));
 
-  /// Adds the [`clan-badges`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)
-  void clanBadges({String? id}) => add(HttpRoutePart('clan-badges', [if (id != null) HttpRouteParam(id)]));
+  /// Adds the [`guild-tag-badges`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)
+  void guildTagBadges({String? id}) => add(HttpRoutePart('guild-tag-badges', [if (id != null) HttpRouteParam(id)]));
 }

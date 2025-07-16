@@ -20,7 +20,7 @@ import 'package:nyxx/src/models/user/application_role_connection.dart';
 import 'package:nyxx/src/models/user/avatar_decoration_data.dart';
 import 'package:nyxx/src/models/user/connection.dart';
 import 'package:nyxx/src/models/user/user.dart';
-import 'package:nyxx/src/models/user/user_clan.dart';
+import 'package:nyxx/src/models/user/primary_guild.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -59,7 +59,7 @@ class UserManager extends ReadOnlyManager<User> {
       publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
       avatarDecorationHash: avatarDecorationData?.asset,
       avatarDecorationData: avatarDecorationData,
-      clan: maybeParse(raw['clan'], parseUserClan),
+      primaryGuild: maybeParse(raw['primary_guild'], parseUserClan),
     );
   }
 
@@ -103,9 +103,9 @@ class UserManager extends ReadOnlyManager<User> {
     );
   }
 
-  /// Parse a [UserClan] from [raw].
-  UserClan parseUserClan(Map<String, Object?> raw) {
-    return UserClan(
+  /// Parse a [UserPrimaryGuild] from [raw].
+  UserPrimaryGuild parseUserClan(Map<String, Object?> raw) {
+    return UserPrimaryGuild(
       identityGuildId: Snowflake.parse(raw['identity_guild_id']!),
       isIdentityEnabled: raw['identity_enabled'] as bool,
       tag: raw['tag'] as String,
