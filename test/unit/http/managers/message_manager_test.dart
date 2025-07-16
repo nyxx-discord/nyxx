@@ -1,3 +1,4 @@
+import 'package:nyxx/src/models/message/message.dart';
 import 'package:test/test.dart';
 import 'package:nyxx/nyxx.dart';
 
@@ -627,6 +628,16 @@ void checkMessageInteractionMetadata(MessageInteractionMetadata metadata) {
   expect(metadata2.triggeringInteractionMetadata, isNull);
 }
 
+final samplePinList = {
+  'items': [
+    {
+      'pinned_at': '2024-10-08T09:18:22.532000+00:00',
+      'message': sampleMessage,
+    },
+  ],
+  'has_more': false,
+};
+
 void main() {
   testManager<Message, MessageManager>(
     'MessageManager',
@@ -678,6 +689,7 @@ void main() {
         name: 'getPins',
         source: [sampleMessage],
         urlMatcher: '/channels/0/pins',
+        // ignore: deprecated_member_use_from_same_package
         execute: (manager) => manager.getPins(),
         check: (list) {
           expect(list, hasLength(1));
@@ -688,7 +700,7 @@ void main() {
         name: 'pin',
         method: 'put',
         source: null,
-        urlMatcher: '/channels/0/pins/1',
+        urlMatcher: '/channels/0/messages/pins/1',
         execute: (manager) => manager.pin(Snowflake(1)),
         check: (_) {},
       ),
@@ -696,9 +708,20 @@ void main() {
         name: 'unpin',
         method: 'delete',
         source: null,
-        urlMatcher: '/channels/0/pins/1',
+        urlMatcher: '/channels/0/messages/pins/1',
         execute: (manager) => manager.unpin(Snowflake(1)),
         check: (_) {},
+      ),
+      EndpointTest<MessageManager, PinList, Map<String, Object?>>(
+        name: 'listPins',
+        source: samplePinList,
+        urlMatcher: '/channels/0/messages/pins',
+        execute: (manager) => manager.listPins(),
+        check: (pinList) {
+          expect(pinList.items, hasLength(1));
+          checkMessage(pinList.items.single.message);
+          expect(pinList.hasMore, isFalse);
+        },
       ),
     ],
   );

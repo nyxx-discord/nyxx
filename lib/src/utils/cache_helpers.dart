@@ -177,6 +177,7 @@ extension CacheUpdates on NyxxRest {
         // the interaction has nothing interesting to cache
         InteractionCallbackResponse(:final resource) => updateCacheWith(resource),
         InteractionResource(:final message?) => updateCacheWith(message),
+        MessagePin(:final message) => updateCacheWith(message),
 
         // Events
 
