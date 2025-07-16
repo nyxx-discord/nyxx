@@ -177,6 +177,7 @@ extension CacheUpdates on NyxxRest {
         // the interaction has nothing interesting to cache
         InteractionCallbackResponse(:final resource) => updateCacheWith(resource),
         InteractionResource(:final message?) => updateCacheWith(message),
+        MessagePin(:final message) => updateCacheWith(message),
 
         // Events
 
@@ -301,11 +302,10 @@ extension CacheUpdates on NyxxRest {
         SoundboardSoundUpdateEvent(:final sound) => updateCacheWith(sound),
         SoundboardSoundDeleteEvent(:final sound?) => sound.manager.cache.remove(sound.id),
         SoundboardSoundsUpdateEvent(:final sounds) => sounds.forEach(updateCacheWith),
-        MessagePin(:final message) => updateCacheWith(message),
-
-        // null and unhandled entity types
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
+
+        // null and unhandled entity types
         WebhookAuthor() => null,
         UnknownDispatchEvent() => null,
         null => null,

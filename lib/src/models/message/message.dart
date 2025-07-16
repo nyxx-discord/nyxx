@@ -50,18 +50,10 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
   Future<void> crosspost() => manager.crosspost(id);
 
   /// Pin this message.
-  @Deprecated('Use `pinMessage` instead.')
   Future<void> pin({String? auditLogReason}) => manager.pin(id, auditLogReason: auditLogReason);
 
-  /// Pin this message.
-  Future<void> pinMessage({String? auditLogReason}) => manager.pinMessage(id, auditLogReason: auditLogReason);
-
   /// Unpin this message.
-  @Deprecated('Use `unpinMessage` instead.')
   Future<void> unpin({String? auditLogReason}) => manager.unpin(id, auditLogReason: auditLogReason);
-
-  /// Unpin this message.
-  Future<void> unpinMessage({String? auditLogReason}) => manager.unpinMessage(id, auditLogReason: auditLogReason);
 
   /// Creates a reaction on this message.
   /// ```dart
@@ -562,7 +554,7 @@ class MessageCall with ToStringHelper {
 /// Information about a pinned message.
 ///
 /// See:
-///   * [MessageManager.getPaginatedPins].
+///   * [MessageManager.listPins].
 ///
 /// External references:
 /// * https://discord.dev/resources/message#message-pin-object

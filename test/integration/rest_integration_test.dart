@@ -134,8 +134,8 @@ void main() {
       expect(message.content, equals('New content'));
 
       try {
-        await expectLater(message.pinMessage(), completes);
-        await expectLater(message.unpinMessage(), completes);
+        await expectLater(message.pin(), completes);
+        await expectLater(message.unpin(), completes);
       } on HttpResponseError catch (e) {
         // Missing permissions.
         if (e.errorCode != 50013) rethrow;

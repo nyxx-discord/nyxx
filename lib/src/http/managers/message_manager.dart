@@ -703,10 +703,10 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Pin a message in the channel.
-  @Deprecated('Use `pinMessage` instead.')
   Future<void> pin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
+      ..messages()
       ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason);
 
@@ -714,10 +714,10 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Unpin a message in the channel.
-  @Deprecated('Use `unpinMessage` instead.')
   Future<void> unpin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
+      ..messages()
       ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
@@ -728,7 +728,7 @@ class MessageManager extends Manager<Message> {
   /// If the user is missing the [Permissions.readMessageHistory] permission in the channel, then no pins will be returned.
   ///
   /// Optionally, you can specify a [before] timestamp to get pins before that time, and a [limit] to limit the number of pins returned (min 1, max 50).
-  Future<PinList> getPaginatedPins({DateTime? before, int? limit}) async {
+  Future<PinList> listPins({DateTime? before, int? limit}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
       ..messages()
@@ -749,26 +749,6 @@ class MessageManager extends Manager<Message> {
     pinList.items.forEach(client.updateCacheWith);
 
     return pinList;
-  }
-
-  Future<void> pinMessage(Snowflake id, {String? auditLogReason}) async {
-    final route = HttpRoute()
-      ..channels(id: channelId.toString())
-      ..messages()
-      ..pins(id: id.toString());
-    final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason);
-
-    await client.httpHandler.executeSafe(request);
-  }
-
-  Future<void> unpinMessage(Snowflake id, {String? auditLogReason}) async {
-    final route = HttpRoute()
-      ..channels(id: channelId.toString())
-      ..messages()
-      ..pins(id: id.toString());
-    final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
-
-    await client.httpHandler.executeSafe(request);
   }
 
   /// Adds a reaction to a message.

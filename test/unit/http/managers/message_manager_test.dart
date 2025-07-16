@@ -696,37 +696,11 @@ void main() {
         },
       ),
       EndpointTest<MessageManager, void, void>(
-        name: 'pin',
+        name: 'pinMessage',
         method: 'put',
         source: null,
-        urlMatcher: '/channels/0/pins/1',
-        execute: (manager) => manager.pin(Snowflake(1)),
-        check: (_) {},
-      ),
-      EndpointTest<MessageManager, void, void>(
-        name: 'unpin',
-        method: 'delete',
-        source: null,
-        urlMatcher: '/channels/0/pins/1',
-        execute: (manager) => manager.unpin(Snowflake(1)),
-        check: (_) {},
-      ),
-      EndpointTest<MessageManager, PinList, Map<String, Object?>>(
-        name: 'getPinList',
-        source: samplePinList,
-        urlMatcher: '/channels/0/messages/pins',
-        execute: (manager) => manager.getPaginatedPins(),
-        check: (pinList) {
-          expect(pinList.items, hasLength(1));
-          checkMessage(pinList.items.single.message);
-          expect(pinList.hasMore, isFalse);
-        },
-      ),
-      EndpointTest<MessageManager, void, void>(
-        name: 'pinMessage',
-        source: null,
         urlMatcher: '/channels/0/messages/pins/1',
-        execute: (manager) => manager.pinMessage(Snowflake(1)),
+        execute: (manager) => manager.pin(Snowflake(1)),
         check: (_) {},
       ),
       EndpointTest<MessageManager, void, void>(
@@ -734,8 +708,19 @@ void main() {
         method: 'delete',
         source: null,
         urlMatcher: '/channels/0/messages/pins/1',
-        execute: (manager) => manager.unpinMessage(Snowflake(1)),
+        execute: (manager) => manager.unpin(Snowflake(1)),
         check: (_) {},
+      ),
+      EndpointTest<MessageManager, PinList, Map<String, Object?>>(
+        name: 'listPins',
+        source: samplePinList,
+        urlMatcher: '/channels/0/messages/pins',
+        execute: (manager) => manager.listPins(),
+        check: (pinList) {
+          expect(pinList.items, hasLength(1));
+          checkMessage(pinList.items.single.message);
+          expect(pinList.hasMore, isFalse);
+        },
       ),
     ],
   );
