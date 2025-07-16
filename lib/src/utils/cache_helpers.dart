@@ -174,6 +174,10 @@ extension CacheUpdates on NyxxRest {
             updateCacheWith(member);
           }(),
         StickerPack(:final stickers) => stickers.forEach(updateCacheWith),
+        // the interaction has nothing interesting to cache
+        InteractionCallbackResponse(:final resource) => updateCacheWith(resource),
+        InteractionResource(:final message?) => updateCacheWith(message),
+        MessagePin(:final message) => updateCacheWith(message),
 
         // Events
 
@@ -264,8 +268,7 @@ extension CacheUpdates on NyxxRest {
             mentions.forEach(updateCacheWith);
           }(),
         MessageUpdateEvent(:final message, :final mentions) => () {
-            // We only get a partial message, but we know it invalidates the message currently in the cache. So we remove the cached message.
-            message.manager.cache.remove(message.id);
+            updateCacheWith(message);
             mentions?.forEach(updateCacheWith);
           }(),
         MessageDeleteEvent(:final id, :final channel) => channel.messages.cache.remove(id),

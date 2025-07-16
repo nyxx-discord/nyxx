@@ -26,7 +26,7 @@ abstract class HasThreadsChannel implements GuildChannel {
   /// External references:
   /// * [ChannelManager.createThreadFromMessage]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#start-thread-from-message
-  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder);
+  Future<Thread> createThreadFromMessage(Snowflake messageId, ThreadFromMessageBuilder builder, {String? auditLogReason});
 
   /// Create a [Thread] in this channel.
   ///
@@ -35,7 +35,7 @@ abstract class HasThreadsChannel implements GuildChannel {
   /// External references:
   /// * [ChannelManager.createThread]
   /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#start-thread-without-message
-  Future<Thread> createThread(ThreadBuilder builder);
+  Future<Thread> createThread(ThreadBuilder builder, {String? auditLogReason});
 
   /// List the public archived [Thread]s in this channel.
   ///

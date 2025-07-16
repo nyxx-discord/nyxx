@@ -105,6 +105,9 @@ abstract class Interaction<T> with ToStringHelper {
   /// Context where the interaction was triggered from.
   final InteractionContextType? context;
 
+  /// Represents the maximun allowed size per-attachment for the given interaction
+  final int attachmentSizeLimit;
+
   /// {@macro interaction}
   /// @nodoc
   Interaction({
@@ -127,6 +130,7 @@ abstract class Interaction<T> with ToStringHelper {
     required this.entitlements,
     required this.authorizingIntegrationOwners,
     required this.context,
+    required this.attachmentSizeLimit,
   });
 
   /// The guild in which this interaction was triggered.
@@ -140,7 +144,7 @@ mixin MessageResponse<T> on Interaction<T> {
   bool? _wasEphemeral;
 
   /// Acknowledge this interaction.
-  Future<void> acknowledge({bool? isEphemeral}) async {
+  Future<InteractionCallbackResponse?> acknowledge({bool? isEphemeral, bool? withResponse}) async {
     if (_didAcknowledge) {
       throw AlreadyAcknowledgedError(this);
     }
@@ -148,11 +152,15 @@ mixin MessageResponse<T> on Interaction<T> {
     _didAcknowledge = true;
     _wasEphemeral = isEphemeral;
 
-    await manager.createResponse(id, token, InteractionResponseBuilder.deferredChannelMessage(isEphemeral: isEphemeral));
+    return manager.createResponse(id, token, InteractionResponseBuilder.deferredChannelMessage(isEphemeral: isEphemeral), withResponse: withResponse);
   }
 
   /// Send a response to this interaction.
-  Future<void> respond(MessageBuilder builder, {bool? isEphemeral}) async {
+  Future<InteractionCallbackResponse?> respond(
+    MessageBuilder builder, {
+    @Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral,
+    bool? withResponse,
+  }) async {
     if (_didRespond) {
       throw AlreadyRespondedError(this);
     }
@@ -162,13 +170,16 @@ mixin MessageResponse<T> on Interaction<T> {
       _didRespond = true;
       _wasEphemeral = isEphemeral;
 
-      await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral));
+      // ignore: deprecated_member_use_from_same_package
+      return manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder, isEphemeral: isEphemeral), withResponse: withResponse);
     } else {
       assert(isEphemeral == _wasEphemeral || isEphemeral == null, 'Cannot change the value of isEphemeral between acknowledge and respond');
       _didRespond = true;
 
       await manager.createFollowup(token, builder);
     }
+
+    return null;
   }
 
   /// Fetch the original response to this interaction.
@@ -233,6 +244,7 @@ class PingInteraction extends Interaction<void> {
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   }) : super(data: null);
 
   /// Send a pong response to this interaction.
@@ -266,6 +278,7 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 }
 
@@ -296,12 +309,13 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 
   bool? _didUpdateMessage;
 
   @override
-  Future<void> acknowledge({bool? updateMessage, bool? isEphemeral}) async {
+  Future<InteractionCallbackResponse?> acknowledge({bool? updateMessage, bool? isEphemeral, bool? withResponse}) async {
     assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
 
     if (_didAcknowledge) {
@@ -313,14 +327,19 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
     _wasEphemeral = isEphemeral;
 
     if (updateMessage == true) {
-      await manager.createResponse(id, token, InteractionResponseBuilder.deferredUpdateMessage());
+      return manager.createResponse(id, token, InteractionResponseBuilder.deferredUpdateMessage(), withResponse: withResponse);
     } else {
-      await manager.createResponse(id, token, InteractionResponseBuilder.deferredChannelMessage(isEphemeral: isEphemeral));
+      return manager.createResponse(id, token, InteractionResponseBuilder.deferredChannelMessage(isEphemeral: isEphemeral), withResponse: withResponse);
     }
   }
 
   @override
-  Future<void> respond(Builder<Message> builder, {bool? updateMessage, bool? isEphemeral}) async {
+  Future<InteractionCallbackResponse?> respond(
+    Builder<Message> builder, {
+    bool? updateMessage,
+    @Deprecated('Use MessageBuilder.flags instead') bool? isEphemeral,
+    bool? withResponse,
+  }) async {
     assert(updateMessage != true || isEphemeral != true, 'Cannot set isEphemeral to true if updateMessage is set to true');
     assert(updateMessage != true || builder is MessageUpdateBuilder, 'builder must be a MessageUpdateBuilder if updateMessage is true');
     assert(updateMessage == true || builder is MessageBuilder, 'builder must be a MessageBuilder if updateMessage is null or false');
@@ -336,9 +355,11 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
       _wasEphemeral = isEphemeral;
 
       if (updateMessage == true) {
-        await manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder));
+        return manager.createResponse(id, token, InteractionResponseBuilder.updateMessage(builder as MessageUpdateBuilder), withResponse: withResponse);
       } else {
-        await manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder, isEphemeral: isEphemeral));
+        // ignore: deprecated_member_use_from_same_package
+        return manager.createResponse(id, token, InteractionResponseBuilder.channelMessage(builder as MessageBuilder, isEphemeral: isEphemeral),
+            withResponse: withResponse);
       }
     } else {
       assert(updateMessage == _didUpdateMessage || updateMessage == null, 'Cannot change the value of updateMessage between acknowledge and respond');
@@ -352,6 +373,8 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
         await manager.createFollowup(token, builder as MessageBuilder);
       }
     }
+
+    return null;
   }
 }
 
@@ -381,6 +404,7 @@ class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> wit
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 }
 
@@ -410,6 +434,7 @@ class ApplicationCommandAutocompleteInteraction extends Interaction<ApplicationC
     required super.entitlements,
     required super.authorizingIntegrationOwners,
     required super.context,
+    required super.attachmentSizeLimit,
   });
 
   /// Send a response to this interaction.
@@ -568,4 +593,109 @@ class ModalSubmitInteractionData with ToStringHelper {
   /// {@macro modal_submit_interaction_data}
   /// @nodoc
   ModalSubmitInteractionData({required this.customId, required this.components});
+}
+
+/// An unknown interaction.
+class UnknownInteraction extends Interaction<void> {
+  /// @nodoc
+  UnknownInteraction({
+    required super.manager,
+    required super.id,
+    required super.applicationId,
+    required super.type,
+    required super.guildId,
+    required super.channel,
+    required super.channelId,
+    required super.member,
+    required super.user,
+    required super.token,
+    required super.version,
+    required super.message,
+    required super.appPermissions,
+    required super.locale,
+    required super.guildLocale,
+    required super.entitlements,
+    required super.authorizingIntegrationOwners,
+    required super.context,
+    required super.attachmentSizeLimit,
+  }) : super(data: null);
+}
+
+/// An interaction callback response.
+class InteractionCallbackResponse with ToStringHelper {
+  /// The interaction object associated with the interaction response.
+  final InteractionCallback interaction;
+
+  /// The resource that was created by the interaction response.
+  final InteractionResource? resource;
+
+  /// @nodoc
+  const InteractionCallbackResponse({
+    required this.interaction,
+    required this.resource,
+  });
+}
+
+/// An interaction callback.
+class InteractionCallback with ToStringHelper {
+  /// The id of the interaction.
+  final Snowflake id;
+
+  /// The type of the interaction.
+  final InteractionType type;
+
+  /// The instance id of the Activity if one was launched or joined.
+  final String? activityInstanceId;
+
+  /// The id of the message that was created by the interaction.
+  final Snowflake? responseMessageId;
+
+  /// Whether or not the message is in a loading state.
+  final bool? responseMessageLoading;
+
+  /// Whether or not the response message was ephemeral.
+  final bool? responseMessageEphemeral;
+
+  /// @nodoc
+  const InteractionCallback({
+    required this.activityInstanceId,
+    required this.id,
+    required this.responseMessageEphemeral,
+    required this.responseMessageId,
+    required this.responseMessageLoading,
+    required this.type,
+  });
+}
+
+/// An interaction resource.
+class InteractionResource with ToStringHelper {
+  /// The interaction callback type.
+  final InteractionCallbackType type;
+
+  /// Represents the Activity launched by this interaction.
+  ///
+  /// * Only present if [type] is [InteractionCallbackType.launchActivity].
+  final InteractionCallbackActivityInstanceResource? activityInstance;
+
+  /// The message created by the interaction.
+  ///
+  /// * Only present if [type] is either [InteractionCallbackType.channelMessageWithSource] or [InteractionCallbackType.updateMessage].
+  final Message? message;
+
+  /// @nodoc
+  const InteractionResource({
+    required this.type,
+    required this.activityInstance,
+    required this.message,
+  });
+}
+
+class InteractionCallbackActivityInstanceResource with ToStringHelper {
+  /// The instance id of the Activity if one was launched or joined.
+  final String id;
+
+  /// @nodoc
+  const InteractionCallbackActivityInstanceResource({
+    required this.id,
+  });
 }

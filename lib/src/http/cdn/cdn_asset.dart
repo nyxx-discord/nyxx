@@ -24,7 +24,12 @@ enum CdnFormat {
   /// The Lottie format.
   ///
   /// This is only available to sticker endpoints where [Sticker.formatType] is [StickerFormatType.lottie].
-  lottie._('lottie');
+  lottie._('lottie'),
+
+  /// The mp3/ogg format.
+  ///
+  /// This is only available to soundboard endpoints.
+  mp3._('');
 
   /// The extension to use on the CDN endpoint for this format.
   final String extension;
@@ -43,6 +48,7 @@ class CdnAsset {
   final Nyxx client;
 
   /// The hash of the asset.
+  // TODO(lexedia): make it nullable next major version.
   final String hash;
 
   /// The base URL of the asset.
@@ -75,7 +81,11 @@ class CdnAsset {
     for (final part in base.parts) {
       route.add(part);
     }
-    route.add(HttpRoutePart('$hash.${format.extension}'));
+
+    // Soundboard assets don't have any extension.
+    final ext = format == CdnFormat.mp3 ? '' : '.${format.extension}';
+
+    route.add(HttpRoutePart('$hash$ext'));
 
     return CdnRequest(route, queryParameters: {if (size != null) 'size': size.toString()});
   }
@@ -100,7 +110,7 @@ class CdnAsset {
     final rawResponse = await client.httpHandler.httpClient.send(rawRequest);
 
     if (rawResponse.statusCode < 200 || rawResponse.statusCode >= 300) {
-      throw HttpResponseError.fromResponse(request, rawResponse);
+      throw await HttpResponseError.fromResponse(request, rawResponse);
     }
 
     yield* rawResponse.stream;

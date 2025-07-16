@@ -60,6 +60,8 @@ class Connection with ToStringHelper {
 enum ConnectionType {
   battleNet._('battlenet', 'Battle.net'),
   bungieNet._('bungie', 'Bungie.net'),
+  bluesky._('bluesky', 'Bluesky'),
+  crunchyroll._('crunchyroll', 'Crunchyroll'),
   domain._('domain', 'Domain'),
   ebay._('ebay', 'eBay'),
   epicGames._('epicgames', 'Epic Games'),
@@ -67,6 +69,7 @@ enum ConnectionType {
   github._('github', 'GitHub'),
   instagram._('instagram', 'Instagram'),
   leagueOfLegends._('leagueoflegends', 'League of Legends'),
+  mastodon._('mastodon', 'Mastodon'),
   paypal._('paypal', 'PayPal'),
   playstation._('playstation', 'PlayStation Network'),
   reddit._('reddit', 'Reddit'),

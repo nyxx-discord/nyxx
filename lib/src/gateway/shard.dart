@@ -74,6 +74,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
         logger.warning('Error: ${message.error}', message.error, message.stackTrace);
       } else if (message is Disconnecting) {
         logger.info('Disconnecting: ${message.reason}');
+      } else if (message is Reconnecting) {
+        logger.info('Reconnecting: ${message.reason}');
       } else if (message is EventReceived) {
         final event = message.event;
 
@@ -82,16 +84,13 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
           switch (event) {
             case InvalidSessionEvent(:final isResumable):
-              logger.finest('Resumable: $isResumable');
               if (isResumable) {
-                logger.info('Reconnecting: invalid session');
+                logger.finest('Resumable: $isResumable');
               } else {
-                logger.warning('Reconnecting: unresumable invalid session');
+                logger.warning('Resumable: $isResumable');
               }
             case HelloEvent(:final heartbeatInterval):
               logger.finest('Heartbeat Interval: $heartbeatInterval');
-            case ReconnectEvent():
-              logger.info('Reconnecting: reconnect requested');
             case HeartbeatAckEvent(:final latency):
               _latency = latency;
             default:

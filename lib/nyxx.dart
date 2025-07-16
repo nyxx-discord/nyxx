@@ -49,10 +49,26 @@ export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder, MessageReferenceBuilder;
 export 'src/builders/message/component.dart'
-    show ActionRowBuilder, ButtonBuilder, MessageComponentBuilder, SelectMenuBuilder, SelectMenuOptionBuilder, TextInputBuilder, DefaultValue;
+    show
+        ActionRowBuilder,
+        ButtonBuilder,
+        MessageComponentBuilder,
+        SelectMenuBuilder,
+        SelectMenuOptionBuilder,
+        TextInputBuilder,
+        DefaultValue,
+        ContainerComponentBuilder,
+        FileComponentBuilder,
+        MediaGalleryComponentBuilder,
+        MediaGalleryItemBuilder,
+        SectionComponentBuilder,
+        SeparatorComponentBuilder,
+        TextDisplayComponentBuilder,
+        ThumbnailComponentBuilder,
+        UnfurledMediaItemBuilder;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
-export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder;
+export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
 export 'src/builders/guild/member.dart' show CurrentMemberUpdateBuilder, MemberBuilder, MemberUpdateBuilder;
 export 'src/builders/guild/welcome_screen.dart' show WelcomeScreenUpdateBuilder;
 export 'src/builders/guild/widget.dart' show WidgetSettingsUpdateBuilder;
@@ -114,7 +130,20 @@ export 'src/http/managers/soundboard_manager.dart' show SoundboardManager, Guild
 export 'src/gateway/gateway.dart' show Gateway;
 export 'src/gateway/event_parser.dart' show EventParser;
 export 'src/gateway/message.dart'
-    show Disconnecting, Dispose, ErrorReceived, EventReceived, GatewayMessage, Send, Sent, ShardData, ShardMessage, Identify, RequestingIdentify, StartShard;
+    show
+        Disconnecting,
+        Dispose,
+        ErrorReceived,
+        EventReceived,
+        GatewayMessage,
+        Send,
+        Sent,
+        ShardData,
+        ShardMessage,
+        Identify,
+        RequestingIdentify,
+        StartShard,
+        Reconnecting;
 export 'src/gateway/shard.dart' show Shard;
 
 export 'src/models/discord_color.dart' show DiscordColor;
@@ -185,7 +214,18 @@ export 'src/models/message/component.dart'
         TextInputComponent,
         ButtonStyle,
         MessageComponentType,
-        TextInputStyle;
+        TextInputStyle,
+        UnknownComponent,
+        ContainerComponent,
+        FileComponent,
+        MediaGalleryComponent,
+        MediaGalleryItem,
+        SectionComponent,
+        SeparatorComponent,
+        SeparatorSpacingSize,
+        TextDisplayComponent,
+        ThumbnailComponent,
+        UnfurledMediaItem;
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
@@ -204,7 +244,8 @@ export 'src/models/guild/guild.dart'
         NsfwLevel,
         PremiumTier,
         VerificationLevel,
-        UserGuild;
+        UserGuild,
+        IncidentsData;
 export 'src/models/guild/integration.dart' show PartialIntegration, Integration, IntegrationAccount, IntegrationApplication, IntegrationExpireBehavior;
 export 'src/models/guild/member.dart' show Member, MemberFlags, PartialMember;
 export 'src/models/guild/onboarding.dart' show Onboarding, OnboardingPrompt, OnboardingPromptOption, OnboardingPromptType, OnboardingMode;
@@ -352,7 +393,8 @@ export 'src/models/interaction.dart'
         MessageComponentInteraction,
         ModalSubmitInteraction,
         PingInteraction,
-        InteractionContextType;
+        InteractionContextType,
+        UnknownInteraction;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
 export 'src/models/sku.dart' show Sku, SkuType, SkuFlags, PartialSku;
 export 'src/models/oauth2.dart' show OAuth2Information;

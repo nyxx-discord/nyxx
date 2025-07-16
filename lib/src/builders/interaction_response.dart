@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/message/component.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/models/message/message.dart';
+import 'package:nyxx/src/utils/enum_like.dart';
 
 class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilder> {
   InteractionCallbackType type;
@@ -13,25 +14,15 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
 
   factory InteractionResponseBuilder.pong() => InteractionResponseBuilder(type: InteractionCallbackType.pong, data: null);
 
-  factory InteractionResponseBuilder.channelMessage(MessageBuilder message, {bool? isEphemeral}) => InteractionResponseBuilder(
-        type: InteractionCallbackType.channelMessageWithSource,
-        data: _EphemeralMessageBuilder(
-          content: message.content,
-          nonce: message.nonce,
-          tts: message.tts,
-          embeds: message.embeds,
-          allowedMentions: message.allowedMentions,
-          referencedMessage: message.referencedMessage,
-          components: message.components,
-          stickerIds: message.stickerIds,
-          attachments: message.attachments,
-          suppressEmbeds: message.suppressEmbeds,
-          suppressNotifications: message.suppressNotifications,
-          enforceNonce: message.enforceNonce,
-          poll: message.poll,
-          isEphemeral: isEphemeral,
-        ),
-      );
+  factory InteractionResponseBuilder.channelMessage(MessageBuilder message, {@Deprecated('Use message.flags') bool? isEphemeral}) {
+    final builder = InteractionResponseBuilder(type: InteractionCallbackType.channelMessageWithSource, data: message);
+
+    if (isEphemeral == true) {
+      message.flags = (message.flags ?? MessageFlags(0)) | MessageFlags.ephemeral;
+    }
+
+    return builder;
+  }
 
   factory InteractionResponseBuilder.deferredChannelMessage({bool? isEphemeral}) => InteractionResponseBuilder(
         type: InteractionCallbackType.deferredChannelMessageWithSource,
@@ -74,52 +65,37 @@ class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilde
   }
 }
 
-class _EphemeralMessageBuilder extends MessageBuilder {
-  bool? isEphemeral;
+final class InteractionCallbackType extends EnumLike<int, InteractionCallbackType> {
+  /// ACK a `Ping`
+  static const pong = InteractionCallbackType(1);
 
-  _EphemeralMessageBuilder({
-    required super.content,
-    required super.nonce,
-    required super.tts,
-    required super.embeds,
-    required super.allowedMentions,
-    required super.components,
-    required super.stickerIds,
-    required super.attachments,
-    required super.suppressEmbeds,
-    required super.suppressNotifications,
-    required super.enforceNonce,
-    required super.poll,
-    required super.referencedMessage,
-    required this.isEphemeral,
-  });
+  /// Respond to an interaction with a message.
+  static const channelMessageWithSource = InteractionCallbackType(4);
 
-  @override
-  Map<String, Object?> build() {
-    final built = super.build();
+  /// ACK an interaction and edit a response later, the user sees a loading state.
+  static const deferredChannelMessageWithSource = InteractionCallbackType(5);
 
-    if (isEphemeral != null) {
-      built['flags'] = (built['flags'] as int? ?? 0) | (isEphemeral == true ? MessageFlags.ephemeral.value : 0);
-    }
+  /// For components, ACK an interaction and edit the original message later; the user does not see a loading state.
+  static const deferredUpdateMessage = InteractionCallbackType(6);
 
-    return built;
-  }
-}
+  /// For components, edit the message the component was attached to.
+  static const updateMessage = InteractionCallbackType(7);
 
-enum InteractionCallbackType {
-  pong._(1),
-  channelMessageWithSource._(4),
-  deferredChannelMessageWithSource._(5),
-  deferredUpdateMessage._(6),
-  updateMessage._(7),
-  applicationCommandAutocompleteResult._(8),
-  modal._(9),
+  /// Respond to an autocomplete interaction with suggested choices.
+  static const applicationCommandAutocompleteResult = InteractionCallbackType(8);
+
+  /// Respond to an interaction with a popup modal.
+  static const modal = InteractionCallbackType(9);
+
+  /// [Deprecated](https://discord.com/developers/docs/change-log#premium-apps-new-premium-button-style-deep-linking-url-schemes); respond to an interaction with an upgrade button,
+  /// only available for apps with [monetization](https://discord.com/developers/docs/monetization/overview) enabled.
   @Deprecated('Respond with ButtonStyle.premium button instead')
-  premiumRequired._(10);
+  static const premiumRequired = InteractionCallbackType(10);
 
-  final int value;
+  /// Launch the Activity associated with the app. Only available for apps with [Activities](https://discord.com/developers/docs/activities/overview) enabled.
+  static const launchActivity = InteractionCallbackType(12);
 
-  const InteractionCallbackType._(this.value);
+  const InteractionCallbackType(super.value);
 }
 
 class ModalBuilder extends CreateBuilder<ModalBuilder> {

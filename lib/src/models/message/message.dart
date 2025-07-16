@@ -61,7 +61,7 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
   /// ```
   /// or
   /// ```dart
-  /// final emoji = await client.emoji.fetch(Snowflake(123456789012345678));
+  /// final emoji = await client.application.emojis.fetch(Snowflake(123456789012345678));
   /// await message.react(ReactionBuilder.fromEmoji(emoji));
   /// ```
   Future<void> react(ReactionBuilder emoji) => manager.addReaction(id, emoji);
@@ -338,6 +338,12 @@ class MessageFlags extends Flags<MessageFlags> {
   /// This message is a voice message.
   static const isVoiceMessage = Flag<MessageFlags>.fromOffset(13);
 
+  /// This message has a snapshot.
+  static const hasSnapshot = Flag<MessageFlags>.fromOffset(14);
+
+  /// This message uses Components V2.
+  static const isComponentsV2 = Flag<MessageFlags>.fromOffset(15);
+
   /// Whether this set of flags has the [crossposted] flag set.
   bool get wasCrossposted => has(crossposted);
 
@@ -370,6 +376,12 @@ class MessageFlags extends Flags<MessageFlags> {
 
   /// Whether this set of flags has the [isVoiceMessage] flag set.
   bool get isAVoiceMessage => has(isVoiceMessage);
+
+  /// Whether this set of flags has the [hasSnapshot] flag set.
+  bool get hasASnapshot => has(hasSnapshot);
+
+  /// Whether this set of flags has the [isComponentsV2] flag set.
+  bool get hasComponentsV2 => has(isComponentsV2);
 
   /// Create a new [MessageFlags].
   const MessageFlags(super.value);
@@ -536,4 +548,43 @@ class MessageCall with ToStringHelper {
   List<PartialUser> get participants => [
         for (final participantId in participantIds) manager.client.users[participantId],
       ];
+}
+
+/// {@template message_pin}
+/// Information about a pinned message.
+///
+/// See:
+///   * [MessageManager.listPins].
+///
+/// External references:
+/// * https://discord.dev/resources/message#message-pin-object
+/// {@endtemplate}
+class MessagePin with ToStringHelper {
+  /// The time the message was pinned.
+  final DateTime pinnedAt;
+
+  /// The pinned message.
+  final Message message;
+
+  /// {@macro message_pin}
+  /// @nodoc
+  const MessagePin({required this.pinnedAt, required this.message});
+}
+
+/// {@template pin_list}
+/// A list of [MessagePin]s.
+/// {@endtemplate}
+class PinList {
+  /// The pins this channel has.
+  final List<MessagePin> items;
+
+  /// Whether more results can be queried.
+  final bool hasMore;
+
+  /// {@macro pin_list}
+  /// @nodoc
+  const PinList({
+    required this.items,
+    required this.hasMore,
+  });
 }

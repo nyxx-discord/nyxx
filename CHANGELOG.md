@@ -1,3 +1,35 @@
+## 6.7.0
+__30.05.20205__
+
+- feat: Implement interaction callback response ([`#748`](https://github.com/nyxx-discord/nyxx/pull/748)) - ([`830bfbb`](https://github.com/nyxx-discord/nyxx/commit/830bfbb941a7ef578db6b365e365c37c3991046d))
+- feat: Add `attachmentSizeLimit` field to `Interaction` ([`#747`](https://github.com/nyxx-discord/nyxx/pull/747)) - ([`8e3c53e7`](https://github.com/nyxx-discord/nyxx/commit/8e3c53e7))
+- feat: Add full message update payload ([`#750`](https://github.com/nyxx-discord/nyxx/pull/750)) - ([`63850dcd`](https://github.com/nyxx-discord/nyxx/commit/63850dcd))
+- feat: Add audit log parameter for thread creation ([`#749`](https://github.com/nyxx-discord/nyxx/pull/749)) - ([`a131c1c7`](https://github.com/nyxx-discord/nyxx/commit/a131c1c7))
+
+## 6.7.0-dev.1
+__11.03.2025__
+
+- feat: Add support for Components V2 ([`#742`](https://github.com/nyxx-discord/nyxx/pull/742)) - ([`1b42b66`](https://github.com/nyxx-discord/nyxx/commit/1b42b6672b67824e49315eddf30ca7fdf24a0eff))
+- fix: Deprecate `GatewayIntents.guildEmojisAndStickers`, replaced by `GatewayIntents.guildExpressions` ([`#744`](https://github.com/nyxx-discord/nyxx/pull/744)) - ([`14a5110`](https://github.com/nyxx-discord/nyxx/commit/14a5110943149d38a7362103a3ad21a78691f503))
+- fix: Handle `abnormalClosure` in shard connections ([`#743`](https://github.com/nyxx-discord/nyxx/pull/743)) - ([`0361097`](https://github.com/nyxx-discord/nyxx/commit/036109709321a99b6c6ee8c9c5d78e4604ecc0b5))
+
+## 6.6.1
+__22.03.2025__
+
+- feat: Properly handle unknown union types.
+
+## 6.6.0
+__23.02.2025__
+
+- feat: Make `SoundboardSound` have a CDN asset ([`#740`](https://github.com/nyxx-discord/nyxx/pull/740)) - ([`a8650288`](https://github.com/nyxx-discord/nyxx/commit/a8650288))
+- feat: Add new connections services ([`#735`](https://github.com/nyxx-discord/nyxx/pull/735)) - ([`afe90236`](https://github.com/nyxx-discord/nyxx/commit/afe90236))
+- feat: Add `has_snapshot` message flag ([`#734`](https://github.com/nyxx-discord/nyxx/pull/734)) - ([`385a9667`](https://github.com/nyxx-discord/nyxx/commit/385a9667))
+- feat: Add `withComponents` param on webhooks ([`#738`](https://github.com/nyxx-discord/nyxx/pull/738)) - ([`2b8f229c`](https://github.com/nyxx-discord/nyxx/commit/2b8f229c))
+- feat: Add incidents data ([`#737`](https://github.com/nyxx-discord/nyxx/pull/737)) - ([`538935b7`](https://github.com/nyxx-discord/nyxx/commit/538935b7))
+- chore: Unclutter the pull request template ([`#732`](https://github.com/nyxx-discord/nyxx/pull/732)) - ([`7dc8bae1`](https://github.com/nyxx-discord/nyxx/commit/7dc8bae1))
+- fix: Fix the readme example ([`#731`](https://github.com/nyxx-discord/nyxx/pull/731)) - ([`e2ab8081`](https://github.com/nyxx-discord/nyxx/commit/e2ab8081))
+- fix: Fix legacy accounts default avatar ([`06d2aee4`](https://github.com/nyxx-discord/nyxx/commit/06d2aee4))
+
 ## 6.5.2
 __02.11.2024__
 

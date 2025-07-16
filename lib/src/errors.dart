@@ -89,7 +89,7 @@ class SkuNotFoundException extends NyxxException {
   /// The ID of the sku.
   final Snowflake skuId;
 
-  /// Create a new [skuNotFoundException].
+  /// Create a new [SkuNotFoundException].
   SkuNotFoundException(this.applicationId, this.skuId) : super('SKU $skuId not found for application $applicationId');
 }
 

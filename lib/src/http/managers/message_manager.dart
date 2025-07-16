@@ -257,46 +257,147 @@ class MessageManager extends Manager<Message> {
     final type = MessageComponentType(raw['type'] as int);
 
     return switch (type) {
-      MessageComponentType.actionRow => ActionRowComponent(
-          components: parseMany(raw['components'] as List, parseMessageComponent),
-        ),
-      MessageComponentType.button => ButtonComponent(
-          style: ButtonStyle(raw['style'] as int),
-          label: raw['label'] as String?,
-          emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
-          customId: raw['custom_id'] as String?,
-          skuId: maybeParse(raw['sku_id'], Snowflake.parse),
-          url: maybeParse(raw['url'], Uri.parse),
-          isDisabled: raw['disabled'] as bool?,
-        ),
-      MessageComponentType.textInput => TextInputComponent(
-          customId: raw['custom_id'] as String,
-          style: maybeParse(raw['style'], TextInputStyle.new),
-          label: raw['label'] as String?,
-          minLength: raw['min_length'] as int?,
-          maxLength: raw['max_length'] as int?,
-          isRequired: raw['required'] as bool?,
-          value: raw['value'] as String?,
-          placeholder: raw['placeholder'] as String?,
-        ),
+      MessageComponentType.actionRow => parseActionRowComponent(raw),
+      MessageComponentType.button => parseButtonComponent(raw),
+      MessageComponentType.textInput => parseTextInputComponent(raw),
       MessageComponentType.stringSelect ||
       MessageComponentType.userSelect ||
       MessageComponentType.roleSelect ||
       MessageComponentType.mentionableSelect ||
       MessageComponentType.channelSelect =>
-        SelectMenuComponent(
-          type: type,
-          customId: raw['custom_id'] as String,
-          options: maybeParseMany(raw['options'], parseSelectMenuOption),
-          channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
-          placeholder: raw['placeholder'] as String?,
-          defaultValues: maybeParseMany(raw['default_values'], parseSelectMenuDefaultValue),
-          minValues: raw['min_values'] as int?,
-          maxValues: raw['max_values'] as int?,
-          isDisabled: raw['disabled'] as bool?,
-        ),
-      MessageComponentType() => throw StateError('Unknown message component type: $type'),
+        parseSelectMenuComponent(raw, type),
+      MessageComponentType.section => parseSectionComponent(raw),
+      MessageComponentType.textDisplay => parseTextDisplayComponent(raw),
+      MessageComponentType.thumbnail => parseThumbnailComponent(raw),
+      MessageComponentType.mediaGallery => parseMediaGalleryComponent(raw),
+      MessageComponentType.file => parseFileComponent(raw),
+      MessageComponentType.separator => parseSeparatorComponent(raw),
+      MessageComponentType.container => parseContainerComponent(raw),
+      _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
+  }
+
+  ContainerComponent parseContainerComponent(Map<String, Object?> raw) {
+    return ContainerComponent(
+      id: raw['id'] as int,
+      accentColor: maybeParse(raw['accent_color'], DiscordColor.new),
+      isSpoiler: raw['spoiler'] as bool?,
+      components: parseMany(raw['components'] as List, parseMessageComponent),
+    );
+  }
+
+  SeparatorComponent parseSeparatorComponent(Map<String, Object?> raw) {
+    return SeparatorComponent(
+      id: raw['id'] as int,
+      isDivider: raw['divider'] as bool?,
+      spacing: maybeParse(raw['spacing'], SeparatorSpacingSize.new),
+    );
+  }
+
+  FileComponent parseFileComponent(Map<String, Object?> raw) {
+    return FileComponent(
+      id: raw['id'] as int,
+      file: parseUnfurledMediaItem(raw['file'] as Map<String, Object?>),
+      isSpoiler: raw['spoiler'] as bool?,
+    );
+  }
+
+  MediaGalleryComponent parseMediaGalleryComponent(Map<String, Object?> raw) {
+    return MediaGalleryComponent(
+      id: raw['id'] as int,
+      items: parseMany(raw['items'] as List, parseMediaGalleryItem),
+    );
+  }
+
+  UnfurledMediaItem parseUnfurledMediaItem(Map<String, Object?> raw) {
+    return UnfurledMediaItem(
+      manager: this,
+      url: Uri.parse(raw['url'] as String),
+      proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
+      height: raw['height'] as int?,
+      width: raw['width'] as int?,
+    );
+  }
+
+  MediaGalleryItem parseMediaGalleryItem(Map<String, Object?> raw) {
+    return MediaGalleryItem(
+      media: parseUnfurledMediaItem(raw['media'] as Map<String, Object?>),
+      description: raw['description'] as String?,
+      isSpoiler: raw['spoiler'] as bool?,
+    );
+  }
+
+  ThumbnailComponent parseThumbnailComponent(Map<String, Object?> raw) {
+    return ThumbnailComponent(
+      id: raw['id'] as int,
+      media: parseUnfurledMediaItem(raw['media'] as Map<String, Object?>),
+      description: raw['description'] as String?,
+      isSpoiler: raw['spoiler'] as bool?,
+    );
+  }
+
+  TextDisplayComponent parseTextDisplayComponent(Map<String, Object?> raw) {
+    return TextDisplayComponent(
+      id: raw['id'] as int,
+      content: raw['content'] as String,
+    );
+  }
+
+  SectionComponent parseSectionComponent(Map<String, Object?> raw) {
+    return SectionComponent(
+      id: raw['id'] as int,
+      accessory: parseMessageComponent(raw['accessory'] as Map<String, Object?>),
+      components: parseMany(raw['components'] as List, parseTextDisplayComponent),
+    );
+  }
+
+  SelectMenuComponent parseSelectMenuComponent(Map<String, Object?> raw, MessageComponentType type) {
+    return SelectMenuComponent(
+      id: raw['id'] as int,
+      type: type,
+      customId: raw['custom_id'] as String,
+      options: maybeParseMany(raw['options'], parseSelectMenuOption),
+      channelTypes: maybeParseMany(raw['channel_types'], ChannelType.new),
+      placeholder: raw['placeholder'] as String?,
+      defaultValues: maybeParseMany(raw['default_values'], parseSelectMenuDefaultValue),
+      minValues: raw['min_values'] as int?,
+      maxValues: raw['max_values'] as int?,
+      isDisabled: raw['disabled'] as bool?,
+    );
+  }
+
+  TextInputComponent parseTextInputComponent(Map<String, Object?> raw) {
+    return TextInputComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      style: maybeParse(raw['style'], TextInputStyle.new),
+      label: raw['label'] as String?,
+      minLength: raw['min_length'] as int?,
+      maxLength: raw['max_length'] as int?,
+      isRequired: raw['required'] as bool?,
+      value: raw['value'] as String?,
+      placeholder: raw['placeholder'] as String?,
+    );
+  }
+
+  ActionRowComponent parseActionRowComponent(Map<String, Object?> raw) {
+    return ActionRowComponent(
+      id: raw['id'] as int,
+      components: parseMany(raw['components'] as List, parseMessageComponent),
+    );
+  }
+
+  ButtonComponent parseButtonComponent(Map<String, Object?> raw) {
+    return ButtonComponent(
+      id: raw['id'] as int,
+      style: ButtonStyle(raw['style'] as int),
+      label: raw['label'] as String?,
+      emoji: maybeParse(raw['emoji'], client.guilds[Snowflake.zero].emojis.parse),
+      customId: raw['custom_id'] as String?,
+      skuId: maybeParse(raw['sku_id'], Snowflake.parse),
+      url: maybeParse(raw['url'], Uri.parse),
+      isDisabled: raw['disabled'] as bool?,
+    );
   }
 
   SelectMenuOption parseSelectMenuOption(Map<String, Object?> raw) {
@@ -417,6 +518,14 @@ class MessageManager extends Manager<Message> {
       participantIds: parseMany(raw['participants'] as List, Snowflake.parse),
       endedAt: maybeParse(raw['ended_at'], DateTime.parse),
     );
+  }
+
+  MessagePin parseMessagePin(Map<String, Object?> raw) {
+    return MessagePin(message: parse(raw['message'] as Map<String, Object?>), pinnedAt: DateTime.parse(raw['pinned_at'] as String));
+  }
+
+  PinList parsePinList(Map<String, Object?> raw) {
+    return PinList(items: parseMany(raw['items'] as List, parseMessagePin), hasMore: raw['has_more'] as bool);
   }
 
   @override
@@ -579,6 +688,7 @@ class MessageManager extends Manager<Message> {
   }
 
   /// Get the pinned messages in the channel.
+  @Deprecated('Use `listPins` instead.')
   Future<List<Message>> getPins() async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
@@ -596,6 +706,7 @@ class MessageManager extends Manager<Message> {
   Future<void> pin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
+      ..messages()
       ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'PUT', auditLogReason: auditLogReason);
 
@@ -606,10 +717,38 @@ class MessageManager extends Manager<Message> {
   Future<void> unpin(Snowflake id, {String? auditLogReason}) async {
     final route = HttpRoute()
       ..channels(id: channelId.toString())
+      ..messages()
       ..pins(id: id.toString());
     final request = BasicRequest(route, method: 'DELETE', auditLogReason: auditLogReason);
 
     await client.httpHandler.executeSafe(request);
+  }
+
+  /// Retrieves the list of pins in a channel. Requires the [Permissions.viewChannel] permission.
+  /// If the user is missing the [Permissions.readMessageHistory] permission in the channel, then no pins will be returned.
+  ///
+  /// Optionally, you can specify a [before] timestamp to get pins before that time, and a [limit] to limit the number of pins returned (min 1, max 50).
+  Future<PinList> listPins({DateTime? before, int? limit}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..messages()
+      ..pins();
+
+    final request = BasicRequest(
+      route,
+      queryParameters: {
+        if (before != null) 'before': before.toIso8601String(),
+        if (limit != null) 'limit': limit.toString(),
+      },
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    final pinList = parsePinList(response.jsonBody as Map<String, Object?>);
+
+    pinList.items.forEach(client.updateCacheWith);
+
+    return pinList;
   }
 
   /// Adds a reaction to a message.

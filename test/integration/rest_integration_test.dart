@@ -81,12 +81,20 @@ void main() {
 
       final avatar = (await client.user.get()).avatar;
 
-      await expectLater(
-        client.users.updateCurrentUser(UserUpdateBuilder(
-          avatar: ImageBuilder(data: await avatar.fetch(), format: avatar.defaultFormat.extension),
-        )),
-        completes,
-      );
+      try {
+        await expectLater(
+          client.users.updateCurrentUser(UserUpdateBuilder(
+            avatar: ImageBuilder(data: await avatar.fetch(), format: avatar.defaultFormat.extension),
+          )),
+          completes,
+        );
+      } on HttpResponseError catch (e) {
+        if (e.errorCode == 50035 && e.errorData?.fieldErrors['avatar']?.errorCode == 'AVATAR_RATE_LIMIT') {
+          markTestSkipped('Avatar changes rate limited');
+        } else {
+          rethrow;
+        }
+      }
     });
 
     test('channels', skip: testTextChannel != null ? false : 'No test channel provided', () async {
@@ -125,8 +133,13 @@ void main() {
 
       expect(message.content, equals('New content'));
 
-      await expectLater(message.pin(), completes);
-      await expectLater(message.unpin(), completes);
+      try {
+        await expectLater(message.pin(), completes);
+        await expectLater(message.unpin(), completes);
+      } on HttpResponseError catch (e) {
+        // Missing permissions.
+        if (e.errorCode != 50013) rethrow;
+      }
 
       await expectLater(
         () async => message = await channel.sendMessage(MessageBuilder(
@@ -171,7 +184,12 @@ void main() {
         completes,
       );
 
-      await expectLater(channel.messages.bulkDelete([message.id, message2.id]), completes);
+      try {
+        await expectLater(channel.messages.bulkDelete([message.id, message2.id]), completes);
+      } on HttpResponseError catch (e) {
+        // Missing permissions.
+        if (e.errorCode != 50013) rethrow;
+      }
 
       await expectLater(
         () async => message = await channel.sendMessage(
@@ -246,6 +264,53 @@ void main() {
 
       await expectLater(message.fetchAnswerVoters(poll.answers[0].id), completes);
       await expectLater(message.endPoll(), completes);
+      await expectLater(message.delete(), completes);
+
+      await expectLater(
+          () async => message = await channel.sendMessage(
+                MessageBuilder(
+                  flags: MessageFlags.isComponentsV2,
+                  attachments: [
+                    await AttachmentBuilder.fromFile(File('test/files/1.png')),
+                    await AttachmentBuilder.fromFile(File('test/files/2.png')),
+                    await AttachmentBuilder.fromFile(File('test/files/3.png')),
+                  ],
+                  components: [
+                    TextDisplayComponentBuilder(content: 'Components V2! Yeah!'),
+                    SectionComponentBuilder(
+                      accessory: ThumbnailComponentBuilder(
+                        media: UnfurledMediaItemBuilder(url: Uri(scheme: 'attachment', host: '1.png')),
+                      ),
+                      components: [
+                        TextDisplayComponentBuilder(content: 'One line....'),
+                        TextDisplayComponentBuilder(content: 'Two lines........'),
+                        TextDisplayComponentBuilder(content: 'Three lines!'),
+                      ],
+                    ),
+                    SeparatorComponentBuilder(),
+                    ContainerComponentBuilder(
+                      accentColor: DiscordColor.fromRgb(255, 150, 150),
+                      components: [
+                        TextDisplayComponentBuilder(content: 'This is a container. It can contain other stuff too:'),
+                        MediaGalleryComponentBuilder(items: [
+                          MediaGalleryItemBuilder(
+                            media: UnfurledMediaItemBuilder(url: Uri(scheme: 'attachment', host: '1.png')),
+                          ),
+                          MediaGalleryItemBuilder(
+                            media: UnfurledMediaItemBuilder(url: Uri(scheme: 'attachment', host: '2.png')),
+                          ),
+                          MediaGalleryItemBuilder(
+                            media: UnfurledMediaItemBuilder(url: Uri(scheme: 'attachment', host: '3.png')),
+                          ),
+                        ]),
+                        TextDisplayComponentBuilder(content: "And that's pretty cool ;)"),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+          completes);
+
       await expectLater(message.delete(), completes);
     });
 

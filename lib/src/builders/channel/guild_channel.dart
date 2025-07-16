@@ -1,3 +1,6 @@
+/// @docImport 'package:nyxx/nyxx.dart';
+library;
+
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
@@ -79,7 +82,7 @@ class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
 
   /// {@template channel_rate_limit_per_user}
   /// The duration after which the user will be able to send another message (0-21600 seconds). Members with the [Permissions.manageMessages]
-  /// or [Permissions.manageChannel] permission are unaffected.
+  /// or [Permissions.manageChannels] permission are unaffected.
   /// {@endtemplate}
   Duration? rateLimitPerUser;
 
@@ -139,8 +142,10 @@ class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextC
   /// {@macro channel_default_auto_archive_duration}
   Duration? defaultAutoArchiveDuration;
 
+  /// {@template default_thread_rate_limit_per_user}
   /// The initial rate_limit_per_user to set on newly created threads in a channel.
   /// This field is copied to the thread at creation time and does not live update.
+  /// {@endtemplate}
   Duration? defaultThreadRateLimitPerUser;
 
   GuildTextChannelUpdateBuilder({

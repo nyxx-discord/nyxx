@@ -46,6 +46,7 @@ import 'package:nyxx/src/models/voice/voice_region.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Guild].
 class PartialGuild extends WritableSnowflakeEntity<Guild> {
@@ -372,6 +373,9 @@ class Guild extends UserGuild {
   /// The ID of the channel safety alerts are sent to.
   final Snowflake? safetyAlertsChannelId;
 
+  /// The incidents data for this guild.
+  final IncidentsData? incidentsData;
+
   /// {@macro guild}
   /// @nodoc
   Guild({
@@ -417,6 +421,7 @@ class Guild extends UserGuild {
     required this.emojiList,
     required this.stickerList,
     required this.safetyAlertsChannelId,
+    required this.incidentsData,
   });
 
   /// The owner of the guild.
@@ -764,4 +769,25 @@ final class NsfwLevel extends EnumLike<int, NsfwLevel> {
 
   @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
   NsfwLevel.parse(int value) : this(value);
+}
+
+class IncidentsData with ToStringHelper {
+  /// When [Invite]s get enabled again.
+  final DateTime? invitesDisabledUntil;
+
+  /// When direct messages get enabled again.
+  final DateTime? dmsDisabledUntil;
+
+  /// When the dm spam was detected.
+  final DateTime? dmSpamDetectedAt;
+
+  /// When the raid was detected.
+  final DateTime? raidDetectedAt;
+
+  const IncidentsData({
+    required this.invitesDisabledUntil,
+    required this.dmsDisabledUntil,
+    required this.dmSpamDetectedAt,
+    required this.raidDetectedAt,
+  });
 }

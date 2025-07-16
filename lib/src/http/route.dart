@@ -17,8 +17,8 @@ class HttpRoute {
 
   /// The segments of this route.
   ///
-  /// This includes the names and parameters of this [parts].
-  Iterable<String> get segments => parts.expand((part) => part.segments);
+  /// This includes the names and parameters of this [parts]. This also filters out empty [HttpRoutePart.segments].
+  Iterable<String> get segments => parts.expand((part) => part.segments).where((part) => part.isNotEmpty);
 
   /// The path this [HttpRoute] represents, relative to Discord's root API URL.
   String get path => '/${segments.join('/')}';
@@ -344,6 +344,9 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`send-soundboard-sound`](https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound) part to this [HttpRoute].
   void sendSoundboardSound() => add(HttpRoutePart('send-soundboard-sound'));
+
+  /// Adds the [`incident-actions`](https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions) part to this [HttpRoute].
+  void incidentActions() => add(HttpRoutePart('incident-actions'));
 
   /// Adds the [`clan-badges`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)
   void clanBadges({String? id}) => add(HttpRoutePart('clan-badges', [if (id != null) HttpRouteParam(id)]));

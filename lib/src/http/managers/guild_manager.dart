@@ -89,6 +89,7 @@ class GuildManager extends Manager<Guild> {
       emojiList: parseMany(raw['emojis'] as List, this[id].emojis.parse),
       stickerList: parseMany(raw['stickers'] as List? ?? [], this[id].stickers.parse),
       safetyAlertsChannelId: maybeParse(raw['safety_alerts_channel_id'], Snowflake.parse),
+      incidentsData: maybeParse(raw['incidents_data'], parseIncidentsData),
     );
   }
 
@@ -331,6 +332,16 @@ class GuildManager extends Manager<Guild> {
         ],
       }),
       isDirty: raw['is_dirty'] as bool?,
+    );
+  }
+
+  /// Parse a [IncidentsData] from [raw].
+  IncidentsData parseIncidentsData(Map<String, Object?> raw) {
+    return IncidentsData(
+      dmSpamDetectedAt: maybeParse(raw['dm_spam_detected_at'], DateTime.parse),
+      dmsDisabledUntil: maybeParse(raw['dms_disabled_until'], DateTime.parse),
+      invitesDisabledUntil: maybeParse(raw['dm_spam_detected_at'], DateTime.parse),
+      raidDetectedAt: maybeParse(raw['raid_detected_at'], DateTime.parse),
     );
   }
 
@@ -824,5 +835,22 @@ class GuildManager extends Manager<Guild> {
     // Templates aren't cached, so we don't need to remove it from any cache, but it still contains a nested user object we can cache.
     client.updateCacheWith(template);
     return template;
+  }
+
+  /// Modifies the incident actions of the guild.
+  Future<IncidentsData> updateIncidents(Snowflake guildId, GuildIncidentsUpdateBuilder builder) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..incidentActions();
+
+    final request = BasicRequest(
+      route,
+      method: 'PUT',
+      body: jsonEncode(builder.build()),
+    );
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    return parseIncidentsData(response.jsonBody as Map<String, Object?>);
   }
 }
