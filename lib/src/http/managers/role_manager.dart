@@ -29,6 +29,7 @@ class RoleManager extends Manager<Role> {
       manager: this,
       name: raw['name'] as String,
       color: DiscordColor(raw['color'] as int),
+      colors: parseRoleColors(raw['colors'] as Map<String, Object?>),
       isHoisted: raw['hoist'] as bool,
       iconHash: raw['icon'] as String?,
       unicodeEmoji: raw['unicode_emoji'] as String?,
@@ -49,6 +50,15 @@ class RoleManager extends Manager<Role> {
       subscriptionListingId: maybeParse(raw['subscription_listing_id'], Snowflake.parse),
       isAvailableForPurchase: raw.containsKey('available_for_purchase'),
       isLinkedRole: raw.containsKey('guild_connections'),
+    );
+  }
+
+  /// Parse [RoleColors] from [raw].
+  RoleColors parseRoleColors(Map<String, Object?> raw) {
+    return RoleColors(
+      primary: DiscordColor(raw['primary'] as int),
+      secondary: maybeParse(raw['secondary'], DiscordColor.new),
+      tertiary: maybeParse(raw['tertiary'], DiscordColor.new),
     );
   }
 
