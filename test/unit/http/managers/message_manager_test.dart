@@ -689,6 +689,7 @@ void main() {
         name: 'getPins',
         source: [sampleMessage],
         urlMatcher: '/channels/0/pins',
+        // ignore: deprecated_member_use_from_same_package
         execute: (manager) => manager.getPins(),
         check: (list) {
           expect(list, hasLength(1));
@@ -696,7 +697,7 @@ void main() {
         },
       ),
       EndpointTest<MessageManager, void, void>(
-        name: 'pinMessage',
+        name: 'pin',
         method: 'put',
         source: null,
         urlMatcher: '/channels/0/messages/pins/1',
@@ -704,7 +705,7 @@ void main() {
         check: (_) {},
       ),
       EndpointTest<MessageManager, void, void>(
-        name: 'unpinMessage',
+        name: 'unpin',
         method: 'delete',
         source: null,
         urlMatcher: '/channels/0/messages/pins/1',
