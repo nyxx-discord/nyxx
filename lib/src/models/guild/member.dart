@@ -69,6 +69,8 @@ class Member extends PartialMember {
   final List<Snowflake> roleIds;
 
   /// The time at which this member joined the guild.
+  /// If the value is less than [Snowflake.epoch], it is a guest member.
+  // TODO(lexedia): next major release, this should be [DateTime?] to match the API.
   final DateTime joinedAt;
 
   /// The time at which this member started boosting the guild.

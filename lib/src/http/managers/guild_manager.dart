@@ -137,6 +137,7 @@ class GuildManager extends Manager<Guild> {
     'VERIFIED': GuildFeatures.verified,
     'VIP_REGIONS': GuildFeatures.vipRegions,
     'WELCOME_SCREEN_ENABLED': GuildFeatures.welcomeScreenEnabled,
+    'GUESTS_ENABLED': GuildFeatures.guestsEnabled,
   };
 
   static final Map<Flag<GuildFeatures>, String> _guildFeatureToName = {

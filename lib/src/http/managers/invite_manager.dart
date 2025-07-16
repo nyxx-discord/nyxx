@@ -42,6 +42,7 @@ class InviteManager {
       expiresAt: maybeParse(raw['expires_at'], DateTime.parse),
       // Don't use a tearoff so we don't evaluate `guild!.id` unless guild_scheduled_event is set.
       guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], (Map<String, Object?> raw) => client.guilds[guild!.id].scheduledEvents.parse(raw)),
+      flags: maybeParse(raw['flags'], GuildInviteFlags.new)
     );
   }
 
@@ -62,6 +63,7 @@ class InviteManager {
       approximateMemberCount: invite.approximateMemberCount,
       expiresAt: invite.expiresAt,
       guildScheduledEvent: invite.guildScheduledEvent,
+      flags: invite.flags,
       uses: raw['uses'] as int,
       maxUses: raw['max_uses'] as int,
       maxAge: Duration(seconds: raw['max_age'] as int),
