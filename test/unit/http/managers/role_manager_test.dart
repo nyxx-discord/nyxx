@@ -8,6 +8,11 @@ final sampleRole = {
   "id": "1",
   "name": "WE DEM BOYZZ!!!!!!",
   "color": 3447003,
+  "colors": {
+    "primary_color": 3447003,
+    "secondary_color": null,
+    "tertiary_color": null
+  },
   "hoist": true,
   "icon": "cf3ced8600b777c9486c6d8d84fb4327",
   "unicode_emoji": null,
@@ -21,6 +26,7 @@ final sampleRole = {
 void checkRole(Role role) {
   expect(role.id, equals(Snowflake(1)));
   expect(role.name, equals('WE DEM BOYZZ!!!!!!'));
+  // ignore: deprecated_member_use_from_same_package
   expect(role.color, equals(DiscordColor(3447003)));
   expect(role.isHoisted, isTrue);
   expect(role.iconHash, equals('cf3ced8600b777c9486c6d8d84fb4327'));
@@ -29,6 +35,7 @@ void checkRole(Role role) {
   expect(role.permissions, equals(Permissions(66321471)));
   expect(role.isMentionable, isFalse);
   expect(role.tags, isNull);
+  expect(role.colors.primary, equals(DiscordColor(3447003)));
 }
 
 void main() {
