@@ -605,6 +605,9 @@ class GuildFeatures extends Flags<GuildFeatures> {
   /// The guild has enabled the welcome screen.
   static const welcomeScreenEnabled = Flag<GuildFeatures>.fromOffset(26);
 
+  /// The guild has access to guest invites.
+  static const guestsEnabled = Flag<GuildFeatures>.fromOffset(27);
+
   /// Create a new [GuildFeatures].
   const GuildFeatures(super.value);
 
@@ -688,6 +691,9 @@ class GuildFeatures extends Flags<GuildFeatures> {
 
   /// Whether this guild has the [raidAlertsDisabled] feature.
   bool get hasRaidAlertsDisabled => has(raidAlertsDisabled);
+
+  /// Whether this guild has the [guestsEnabled] feature.
+  bool get hasGuestsEnabled => has(guestsEnabled);
 }
 
 /// The MFA level required for moderators of a guild.

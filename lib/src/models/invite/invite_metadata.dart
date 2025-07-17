@@ -30,6 +30,7 @@ class InviteWithMetadata extends Invite {
     required super.approximatePresenceCount,
     required super.expiresAt,
     required super.guildScheduledEvent,
+    required super.flags,
     required this.uses,
     required this.maxUses,
     required this.maxAge,

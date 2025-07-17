@@ -33,7 +33,7 @@ class MemberManager extends Manager<Member> {
       avatarHash: raw['avatar'] as String?,
       bannerHash: raw['banner'] as String?,
       roleIds: parseMany(raw['roles'] as List, Snowflake.parse),
-      joinedAt: DateTime.parse(raw['joined_at'] as String),
+      joinedAt: maybeParse(raw['joined_at'], DateTime.parse) ?? Snowflake.epoch.subtract(const Duration(days: 1)),
       premiumSince: maybeParse(raw['premium_since'], DateTime.parse),
       isDeaf: raw['deaf'] as bool?,
       isMute: raw['mute'] as bool?,
