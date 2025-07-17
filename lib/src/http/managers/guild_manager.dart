@@ -106,6 +106,7 @@ class GuildManager extends Manager<Guild> {
       features: parseGuildFeatures(raw['features'] as List),
       approximateMemberCount: raw['approximate_member_count'] as int?,
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
+      bannerHash: raw['banner'] as String?,
     );
   }
 
@@ -137,6 +138,7 @@ class GuildManager extends Manager<Guild> {
     'VERIFIED': GuildFeatures.verified,
     'VIP_REGIONS': GuildFeatures.vipRegions,
     'WELCOME_SCREEN_ENABLED': GuildFeatures.welcomeScreenEnabled,
+    'GUESTS_ENABLED': GuildFeatures.guestsEnabled,
   };
 
   static final Map<Flag<GuildFeatures>, String> _guildFeatureToName = {
