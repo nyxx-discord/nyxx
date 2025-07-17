@@ -59,9 +59,9 @@ class RoleManager extends Manager<Role> {
   /// Parse [RoleColors] from [raw].
   RoleColors parseRoleColors(Map<String, Object?> raw) {
     return RoleColors(
-      primary: DiscordColor(raw['primary'] as int),
-      secondary: maybeParse(raw['secondary'], DiscordColor.new),
-      tertiary: maybeParse(raw['tertiary'], DiscordColor.new),
+      primary: DiscordColor(raw['primary_color'] as int),
+      secondary: maybeParse(raw['secondary_color'], DiscordColor.new),
+      tertiary: maybeParse(raw['tertiary_color'], DiscordColor.new),
     );
   }
 
