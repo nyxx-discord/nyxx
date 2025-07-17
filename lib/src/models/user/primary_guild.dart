@@ -20,6 +20,7 @@ class UserPrimaryGuild with ToStringHelper {
   /// The server tag badge hash.
   final String badgeHash;
 
+  /// @nodoc
   UserPrimaryGuild({required this.identityGuildId, required this.badgeHash, required this.isIdentityEnabled, required this.tag, required this.manager});
 
   /// The guild of this user's primary guild.
