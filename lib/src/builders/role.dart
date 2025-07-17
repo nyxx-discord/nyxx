@@ -6,12 +6,32 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+class RoleColorsBuilder extends Builder<RoleColors> {
+  DiscordColor primary;
+
+  DiscordColor? secondary;
+
+  DiscordColor? tertiary;
+
+  RoleColorsBuilder({
+    required this.primary,
+    this.secondary,
+    this.tertiary,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        'primary_color': primary.value,
+        if (secondary != null) 'secondary_color': secondary!.value,
+        if (tertiary != null) 'tertiary_color': tertiary!.value,
+      };
+}
+
+// TODO(lexedia): Remove color.
 class RoleBuilder extends CreateBuilder<Role> {
   String? name;
 
   Flags<Permissions>? permissions;
-
-  DiscordColor? color;
 
   bool? isHoisted;
 
@@ -21,25 +41,46 @@ class RoleBuilder extends CreateBuilder<Role> {
 
   bool? isMentionable;
 
+  RoleColorsBuilder? colors;
+
   RoleBuilder({
     this.name,
     this.permissions,
-    this.color,
+    @Deprecated('Use `colors.primary` instead') DiscordColor? color,
     this.isHoisted,
     this.icon,
     this.unicodeEmoji,
     this.isMentionable,
-  });
+    this.colors,
+  }) {
+    if (color != null) {
+      assert(colors == null, 'Cannot set color if colors is non-null');
+      colors = RoleColorsBuilder(primary: color);
+    }
+  }
+
+  @Deprecated('Use `colors.primary` instead.')
+  DiscordColor? get color => colors?.primary;
+
+  @Deprecated('Use `colors.primary` instead.')
+  set color(DiscordColor? color) {
+    if (color != null) {
+      assert(colors == null, 'Cannot set color if colors is non-null');
+      colors = RoleColorsBuilder(primary: color);
+    } else {
+      colors = null;
+    }
+  }
 
   @override
   Map<String, Object?> build() => {
         if (name != null) 'name': name,
         if (permissions != null) 'permissions': permissions!.value.toString(),
-        if (color != null) 'color': color!.value,
         if (isHoisted != null) 'hoist': isHoisted,
         if (icon != null) 'icon': icon!.buildDataString(),
         if (unicodeEmoji != null) 'unicode_emoji': unicodeEmoji,
         if (isMentionable != null) 'mentionable': isMentionable,
+        if (colors != null) 'colors': colors!.build(),
       };
 }
 
@@ -48,8 +89,6 @@ class RoleUpdateBuilder extends UpdateBuilder<Role> {
 
   Flags<Permissions>? permissions;
 
-  DiscordColor? color;
-
   bool? isHoisted;
 
   ImageBuilder? icon;
@@ -58,24 +97,45 @@ class RoleUpdateBuilder extends UpdateBuilder<Role> {
 
   bool? isMentionable;
 
+  RoleColorsBuilder? colors;
+
   RoleUpdateBuilder({
     this.name,
     this.permissions,
-    this.color,
+    @Deprecated('Use `colors.primary` instead.') DiscordColor? color,
     this.isHoisted,
     this.icon = sentinelImageBuilder,
     this.unicodeEmoji = sentinelString,
     this.isMentionable,
-  });
+    this.colors,
+  }) {
+    if (color != null) {
+      assert(colors == null, 'Cannot set color if colors is non-null');
+      colors = RoleColorsBuilder(primary: color);
+    }
+  }
+
+  @Deprecated('Use `colors.primary` instead.')
+  DiscordColor? get color => colors?.primary;
+
+  @Deprecated('Use `colors.primary` instead.')
+  set color(DiscordColor? color) {
+    if (color != null) {
+      assert(colors == null, 'Cannot set color if colors is non-null');
+      colors = RoleColorsBuilder(primary: color);
+    } else {
+      colors = null;
+    }
+  }
 
   @override
   Map<String, Object?> build() => {
         if (name != null) 'name': name,
         if (permissions != null) 'permissions': permissions!.value.toString(),
-        if (color != null) 'color': color!.value,
         if (isHoisted != null) 'hoist': isHoisted,
         if (!identical(icon, sentinelImageBuilder)) 'icon': icon?.buildDataString(),
         if (!identical(unicodeEmoji, sentinelString)) 'unicode_emoji': unicodeEmoji,
         if (isMentionable != null) 'mentionable': isMentionable,
+        if (colors != null) 'colors': colors!.build(),
       };
 }
