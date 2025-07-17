@@ -19,6 +19,16 @@ final sampleUser = {
   "accent_color": 16711680,
   "premium_type": 1,
   "public_flags": 64,
+    "avatar_decoration_data": {
+    "sku_id": "1144058844004233369",
+    "asset": "a_fed43ab12698df65902ba06727e20c0e"
+  },
+  "primary_guild": {
+    "identity_guild_id": "80351110224678912",
+    "identity_enabled": true,
+    "tag": "CUTE",
+    "badge": "0fcf9a436df1a4b0de5644d3d42188e2"
+  }
 };
 
 void checkSampleUser(User user) {
@@ -36,6 +46,12 @@ void checkSampleUser(User user) {
   expect(user.flags, equals(UserFlags(64)));
   expect(user.nitroType, equals(NitroType.classic));
   expect(user.publicFlags, equals(UserFlags(64)));
+  expect(user.avatarDecorationHash, equals('a_fed43ab12698df65902ba06727e20c0e'));
+  expect(user.avatarDecorationData!.skuId, equals(Snowflake(1144058844004233369)));
+  expect(user.primaryGuild!.identityGuildId, equals(Snowflake(80351110224678912)));
+  expect(user.primaryGuild!.isIdentityEnabled, isTrue);
+  expect(user.primaryGuild!.tag, equals('CUTE'));
+  expect(user.primaryGuild!.badgeHash, equals('0fcf9a436df1a4b0de5644d3d42188e2'));
 }
 
 final sampleConnection = {
