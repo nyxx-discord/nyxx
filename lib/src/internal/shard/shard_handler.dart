@@ -172,12 +172,12 @@ class ShardRunner implements Disposable {
       }
 
       execute(ShardMessage(reconnecting ? ShardToManager.reconnected : ShardToManager.connected, seq: seq));
-    } on WebSocketException catch (err) {
-      execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': err.message, 'shouldReconnect': true}));
-    } on SocketException catch (err) {
-      execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': err.message, 'shouldReconnect': true}));
     } catch (err) {
-      execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': 'Unhanded exception $err'}));
+      if (err is IOException || err is OSError) {
+        execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': err.toString(), 'shouldReconnect': true}));
+      } else {
+        execute(ShardMessage(ShardToManager.error, seq: seq, data: {'message': 'Unhanded exception $err'}));
+      }
     }
 
     connecting = false;

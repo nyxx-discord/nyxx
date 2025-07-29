@@ -1,3 +1,8 @@
+## 5.1.2
+__29.07.2025__
+
+- feat: Retry connections more often for flaky internet.
+
 ## 5.1.1
 __11.08.2023__
 

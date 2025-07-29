@@ -1,5 +1,5 @@
 name: nyxx
-version: 5.1.1
+version: 5.1.2
 description: A Discord library for Dart. Simple, robust framework for creating discord bots for Dart language.
 homepage: https://github.com/nyxx-discord/nyxx
 repository: https://github.com/nyxx-discord/nyxx
@@ -7,7 +7,7 @@ documentation: https://nyxx.l7ssha.xyz
 issue_tracker: https://github.com/nyxx-discord/nyxx/issues
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
+  sdk: ">=2.17.0 <4.0.0"
 
 dependencies:
   http: ^0.13.3
