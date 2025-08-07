@@ -29,6 +29,7 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   static const file = MessageComponentType(13);
   static const separator = MessageComponentType(14);
   static const container = MessageComponentType(17);
+  static const label = MessageComponentType(18);
 
   /// @nodoc
   const MessageComponentType(super.value);
@@ -213,6 +214,11 @@ class SelectMenuComponent extends MessageComponent {
   /// Whether this component is disabled.
   final bool? isDisabled;
 
+  /// Whether this component is required when in a modal.
+  ///
+  /// Only applicable to select menus with type [MessageComponentType.stringSelect]
+  final bool? isRequired;
+
   /// Create a new [SelectMenuComponent].
   /// @nodoc
   SelectMenuComponent({
@@ -226,6 +232,7 @@ class SelectMenuComponent extends MessageComponent {
     required this.maxValues,
     required this.isDisabled,
     required super.id,
+    required this.isRequired,
   });
 }
 
@@ -295,6 +302,7 @@ class TextInputComponent extends MessageComponent {
   final TextInputStyle? style;
 
   /// This component's label.
+  @Deprecated('Use LabelComponent instead')
   final String? label;
 
   /// The minimum number of characters the user must input.
@@ -475,4 +483,27 @@ class ContainerComponent extends MessageComponent {
 
   /// @nodoc
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
+}
+
+/// A label that can be attached to a component in a modal.
+class LabelComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.label;
+
+  /// The label attached to the component.
+  final String label;
+
+  /// An optional additional description.
+  final String? description;
+
+  /// The labeled component.
+  final MessageComponent component;
+
+  /// @nodoc
+  LabelComponent({
+    required super.id,
+    required this.label,
+    required this.description,
+    required this.component,
+  });
 }

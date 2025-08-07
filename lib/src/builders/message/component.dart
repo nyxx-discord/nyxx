@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/builder.dart';
+import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/discord_color.dart';
@@ -147,6 +148,8 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
 
   bool? isDisabled;
 
+  bool? isRequired;
+
   SelectMenuBuilder({
     required super.type,
     required this.customId,
@@ -168,6 +171,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.maxValues,
     this.isDisabled,
     super.id,
+    this.isRequired,
   }) : super(type: MessageComponentType.stringSelect);
 
   SelectMenuBuilder.userSelect({
@@ -222,6 +226,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
         if (minValues != null) 'min_values': minValues,
         if (maxValues != null) 'max_values': maxValues,
         if (isDisabled != null) 'disabled': isDisabled,
+        if (isRequired != null) 'required': isRequired,
       };
 }
 
@@ -287,6 +292,8 @@ class TextInputBuilder extends MessageComponentBuilder<TextInputComponent> {
 
   TextInputStyle style;
 
+  @Deprecated('Use Label components instead')
+  // TODO(abitofevrything) This should be nullable.
   String label;
 
   int? minLength;
@@ -302,7 +309,7 @@ class TextInputBuilder extends MessageComponentBuilder<TextInputComponent> {
   TextInputBuilder({
     required this.customId,
     required this.style,
-    required this.label,
+    this.label = sentinelString,
     this.minLength,
     this.maxLength,
     this.isRequired,
@@ -316,7 +323,8 @@ class TextInputBuilder extends MessageComponentBuilder<TextInputComponent> {
         ...super.build(),
         'custom_id': customId,
         'style': style.value,
-        'label': label,
+        // ignore: deprecated_member_use_from_same_package
+        if (!identical(label, sentinelString)) 'label': label,
         if (minLength != null) 'min_length': minLength,
         if (maxLength != null) 'max_length': maxLength,
         if (isRequired != null) 'required': isRequired,
@@ -453,5 +461,28 @@ class ContainerComponentBuilder extends MessageComponentBuilder<ContainerCompone
         if (accentColor != null) 'accent_color': accentColor!.value,
         if (isSpoiler != null) 'spoiler': isSpoiler,
         'components': components.map((e) => e.build()).toList(),
+      };
+}
+
+class LabelComponentBuilder extends MessageComponentBuilder<LabelComponent> {
+  String label;
+
+  String? description;
+
+  MessageComponentBuilder component;
+
+  LabelComponentBuilder({
+    required super.type,
+    required this.label,
+    this.description,
+    required this.component,
+  });
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'label': label,
+        if (description != null) 'description': description,
+        'component': component.build(),
       };
 }

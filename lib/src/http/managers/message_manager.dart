@@ -273,6 +273,7 @@ class MessageManager extends Manager<Message> {
       MessageComponentType.file => parseFileComponent(raw),
       MessageComponentType.separator => parseSeparatorComponent(raw),
       MessageComponentType.container => parseContainerComponent(raw),
+      MessageComponentType.label => parseLabelComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
@@ -363,6 +364,7 @@ class MessageManager extends Manager<Message> {
       minValues: raw['min_values'] as int?,
       maxValues: raw['max_values'] as int?,
       isDisabled: raw['disabled'] as bool?,
+      isRequired: raw['required'] as bool?,
     );
   }
 
@@ -414,6 +416,15 @@ class MessageManager extends Manager<Message> {
     return SelectMenuDefaultValue(
       id: Snowflake.parse(raw['id']!),
       type: SelectMenuDefaultValueType(raw['type'] as String),
+    );
+  }
+
+  LabelComponent parseLabelComponent(Map<String, Object?> raw) {
+    return LabelComponent(
+      id: raw['id'] as int,
+      label: raw['label'] as String,
+      description: raw['description'] as String?,
+      component: parseMessageComponent(raw['component'] as Map<String, Object?>),
     );
   }
 
