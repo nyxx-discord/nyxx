@@ -472,11 +472,10 @@ class LabelComponentBuilder extends MessageComponentBuilder<LabelComponent> {
   MessageComponentBuilder component;
 
   LabelComponentBuilder({
-    required super.type,
     required this.label,
     this.description,
     required this.component,
-  });
+  }) : super(type: MessageComponentType.label);
 
   @override
   Map<String, Object?> build() => {
