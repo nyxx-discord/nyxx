@@ -212,6 +212,7 @@ export 'src/models/message/component.dart'
         SelectMenuOption,
         SelectMenuDefaultValue,
         SelectMenuDefaultValueType,
+        // ignore: deprecated_member_use_from_same_package
         TextInputComponent,
         ButtonStyle,
         MessageComponentType,
@@ -227,7 +228,10 @@ export 'src/models/message/component.dart'
         TextDisplayComponent,
         ThumbnailComponent,
         UnfurledMediaItem,
-        LabelComponent;
+        SubmittedComponent,
+        SubmittedLabelComponent,
+        SubmittedSelectMenuComponent,
+        SubmittedTextInputComponent;
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;

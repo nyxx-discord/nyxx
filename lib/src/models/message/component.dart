@@ -291,33 +291,42 @@ class SelectMenuOption with ToStringHelper {
 }
 
 /// A text field in a modal.
-class TextInputComponent extends MessageComponent {
+@Deprecated('Use SubmittedTextInputComponent instead. The fields on this class are never populated.')
+class TextInputComponent extends MessageComponent implements SubmittedTextInputComponent {
   @override
   MessageComponentType get type => MessageComponentType.textInput;
 
   /// This component's custom ID.
+  @override
   final String customId;
 
   /// The style of this [TextInputComponent].
+  @Deprecated('This field is never populated.')
   final TextInputStyle? style;
 
   /// This component's label.
-  @Deprecated('Use LabelComponent instead')
+  @Deprecated('This field is never populated.')
   final String? label;
 
   /// The minimum number of characters the user must input.
+  @Deprecated('This field is never populated.')
   final int? minLength;
 
   /// The maximum number of characters the user can input.
+  @Deprecated('This field is never populated.')
   final int? maxLength;
 
   /// Whether this component requires input.
+  @Deprecated('This field is never populated.')
   final bool? isRequired;
 
   /// The text contained in this component.
+  @Deprecated('This field is never populated.')
+  @override
   final String? value;
 
   /// Placeholder text shown when this component is empty.
+  @Deprecated('This field is never populated.')
   final String? placeholder;
 
   /// Create a new [TextInputComponent].
@@ -335,7 +344,7 @@ class TextInputComponent extends MessageComponent {
   });
 }
 
-/// The type of a [TextInputComponent].
+/// The type of a [SubmittedTextInputComponent].
 final class TextInputStyle extends EnumLike<int, TextInputStyle> {
   static const short = TextInputStyle(1);
   static const paragraph = TextInputStyle(2);
@@ -348,7 +357,7 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
 }
 
 /// An unknown component.
-class UnknownComponent extends MessageComponent {
+class UnknownComponent extends MessageComponent implements SubmittedComponent {
   @override
   final MessageComponentType type;
 
@@ -485,25 +494,51 @@ class ContainerComponent extends MessageComponent {
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
 
-/// A label that can be attached to a component in a modal.
-class LabelComponent extends MessageComponent {
+abstract class SubmittedComponent extends MessageComponent {
+  /// @nodoc
+  SubmittedComponent({required super.id});
+}
+
+class SubmittedActionRowComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.actionRow;
+
+  final List<SubmittedComponent> components;
+
+  /// @nodoc
+  SubmittedActionRowComponent({required this.components, required super.id});
+}
+
+class SubmittedTextInputComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.textInput;
+
+  final String customId;
+
+  final String? value;
+
+  /// @nodoc
+  SubmittedTextInputComponent({required super.id, required this.customId, required this.value});
+}
+
+class SubmittedLabelComponent extends SubmittedComponent {
   @override
   MessageComponentType get type => MessageComponentType.label;
 
-  /// The label attached to the component.
-  final String label;
-
-  /// An optional additional description.
-  final String? description;
-
-  /// The labeled component.
-  final MessageComponent component;
+  final SubmittedComponent component;
 
   /// @nodoc
-  LabelComponent({
-    required super.id,
-    required this.label,
-    required this.description,
-    required this.component,
-  });
+  SubmittedLabelComponent({required super.id, required this.component});
+}
+
+class SubmittedSelectMenuComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.stringSelect;
+
+  final String customId;
+
+  final List<String> values;
+
+  /// @nodoc
+  SubmittedSelectMenuComponent({required super.id, required this.customId, required this.values});
 }

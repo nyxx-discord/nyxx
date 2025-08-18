@@ -46,6 +46,7 @@ class PartialApplication with ToStringHelper {
   Future<List<ApplicationRoleConnectionMetadata>> updateRoleConnectionMetadata() => manager.updateApplicationRoleConnectionMetadata(id);
 
   /// List this application's SKUs.
+  @Deprecated('Use skus.list() instead')
   Future<List<Sku>> listSkus() => manager.listSkus(id);
 }
 

@@ -259,7 +259,6 @@ class MessageManager extends Manager<Message> {
     return switch (type) {
       MessageComponentType.actionRow => parseActionRowComponent(raw),
       MessageComponentType.button => parseButtonComponent(raw),
-      MessageComponentType.textInput => parseTextInputComponent(raw),
       MessageComponentType.stringSelect ||
       MessageComponentType.userSelect ||
       MessageComponentType.roleSelect ||
@@ -273,7 +272,6 @@ class MessageManager extends Manager<Message> {
       MessageComponentType.file => parseFileComponent(raw),
       MessageComponentType.separator => parseSeparatorComponent(raw),
       MessageComponentType.container => parseContainerComponent(raw),
-      MessageComponentType.label => parseLabelComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
@@ -368,6 +366,7 @@ class MessageManager extends Manager<Message> {
     );
   }
 
+  @Deprecated('Use parseSubmittedTextInputComponent instead.')
   TextInputComponent parseTextInputComponent(Map<String, Object?> raw) {
     return TextInputComponent(
       id: raw['id'] as int,
@@ -419,12 +418,45 @@ class MessageManager extends Manager<Message> {
     );
   }
 
-  LabelComponent parseLabelComponent(Map<String, Object?> raw) {
-    return LabelComponent(
+  SubmittedComponent parseSubmittedComponent(Map<String, Object?> raw) {
+    final type = MessageComponentType(raw['type'] as int);
+
+    return switch (type) {
+      MessageComponentType.actionRow => parseSubmittedActionRowComponent(raw),
+      MessageComponentType.textInput => parseSubmittedTextInputComponent(raw),
+      MessageComponentType.label => parseSubmittedLabelComponent(raw),
+      MessageComponentType.stringSelect => parseSubmittedSelectMenuComponent(raw),
+      _ => UnknownComponent(type: type, id: raw['id'] as int),
+    };
+  }
+
+  SubmittedActionRowComponent parseSubmittedActionRowComponent(Map<String, Object?> raw) {
+    return SubmittedActionRowComponent(
       id: raw['id'] as int,
-      label: raw['label'] as String,
-      description: raw['description'] as String?,
-      component: parseMessageComponent(raw['component'] as Map<String, Object?>),
+      components: parseMany(raw['components'] as List, parseSubmittedComponent),
+    );
+  }
+
+  SubmittedTextInputComponent parseSubmittedTextInputComponent(Map<String, Object?> raw) {
+    return SubmittedTextInputComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      value: raw['value'] as String,
+    );
+  }
+
+  SubmittedLabelComponent parseSubmittedLabelComponent(Map<String, Object?> raw) {
+    return SubmittedLabelComponent(
+      id: raw['id'] as int,
+      component: parseSubmittedComponent(raw['component'] as Map<String, Object?>),
+    );
+  }
+
+  SubmittedSelectMenuComponent parseSubmittedSelectMenuComponent(Map<String, Object?> raw) {
+    return SubmittedSelectMenuComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      values: parseMany(raw['values'] as List),
     );
   }
 

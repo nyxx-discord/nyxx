@@ -287,7 +287,7 @@ class DefaultValue<T extends SnowflakeEntity<T>> extends CreateBuilder<DefaultVa
       };
 }
 
-class TextInputBuilder extends MessageComponentBuilder<TextInputComponent> {
+class TextInputBuilder extends MessageComponentBuilder<SubmittedTextInputComponent> {
   String customId;
 
   TextInputStyle style;
@@ -464,7 +464,7 @@ class ContainerComponentBuilder extends MessageComponentBuilder<ContainerCompone
       };
 }
 
-class LabelComponentBuilder extends MessageComponentBuilder<LabelComponent> {
+class LabelComponentBuilder extends MessageComponentBuilder<SubmittedLabelComponent> {
   String label;
 
   String? description;

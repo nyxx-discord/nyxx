@@ -288,7 +288,7 @@ class InteractionManager {
   ModalSubmitInteractionData parseModalSubmitInteractionData(Map<String, Object?> raw) {
     return ModalSubmitInteractionData(
       customId: raw['custom_id'] as String,
-      components: parseMany(raw['components'] as List, (client.channels[Snowflake.zero] as PartialTextChannel).messages.parseMessageComponent),
+      components: parseMany(raw['components'] as List, (client.channels[Snowflake.zero] as PartialTextChannel).messages.parseSubmittedComponent),
     );
   }
 
