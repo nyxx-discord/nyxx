@@ -1,3 +1,6 @@
+/// @docImport 'package:nyxx/nyxx.dart';
+library;
+
 import 'dart:typed_data';
 
 import 'package:http/http.dart';
@@ -29,6 +32,7 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   static const file = MessageComponentType(13);
   static const separator = MessageComponentType(14);
   static const container = MessageComponentType(17);
+  static const label = MessageComponentType(18);
 
   /// @nodoc
   const MessageComponentType(super.value);
@@ -213,6 +217,11 @@ class SelectMenuComponent extends MessageComponent {
   /// Whether this component is disabled.
   final bool? isDisabled;
 
+  /// Whether this component is required when in a modal.
+  ///
+  /// Only applicable to select menus with type [MessageComponentType.stringSelect]
+  final bool? isRequired;
+
   /// Create a new [SelectMenuComponent].
   /// @nodoc
   SelectMenuComponent({
@@ -226,6 +235,7 @@ class SelectMenuComponent extends MessageComponent {
     required this.maxValues,
     required this.isDisabled,
     required super.id,
+    required this.isRequired,
   });
 }
 
@@ -284,32 +294,42 @@ class SelectMenuOption with ToStringHelper {
 }
 
 /// A text field in a modal.
-class TextInputComponent extends MessageComponent {
+@Deprecated('Use SubmittedTextInputComponent instead. The fields on this class are never populated.')
+class TextInputComponent extends MessageComponent implements SubmittedTextInputComponent {
   @override
   MessageComponentType get type => MessageComponentType.textInput;
 
   /// This component's custom ID.
+  @override
   final String customId;
 
   /// The style of this [TextInputComponent].
+  @Deprecated('This field is never populated.')
   final TextInputStyle? style;
 
   /// This component's label.
+  @Deprecated('This field is never populated.')
   final String? label;
 
   /// The minimum number of characters the user must input.
+  @Deprecated('This field is never populated.')
   final int? minLength;
 
   /// The maximum number of characters the user can input.
+  @Deprecated('This field is never populated.')
   final int? maxLength;
 
   /// Whether this component requires input.
+  @Deprecated('This field is never populated.')
   final bool? isRequired;
 
   /// The text contained in this component.
+  @Deprecated('This field is never populated.')
+  @override
   final String? value;
 
   /// Placeholder text shown when this component is empty.
+  @Deprecated('This field is never populated.')
   final String? placeholder;
 
   /// Create a new [TextInputComponent].
@@ -327,7 +347,7 @@ class TextInputComponent extends MessageComponent {
   });
 }
 
-/// The type of a [TextInputComponent].
+/// The type of a [SubmittedTextInputComponent].
 final class TextInputStyle extends EnumLike<int, TextInputStyle> {
   static const short = TextInputStyle(1);
   static const paragraph = TextInputStyle(2);
@@ -340,7 +360,7 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
 }
 
 /// An unknown component.
-class UnknownComponent extends MessageComponent {
+class UnknownComponent extends MessageComponent implements SubmittedComponent {
   @override
   final MessageComponentType type;
 
@@ -475,4 +495,64 @@ class ContainerComponent extends MessageComponent {
 
   /// @nodoc
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
+}
+
+/// A component received as part of an [Interaction].
+abstract class SubmittedComponent extends MessageComponent {
+  /// @nodoc
+  SubmittedComponent({required super.id});
+}
+
+/// An [ActionRowComponent] received in an [Interaction].
+class SubmittedActionRowComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.actionRow;
+
+  /// The components submitted in this action row.
+  final List<SubmittedComponent> components;
+
+  /// @nodoc
+  SubmittedActionRowComponent({required this.components, required super.id});
+}
+
+/// A text input received in an [Interaction].
+class SubmittedTextInputComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.textInput;
+
+  /// The custom ID of this text input.
+  final String customId;
+
+  /// The value submitted by the user, or `null` if no value was submitted.
+  final String? value;
+
+  /// @nodoc
+  SubmittedTextInputComponent({required super.id, required this.customId, required this.value});
+}
+
+/// A label received in an [Interaction].
+class SubmittedLabelComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.label;
+
+  /// The component in this label that was submitted.
+  final SubmittedComponent component;
+
+  /// @nodoc
+  SubmittedLabelComponent({required super.id, required this.component});
+}
+
+/// A [SelectMenuComponent] received in an [Interaction].
+class SubmittedSelectMenuComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.stringSelect;
+
+  /// The custom ID of this select menu.
+  final String customId;
+
+  /// The values selected by the user.
+  final List<String> values;
+
+  /// @nodoc
+  SubmittedSelectMenuComponent({required super.id, required this.customId, required this.values});
 }

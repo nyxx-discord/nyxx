@@ -588,7 +588,7 @@ class ModalSubmitInteractionData with ToStringHelper {
   final String customId;
 
   /// A list of components in the modal.
-  final List<MessageComponent> components;
+  final List<SubmittedComponent> components;
 
   /// {@macro modal_submit_interaction_data}
   /// @nodoc
