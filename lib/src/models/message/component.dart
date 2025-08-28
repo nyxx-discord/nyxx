@@ -11,7 +11,10 @@ import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/emoji.dart';
+import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
@@ -544,8 +547,12 @@ class SubmittedLabelComponent extends SubmittedComponent {
 
 /// A [SelectMenuComponent] received in an [Interaction].
 class SubmittedSelectMenuComponent extends SubmittedComponent {
+  final MessageManager manager;
+  // For the [roles] getter.
+  final Snowflake? _guildId;
+
   @override
-  MessageComponentType get type => MessageComponentType.stringSelect;
+  final MessageComponentType type;
 
   /// The custom ID of this select menu.
   final String customId;
@@ -554,5 +561,54 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
   final List<String> values;
 
   /// @nodoc
-  SubmittedSelectMenuComponent({required super.id, required this.customId, required this.values});
+  SubmittedSelectMenuComponent({
+    required this.manager,
+    Snowflake? guildId,
+    required this.type,
+    required super.id,
+    required this.customId,
+    required this.values,
+  }) : _guildId = guildId;
+
+  /// The selected users.
+  ///
+  /// Will be `null` if `type` is not [MessageComponentType.userSelect].
+  List<PartialUser>? get users => type != MessageComponentType.userSelect
+      ? null
+      : [
+          for (final id in values) manager.client.users[Snowflake.parse(id)],
+        ];
+
+  /// The selected members.
+  ///
+  /// Will be `null` if `type` is not [MessageComponentType.userSelect].
+  List<PartialMember>? get members => type != MessageComponentType.userSelect
+      ? null
+      : [
+          for (final id in values) manager.client.guilds[_guildId ?? Snowflake.zero].members[Snowflake.parse(id)],
+        ];
+
+  /// The selected roles.
+  ///
+  /// Will be `null` if `type` is not [MessageComponentType.roleSelect].
+  List<PartialRole>? get roles =>
+      type != MessageComponentType.userSelect ? null : [for (final id in values) manager.client.guilds[_guildId ?? Snowflake.zero].roles[Snowflake.parse(id)]];
+
+  /// The selected channels.
+  ///
+  /// Will be `null` if `type` is not [MessageComponentType.channelSelect].
+  List<PartialChannel>? get channels => type != MessageComponentType.channelSelect
+      ? null
+      : [
+          for (final id in values) manager.client.channels[Snowflake.parse(id)],
+        ];
+}
+
+/// A [TextDisplayComponent] received in an [Interaction].
+class SubmittedTextDisplayComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.textDisplay;
+
+  /// @nodoc
+  SubmittedTextDisplayComponent({required super.id});
 }
