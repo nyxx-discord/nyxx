@@ -591,8 +591,11 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
   /// The selected roles.
   ///
   /// Will be `null` if `type` is not [MessageComponentType.roleSelect].
-  List<PartialRole>? get roles =>
-      type != MessageComponentType.userSelect ? null : [for (final id in values) manager.client.guilds[_guildId ?? Snowflake.zero].roles[Snowflake.parse(id)]];
+  List<PartialRole>? get roles => type != MessageComponentType.roleSelect
+      ? null
+      : [
+          for (final id in values) manager.client.guilds[_guildId ?? Snowflake.zero].roles[Snowflake.parse(id)],
+        ];
 
   /// The selected channels.
   ///
