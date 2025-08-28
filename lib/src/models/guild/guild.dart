@@ -608,6 +608,9 @@ class GuildFeatures extends Flags<GuildFeatures> {
   /// The guild has access to guest invites.
   static const guestsEnabled = Flag<GuildFeatures>.fromOffset(27);
 
+  /// The guild guild is able to set gradient colors to roles.
+  static const enhancedRoleColors = Flag<GuildFeatures>.fromOffset(28);
+
   /// Create a new [GuildFeatures].
   const GuildFeatures(super.value);
 
@@ -694,6 +697,9 @@ class GuildFeatures extends Flags<GuildFeatures> {
 
   /// Whether this guild has the [guestsEnabled] feature.
   bool get hasGuestsEnabled => has(guestsEnabled);
+
+  /// Whether this guild has the [enhancedRoleColors] feature.
+  bool get hasEnhancedRoleColors => has(enhancedRoleColors);
 }
 
 /// The MFA level required for moderators of a guild.
