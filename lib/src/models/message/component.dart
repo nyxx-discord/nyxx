@@ -1,3 +1,6 @@
+/// @docImport 'package:nyxx/nyxx.dart';
+library;
+
 import 'dart:typed_data';
 
 import 'package:http/http.dart';
@@ -494,49 +497,60 @@ class ContainerComponent extends MessageComponent {
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
 
+/// A component received as part of an [Interaction].
 abstract class SubmittedComponent extends MessageComponent {
   /// @nodoc
   SubmittedComponent({required super.id});
 }
 
+/// An [ActionRowComponent] received in an [Interaction].
 class SubmittedActionRowComponent extends SubmittedComponent {
   @override
   MessageComponentType get type => MessageComponentType.actionRow;
 
+  /// The components submitted in this action row.
   final List<SubmittedComponent> components;
 
   /// @nodoc
   SubmittedActionRowComponent({required this.components, required super.id});
 }
 
+/// A text input received in an [Interaction].
 class SubmittedTextInputComponent extends SubmittedComponent {
   @override
   MessageComponentType get type => MessageComponentType.textInput;
 
+  /// The custom ID of this text input.
   final String customId;
 
+  /// The value submitted by the user, or `null` if no value was submitted.
   final String? value;
 
   /// @nodoc
   SubmittedTextInputComponent({required super.id, required this.customId, required this.value});
 }
 
+/// A label received in an [Interaction].
 class SubmittedLabelComponent extends SubmittedComponent {
   @override
   MessageComponentType get type => MessageComponentType.label;
 
+  /// The component in this label that was submitted.
   final SubmittedComponent component;
 
   /// @nodoc
   SubmittedLabelComponent({required super.id, required this.component});
 }
 
+/// A [SelectMenuComponent] received in an [Interaction].
 class SubmittedSelectMenuComponent extends SubmittedComponent {
   @override
   MessageComponentType get type => MessageComponentType.stringSelect;
 
+  /// The custom ID of this select menu.
   final String customId;
 
+  /// The values selected by the user.
   final List<String> values;
 
   /// @nodoc
