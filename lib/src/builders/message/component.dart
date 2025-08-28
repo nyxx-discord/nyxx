@@ -182,6 +182,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.maxValues,
     this.isDisabled,
     super.id,
+    this.isRequired,
   }) : super(type: MessageComponentType.userSelect);
 
   SelectMenuBuilder.roleSelect({
@@ -192,6 +193,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.maxValues,
     this.isDisabled,
     super.id,
+    this.isRequired,
   }) : super(type: MessageComponentType.roleSelect);
 
   SelectMenuBuilder.mentionableSelect({
@@ -203,6 +205,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.maxValues,
     this.isDisabled,
     super.id,
+    this.isRequired,
   }) : super(type: MessageComponentType.mentionableSelect);
 
   SelectMenuBuilder.channelSelect({
@@ -213,6 +216,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.maxValues,
     this.isDisabled,
     super.id,
+    this.isRequired,
   }) : super(type: MessageComponentType.channelSelect);
 
   @override

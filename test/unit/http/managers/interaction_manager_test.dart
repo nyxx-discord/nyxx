@@ -395,6 +395,286 @@ void checkModalSubmitInteraction(Interaction<dynamic> interaction) {
   expect(interaction.attachmentSizeLimit, equals(104857600));
 }
 
+final sampleModalSubmitInteraction2 = {
+  "version": 1,
+  "type": 5,
+  "token":
+      "aW50ZXJhY3Rpb246MTQxMDY2MDAxNTAwOTk1NTg0MTpqYTNZS3o5NzM1ajBCNFBieUJDUjA4NzhIak9PejlTZ0FodVpRM3Q2QVhEMXdtRWRXemZ3MDZUR01kVnJQaDY1ZzRKUFB3RmVGSFZ4WXA0cDBWczJNRnpWYmNGdW4wb094ZWpwR2lRSlBnakZtSDA3SkdMS2xXQ0MxNVoxd3R5Qg",
+  "member": {
+    "user": {
+      "username": "abitofevrything",
+      "public_flags": 128,
+      "primary_guild": null,
+      "id": "506759329068613643",
+      "global_name": "Mylo",
+      "display_name_styles": null,
+      "discriminator": "0",
+      "collectibles": null,
+      "clan": null,
+      "avatar_decoration_data": null,
+      "avatar": "b591ea8a9d057669ea2a6cd3ab450301"
+    },
+    "unusual_dm_activity_until": null,
+    "roles": ["1336784655155986432", "1403111146944467114", "1403115171127234704"],
+    "premium_since": null,
+    "permissions": "2222085186637376",
+    "pending": false,
+    "nick": null,
+    "mute": false,
+    "joined_at": "2024-12-15T21:11:08.816000+00:00",
+    "flags": 2,
+    "deaf": false,
+    "communication_disabled_until": null,
+    "collectibles": null,
+    "banner": null,
+    "avatar": null
+  },
+  "locale": "en-GB",
+  "id": "1410660015009955841",
+  "guild_locale": "en-US",
+  "guild_id": "1317206872763404478",
+  "guild": {
+    "locale": "en-US",
+    "id": "1317206872763404478",
+    "features": [
+      "ACTIVITY_FEED_DISABLED_BY_USER",
+      "AUTO_MODERATION",
+      "ANIMATED_BANNER",
+      "AUDIO_BITRATE_384_KBPS",
+      "STAGE_CHANNEL_VIEWERS_150",
+      "ROLE_ICONS",
+      "BANNER",
+      "ANIMATED_ICON",
+      "RAID_ALERTS_DISABLED",
+      "PIN_PERMISSION_MIGRATION_COMPLETE",
+      "AUDIO_BITRATE_128_KBPS",
+      "AUDIO_BITRATE_256_KBPS",
+      "VANITY_URL",
+      "MAX_FILE_SIZE_100_MB",
+      "STAGE_CHANNEL_VIEWERS_300",
+      "VIDEO_QUALITY_720_60FPS",
+      "MAX_FILE_SIZE_50_MB",
+      "VIDEO_QUALITY_1080_60FPS",
+      "INVITE_SPLASH",
+      "STAGE_CHANNEL_VIEWERS_50",
+      "GUILD_ONBOARDING_EVER_ENABLED",
+      "PREMIUM_TIER_3_OVERRIDE",
+      "TIERLESS_BOOSTING_SYSTEM_MESSAGE",
+      "GUILD_ONBOARDING_HAS_PROMPTS",
+      "NEWS",
+      "GUILD_ONBOARDING",
+      "COMMUNITY",
+      "VIDEO_BITRATE_ENHANCED"
+    ]
+  },
+  "entitlements": [],
+  "entitlement_sku_ids": [],
+  "data": {
+    "resolved": {
+      "users": {
+        "856780995629154305": {
+          "username": "lulalaby",
+          "public_flags": 4194560,
+          "primary_guild": {"tag": "RAWR", "identity_guild_id": "804032421678153819", "identity_enabled": true, "badge": "6245505dfa39c9fd91f02cda71c56d07"},
+          "id": "856780995629154305",
+          "global_name": "Lala",
+          "display_name_styles": null,
+          "discriminator": "0",
+          "collectibles": {
+            "nameplate": {
+              "sku_id": "1349849614257225760",
+              "palette": "violet",
+              "label": "COLLECTIBLES_NAMEPLATES_VENGEANCE_A11Y",
+              "expires_at": null,
+              "asset": "nameplates/nameplates/vengeance/"
+            }
+          },
+          "clan": {"tag": "RAWR", "identity_guild_id": "804032421678153819", "identity_enabled": true, "badge": "6245505dfa39c9fd91f02cda71c56d07"},
+          "avatar_decoration_data": {"sku_id": "1402472280642289775", "expires_at": null, "asset": "a_b9f89cd88eabf437777bf35f55e6126f"},
+          "avatar": "a_befab3a05e5f9b3695fe1f2971a3dc2e"
+        },
+        "506759329068613643": {
+          "username": "abitofevrything",
+          "public_flags": 128,
+          "primary_guild": null,
+          "id": "506759329068613643",
+          "global_name": "Mylo",
+          "display_name_styles": null,
+          "discriminator": "0",
+          "collectibles": null,
+          "clan": null,
+          "avatar_decoration_data": null,
+          "avatar": "b591ea8a9d057669ea2a6cd3ab450301"
+        }
+      },
+      "roles": {
+        "1403111187431948451": {
+          "unicode_emoji": null,
+          "position": 3,
+          "permissions": "0",
+          "name": "App / Bot Developer",
+          "mentionable": false,
+          "managed": false,
+          "id": "1403111187431948451",
+          "icon": "58e12b0cbfd099112c846a016b1e75d1",
+          "hoist": true,
+          "flags": 1,
+          "description": null,
+          "colors": {"tertiary_color": null, "secondary_color": null, "primary_color": 12420897},
+          "color": 12420897
+        }
+      },
+      "members": {
+        "856780995629154305": {
+          "unusual_dm_activity_until": null,
+          "roles": [
+            "1336784655155986432",
+            "1403111187431948451",
+            "1403111146944467114",
+            "1403115182523289680",
+            "1338186724504899696",
+            "1403115035416465458",
+            "1343357894275371028"
+          ],
+          "premium_since": null,
+          "permissions": "4503599627370495",
+          "pending": false,
+          "nick": "Dungeon Gremlin",
+          "joined_at": "2025-02-09T17:05:08.329000+00:00",
+          "flags": 10,
+          "communication_disabled_until": null,
+          "collectibles": null,
+          "banner": "a_aeb3580903b87f916dc2e674a5bb9bf7",
+          "avatar_decoration_data": {"sku_id": "1399543537032237066", "expires_at": null, "asset": "a_fbefe2b8f016d8dffa230e01f89aa8f2"},
+          "avatar": "a_35e7ece1531f3ffbdbfff4f3fb0051ac"
+        },
+        "506759329068613643": {
+          "unusual_dm_activity_until": null,
+          "roles": ["1336784655155986432", "1403111146944467114", "1403115171127234704"],
+          "premium_since": null,
+          "permissions": "2222085186637376",
+          "pending": false,
+          "nick": null,
+          "joined_at": "2024-12-15T21:11:08.816000+00:00",
+          "flags": 2,
+          "communication_disabled_until": null,
+          "collectibles": null,
+          "banner": null,
+          "avatar": null
+        }
+      },
+      "channels": {
+        "1317208024682725426": {
+          "type": 0,
+          "topic": "Library Tracking: <#1408615095650619392>",
+          "rate_limit_per_user": 0,
+          "position": 5,
+          "permissions": "2221535430823488",
+          "parent_id": "1364628788683608134",
+          "nsfw": false,
+          "name": "general",
+          "last_pin_timestamp": "2025-08-28T08:28:46.882000+00:00",
+          "last_message_id": "1410655060987219978",
+          "id": "1317208024682725426",
+          "guild_id": "1317206872763404478",
+          "flags": 0
+        }
+      }
+    },
+    "custom_id": "dgf",
+    "components": [
+      {"type": 10, "id": 1},
+      {
+        "type": 18,
+        "id": 2,
+        "component": {
+          "values": ["506759329068613643"],
+          "type": 5,
+          "id": 6,
+          "custom_id": "one"
+        }
+      },
+      {
+        "type": 18,
+        "id": 3,
+        "component": {
+          "values": ["1403111187431948451"],
+          "type": 6,
+          "id": 7,
+          "custom_id": "two"
+        }
+      },
+      {
+        "type": 18,
+        "id": 4,
+        "component": {
+          "values": ["856780995629154305"],
+          "type": 7,
+          "id": 8,
+          "custom_id": "three"
+        }
+      },
+      {
+        "type": 18,
+        "id": 5,
+        "component": {
+          "values": ["1317208024682725426"],
+          "type": 8,
+          "id": 9,
+          "custom_id": "four"
+        }
+      }
+    ]
+  },
+  "context": 0,
+  "channel_id": "1317207700261834803",
+  "channel": {
+    "type": 0,
+    "topic": null,
+    "rate_limit_per_user": 0,
+    "position": 12,
+    "permissions": "2222085186637376",
+    "parent_id": "1317206872763404479",
+    "nsfw": false,
+    "name": "playground-1",
+    "last_message_id": "1410406299618902016",
+    "id": "1317207700261834803",
+    "guild_id": "1317206872763404478",
+    "flags": 0
+  },
+  "authorizing_integration_owners": {"1": "506759329068613643", "0": "1317206872763404478"},
+  "attachment_size_limit": 104857600,
+  "application_id": "1033681843708510238",
+  "app_permissions": "2222085186637376"
+};
+
+void checkModalSubmitInteraction2(Interaction<dynamic> interaction) {
+  expect(interaction, isA<ModalSubmitInteraction>());
+  interaction as ModalSubmitInteraction;
+
+  expect(interaction.data.components[0], isA<SubmittedTextDisplayComponent>());
+  expect(interaction.data.components[1], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedSelectMenuComponent>());
+    expect(component.component.type, equals(MessageComponentType.userSelect));
+    return true;
+  });
+  expect(interaction.data.components[2], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedSelectMenuComponent>());
+    expect(component.component.type, equals(MessageComponentType.roleSelect));
+    return true;
+  });
+  expect(interaction.data.components[3], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedSelectMenuComponent>());
+    expect(component.component.type, equals(MessageComponentType.mentionableSelect));
+    return true;
+  });
+  expect(interaction.data.components[4], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedSelectMenuComponent>());
+    expect(component.component.type, equals(MessageComponentType.channelSelect));
+    return true;
+  });
+}
+
 void main() {
   group('InteractionManager', () {
     test('parse', () {
@@ -428,6 +708,13 @@ void main() {
         source: sampleModalSubmitInteraction,
         parse: (manager) => manager.parse,
         check: checkModalSubmitInteraction,
+      ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
+
+      ParsingTest<InteractionManager, Interaction<dynamic>, Map<String, Object?>>(
+        name: 'parse (4)',
+        source: sampleModalSubmitInteraction2,
+        parse: (manager) => manager.parse,
+        check: checkModalSubmitInteraction2,
       ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
     });
 
