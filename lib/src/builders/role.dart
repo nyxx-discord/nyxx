@@ -6,7 +6,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
-class RoleColorsBuilder extends Builder<RoleColors> {
+class RoleColorsBuilder extends CreateBuilder<RoleColors> {
   DiscordColor primary;
 
   DiscordColor? secondary;
@@ -110,7 +110,6 @@ class RoleUpdateBuilder extends UpdateBuilder<Role> {
     this.colors,
   }) {
     if (color != null) {
-      assert(colors == null, 'Cannot set color if colors is non-null');
       colors = RoleColorsBuilder(primary: color);
     }
   }
@@ -121,7 +120,6 @@ class RoleUpdateBuilder extends UpdateBuilder<Role> {
   @Deprecated('Use `colors.primary` instead.')
   set color(DiscordColor? color) {
     if (color != null) {
-      assert(colors == null, 'Cannot set color if colors is non-null');
       colors = RoleColorsBuilder(primary: color);
     } else {
       colors = null;
