@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template invite}
@@ -55,6 +56,9 @@ class Invite with ToStringHelper {
   /// The [ScheduledEvent] data, only included if [InviteManager.fetch] is called with `guildScheduledEvent` is set to a valid [Snowflake].
   final ScheduledEvent? guildScheduledEvent;
 
+  /// The flags for this invite.
+  final GuildInviteFlags? flags;
+
   /// {@macro invite}
   /// @nodoc
   Invite({
@@ -70,6 +74,7 @@ class Invite with ToStringHelper {
     required this.approximatePresenceCount,
     required this.expiresAt,
     required this.guildScheduledEvent,
+    required this.flags,
   });
 }
 
@@ -93,4 +98,16 @@ final class InviteType extends EnumLike<int, InviteType> {
 
   /// @nodoc
   const InviteType(super.value);
+}
+
+/// Flags for [Invite]s.
+class GuildInviteFlags extends Flags<GuildInviteFlags> {
+  /// The invite is a guest invite for a voice channel.
+  static const isGuestInvite = Flag<GuildInviteFlags>.fromOffset(1 << 0);
+
+  /// Whether this invite is a guest invite for a voice channel.
+  bool get hasGuestInvite => has(GuildInviteFlags.isGuestInvite);
+
+  /// @nodoc
+  const GuildInviteFlags(super.value);
 }

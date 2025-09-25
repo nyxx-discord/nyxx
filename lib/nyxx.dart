@@ -65,7 +65,8 @@ export 'src/builders/message/component.dart'
         SeparatorComponentBuilder,
         TextDisplayComponentBuilder,
         ThumbnailComponentBuilder,
-        UnfurledMediaItemBuilder;
+        UnfurledMediaItemBuilder,
+        LabelComponentBuilder;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
@@ -213,6 +214,7 @@ export 'src/models/message/component.dart'
         SelectMenuOption,
         SelectMenuDefaultValue,
         SelectMenuDefaultValueType,
+        // ignore: deprecated_member_use_from_same_package
         TextInputComponent,
         ButtonStyle,
         MessageComponentType,
@@ -227,7 +229,11 @@ export 'src/models/message/component.dart'
         SeparatorSpacingSize,
         TextDisplayComponent,
         ThumbnailComponent,
-        UnfurledMediaItem;
+        UnfurledMediaItem,
+        SubmittedComponent,
+        SubmittedLabelComponent,
+        SubmittedSelectMenuComponent,
+        SubmittedTextInputComponent;
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;

@@ -103,7 +103,7 @@ class ModalBuilder extends CreateBuilder<ModalBuilder> {
 
   String title;
 
-  List<ActionRowBuilder> components;
+  List<MessageComponentBuilder> components;
 
   ModalBuilder({required this.customId, required this.title, required this.components});
 

@@ -1,3 +1,11 @@
+## 6.8.0-dev.1
+__28.08.2025__
+
+- feat: Implement phase 1 modals.
+  - Add `LabelBuilder` and support for select menus in modals.
+  - Deprecate receiving `TextInputComponent`s.
+  - Receive `SubmittedComponent` subtypes in modal interactions.
+
 ## 6.7.0
 __30.05.20205__
 
