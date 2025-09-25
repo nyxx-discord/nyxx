@@ -65,7 +65,6 @@ class RoleBuilder extends CreateBuilder<Role> {
   @Deprecated('Use `colors.primary` instead.')
   set color(DiscordColor? color) {
     if (color != null) {
-      assert(colors == null, 'Cannot set color if colors is non-null');
       colors = RoleColorsBuilder(primary: color);
     } else {
       colors = null;
@@ -110,6 +109,7 @@ class RoleUpdateBuilder extends UpdateBuilder<Role> {
     this.colors,
   }) {
     if (color != null) {
+      assert(colors == null, 'Cannot set color if colors is non-null');
       colors = RoleColorsBuilder(primary: color);
     }
   }
