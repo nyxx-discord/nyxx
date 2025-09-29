@@ -24,11 +24,15 @@ class RoleManager extends Manager<Role> {
 
   @override
   Role parse(Map<String, Object?> raw) {
+    final colors = parseRoleColors(raw['colors'] as Map<String, Object?>);
+
     return Role(
       id: Snowflake.parse(raw['id']!),
       manager: this,
       name: raw['name'] as String,
-      color: DiscordColor(raw['color'] as int),
+      // Just in case discord seemingly stops sending this property. Surely they wouldn't do that, right? :clueless:
+      color: maybeParse(raw['color'], DiscordColor.new) ?? colors.primary,
+      colors: colors,
       isHoisted: raw['hoist'] as bool,
       iconHash: raw['icon'] as String?,
       unicodeEmoji: raw['unicode_emoji'] as String?,
@@ -49,6 +53,15 @@ class RoleManager extends Manager<Role> {
       subscriptionListingId: maybeParse(raw['subscription_listing_id'], Snowflake.parse),
       isAvailableForPurchase: raw.containsKey('available_for_purchase'),
       isLinkedRole: raw.containsKey('guild_connections'),
+    );
+  }
+
+  /// Parse [RoleColors] from [raw].
+  RoleColors parseRoleColors(Map<String, Object?> raw) {
+    return RoleColors(
+      primary: DiscordColor(raw['primary_color'] as int),
+      secondary: maybeParse(raw['secondary_color'], DiscordColor.new),
+      tertiary: maybeParse(raw['tertiary_color'], DiscordColor.new),
     );
   }
 

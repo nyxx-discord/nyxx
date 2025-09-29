@@ -157,6 +157,11 @@ final sampleGuild2 = {
       "permissions": "49794752",
       "position": 0,
       "color": 0,
+      'colors': {
+        'primary_color': 0,
+        'secondary_color': null,
+        'tertiary_color': null,
+      },
       "hoist": false,
       "managed": false,
       "mentionable": false,
@@ -458,6 +463,11 @@ final sampleGuildTemplate = {
         "name": "@everyone",
         "permissions": "104324689",
         "color": 0,
+        "colors": {
+          'primary_color': 0,
+          'secondary_color': null,
+          'tertiary_color': null,
+        },
         "hoist": false,
         "mentionable": false,
         "flags": 0,

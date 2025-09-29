@@ -49,6 +49,7 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
   /// The color of this role.
   ///
   /// If the value of this color is `0`, this role does not have a visible color.
+  @Deprecated('Use `colors.primary` instead.')
   final DiscordColor color;
 
   /// Whether this role is displayed separately from others in the member list.
@@ -75,6 +76,9 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
   /// This role's flags.
   final RoleFlags flags;
 
+  /// The colors for this role.
+  final RoleColors colors;
+
   /// {@macro role}
   /// @nodoc
   Role({
@@ -82,6 +86,7 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
     required super.manager,
     required this.name,
     required this.color,
+    required this.colors,
     required this.isHoisted,
     required this.iconHash,
     required this.unicodeEmoji,
@@ -146,4 +151,26 @@ class RoleFlags extends Flags<RoleFlags> {
 
   /// Create a new [RoleFlags].
   const RoleFlags(super.value);
+}
+
+/// The colors for the [Role].
+class RoleColors {
+  /// The primary color for the role.
+  final DiscordColor primary;
+
+  /// The secondary color for the role.
+  /// This will make the role a gradient between the other provided colors.
+  final DiscordColor? secondary;
+
+  /// The tertiary color for the role.
+  /// This will turn the gradient into a holographic style.
+  final DiscordColor? tertiary;
+
+  /// Create a new [RoleColors].
+  /// @nodoc
+  const RoleColors({
+    required this.primary,
+    required this.secondary,
+    required this.tertiary,
+  });
 }
