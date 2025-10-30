@@ -33,6 +33,9 @@ class TextEmoji extends Emoji {
   @override
   final String name;
 
+  @override
+  int get hashCode => name.hashCode;
+
   /// @nodoc
   TextEmoji({
     required super.id,
@@ -43,6 +46,10 @@ class TextEmoji extends Emoji {
   // Intercept fetch since the manager will throw if we attempt to fetch a text emoji
   @override
   Future<TextEmoji> fetch() async => this;
+
+  // we actually need to override this with a custom [==] operator, otherwise it'd be delegated to the parent `SnowflakeEntity` class
+  @override
+  bool operator ==(Object other) => other is TextEmoji && other.name == name;
 }
 
 // Apparently an ApplicationEmoji contains a `roles` field, but it's always an empty list, so we don't include it here.
