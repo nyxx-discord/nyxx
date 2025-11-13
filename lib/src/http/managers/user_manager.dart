@@ -59,7 +59,7 @@ class UserManager extends ReadOnlyManager<User> {
       publicFlags: hasPublicFlags ? UserFlags(raw['public_flags'] as int) : null,
       avatarDecorationHash: avatarDecorationData?.asset,
       avatarDecorationData: avatarDecorationData,
-      primaryGuild: maybeParse(raw['primary_guild'], parseUserClan),
+      primaryGuild: maybeParse(raw['primary_guild'], parseUserPrimaryGuild),
     );
   }
 
@@ -104,12 +104,12 @@ class UserManager extends ReadOnlyManager<User> {
   }
 
   /// Parse a [UserPrimaryGuild] from [raw].
-  UserPrimaryGuild parseUserClan(Map<String, Object?> raw) {
+  UserPrimaryGuild parseUserPrimaryGuild(Map<String, Object?> raw) {
     return UserPrimaryGuild(
-      identityGuildId: Snowflake.parse(raw['identity_guild_id']!),
-      isIdentityEnabled: raw['identity_enabled'] as bool,
-      tag: raw['tag'] as String,
-      badgeHash: raw['badge'] as String,
+      identityGuildId: maybeParse(raw['identity_guild_id'], Snowflake.parse),
+      isIdentityEnabled: raw['identity_enabled'] as bool?,
+      tag: raw['tag'] as String?,
+      badgeHash: raw['badge'] as String?,
       manager: this,
     );
   }
