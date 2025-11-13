@@ -198,7 +198,9 @@ export 'src/models/message/message.dart'
         MessageInteraction,
         MessageInteractionMetadata,
         MessageSnapshot,
-        MessageCall;
+        MessageCall,
+        MessagePin,
+        PinList;
 export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference, MessageReferenceType;
@@ -400,7 +402,11 @@ export 'src/models/interaction.dart'
         ModalSubmitInteraction,
         PingInteraction,
         InteractionContextType,
-        UnknownInteraction;
+        UnknownInteraction,
+        InteractionCallback,
+        InteractionCallbackActivityInstanceResource,
+        InteractionCallbackResponse,
+        InteractionResource;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
 export 'src/models/sku.dart' show Sku, SkuType, SkuFlags, PartialSku;
 export 'src/models/oauth2.dart' show OAuth2Information;
