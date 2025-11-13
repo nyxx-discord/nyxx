@@ -135,7 +135,7 @@ class InteractionManager {
             id: id,
             applicationId: applicationId,
             type: type,
-            data: parseModalSubmitInteractionData(raw['data'] as Map<String, Object?>),
+            data: parseModalSubmitInteractionData(raw['data'] as Map<String, Object?>, guildId: guildId, channelId: channelId),
             guildId: guildId,
             channel: channel,
             channelId: channelId,
@@ -285,10 +285,14 @@ class InteractionManager {
     );
   }
 
-  ModalSubmitInteractionData parseModalSubmitInteractionData(Map<String, Object?> raw) {
+  ModalSubmitInteractionData parseModalSubmitInteractionData(Map<String, Object?> raw, {Snowflake? guildId, Snowflake? channelId}) {
     return ModalSubmitInteractionData(
       customId: raw['custom_id'] as String,
-      components: parseMany(raw['components'] as List, (client.channels[Snowflake.zero] as PartialTextChannel).messages.parseSubmittedComponent),
+      components: parseMany(
+        raw['components'] as List,
+        (Map<String, Object?> raw) =>
+            (client.channels[channelId ?? Snowflake.zero] as PartialTextChannel).messages.parseSubmittedComponent(raw, guildId: guildId),
+      ),
     );
   }
 

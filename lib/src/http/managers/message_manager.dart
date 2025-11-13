@@ -1,3 +1,5 @@
+/// @docImport 'package:nyxx/nyxx.dart';
+
 import 'dart:convert';
 
 import 'package:http/http.dart' show MultipartFile;
@@ -418,22 +420,28 @@ class MessageManager extends Manager<Message> {
     );
   }
 
-  SubmittedComponent parseSubmittedComponent(Map<String, Object?> raw) {
+  SubmittedComponent parseSubmittedComponent(Map<String, Object?> raw, {Snowflake? guildId}) {
     final type = MessageComponentType(raw['type'] as int);
 
     return switch (type) {
-      MessageComponentType.actionRow => parseSubmittedActionRowComponent(raw),
+      MessageComponentType.actionRow => parseSubmittedActionRowComponent(raw, guildId: guildId),
       MessageComponentType.textInput => parseSubmittedTextInputComponent(raw),
-      MessageComponentType.label => parseSubmittedLabelComponent(raw),
-      MessageComponentType.stringSelect => parseSubmittedSelectMenuComponent(raw),
+      MessageComponentType.label => parseSubmittedLabelComponent(raw, guildId: guildId),
+      MessageComponentType.stringSelect ||
+      MessageComponentType.userSelect ||
+      MessageComponentType.mentionableSelect ||
+      MessageComponentType.roleSelect ||
+      MessageComponentType.channelSelect =>
+        parseSubmittedSelectMenuComponent(raw, guildId: guildId),
+      MessageComponentType.textDisplay => parseSubmittedTextDisplayComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
 
-  SubmittedActionRowComponent parseSubmittedActionRowComponent(Map<String, Object?> raw) {
+  SubmittedActionRowComponent parseSubmittedActionRowComponent(Map<String, Object?> raw, {Snowflake? guildId}) {
     return SubmittedActionRowComponent(
       id: raw['id'] as int,
-      components: parseMany(raw['components'] as List, parseSubmittedComponent),
+      components: parseMany(raw['components'] as List, (Map<String, Object?> raw) => parseSubmittedComponent(raw, guildId: guildId)),
     );
   }
 
@@ -445,19 +453,26 @@ class MessageManager extends Manager<Message> {
     );
   }
 
-  SubmittedLabelComponent parseSubmittedLabelComponent(Map<String, Object?> raw) {
+  SubmittedLabelComponent parseSubmittedLabelComponent(Map<String, Object?> raw, {Snowflake? guildId}) {
     return SubmittedLabelComponent(
       id: raw['id'] as int,
-      component: parseSubmittedComponent(raw['component'] as Map<String, Object?>),
+      component: parseSubmittedComponent(raw['component'] as Map<String, Object?>, guildId: guildId),
     );
   }
 
-  SubmittedSelectMenuComponent parseSubmittedSelectMenuComponent(Map<String, Object?> raw) {
+  SubmittedSelectMenuComponent parseSubmittedSelectMenuComponent(Map<String, Object?> raw, {Snowflake? guildId}) {
     return SubmittedSelectMenuComponent(
+      manager: this,
+      guildId: guildId,
+      type: MessageComponentType(raw['type'] as int),
       id: raw['id'] as int,
       customId: raw['custom_id'] as String,
       values: parseMany(raw['values'] as List),
     );
+  }
+
+  SubmittedTextDisplayComponent parseSubmittedTextDisplayComponent(Map<String, Object?> raw) {
+    return SubmittedTextDisplayComponent(id: raw['id'] as int);
   }
 
   // ignore: deprecated_member_use_from_same_package
