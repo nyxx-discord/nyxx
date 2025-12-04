@@ -538,8 +538,7 @@ class SubmittedFileUploadComponent extends SubmittedComponent {
   final List<Snowflake> values;
 
   /// @nodoc
-  SubmittedFileUploadComponent(
-      {required super.id, required this.customId, required this.values});
+  SubmittedFileUploadComponent({required super.id, required this.customId, required this.values});
 }
 
 /// An [ActionRowComponent] received in an [Interaction].

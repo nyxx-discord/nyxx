@@ -486,13 +486,12 @@ class MessageManager extends Manager<Message> {
     return SubmittedTextDisplayComponent(id: raw['id'] as int);
   }
 
-  SubmittedFileUploadComponent parseSubmittedFileUploadComponent(
-      Map<String, Object?> raw) {
+  SubmittedFileUploadComponent parseSubmittedFileUploadComponent(Map<String, Object?> raw) {
     return SubmittedFileUploadComponent(
-        id: raw['id'] as int,
-        customId: raw['custom_id'] as String,
-        values: parseMany(raw['values'] as List, Snowflake.parse),
-        );
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      values: parseMany(raw['values'] as List, Snowflake.parse),
+    );
   }
 
   // ignore: deprecated_member_use_from_same_package

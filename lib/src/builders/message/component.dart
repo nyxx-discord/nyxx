@@ -490,8 +490,7 @@ class LabelComponentBuilder extends MessageComponentBuilder<SubmittedLabelCompon
       };
 }
 
-class FileUploadComponentBuilder
-    extends MessageComponentBuilder<FileUploadComponent> {
+class FileUploadComponentBuilder extends MessageComponentBuilder<FileUploadComponent> {
   String customId;
 
   int? minValues;
@@ -500,9 +499,7 @@ class FileUploadComponentBuilder
 
   bool? isRequired;
 
-  FileUploadComponentBuilder(
-      {required this.customId, this.minValues, this.maxValues, this.isRequired})
-      : super(type: MessageComponentType.fileUpload);
+  FileUploadComponentBuilder({required this.customId, this.minValues, this.maxValues, this.isRequired}) : super(type: MessageComponentType.fileUpload);
 
   @override
   Map<String, Object?> build() => {
