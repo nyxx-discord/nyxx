@@ -66,7 +66,8 @@ export 'src/builders/message/component.dart'
         TextDisplayComponentBuilder,
         ThumbnailComponentBuilder,
         UnfurledMediaItemBuilder,
-        LabelComponentBuilder;
+        LabelComponentBuilder,
+        FileUploadComponentBuilder;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
@@ -219,6 +220,7 @@ export 'src/models/message/component.dart'
         TextInputStyle,
         UnknownComponent,
         ContainerComponent,
+        FileUploadComponent,
         FileComponent,
         MediaGalleryComponent,
         MediaGalleryItem,
@@ -231,7 +233,9 @@ export 'src/models/message/component.dart'
         SubmittedComponent,
         SubmittedLabelComponent,
         SubmittedSelectMenuComponent,
-        SubmittedTextInputComponent;
+        SubmittedTextInputComponent,
+        SubmittedFileUploadComponent;
+
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
