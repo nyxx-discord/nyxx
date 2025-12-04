@@ -491,7 +491,8 @@ class MessageManager extends Manager<Message> {
     return SubmittedFileUploadComponent(
         id: raw['id'] as int,
         customId: raw['custom_id'] as String,
-        values: parseMany(raw['values'] as List));
+        values: parseMany(raw['values'] as List, Snowflake.parse),
+        );
   }
 
   // ignore: deprecated_member_use_from_same_package
