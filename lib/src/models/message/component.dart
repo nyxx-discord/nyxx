@@ -501,6 +501,26 @@ class ContainerComponent extends MessageComponent {
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
 
+class FileUploadComponent extends MessageComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.fileUpload;
+
+  /// The custom id for this component
+  final String customId;
+
+  /// The minimum number of files the user must upload. (default 1, min 0)
+  final int? minValues;
+
+  /// The maximum number of files the user can upload. (default 1, max 10)
+  final int? maxValues;
+
+  /// Whether this component is required when in a modal.
+  final bool? isRequired;
+
+  /// @nodoc
+  FileUploadComponent({required super.id, required this.customId, required this.minValues, required this.maxValues, required this.isRequired});
+}
+
 /// A component received as part of an [Interaction].
 abstract class SubmittedComponent extends MessageComponent {
   /// @nodoc
