@@ -581,10 +581,10 @@ final sampleModalSubmitInteraction2 = {
         }
       },
       "attachments": {
-        "111111111111111111111" :{
+        "111111111111111111111": {
           "content_type": "image/png",
           "ephemeral": true,
-          "filename": "bug.png"
+          "filename": "bug.png",
           "height": 604,
           "id": "111111111111111111111",
           "placeholder": "/PcBAoBQydvKesabEIoMsdg=",
@@ -644,12 +644,12 @@ final sampleModalSubmitInteraction2 = {
         "id": 6,
         "component": {
           "custom_id": "file-upload",
-          "type": 19
+          "type": 19,
           "id": 10,
           "values": [
             "111111111111111111111",
           ]
-      },
+        },
       },
     ]
   },
@@ -697,7 +697,13 @@ void checkModalSubmitInteraction2(Interaction<dynamic> interaction) {
   });
   expect(interaction.data.components[4], (SubmittedLabelComponent component) {
     expect(component.component, isA<SubmittedSelectMenuComponent>());
-    expect(component.component.type, equals(MessageComponentType.channelSelect));
+    expect(
+        component.component.type, equals(MessageComponentType.channelSelect));
+    return true;
+  });
+  expect(interaction.data.components[5], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedFileUploadComponent>());
+    expect(component.component.type, equals(MessageComponentType.fileUpload));
     return true;
   });
 }
