@@ -36,6 +36,7 @@ final class MessageComponentType extends EnumLike<int, MessageComponentType> {
   static const separator = MessageComponentType(14);
   static const container = MessageComponentType(17);
   static const label = MessageComponentType(18);
+  static const fileUpload = MessageComponentType(19);
 
   /// @nodoc
   const MessageComponentType(super.value);
@@ -504,6 +505,21 @@ class ContainerComponent extends MessageComponent {
 abstract class SubmittedComponent extends MessageComponent {
   /// @nodoc
   SubmittedComponent({required super.id});
+}
+
+class SubmittedFileUploadComponent extends SubmittedComponent {
+  @override
+  MessageComponentType get type => MessageComponentType.fileUpload;
+
+  /// The custom id for this component
+  final String customId;
+
+  /// IDs of the uploaded files in the resolved data
+  final List<Snowflake> values;
+
+  /// @nodoc
+  SubmittedFileUploadComponent(
+      {required super.id, required this.customId, required this.values});
 }
 
 /// An [ActionRowComponent] received in an [Interaction].

@@ -489,3 +489,27 @@ class LabelComponentBuilder extends MessageComponentBuilder<SubmittedLabelCompon
         'component': component.build(),
       };
 }
+
+class FileUploadComponentBuilder
+    extends MessageComponentBuilder<FileUploadComponent> {
+  String customId;
+
+  int? minValues;
+
+  int? maxValues;
+
+  bool? isRequired;
+
+  FileUploadComponentBuilder(
+      {required this.customId, this.minValues, this.maxValues, this.isRequired})
+      : super(type: MessageComponentType.fileUpload);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'custom_id': customId,
+        if (minValues != null) 'min_values': minValues,
+        if (maxValues != null) 'max_values': maxValues,
+        if (isRequired != null) 'required': isRequired,
+      };
+}
