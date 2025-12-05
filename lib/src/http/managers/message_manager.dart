@@ -274,8 +274,18 @@ class MessageManager extends Manager<Message> {
       MessageComponentType.file => parseFileComponent(raw),
       MessageComponentType.separator => parseSeparatorComponent(raw),
       MessageComponentType.container => parseContainerComponent(raw),
+      MessageComponentType.fileUpload => parseFileUploadComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
+  }
+
+  FileUploadComponent parseFileUploadComponent(Map<String, Object?> raw) {
+    return FileUploadComponent(
+        id: raw['id'] as int,
+        customId: raw['custom_id'] as String,
+        minValues: raw['min_values'] as int?,
+        maxValues: raw['max_values'] as int?,
+        isRequired: raw['required'] as bool?);
   }
 
   ContainerComponent parseContainerComponent(Map<String, Object?> raw) {
@@ -434,6 +444,7 @@ class MessageManager extends Manager<Message> {
       MessageComponentType.channelSelect =>
         parseSubmittedSelectMenuComponent(raw, guildId: guildId),
       MessageComponentType.textDisplay => parseSubmittedTextDisplayComponent(raw),
+      MessageComponentType.fileUpload => parseSubmittedFileUploadComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
@@ -473,6 +484,14 @@ class MessageManager extends Manager<Message> {
 
   SubmittedTextDisplayComponent parseSubmittedTextDisplayComponent(Map<String, Object?> raw) {
     return SubmittedTextDisplayComponent(id: raw['id'] as int);
+  }
+
+  SubmittedFileUploadComponent parseSubmittedFileUploadComponent(Map<String, Object?> raw) {
+    return SubmittedFileUploadComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      values: parseMany(raw['values'] as List, Snowflake.parse),
+    );
   }
 
   // ignore: deprecated_member_use_from_same_package
