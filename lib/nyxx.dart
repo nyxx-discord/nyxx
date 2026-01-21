@@ -67,7 +67,13 @@ export 'src/builders/component.dart'
         ThumbnailComponentBuilder,
         UnfurledMediaItemBuilder,
         LabelComponentBuilder,
-        FileUploadComponentBuilder;
+        FileUploadComponentBuilder,
+        CheckboxComponentBuilder,
+        CheckboxGroupComponentBuilder,
+        CheckboxGroupOptionBuilder,
+        RadioGroupComponentBuilder,
+        RadioGroupOptionBuilder,
+        MessageComponentBuilder;
 export 'src/builders/message/poll.dart' show PollAnswerBuilder, PollBuilder, PollMediaBuilder;
 export 'src/builders/webhook.dart' show WebhookBuilder, WebhookUpdateBuilder;
 export 'src/builders/guild/guild.dart' show GuildBuilder, GuildUpdateBuilder, GuildIncidentsUpdateBuilder;
@@ -79,7 +85,7 @@ export 'src/builders/guild/template.dart' show GuildTemplateBuilder, GuildTempla
 export 'src/builders/guild/auto_moderation.dart'
     show AutoModerationRuleBuilder, AutoModerationRuleUpdateBuilder, ActionMetadataBuilder, AutoModerationActionBuilder, TriggerMetadataBuilder;
 export 'src/builders/guild/onboarding.dart' show OnboardingPromptBuilder, OnboardingPromptOptionBuilder, OnboardingUpdateBuilder;
-export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder;
+export 'src/builders/role.dart' show RoleBuilder, RoleUpdateBuilder, RoleColorsBuilder;
 export 'src/builders/voice.dart' show CurrentUserVoiceStateUpdateBuilder, VoiceStateUpdateBuilder, GatewayVoiceStateBuilder;
 export 'src/builders/presence.dart' show PresenceBuilder, CurrentUserStatus, ActivityBuilder;
 export 'src/builders/application_role_connection.dart' show ApplicationRoleConnectionUpdateBuilder;
@@ -157,6 +163,7 @@ export 'src/models/snowflake_entity/snowflake_entity.dart' show SnowflakeEntity,
 export 'src/models/user/application_role_connection.dart' show ApplicationRoleConnection;
 export 'src/models/user/connection.dart' show Connection, ConnectionType, ConnectionVisibility;
 export 'src/models/user/user.dart' show PartialUser, User, UserFlags, NitroType;
+export 'src/models/user/primary_guild.dart' show UserPrimaryGuild;
 export 'src/models/user/avatar_decoration_data.dart' show AvatarDecorationData;
 export 'src/models/soundboard/soundboard.dart' show SoundboardSound, PartialSoundboardSound;
 export 'src/models/channel/channel.dart' show Channel, ChannelFlags, PartialChannel, ChannelType;
@@ -199,7 +206,9 @@ export 'src/models/message/message.dart'
         MessageInteraction,
         MessageInteractionMetadata,
         MessageSnapshot,
-        MessageCall;
+        MessageCall,
+        MessagePin,
+        PinList;
 export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, PollMedia, PollResults, PollLayoutType;
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference, MessageReferenceType;
@@ -234,9 +243,16 @@ export 'src/models/component.dart'
         SubmittedLabelComponent,
         SubmittedSelectMenuComponent,
         SubmittedTextInputComponent,
-        SubmittedFileUploadComponent;
+        SubmittedFileUploadComponent,
+        SubmittedActionRowComponent,
+        SubmittedCheckboxComponent,
+        SubmittedCheckboxGroupComponent,
+        SubmittedRadioGroupComponent,
+        SubmittedTextDisplayComponent,
+        MessageComponent,
+        MessageComponentType;
 
-export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType;
+export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType, GuildInviteFlags;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban, BulkBanResponse;
@@ -298,7 +314,7 @@ export 'src/models/guild/auto_moderation.dart'
         TriggerType;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
-export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags;
+export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags, RoleColors;
 export 'src/models/gateway/gateway.dart' show GatewayBot, GatewayConfiguration, SessionStartLimit;
 export 'src/models/gateway/event.dart'
     show
@@ -404,7 +420,11 @@ export 'src/models/interaction.dart'
         ModalSubmitInteraction,
         PingInteraction,
         InteractionContextType,
-        UnknownInteraction;
+        UnknownInteraction,
+        InteractionCallback,
+        InteractionCallbackActivityInstanceResource,
+        InteractionCallbackResponse,
+        InteractionResource;
 export 'src/models/entitlement.dart' show Entitlement, PartialEntitlement, EntitlementType;
 export 'src/models/sku.dart' show Sku, SkuType, SkuFlags, PartialSku;
 export 'src/models/oauth2.dart' show OAuth2Information;
