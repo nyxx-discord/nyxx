@@ -37,6 +37,9 @@ final class ComponentType extends EnumLike<int, ComponentType> {
   static const container = ComponentType(17);
   static const label = ComponentType(18);
   static const fileUpload = ComponentType(19);
+  static const radioGroup = ComponentType(21);
+  static const checkboxGroup = ComponentType(22);
+  static const checkbox = ComponentType(23);
 
   /// @nodoc
   const ComponentType(super.value);
@@ -538,20 +541,6 @@ abstract class SubmittedComponent extends Component {
   SubmittedComponent({required super.id});
 }
 
-class SubmittedFileUploadComponent extends SubmittedComponent {
-  @override
-  ComponentType get type => ComponentType.fileUpload;
-
-  /// The custom id for this component
-  final String customId;
-
-  /// IDs of the uploaded files in the resolved data
-  final List<Snowflake> values;
-
-  /// @nodoc
-  SubmittedFileUploadComponent({required super.id, required this.customId, required this.values});
-}
-
 /// An [ActionRowComponent] received in an [Interaction].
 class SubmittedActionRowComponent extends SubmittedComponent {
   @override
@@ -660,4 +649,60 @@ class SubmittedTextDisplayComponent extends SubmittedComponent {
 
   /// @nodoc
   SubmittedTextDisplayComponent({required super.id});
+}
+
+class SubmittedFileUploadComponent extends SubmittedComponent {
+  @override
+  ComponentType get type => ComponentType.fileUpload;
+
+  /// The custom id for this component
+  final String customId;
+
+  /// IDs of the uploaded files in the resolved data
+  final List<Snowflake> values;
+
+  /// @nodoc
+  SubmittedFileUploadComponent({required super.id, required this.customId, required this.values});
+}
+
+class SubmittedRadioGroupComponent extends SubmittedComponent {
+  @override
+  ComponentType get type => ComponentType.radioGroup;
+
+  /// The custom id for this component.
+  final String customId;
+
+  /// The value of the selected option.
+  final String value;
+
+  /// @nodoc
+  SubmittedRadioGroupComponent({required super.id, required this.customId, required this.value});
+}
+
+class SubmittedCheckboxGroupComponent extends SubmittedComponent {
+  @override
+  ComponentType get type => ComponentType.checkboxGroup;
+
+  /// The custom id for this component.
+  final String customId;
+
+  /// The selected values.
+  final List<String> values;
+
+  /// @nodoc
+  SubmittedCheckboxGroupComponent({required super.id, required this.customId, required this.values});
+}
+
+class SubmittedCheckboxComponent extends SubmittedComponent {
+  @override
+  ComponentType get type => ComponentType.checkbox;
+
+  /// The custom id for this component.
+  final String customId;
+
+  /// Whether the checkbox is selected.
+  final bool value;
+
+  /// @nodoc
+  SubmittedCheckboxComponent({required super.id, required this.customId, required this.value});
 }

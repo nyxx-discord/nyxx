@@ -483,6 +483,7 @@ class LabelComponentBuilder extends ComponentBuilder<SubmittedLabelComponent> {
     required this.label,
     this.description,
     required this.component,
+    super.id,
   }) : super(type: ComponentType.label);
 
   @override
@@ -503,7 +504,7 @@ class FileUploadComponentBuilder extends ComponentBuilder<FileUploadComponent> {
 
   bool? isRequired;
 
-  FileUploadComponentBuilder({required this.customId, this.minValues, this.maxValues, this.isRequired}) : super(type: ComponentType.fileUpload);
+  FileUploadComponentBuilder({required this.customId, this.minValues, this.maxValues, this.isRequired, super.id}) : super(type: ComponentType.fileUpload);
 
   @override
   Map<String, Object?> build() => {
@@ -512,5 +513,92 @@ class FileUploadComponentBuilder extends ComponentBuilder<FileUploadComponent> {
         if (minValues != null) 'min_values': minValues,
         if (maxValues != null) 'max_values': maxValues,
         if (isRequired != null) 'required': isRequired,
+      };
+}
+
+class RadioGroupComponentBuilder extends ComponentBuilder<SubmittedRadioGroupComponent> {
+  String customId;
+
+  List<RadioGroupOptionBuilder> options;
+
+  bool? isRequired;
+
+  RadioGroupComponentBuilder({required this.customId, required this.options, this.isRequired, super.id}) : super(type: ComponentType.radioGroup);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'custom_id': customId,
+        'options': options.map((o) => o.build()).toList(),
+        if (isRequired != null) 'required': isRequired,
+      };
+}
+
+class RadioGroupOptionBuilder extends CreateBuilder<RadioGroupOptionBuilder> {
+  String value;
+  String label;
+  String? description;
+  bool? defaultValue;
+
+  RadioGroupOptionBuilder({required this.value, required this.label, this.description, this.defaultValue});
+
+  @override
+  Map<String, Object?> build() => {
+        'value': value,
+        'label': label,
+        if (description != null) 'description': description,
+        if (defaultValue != null) 'default': defaultValue,
+      };
+}
+
+class CheckboxGroupComponentBuilder extends ComponentBuilder<SubmittedCheckboxGroupComponent> {
+  String customId;
+  List<CheckboxGroupOptionBuilder> options;
+  int? minValues;
+  int? maxValues;
+  bool? isRequired;
+
+  CheckboxGroupComponentBuilder({required this.customId, required this.options, this.minValues, this.maxValues, this.isRequired, super.id})
+      : super(type: ComponentType.checkboxGroup);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'custom_id': customId,
+        'options': options.map((o) => o.build()).toList(),
+        if (minValues != null) 'min_values': minValues,
+        if (maxValues != null) 'max_values': maxValues,
+        if (isRequired != null) 'required': isRequired,
+      };
+}
+
+class CheckboxGroupOptionBuilder extends CreateBuilder<CheckboxGroupOptionBuilder> {
+  String value;
+  String label;
+  String? description;
+  bool? defaultValue;
+
+  CheckboxGroupOptionBuilder({required this.value, required this.label, this.description, this.defaultValue});
+
+  @override
+  Map<String, Object?> build() => {
+        'value': value,
+        'label': label,
+        if (description != null) 'description': description,
+        if (defaultValue != null) 'default': defaultValue,
+      };
+}
+
+class CheckboxComponentBuilder extends ComponentBuilder<SubmittedCheckboxComponent> {
+  String customId;
+  bool? defaultValue;
+
+  CheckboxComponentBuilder({required this.customId, this.defaultValue, super.id}) : super(type: ComponentType.checkbox);
+
+  @override
+  Map<String, Object?> build() => {
+        ...super.build(),
+        'custom_id': customId,
+        if (defaultValue != null) 'default': defaultValue,
       };
 }

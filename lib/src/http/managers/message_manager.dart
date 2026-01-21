@@ -449,6 +449,9 @@ class MessageManager extends Manager<Message> {
         parseSubmittedSelectMenuComponent(raw, guildId: guildId),
       ComponentType.textDisplay => parseSubmittedTextDisplayComponent(raw),
       ComponentType.fileUpload => parseSubmittedFileUploadComponent(raw),
+      ComponentType.radioGroup => parseSubmittedRadioGroupComponent(raw),
+      ComponentType.checkboxGroup => parseSubmittedCheckboxGroupComponent(raw),
+      ComponentType.checkbox => parseSubmittedCheckboxComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
@@ -495,6 +498,30 @@ class MessageManager extends Manager<Message> {
       id: raw['id'] as int,
       customId: raw['custom_id'] as String,
       values: parseMany(raw['values'] as List, Snowflake.parse),
+    );
+  }
+
+  SubmittedRadioGroupComponent parseSubmittedRadioGroupComponent(Map<String, Object?> raw) {
+    return SubmittedRadioGroupComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      value: raw['value'] as String,
+    );
+  }
+
+  SubmittedCheckboxGroupComponent parseSubmittedCheckboxGroupComponent(Map<String, Object?> raw) {
+    return SubmittedCheckboxGroupComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      values: parseMany(raw['values'] as List),
+    );
+  }
+
+  SubmittedCheckboxComponent parseSubmittedCheckboxComponent(Map<String, Object?> raw) {
+    return SubmittedCheckboxComponent(
+      id: raw['id'] as int,
+      customId: raw['custom_id'] as String,
+      value: raw['value'] as bool,
     );
   }
 

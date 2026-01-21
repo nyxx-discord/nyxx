@@ -709,6 +709,208 @@ void checkModalSubmitInteraction2(Interaction<dynamic> interaction) {
   });
 }
 
+final sampleModalSubmitInteraction3 = {
+  'version': 1,
+  'type': 5,
+  'token':
+      'aW50ZXJhY3Rpb246MTQ2MzQ3OTUzNzc2ODg2MTgyNTpmUXl0bEcydHNjM0Q2dUZjRXk0TXFFR1RRV1VUYTFlNm9nZ3BaNDdMUVgxcGpSekJPNDFrYTdPdTQwY1lZQ1VneVR1enU0NURaRlVyekpJc055bGJaWnNrYnIwR0ZCd08yc0NlV3dRaDRCZWJlQnZCVmlYYnVGQ3pyQ0NFS1ZyVw',
+  'message': {
+    'type': 0,
+    'tts': false,
+    'timestamp': '2026-01-21T10:11:03.601000+00:00',
+    'pinned': false,
+    'mentions': [],
+    'mention_roles': [],
+    'mention_everyone': false,
+    'id': '1463475979581128791',
+    'flags': 0,
+    'embeds': [],
+    'edited_timestamp': null,
+    'content': '',
+    'components': [
+      {
+        'type': 1,
+        'id': 1,
+        'components': [
+          {'type': 2, 'style': 1, 'label': 'Test', 'id': 2, 'custom_id': 'yea'}
+        ]
+      }
+    ],
+    'channel_id': '1317207732318900244',
+    'author': {
+      'username': 'Abitofbot',
+      'public_flags': 0,
+      'primary_guild': null,
+      'id': 1033681843708510238,
+      'global_name': null,
+      'display_name_styles': null,
+      'discriminator': '8969',
+      'collectibles': null,
+      'clan': null,
+      'bot': true,
+      'avatar_decoration_data': null,
+      'avatar': 'aa7db854d87612b4ea277481bb286be1'
+    },
+    'attachments': []
+  },
+  'member': {
+    'user': {
+      'username': 'abitofevrything',
+      'public_flags': 128,
+      'primary_guild': {'tag': 'CAP', 'identity_guild_id': '1317206872763404478', 'identity_enabled': true, 'badge': 'd7234d6824ca9ead59ffdcd76be30277'},
+      'id': '506759329068613643',
+      'global_name': 'Mylo',
+      'display_name_styles': null,
+      'discriminator': '0',
+      'collectibles': null,
+      'clan': {'tag': 'CAP', 'identity_guild_id': '1317206872763404478', 'identity_enabled': true, 'badge': 'd7234d6824ca9ead59ffdcd76be30277'},
+      'avatar_decoration_data': {'sku_id': '1440174638930853957', 'expires_at': null, 'asset': 'a_3c8525a96d0272550c2f95bc8b594da5'},
+      'avatar': '9a84d45ff600e087dd973273aba6ec14'
+    },
+    'unusual_dm_activity_until': null,
+    'roles': ['1336784655155986432', '1403111146944467114', '1403115171127234704'],
+    'premium_since': null,
+    'permissions': '2222085186637376',
+    'pending': false,
+    'nick': null,
+    'mute': false,
+    'joined_at': '2024-12-15T21:11:08.816000+00:00',
+    'flags': 2,
+    'display_name_styles': null,
+    'deaf': false,
+    'communication_disabled_until': null,
+    'collectibles': null,
+    'banner': null,
+    'avatar': null
+  },
+  'locale': 'en-GB',
+  'id': '1463479537768861825',
+  'guild_locale': 'en-US',
+  'guild_id': '1317206872763404478',
+  'guild': {
+    'locale': 'en-US',
+    'id': '1317206872763404478',
+    'features': [
+      'MAX_FILE_SIZE_50_MB',
+      'RAID_ALERTS_DISABLED',
+      'AUDIO_BITRATE_128_KBPS',
+      'GUILD_ONBOARDING',
+      'ROLE_ICONS',
+      'VIDEO_QUALITY_1080_60FPS',
+      'ANIMATED_BANNER',
+      'GUILD_ONBOARDING_HAS_PROMPTS',
+      'PREMIUM_TIER_3_OVERRIDE',
+      'VANITY_URL',
+      'GUILD_TAGS',
+      'VIDEO_BITRATE_ENHANCED',
+      'BANNER',
+      'ACTIVITY_FEED_DISABLED_BY_USER',
+      'AUDIO_BITRATE_256_KBPS',
+      'COMMUNITY',
+      'AUTO_MODERATION',
+      'VIDEO_QUALITY_720_60FPS',
+      'PIN_PERMISSION_MIGRATION_COMPLETE',
+      'NEWS',
+      'ANIMATED_ICON',
+      'INVITE_SPLASH',
+      'TIERLESS_BOOSTING',
+      'AUDIO_BITRATE_384_KBPS',
+      'STAGE_CHANNEL_VIEWERS_300',
+      'GUILD_ONBOARDING_EVER_ENABLED',
+      'STAGE_CHANNEL_VIEWERS_150',
+      'BYPASS_SLOWMODE_PERMISSION_MIGRATION_COMPLETE',
+      'STAGE_CHANNEL_VIEWERS_50',
+      'TIERLESS_BOOSTING_SYSTEM_MESSAGE',
+      'MAX_FILE_SIZE_100_MB'
+    ]
+  },
+  'entitlements': [],
+  'entitlement_sku_ids': [],
+  'data': {
+    'custom_id': 'test',
+    'components': [
+      {
+        'type': 18,
+        'id': 1,
+        'component': {'value': 'two', 'type': 21, 'id': 2, 'custom_id': 'sf'}
+      },
+      {
+        'type': 18,
+        'id': 3,
+        'component': {
+          'values': ['one'],
+          'type': 22,
+          'id': 4,
+          'custom_id': 'sdf'
+        }
+      },
+      {
+        'type': 18,
+        'id': 5,
+        'component': {'value': true, 'type': 23, 'id': 6, 'custom_id': 'rster32ewrae'}
+      }
+    ]
+  },
+  'context': 0,
+  'channel_id': '1317207732318900244',
+  'channel': {
+    'type': 0,
+    'topic': null,
+    'rate_limit_per_user': 0,
+    'position': 13,
+    'permissions': '2222085186637376',
+    'parent_id': '1317206872763404479',
+    'nsfw': false,
+    'name': 'playground-2',
+    'last_message_id': '1463479255466770443',
+    'id': '1317207732318900244',
+    'guild_id': '1317206872763404478',
+    'flags': 0
+  },
+  'authorizing_integration_owners': {'0': '1317206872763404478'},
+  'attachment_size_limit': 104857600,
+  'application_id': '1033681843708510238',
+  'app_permissions': '2222085186637376'
+};
+
+void checkModalSubmitInteraction3(Interaction<dynamic> interaction) {
+  expect(interaction, isA<ModalSubmitInteraction>());
+  interaction as ModalSubmitInteraction;
+
+  expect(interaction.data.components[0], isA<SubmittedLabelComponent>());
+  expect(interaction.data.components[0], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedRadioGroupComponent>());
+    expect(component.component, (SubmittedRadioGroupComponent component) {
+      expect(component.customId, equals('sf'));
+      expect(component.value, equals('two'));
+      return true;
+    });
+    return true;
+  });
+
+  expect(interaction.data.components[1], isA<SubmittedLabelComponent>());
+  expect(interaction.data.components[1], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedCheckboxGroupComponent>());
+    expect(component.component, (SubmittedCheckboxGroupComponent component) {
+      expect(component.customId, equals('sdf'));
+      expect(component.values, equals(['one']));
+      return true;
+    });
+    return true;
+  });
+
+  expect(interaction.data.components[2], isA<SubmittedLabelComponent>());
+  expect(interaction.data.components[2], (SubmittedLabelComponent component) {
+    expect(component.component, isA<SubmittedCheckboxComponent>());
+    expect(component.component, (SubmittedCheckboxComponent component) {
+      expect(component.customId, equals('rster32ewrae'));
+      expect(component.value, isTrue);
+      return true;
+    });
+    return true;
+  });
+}
+
 void main() {
   group('InteractionManager', () {
     test('parse', () {
@@ -749,6 +951,13 @@ void main() {
         source: sampleModalSubmitInteraction2,
         parse: (manager) => manager.parse,
         check: checkModalSubmitInteraction2,
+      ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
+
+      ParsingTest<InteractionManager, Interaction<dynamic>, Map<String, Object?>>(
+        name: 'parse (5)',
+        source: sampleModalSubmitInteraction3,
+        parse: (manager) => manager.parse,
+        check: checkModalSubmitInteraction3,
       ).runWithManager(InteractionManager(client, applicationId: Snowflake.zero));
     });
 
