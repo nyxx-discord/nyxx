@@ -18,32 +18,36 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
-/// The type of a [MessageComponent].
-final class MessageComponentType extends EnumLike<int, MessageComponentType> {
-  static const actionRow = MessageComponentType(1);
-  static const button = MessageComponentType(2);
-  static const stringSelect = MessageComponentType(3);
-  static const textInput = MessageComponentType(4);
-  static const userSelect = MessageComponentType(5);
-  static const roleSelect = MessageComponentType(6);
-  static const mentionableSelect = MessageComponentType(7);
-  static const channelSelect = MessageComponentType(8);
-  static const section = MessageComponentType(9);
-  static const textDisplay = MessageComponentType(10);
-  static const thumbnail = MessageComponentType(11);
-  static const mediaGallery = MessageComponentType(12);
-  static const file = MessageComponentType(13);
-  static const separator = MessageComponentType(14);
-  static const container = MessageComponentType(17);
-  static const label = MessageComponentType(18);
-  static const fileUpload = MessageComponentType(19);
+/// The type of a [Component].
+final class ComponentType extends EnumLike<int, ComponentType> {
+  static const actionRow = ComponentType(1);
+  static const button = ComponentType(2);
+  static const stringSelect = ComponentType(3);
+  static const textInput = ComponentType(4);
+  static const userSelect = ComponentType(5);
+  static const roleSelect = ComponentType(6);
+  static const mentionableSelect = ComponentType(7);
+  static const channelSelect = ComponentType(8);
+  static const section = ComponentType(9);
+  static const textDisplay = ComponentType(10);
+  static const thumbnail = ComponentType(11);
+  static const mediaGallery = ComponentType(12);
+  static const file = ComponentType(13);
+  static const separator = ComponentType(14);
+  static const container = ComponentType(17);
+  static const label = ComponentType(18);
+  static const fileUpload = ComponentType(19);
 
   /// @nodoc
-  const MessageComponentType(super.value);
+  const ComponentType(super.value);
 
   @Deprecated('The .parse() constructor is deprecated. Use the unnamed constructor instead.')
-  MessageComponentType.parse(int value) : this(value);
+  ComponentType.parse(int value) : this(value);
 }
+
+/// @nodoc
+@Deprecated('Use ComponentType instead')
+typedef MessageComponentType = ComponentType;
 
 class UnfurledMediaItem with ToStringHelper implements CdnAsset {
   /// The manager for this [UnfurledMediaItem].
@@ -108,24 +112,31 @@ class UnfurledMediaItem with ToStringHelper implements CdnAsset {
 }
 
 /// A component in a [Message].
-abstract class MessageComponent with ToStringHelper {
+///
+/// Components sent in modals can never be fetched by the client. Instead, see
+/// [SubmittedComponent] for obtaining the values submitted by the user.
+abstract class Component with ToStringHelper {
   /// The type of this component.
-  MessageComponentType get type;
+  ComponentType get type;
 
   /// An identifier for this component.
   final int id;
 
   /// @nodoc
-  MessageComponent({required this.id});
+  Component({required this.id});
 }
 
-/// A [MessageComponent] that contains multiple child [MessageComponent]s.
-class ActionRowComponent extends MessageComponent {
+/// @nodoc
+@Deprecated('Use Component instead')
+typedef MessageComponent = Component;
+
+/// A [Component] that contains multiple child [Component]s.
+class ActionRowComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.actionRow;
+  ComponentType get type => ComponentType.actionRow;
 
   /// The children of this [ActionRowComponent].
-  final List<MessageComponent> components;
+  final List<Component> components;
 
   /// Create a new [ActionRowComponent].
   /// @nodoc
@@ -133,9 +144,9 @@ class ActionRowComponent extends MessageComponent {
 }
 
 /// A clickable button.
-class ButtonComponent extends MessageComponent {
+class ButtonComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.button;
+  ComponentType get type => ComponentType.button;
 
   /// The style of this button.
   final ButtonStyle style;
@@ -189,21 +200,21 @@ final class ButtonStyle extends EnumLike<int, ButtonStyle> {
 }
 
 /// A dropdown menu in which users can select from on or more choices.
-class SelectMenuComponent extends MessageComponent {
+class SelectMenuComponent extends Component {
   @override
-  final MessageComponentType type;
+  final ComponentType type;
 
   /// This component's custom ID.
   final String customId;
 
   /// The options in this menu.
   ///
-  /// Will be `null` if this menu is not a [MessageComponentType.stringSelect] menu.
+  /// Will be `null` if this menu is not a [ComponentType.stringSelect] menu.
   final List<SelectMenuOption>? options;
 
   /// The channel types displayed in this select menu.
   ///
-  /// Will be `null` if this menu is not a [MessageComponentType.channelSelect] menu.
+  /// Will be `null` if this menu is not a [ComponentType.channelSelect] menu.
   final List<ChannelType>? channelTypes;
 
   /// The placeholder shown when the user has not yet selected a value.
@@ -223,7 +234,7 @@ class SelectMenuComponent extends MessageComponent {
 
   /// Whether this component is required when in a modal.
   ///
-  /// Only applicable to select menus with type [MessageComponentType.stringSelect]
+  /// Only applicable to select menus with type [ComponentType.stringSelect]
   final bool? isRequired;
 
   /// Create a new [SelectMenuComponent].
@@ -299,9 +310,9 @@ class SelectMenuOption with ToStringHelper {
 
 /// A text field in a modal.
 @Deprecated('Use SubmittedTextInputComponent instead. The fields on this class are never populated.')
-class TextInputComponent extends MessageComponent implements SubmittedTextInputComponent {
+class TextInputComponent extends Component implements SubmittedTextInputComponent {
   @override
-  MessageComponentType get type => MessageComponentType.textInput;
+  ComponentType get type => ComponentType.textInput;
 
   /// This component's custom ID.
   @override
@@ -364,33 +375,33 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
 }
 
 /// An unknown component.
-class UnknownComponent extends MessageComponent implements SubmittedComponent {
+class UnknownComponent extends Component implements SubmittedComponent {
   @override
-  final MessageComponentType type;
+  final ComponentType type;
 
   /// @nodoc
   UnknownComponent({required this.type, required super.id});
 }
 
 /// A section in a message, with small accessory component.
-class SectionComponent extends MessageComponent {
+class SectionComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.section;
+  ComponentType get type => ComponentType.section;
 
   /// The components in this section.
   final List<TextDisplayComponent> components;
 
   /// A small component displayed at the top of the section.
-  final MessageComponent accessory;
+  final Component accessory;
 
   /// @nodoc
   SectionComponent({required super.id, required this.components, required this.accessory});
 }
 
 /// A component that displays text.
-class TextDisplayComponent extends MessageComponent {
+class TextDisplayComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.textDisplay;
+  ComponentType get type => ComponentType.textDisplay;
 
   /// The content of this section.
   final String content;
@@ -400,9 +411,9 @@ class TextDisplayComponent extends MessageComponent {
 }
 
 /// A component that shows a small image.
-class ThumbnailComponent extends MessageComponent {
+class ThumbnailComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.thumbnail;
+  ComponentType get type => ComponentType.thumbnail;
 
   /// The image that is shown.
   final UnfurledMediaItem media;
@@ -433,9 +444,9 @@ class MediaGalleryItem with ToStringHelper {
 }
 
 /// A component that displays several child media items.
-class MediaGalleryComponent extends MessageComponent {
+class MediaGalleryComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.mediaGallery;
+  ComponentType get type => ComponentType.mediaGallery;
 
   /// The items to display.
   final List<MediaGalleryItem> items;
@@ -454,9 +465,9 @@ final class SeparatorSpacingSize extends EnumLike<int, SeparatorSpacingSize> {
 }
 
 /// A component that introduces space between two other components.
-class SeparatorComponent extends MessageComponent {
+class SeparatorComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.separator;
+  ComponentType get type => ComponentType.separator;
 
   /// Whether this component should render a divider line.
   final bool? isDivider;
@@ -469,9 +480,9 @@ class SeparatorComponent extends MessageComponent {
 }
 
 /// A component that displays a downloadable file.
-class FileComponent extends MessageComponent {
+class FileComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.file;
+  ComponentType get type => ComponentType.file;
 
   /// The file that can be downloaded.
   final UnfurledMediaItem file;
@@ -484,9 +495,9 @@ class FileComponent extends MessageComponent {
 }
 
 /// A component that contains several other components.
-class ContainerComponent extends MessageComponent {
+class ContainerComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.container;
+  ComponentType get type => ComponentType.container;
 
   /// The accent color for this container.
   final DiscordColor? accentColor;
@@ -495,15 +506,15 @@ class ContainerComponent extends MessageComponent {
   final bool? isSpoiler;
 
   /// The components in this container.
-  final List<MessageComponent> components;
+  final List<Component> components;
 
   /// @nodoc
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
 
-class FileUploadComponent extends MessageComponent {
+class FileUploadComponent extends Component {
   @override
-  MessageComponentType get type => MessageComponentType.fileUpload;
+  ComponentType get type => ComponentType.fileUpload;
 
   /// The custom id for this component
   final String customId;
@@ -522,14 +533,14 @@ class FileUploadComponent extends MessageComponent {
 }
 
 /// A component received as part of an [Interaction].
-abstract class SubmittedComponent extends MessageComponent {
+abstract class SubmittedComponent extends Component {
   /// @nodoc
   SubmittedComponent({required super.id});
 }
 
 class SubmittedFileUploadComponent extends SubmittedComponent {
   @override
-  MessageComponentType get type => MessageComponentType.fileUpload;
+  ComponentType get type => ComponentType.fileUpload;
 
   /// The custom id for this component
   final String customId;
@@ -544,7 +555,7 @@ class SubmittedFileUploadComponent extends SubmittedComponent {
 /// An [ActionRowComponent] received in an [Interaction].
 class SubmittedActionRowComponent extends SubmittedComponent {
   @override
-  MessageComponentType get type => MessageComponentType.actionRow;
+  ComponentType get type => ComponentType.actionRow;
 
   /// The components submitted in this action row.
   final List<SubmittedComponent> components;
@@ -556,7 +567,7 @@ class SubmittedActionRowComponent extends SubmittedComponent {
 /// A text input received in an [Interaction].
 class SubmittedTextInputComponent extends SubmittedComponent {
   @override
-  MessageComponentType get type => MessageComponentType.textInput;
+  ComponentType get type => ComponentType.textInput;
 
   /// The custom ID of this text input.
   final String customId;
@@ -571,7 +582,7 @@ class SubmittedTextInputComponent extends SubmittedComponent {
 /// A label received in an [Interaction].
 class SubmittedLabelComponent extends SubmittedComponent {
   @override
-  MessageComponentType get type => MessageComponentType.label;
+  ComponentType get type => ComponentType.label;
 
   /// The component in this label that was submitted.
   final SubmittedComponent component;
@@ -587,7 +598,7 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
   final Snowflake? _guildId;
 
   @override
-  final MessageComponentType type;
+  final ComponentType type;
 
   /// The custom ID of this select menu.
   final String customId;
@@ -607,8 +618,8 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
 
   /// The selected users.
   ///
-  /// Will be `null` if `type` is not [MessageComponentType.userSelect].
-  List<PartialUser>? get users => type != MessageComponentType.userSelect
+  /// Will be `null` if `type` is not [ComponentType.userSelect].
+  List<PartialUser>? get users => type != ComponentType.userSelect
       ? null
       : [
           for (final id in values) manager.client.users[Snowflake.parse(id)],
@@ -616,8 +627,8 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
 
   /// The selected members.
   ///
-  /// Will be `null` if `type` is not [MessageComponentType.userSelect].
-  List<PartialMember>? get members => type != MessageComponentType.userSelect
+  /// Will be `null` if `type` is not [ComponentType.userSelect].
+  List<PartialMember>? get members => type != ComponentType.userSelect
       ? null
       : [
           for (final id in values) manager.client.guilds[_guildId ?? Snowflake.zero].members[Snowflake.parse(id)],
@@ -625,8 +636,8 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
 
   /// The selected roles.
   ///
-  /// Will be `null` if `type` is not [MessageComponentType.roleSelect].
-  List<PartialRole>? get roles => type != MessageComponentType.roleSelect
+  /// Will be `null` if `type` is not [ComponentType.roleSelect].
+  List<PartialRole>? get roles => type != ComponentType.roleSelect
       ? null
       : [
           for (final id in values) manager.client.guilds[_guildId ?? Snowflake.zero].roles[Snowflake.parse(id)],
@@ -634,8 +645,8 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
 
   /// The selected channels.
   ///
-  /// Will be `null` if `type` is not [MessageComponentType.channelSelect].
-  List<PartialChannel>? get channels => type != MessageComponentType.channelSelect
+  /// Will be `null` if `type` is not [ComponentType.channelSelect].
+  List<PartialChannel>? get channels => type != ComponentType.channelSelect
       ? null
       : [
           for (final id in values) manager.client.channels[Snowflake.parse(id)],
@@ -645,7 +656,7 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
 /// A [TextDisplayComponent] received in an [Interaction].
 class SubmittedTextDisplayComponent extends SubmittedComponent {
   @override
-  MessageComponentType get type => MessageComponentType.textDisplay;
+  ComponentType get type => ComponentType.textDisplay;
 
   /// @nodoc
   SubmittedTextDisplayComponent({required super.id});

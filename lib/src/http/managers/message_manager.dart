@@ -19,7 +19,7 @@ import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/channel_mention.dart';
-import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/component.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/message/reaction.dart';
@@ -255,29 +255,33 @@ class MessageManager extends Manager<Message> {
     );
   }
 
-  MessageComponent parseMessageComponent(Map<String, Object?> raw) {
-    final type = MessageComponentType(raw['type'] as int);
+  Component parseComponent(Map<String, Object?> raw) {
+    final type = ComponentType(raw['type'] as int);
 
     return switch (type) {
-      MessageComponentType.actionRow => parseActionRowComponent(raw),
-      MessageComponentType.button => parseButtonComponent(raw),
-      MessageComponentType.stringSelect ||
-      MessageComponentType.userSelect ||
-      MessageComponentType.roleSelect ||
-      MessageComponentType.mentionableSelect ||
-      MessageComponentType.channelSelect =>
+      ComponentType.actionRow => parseActionRowComponent(raw),
+      ComponentType.button => parseButtonComponent(raw),
+      ComponentType.stringSelect ||
+      ComponentType.userSelect ||
+      ComponentType.roleSelect ||
+      ComponentType.mentionableSelect ||
+      ComponentType.channelSelect =>
         parseSelectMenuComponent(raw, type),
-      MessageComponentType.section => parseSectionComponent(raw),
-      MessageComponentType.textDisplay => parseTextDisplayComponent(raw),
-      MessageComponentType.thumbnail => parseThumbnailComponent(raw),
-      MessageComponentType.mediaGallery => parseMediaGalleryComponent(raw),
-      MessageComponentType.file => parseFileComponent(raw),
-      MessageComponentType.separator => parseSeparatorComponent(raw),
-      MessageComponentType.container => parseContainerComponent(raw),
-      MessageComponentType.fileUpload => parseFileUploadComponent(raw),
+      ComponentType.section => parseSectionComponent(raw),
+      ComponentType.textDisplay => parseTextDisplayComponent(raw),
+      ComponentType.thumbnail => parseThumbnailComponent(raw),
+      ComponentType.mediaGallery => parseMediaGalleryComponent(raw),
+      ComponentType.file => parseFileComponent(raw),
+      ComponentType.separator => parseSeparatorComponent(raw),
+      ComponentType.container => parseContainerComponent(raw),
+      ComponentType.fileUpload => parseFileUploadComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
+
+  /// @nodoc
+  @Deprecated('Use parseComponent instead')
+  Component parseMessageComponent(Map<String, Object?> raw) => parseComponent(raw);
 
   FileUploadComponent parseFileUploadComponent(Map<String, Object?> raw) {
     return FileUploadComponent(
@@ -293,7 +297,7 @@ class MessageManager extends Manager<Message> {
       id: raw['id'] as int,
       accentColor: maybeParse(raw['accent_color'], DiscordColor.new),
       isSpoiler: raw['spoiler'] as bool?,
-      components: parseMany(raw['components'] as List, parseMessageComponent),
+      components: parseMany(raw['components'] as List, parseComponent),
     );
   }
 
@@ -357,12 +361,12 @@ class MessageManager extends Manager<Message> {
   SectionComponent parseSectionComponent(Map<String, Object?> raw) {
     return SectionComponent(
       id: raw['id'] as int,
-      accessory: parseMessageComponent(raw['accessory'] as Map<String, Object?>),
+      accessory: parseComponent(raw['accessory'] as Map<String, Object?>),
       components: parseMany(raw['components'] as List, parseTextDisplayComponent),
     );
   }
 
-  SelectMenuComponent parseSelectMenuComponent(Map<String, Object?> raw, MessageComponentType type) {
+  SelectMenuComponent parseSelectMenuComponent(Map<String, Object?> raw, ComponentType type) {
     return SelectMenuComponent(
       id: raw['id'] as int,
       type: type,
@@ -396,7 +400,7 @@ class MessageManager extends Manager<Message> {
   ActionRowComponent parseActionRowComponent(Map<String, Object?> raw) {
     return ActionRowComponent(
       id: raw['id'] as int,
-      components: parseMany(raw['components'] as List, parseMessageComponent),
+      components: parseMany(raw['components'] as List, parseComponent),
     );
   }
 
@@ -431,20 +435,20 @@ class MessageManager extends Manager<Message> {
   }
 
   SubmittedComponent parseSubmittedComponent(Map<String, Object?> raw, {Snowflake? guildId}) {
-    final type = MessageComponentType(raw['type'] as int);
+    final type = ComponentType(raw['type'] as int);
 
     return switch (type) {
-      MessageComponentType.actionRow => parseSubmittedActionRowComponent(raw, guildId: guildId),
-      MessageComponentType.textInput => parseSubmittedTextInputComponent(raw),
-      MessageComponentType.label => parseSubmittedLabelComponent(raw, guildId: guildId),
-      MessageComponentType.stringSelect ||
-      MessageComponentType.userSelect ||
-      MessageComponentType.mentionableSelect ||
-      MessageComponentType.roleSelect ||
-      MessageComponentType.channelSelect =>
+      ComponentType.actionRow => parseSubmittedActionRowComponent(raw, guildId: guildId),
+      ComponentType.textInput => parseSubmittedTextInputComponent(raw),
+      ComponentType.label => parseSubmittedLabelComponent(raw, guildId: guildId),
+      ComponentType.stringSelect ||
+      ComponentType.userSelect ||
+      ComponentType.mentionableSelect ||
+      ComponentType.roleSelect ||
+      ComponentType.channelSelect =>
         parseSubmittedSelectMenuComponent(raw, guildId: guildId),
-      MessageComponentType.textDisplay => parseSubmittedTextDisplayComponent(raw),
-      MessageComponentType.fileUpload => parseSubmittedFileUploadComponent(raw),
+      ComponentType.textDisplay => parseSubmittedTextDisplayComponent(raw),
+      ComponentType.fileUpload => parseSubmittedFileUploadComponent(raw),
       _ => UnknownComponent(type: type, id: raw['id'] as int),
     };
   }
@@ -475,7 +479,7 @@ class MessageManager extends Manager<Message> {
     return SubmittedSelectMenuComponent(
       manager: this,
       guildId: guildId,
-      type: MessageComponentType(raw['type'] as int),
+      type: ComponentType(raw['type'] as int),
       id: raw['id'] as int,
       customId: raw['custom_id'] as String,
       values: parseMany(raw['values'] as List),
@@ -585,7 +589,7 @@ class MessageManager extends Manager<Message> {
       roleMentionIds: maybeParseMany(raw['mention_roles'] as List?, Snowflake.parse) ?? [],
       type: MessageType(raw['type'] as int),
       stickers: parseMany(raw['sticker_items'] as List? ?? [], client.stickers.parseStickerItem),
-      components: maybeParseMany(raw['components'], parseMessageComponent),
+      components: maybeParseMany(raw['components'], parseComponent),
     );
   }
 

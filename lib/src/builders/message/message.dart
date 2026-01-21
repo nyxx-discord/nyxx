@@ -1,7 +1,7 @@
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/message/allowed_mentions.dart';
 import 'package:nyxx/src/builders/message/attachment.dart';
-import 'package:nyxx/src/builders/message/component.dart';
+import 'package:nyxx/src/builders/component.dart';
 import 'package:nyxx/src/builders/message/embed.dart';
 import 'package:nyxx/src/builders/message/poll.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
@@ -24,7 +24,7 @@ class MessageBuilder extends CreateBuilder<Message> {
 
   MessageReferenceBuilder? referencedMessage;
 
-  List<MessageComponentBuilder>? components;
+  List<ComponentBuilder>? components;
 
   List<Snowflake>? stickerIds;
 
@@ -149,7 +149,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
 
   AllowedMentions? allowedMentions;
 
-  List<MessageComponentBuilder>? components;
+  List<ComponentBuilder>? components;
 
   List<AttachmentBuilder>? attachments;
 

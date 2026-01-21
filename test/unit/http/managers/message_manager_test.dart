@@ -520,7 +520,7 @@ void checkComponentsV2Message(Message message) {
     return true;
   });
   expect(message.referencedMessage, isNull);
-  expect(message.components, (List<MessageComponent>? components) {
+  expect(message.components, (List<Component>? components) {
     expect(components, isNotNull);
     expect(components, hasLength(1));
 

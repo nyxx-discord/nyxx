@@ -48,11 +48,11 @@ export 'src/builders/message/allowed_mentions.dart' show AllowedMentions;
 export 'src/builders/message/attachment.dart' show AttachmentBuilder;
 export 'src/builders/message/embed.dart' show EmbedBuilder, EmbedAuthorBuilder, EmbedFieldBuilder, EmbedFooterBuilder, EmbedImageBuilder, EmbedThumbnailBuilder;
 export 'src/builders/message/message.dart' show MessageBuilder, MessageUpdateBuilder, MessageReferenceBuilder;
-export 'src/builders/message/component.dart'
+export 'src/builders/component.dart'
     show
         ActionRowBuilder,
         ButtonBuilder,
-        MessageComponentBuilder,
+        ComponentBuilder,
         SelectMenuBuilder,
         SelectMenuOptionBuilder,
         TextInputBuilder,
@@ -204,11 +204,11 @@ export 'src/models/message/poll.dart' show Poll, PollAnswer, PollAnswerCount, Po
 export 'src/models/message/reaction.dart' show Reaction, ReactionCountDetails;
 export 'src/models/message/reference.dart' show MessageReference, MessageReferenceType;
 export 'src/models/message/role_subscription_data.dart' show RoleSubscriptionData;
-export 'src/models/message/component.dart'
+export 'src/models/component.dart'
     show
         ActionRowComponent,
         ButtonComponent,
-        MessageComponent,
+        Component,
         SelectMenuComponent,
         SelectMenuOption,
         SelectMenuDefaultValue,
@@ -216,7 +216,7 @@ export 'src/models/message/component.dart'
         // ignore: deprecated_member_use_from_same_package
         TextInputComponent,
         ButtonStyle,
-        MessageComponentType,
+        ComponentType,
         TextInputStyle,
         UnknownComponent,
         ContainerComponent,

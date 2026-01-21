@@ -34,7 +34,7 @@ void main() async {
         ]),
         ActionRowBuilder(components: [
           SelectMenuBuilder(
-            type: MessageComponentType.stringSelect,
+            type: ComponentType.stringSelect,
             customId: 'a_custom_id',
             options: [
               SelectMenuOptionBuilder(label: 'Option 1', value: 'option_1'),

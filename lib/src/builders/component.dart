@@ -5,28 +5,32 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/emoji.dart';
-import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/component.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
-abstract class MessageComponentBuilder<T extends MessageComponent> extends CreateBuilder<T> {
-  MessageComponentType type;
+abstract class ComponentBuilder<T extends Component> extends CreateBuilder<T> {
+  ComponentType type;
 
   int? id;
 
-  MessageComponentBuilder({required this.type, this.id});
+  ComponentBuilder({required this.type, this.id});
 
   @override
   @mustBeOverridden
   Map<String, Object?> build() => {'type': type.value, 'id': id};
 }
 
-class ActionRowBuilder extends MessageComponentBuilder<ActionRowComponent> {
-  List<MessageComponentBuilder> components;
+/// @nodoc
+@Deprecated('Use ComponentBuilder instead')
+typedef MessageComponentBuilder = ComponentBuilder;
 
-  ActionRowBuilder({required this.components}) : super(type: MessageComponentType.actionRow);
+class ActionRowBuilder extends ComponentBuilder<ActionRowComponent> {
+  List<ComponentBuilder> components;
+
+  ActionRowBuilder({required this.components}) : super(type: ComponentType.actionRow);
 
   @override
   Map<String, Object?> build() => {
@@ -35,7 +39,7 @@ class ActionRowBuilder extends MessageComponentBuilder<ActionRowComponent> {
       };
 }
 
-class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
+class ButtonBuilder extends ComponentBuilder<ButtonComponent> {
   ButtonStyle style;
 
   String? label;
@@ -59,7 +63,7 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
     this.url,
     this.isDisabled,
     super.id,
-  }) : super(type: MessageComponentType.button);
+  }) : super(type: ComponentType.button);
 
   ButtonBuilder.primary({
     this.label,
@@ -68,7 +72,7 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
     this.isDisabled,
     super.id,
   })  : style = ButtonStyle.primary,
-        super(type: MessageComponentType.button);
+        super(type: ComponentType.button);
 
   ButtonBuilder.secondary({
     this.label,
@@ -77,7 +81,7 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
     this.isDisabled,
     super.id,
   })  : style = ButtonStyle.secondary,
-        super(type: MessageComponentType.button);
+        super(type: ComponentType.button);
 
   ButtonBuilder.success({
     this.label,
@@ -86,7 +90,7 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
     this.isDisabled,
     super.id,
   })  : style = ButtonStyle.success,
-        super(type: MessageComponentType.button);
+        super(type: ComponentType.button);
 
   ButtonBuilder.danger({
     this.label,
@@ -95,7 +99,7 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
     this.isDisabled,
     super.id,
   })  : style = ButtonStyle.danger,
-        super(type: MessageComponentType.button);
+        super(type: ComponentType.button);
 
   ButtonBuilder.link({
     this.label,
@@ -104,14 +108,14 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
     this.isDisabled,
     super.id,
   })  : style = ButtonStyle.link,
-        super(type: MessageComponentType.button);
+        super(type: ComponentType.button);
 
   ButtonBuilder.premium({
     required Snowflake this.skuId,
     this.isDisabled,
     super.id,
   })  : style = ButtonStyle.premium,
-        super(type: MessageComponentType.button);
+        super(type: ComponentType.button);
 
   @override
   Map<String, Object?> build() => {
@@ -131,7 +135,7 @@ class ButtonBuilder extends MessageComponentBuilder<ButtonComponent> {
       };
 }
 
-class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
+class SelectMenuBuilder extends ComponentBuilder<SelectMenuComponent> {
   String customId;
 
   List<SelectMenuOptionBuilder>? options;
@@ -172,7 +176,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.isDisabled,
     super.id,
     this.isRequired,
-  }) : super(type: MessageComponentType.stringSelect);
+  }) : super(type: ComponentType.stringSelect);
 
   SelectMenuBuilder.userSelect({
     required this.customId,
@@ -183,7 +187,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.isDisabled,
     super.id,
     this.isRequired,
-  }) : super(type: MessageComponentType.userSelect);
+  }) : super(type: ComponentType.userSelect);
 
   SelectMenuBuilder.roleSelect({
     required this.customId,
@@ -194,7 +198,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.isDisabled,
     super.id,
     this.isRequired,
-  }) : super(type: MessageComponentType.roleSelect);
+  }) : super(type: ComponentType.roleSelect);
 
   SelectMenuBuilder.mentionableSelect({
     required this.customId,
@@ -206,7 +210,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.isDisabled,
     super.id,
     this.isRequired,
-  }) : super(type: MessageComponentType.mentionableSelect);
+  }) : super(type: ComponentType.mentionableSelect);
 
   SelectMenuBuilder.channelSelect({
     required this.customId,
@@ -217,7 +221,7 @@ class SelectMenuBuilder extends MessageComponentBuilder<SelectMenuComponent> {
     this.isDisabled,
     super.id,
     this.isRequired,
-  }) : super(type: MessageComponentType.channelSelect);
+  }) : super(type: ComponentType.channelSelect);
 
   @override
   Map<String, Object?> build() => {
@@ -291,7 +295,7 @@ class DefaultValue<T extends SnowflakeEntity<T>> extends CreateBuilder<DefaultVa
       };
 }
 
-class TextInputBuilder extends MessageComponentBuilder<SubmittedTextInputComponent> {
+class TextInputBuilder extends ComponentBuilder<SubmittedTextInputComponent> {
   String customId;
 
   TextInputStyle style;
@@ -320,7 +324,7 @@ class TextInputBuilder extends MessageComponentBuilder<SubmittedTextInputCompone
     this.value,
     this.placeholder,
     super.id,
-  }) : super(type: MessageComponentType.textInput);
+  }) : super(type: ComponentType.textInput);
 
   @override
   Map<String, Object?> build() => {
@@ -337,12 +341,12 @@ class TextInputBuilder extends MessageComponentBuilder<SubmittedTextInputCompone
       };
 }
 
-class SectionComponentBuilder extends MessageComponentBuilder<SectionComponent> {
+class SectionComponentBuilder extends ComponentBuilder<SectionComponent> {
   List<TextDisplayComponentBuilder> components;
 
-  MessageComponentBuilder accessory;
+  ComponentBuilder accessory;
 
-  SectionComponentBuilder({super.id, required this.components, required this.accessory}) : super(type: MessageComponentType.section);
+  SectionComponentBuilder({super.id, required this.components, required this.accessory}) : super(type: ComponentType.section);
 
   @override
   Map<String, Object?> build() => {
@@ -352,10 +356,10 @@ class SectionComponentBuilder extends MessageComponentBuilder<SectionComponent> 
       };
 }
 
-class TextDisplayComponentBuilder extends MessageComponentBuilder<TextDisplayComponent> {
+class TextDisplayComponentBuilder extends ComponentBuilder<TextDisplayComponent> {
   final String content;
 
-  TextDisplayComponentBuilder({required this.content, super.id}) : super(type: MessageComponentType.textDisplay);
+  TextDisplayComponentBuilder({required this.content, super.id}) : super(type: ComponentType.textDisplay);
 
   @override
   Map<String, Object?> build() => {
@@ -373,14 +377,14 @@ class UnfurledMediaItemBuilder extends CreateBuilder<UnfurledMediaItem> {
   Map<String, Object?> build() => {'url': url.toString()};
 }
 
-class ThumbnailComponentBuilder extends MessageComponentBuilder<ThumbnailComponent> {
+class ThumbnailComponentBuilder extends ComponentBuilder<ThumbnailComponent> {
   UnfurledMediaItemBuilder media;
 
   String? description;
 
   bool? isSpoiler;
 
-  ThumbnailComponentBuilder({required this.media, this.description, this.isSpoiler, super.id}) : super(type: MessageComponentType.thumbnail);
+  ThumbnailComponentBuilder({required this.media, this.description, this.isSpoiler, super.id}) : super(type: ComponentType.thumbnail);
 
   @override
   Map<String, Object?> build() => {
@@ -408,10 +412,10 @@ class MediaGalleryItemBuilder extends CreateBuilder<MediaGalleryItem> {
       };
 }
 
-class MediaGalleryComponentBuilder extends MessageComponentBuilder<MediaGalleryComponent> {
+class MediaGalleryComponentBuilder extends ComponentBuilder<MediaGalleryComponent> {
   List<MediaGalleryItemBuilder> items;
 
-  MediaGalleryComponentBuilder({required this.items, super.id}) : super(type: MessageComponentType.mediaGallery);
+  MediaGalleryComponentBuilder({required this.items, super.id}) : super(type: ComponentType.mediaGallery);
 
   @override
   Map<String, Object?> build() => {
@@ -420,12 +424,12 @@ class MediaGalleryComponentBuilder extends MessageComponentBuilder<MediaGalleryC
       };
 }
 
-class SeparatorComponentBuilder extends MessageComponentBuilder<SeparatorComponent> {
+class SeparatorComponentBuilder extends ComponentBuilder<SeparatorComponent> {
   bool? isDivider;
 
   SeparatorSpacingSize? spacing;
 
-  SeparatorComponentBuilder({this.isDivider, this.spacing, super.id}) : super(type: MessageComponentType.separator);
+  SeparatorComponentBuilder({this.isDivider, this.spacing, super.id}) : super(type: ComponentType.separator);
 
   @override
   Map<String, Object?> build() => {
@@ -435,12 +439,12 @@ class SeparatorComponentBuilder extends MessageComponentBuilder<SeparatorCompone
       };
 }
 
-class FileComponentBuilder extends MessageComponentBuilder<FileComponent> {
+class FileComponentBuilder extends ComponentBuilder<FileComponent> {
   UnfurledMediaItemBuilder file;
 
   bool? isSpoiler;
 
-  FileComponentBuilder({required this.file, this.isSpoiler, super.id}) : super(type: MessageComponentType.file);
+  FileComponentBuilder({required this.file, this.isSpoiler, super.id}) : super(type: ComponentType.file);
 
   @override
   Map<String, Object?> build() => {
@@ -450,14 +454,14 @@ class FileComponentBuilder extends MessageComponentBuilder<FileComponent> {
       };
 }
 
-class ContainerComponentBuilder extends MessageComponentBuilder<ContainerComponent> {
+class ContainerComponentBuilder extends ComponentBuilder<ContainerComponent> {
   DiscordColor? accentColor;
 
   bool? isSpoiler;
 
-  List<MessageComponentBuilder> components;
+  List<ComponentBuilder> components;
 
-  ContainerComponentBuilder({required this.components, this.accentColor, this.isSpoiler, super.id}) : super(type: MessageComponentType.container);
+  ContainerComponentBuilder({required this.components, this.accentColor, this.isSpoiler, super.id}) : super(type: ComponentType.container);
 
   @override
   Map<String, Object?> build() => {
@@ -468,18 +472,18 @@ class ContainerComponentBuilder extends MessageComponentBuilder<ContainerCompone
       };
 }
 
-class LabelComponentBuilder extends MessageComponentBuilder<SubmittedLabelComponent> {
+class LabelComponentBuilder extends ComponentBuilder<SubmittedLabelComponent> {
   String label;
 
   String? description;
 
-  MessageComponentBuilder component;
+  ComponentBuilder component;
 
   LabelComponentBuilder({
     required this.label,
     this.description,
     required this.component,
-  }) : super(type: MessageComponentType.label);
+  }) : super(type: ComponentType.label);
 
   @override
   Map<String, Object?> build() => {
@@ -490,7 +494,7 @@ class LabelComponentBuilder extends MessageComponentBuilder<SubmittedLabelCompon
       };
 }
 
-class FileUploadComponentBuilder extends MessageComponentBuilder<FileUploadComponent> {
+class FileUploadComponentBuilder extends ComponentBuilder<FileUploadComponent> {
   String customId;
 
   int? minValues;
@@ -499,7 +503,7 @@ class FileUploadComponentBuilder extends MessageComponentBuilder<FileUploadCompo
 
   bool? isRequired;
 
-  FileUploadComponentBuilder({required this.customId, this.minValues, this.maxValues, this.isRequired}) : super(type: MessageComponentType.fileUpload);
+  FileUploadComponentBuilder({required this.customId, this.minValues, this.maxValues, this.isRequired}) : super(type: ComponentType.fileUpload);
 
   @override
   Map<String, Object?> build() => {

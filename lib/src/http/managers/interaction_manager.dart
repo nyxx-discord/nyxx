@@ -14,7 +14,7 @@ import 'package:nyxx/src/models/commands/application_command.dart';
 import 'package:nyxx/src/models/commands/application_command_option.dart';
 import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/locale.dart';
-import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/component.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
@@ -279,7 +279,7 @@ class InteractionManager {
   MessageComponentInteractionData parseMessageComponentInteractionData(Map<String, Object?> raw, {Snowflake? guildId, Snowflake? channelId}) {
     return MessageComponentInteractionData(
       customId: raw['custom_id'] as String,
-      type: MessageComponentType(raw['component_type'] as int),
+      type: ComponentType(raw['component_type'] as int),
       values: maybeParseMany(raw['values']),
       resolved: maybeParse(raw['resolved'], (Map<String, Object?> raw) => parseResolvedData(raw, guildId: guildId, channelId: channelId)),
     );

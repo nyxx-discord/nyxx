@@ -8,7 +8,7 @@ import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/models/message/activity.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
 import 'package:nyxx/src/models/message/channel_mention.dart';
-import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/component.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 import 'package:nyxx/src/models/message/author.dart';
 import 'package:nyxx/src/models/message/poll.dart';
@@ -182,7 +182,7 @@ class Message extends PartialMessage implements MessageSnapshot {
   final Thread? thread;
 
   @override
-  final List<MessageComponent>? components;
+  final List<Component>? components;
 
   @override
   final List<StickerItem> stickers;
@@ -508,7 +508,7 @@ class MessageSnapshot with ToStringHelper {
   final List<StickerItem> stickers;
 
   /// A list of components in this message.
-  final List<MessageComponent>? components;
+  final List<Component>? components;
 
   /// @nodoc
   MessageSnapshot({
