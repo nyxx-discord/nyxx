@@ -108,6 +108,14 @@ class Gateway extends GatewayManager with EventParser {
     // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
     final identifyLocks = <int, Future<void>>{};
 
+    client.initialized.then((_) {
+      _startOrIdentifyTimers.add(Timer(Duration(seconds: 10), () {
+        // Drain events so we parse and cache gateway events.
+        // Don't drain immediately so users can install their own event handlers and receive buffered events.
+        events.drain().ignore();
+      }));
+    });
+
     // Handle messages from the shards and start them according to their rate limit key.
     for (final shard in shards) {
       final rateLimitKey = shard.id % maxConcurrency;
