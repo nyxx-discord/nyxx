@@ -212,7 +212,7 @@ void main() {
               ]),
               ActionRowBuilder(components: [
                 SelectMenuBuilder(
-                  type: MessageComponentType.stringSelect,
+                  type: ComponentType.stringSelect,
                   customId: 'i',
                   options: [
                     SelectMenuOptionBuilder(label: 'One', value: '1'),

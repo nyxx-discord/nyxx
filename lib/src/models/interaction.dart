@@ -13,7 +13,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/message/attachment.dart';
-import 'package:nyxx/src/models/message/component.dart';
+import 'package:nyxx/src/models/component.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
@@ -44,7 +44,7 @@ final class InteractionContextType extends EnumLike<int, InteractionContextType>
 }
 
 /// {@template interaction}
-/// An interaction sent by Discord when a user interacts with an [ApplicationCommand], a [MessageComponent]
+/// An interaction sent by Discord when a user interacts with an [ApplicationCommand], a [Component]
 /// or a [ModalBuilder].
 /// {@endtemplate}
 abstract class Interaction<T> with ToStringHelper {
@@ -567,7 +567,7 @@ class MessageComponentInteractionData with ToStringHelper {
   final String customId;
 
   /// The type of component that was used.
-  final MessageComponentType type;
+  final ComponentType type;
 
   /// A list of values provided if the component was a [SelectMenuComponent].
   final List<String>? values;

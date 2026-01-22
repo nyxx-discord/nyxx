@@ -1,6 +1,6 @@
 import 'package:nyxx/src/builders/application_command.dart';
 import 'package:nyxx/src/builders/builder.dart';
-import 'package:nyxx/src/builders/message/component.dart';
+import 'package:nyxx/src/builders/component.dart';
 import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
@@ -103,7 +103,7 @@ class ModalBuilder extends CreateBuilder<ModalBuilder> {
 
   String title;
 
-  List<MessageComponentBuilder> components;
+  List<ComponentBuilder> components;
 
   ModalBuilder({required this.customId, required this.title, required this.components});
 
