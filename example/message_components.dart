@@ -13,36 +13,61 @@ void main() async {
     if (!event.message.content.startsWith('!component')) return;
 
     await event.message.channel.sendMessage(MessageBuilder(
-      content: 'Here are some components for you to play with!',
+      flags: MessageFlags.isComponentsV2,
       components: [
-        ActionRowBuilder(components: [
-          ButtonBuilder(
-            label: 'Visit nyxx on pub.dev',
-            style: ButtonStyle.link,
-            url: Uri.https('pub.dev', '/packages/nyxx'),
-          ),
-          ButtonBuilder(
-            label: 'A primary button',
-            style: ButtonStyle.primary,
-            customId: 'primary_button',
-          ),
-          ButtonBuilder(
-            label: 'A secondary button',
-            style: ButtonStyle.secondary,
-            customId: 'secondary_button',
-          ),
-        ]),
-        ActionRowBuilder(components: [
-          SelectMenuBuilder(
-            type: ComponentType.stringSelect,
-            customId: 'a_custom_id',
-            options: [
-              SelectMenuOptionBuilder(label: 'Option 1', value: 'option_1'),
-              SelectMenuOptionBuilder(label: 'Option 2', value: 'option_2'),
-              SelectMenuOptionBuilder(label: 'Option 3', value: 'option_3'),
-            ],
-          ),
-        ]),
+        ContainerComponentBuilder(
+          accentColor: DiscordColor(9225410),
+          components: [
+            TextDisplayComponentBuilder(content: "Example components - also check out [discord.builders](https://discord.builders)!"),
+            TextDisplayComponentBuilder(content: "\nButtons"),
+            ActionRowBuilder(
+              components: [
+                ButtonBuilder.link(
+                  url: Uri.parse("https://pub.dev/packages/nyxx"),
+                  label: "Buttons that",
+                ),
+                ButtonBuilder.primary(
+                  label: "you can",
+                  customId: "36acfad8d418474084daed1d0d06bef2",
+                ),
+                ButtonBuilder.secondary(
+                  label: "click",
+                  customId: "212dc1a845d54912cdff8446cdb3d321",
+                ),
+              ],
+            ),
+            TextDisplayComponentBuilder(content: "\nSelect menus"),
+            ActionRowBuilder(
+              components: [
+                SelectMenuBuilder.stringSelect(
+                  customId: "99fca274f90a4070beb7086fdf335bfc",
+                  minValues: 1,
+                  maxValues: 2,
+                  options: [
+                    SelectMenuOptionBuilder(
+                      label: "Test selection",
+                      value: "44c530edcff948c5e63764303419e252",
+                      description: "test",
+                      isDefault: true,
+                    ),
+                    SelectMenuOptionBuilder(
+                      label: "Other selection",
+                      value: "c0f60f084fc44e99ec904a89f83ffaf6",
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            TextDisplayComponentBuilder(content: "\nImages"),
+            MediaGalleryComponentBuilder(
+              items: [
+                MediaGalleryItemBuilder(
+                  media: UnfurledMediaItemBuilder(url: Uri.parse("https://avatars.githubusercontent.com/u/88039362?s=256")),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     ));
   });
