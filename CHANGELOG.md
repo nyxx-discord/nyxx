@@ -1,3 +1,12 @@
+## 6.8.0
+__23.01.2026__
+- feat: Implement modals v2 phase 4 (radio & checkbox groups)
+- bug: Update cache even with no listeners
+- feat: Implement modals v2 phase 3 (file upload components)
+- bug: Fix comparing `TextEmoji`s for equality.
+- feat: Implement modals v2 phase 2 (select menus in modals)
+- feat: Implement role gradient colors
+
 ## 6.8.0-dev.1
 __28.08.2025__
 
@@ -5,6 +14,10 @@ __28.08.2025__
   - Add `LabelBuilder` and support for select menus in modals.
   - Deprecate receiving `TextInputComponent`s.
   - Receive `SubmittedComponent` subtypes in modal interactions.
+- feat: Implement user guild tags
+- feat: Implement guest invites
+- feat: Add `bannerHash` to user guilds
+- feat: Implement new pin endpoints
 
 ## 6.7.0
 __30.05.20205__
