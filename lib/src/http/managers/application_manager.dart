@@ -56,7 +56,8 @@ class ApplicationManager {
       coverImageHash: raw['cover_image'] as String?,
       flags: ApplicationFlags(raw['flags'] as int? ?? 0),
       approximateGuildCount: raw['approximate_guild_count'] as int?,
-      redirectUris: maybeParseMany(raw['redirect_uris'], Uri.parse),
+      // TODO: remove ts once https://github.com/discord/discord-api-docs/issues/7586 is resolved.
+      redirectUris: maybeParseMany((raw['redirect_uris'] as List?)?.nonNulls.toList(), Uri.parse),
       interactionsEndpointUrl: maybeParse(raw['interactions_endpoint_url'], Uri.parse),
       tags: maybeParseMany(raw['tags']),
       installationParameters: maybeParse(raw['install_params'], parseInstallationParameters),
