@@ -50,7 +50,9 @@ final sampleApplication = {
     "name": "test team",
     "owner_user_id": "0",
   },
-  "verify_key": "1e0a356058d627ca38a5c8c9648818061d49e49bd9da9e3ab17d98ad4d6bg2u8"
+  "verify_key": "1e0a356058d627ca38a5c8c9648818061d49e49bd9da9e3ab17d98ad4d6bg2u8",
+  // We also set a null value to test if our fix work
+  'redirect_uris': ['http://localhost:3000/oauth/discord/callback', null]
 };
 
 void checkApplication(Application application) {
@@ -82,6 +84,7 @@ void checkApplication(Application application) {
     expect(config.oauth2InstallParameters!.permissions, equals(Permissions(2048)));
     return true;
   });
+  expect(application.redirectUris, equals([Uri.parse('http://localhost:3000/oauth/discord/callback')]));
 }
 
 final sampleRoleConnectionMetadata = {
