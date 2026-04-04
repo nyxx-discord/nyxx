@@ -100,10 +100,6 @@ class ShardRunner {
         disposing = true;
         connection?.close();
 
-        // We might get a dispose request while we are waiting to identify.
-        // Add an event to the identify stream so we break out of the wait.
-        identifyController.add(null);
-
         // We need to start the shard to jump ahead to the check for exiting the shard.
         if (!startCompleter.isCompleted) {
           startCompleter.complete(StartShard());
@@ -154,6 +150,13 @@ class ShardRunner {
 
           heartbeatInterval = hello.heartbeatInterval;
           startHeartbeat();
+
+          connection!.done.then((_) {
+            heartbeatTimer?.cancel();
+            // The connection might close while we are waiting to identify.
+            // Add an event to the identify stream so we break out of the wait.
+            identifyController.add(null);
+          });
 
           // If we can resume (the connection loop was restarted) and we have the information needed, try to resume.
           // Otherwise, identify.
@@ -219,7 +222,6 @@ class ShardRunner {
 
           // Wait for the current connection to end, either due to a remote close or due to us disconnecting.
           await subscription.asFuture();
-          heartbeatTimer?.cancel();
 
           // Check if we can resume based on close code if the connection was closed by Discord.
           if (connection!.localCloseCode == null) {
