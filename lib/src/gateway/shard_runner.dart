@@ -537,7 +537,9 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
           }
 
           // Copy contents out of buffer that will be reused.
-          output.add(Uint8List.fromList(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos)));
+          if (outputPtr.ref.pos > 0) {
+            output.add(Uint8List.fromList(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos)));
+          }
         }
       }
     },
