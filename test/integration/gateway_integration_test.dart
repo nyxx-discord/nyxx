@@ -56,6 +56,13 @@ void main() {
       }
       await expectLater(client.close(), completes);
     });
+
+    test('Fails without enough session starts', () async {
+      expect(
+        Nyxx.connectGateway(testToken!, GatewayIntents.none, options: GatewayClientOptions(minimumSessionStarts: 1000000)),
+        throwsA(isA<OutOfRemainingSessionsError>()),
+      );
+    });
   });
 
   group('NyxxGateway', skip: testToken != null ? false : 'No test token provided', () {
