@@ -502,6 +502,7 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
   final outputSize = zstd.ZSTD_DStreamOutSize();
   final outputPtr = malloc<ZSTD_outBuffer>();
   outputPtr.ref.dst = malloc<Uint8>(outputSize).cast<Void>();
+  outputPtr.ref.size = outputSize;
 
   final dctx = zstd.ZSTD_createDCtx();
   if (dctx == nullptr) {
@@ -512,6 +513,7 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
 
     throw NyxxException('Unable to initialise Zstd dctx');
   }
+  zstd.ZSTD_initDStream(dctx);
 
   var lastRet = 0;
 
