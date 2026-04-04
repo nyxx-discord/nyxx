@@ -81,7 +81,7 @@ jobs:
         run: dart format --set-exit-if-changed -l 160 ./lib
 
   unit-tests:
-    needs: [ format, analyze, fix ]
+    needs: [format, analyze, fix]
     name: Unit tests
     runs-on: ubuntu-latest
     env:
@@ -111,7 +111,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: [ format, analyze, fix ]
+    needs: [format, analyze, fix]
     runs-on: ubuntu-latest
     env:
       TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
@@ -136,4 +136,4 @@ jobs:
         run: dart pub get
 
       - name: Integration tests
-        run: dart run test test/integration/**
+        run: dart run test -j 1 test/integration/**
