@@ -97,6 +97,9 @@ class HttpHandler {
 
   final Set<Completer<void>> _pendingRateLimits = {};
 
+  final Completer<void> _doneCompleter = Completer();
+  bool _isClosed = false;
+
   /// Create a new [HttpHandler].
   ///
   /// {@macro http_handler}
@@ -216,6 +219,9 @@ class HttpHandler {
         _pendingRateLimits.add(completer);
         try {
           await completer.future;
+        } catch (e) {
+          // Add a proper stack trace.
+          Error.throwWithStackTrace(e, StackTrace.current);
         } finally {
           _pendingRateLimits.remove(completer);
           timer.cancel();
@@ -329,20 +335,41 @@ class HttpHandler {
     return parsedResponse;
   }
 
-  void close() {
-    // Timers associated with these completers will be cancelled in
-    // the finally block from the try/catch that the completer is awaited in.
-    for (final completer in _pendingRateLimits) {
-      completer.completeError(
-        ClientClosedError(),
-        StackTrace.current,
-      );
+  /// A future that completes when this HTTP handler closes.
+  ///
+  /// If this HTTP handler closes due to an error, this future will also complete with an error.
+  Future<void> get done => _doneCompleter.future;
+
+  /// Close this HTTP handler.
+  ///
+  /// Returns the same future as [done].
+  Future<void> close() {
+    Future<void> doClose() async {
+      _isClosed = true;
+
+      // Timers associated with these completers will be cancelled in
+      // the finally block from the try/catch that the completer is awaited in.
+      for (final completer in _pendingRateLimits) {
+        completer.completeError(ClientClosedError());
+      }
+
+      httpClient.close();
+      _onRequestController.close();
+      _onResponseController.close();
+      _onRateLimitController.close();
     }
 
-    httpClient.close();
-    _onRequestController.close();
-    _onResponseController.close();
-    _onRateLimitController.close();
+    if (!_isClosed) {
+      final closeFuture = doClose();
+      if (!_doneCompleter.isCompleted) {
+        _doneCompleter.complete(closeFuture);
+      } else {
+        closeFuture.ignore();
+      }
+    }
+
+    assert(_doneCompleter.isCompleted);
+    return _doneCompleter.future;
   }
 }
 

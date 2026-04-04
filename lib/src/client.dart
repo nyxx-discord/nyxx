@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/cache/cache.dart';
@@ -24,7 +23,7 @@ import 'package:oauth2/oauth2.dart';
 import 'package:runtime_type/runtime_type.dart';
 
 /// A helper function to nest and execute calls to plugin connect methods.
-Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
+Future<T> _pluginConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions clientOptions, Future<T> Function() connect, List<NyxxPlugin> plugins) {
   final actualClientType = RuntimeType<T>();
 
   for (final plugin in plugins) {
@@ -36,8 +35,7 @@ Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions client
   final originalConnect = connect;
 
   connect = plugins.fold(
-    () async => await originalConnect()
-      .._initializedCompleter.complete(),
+    originalConnect,
     (previousConnect, plugin) => () async => actualClientType.castInstance(await plugin.doConnect(apiOptions, clientOptions, previousConnect)),
   );
 
@@ -45,19 +43,12 @@ Future<T> _doConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions client
 }
 
 /// A helper function to nest and execute calls to plugin close methods.
-Future<void> _doClose(Nyxx client, Future<void> Function() close, List<NyxxPlugin> plugins) {
+Future<void> _pluginClose(Nyxx client, Future<void> Function() close, List<NyxxPlugin> plugins) {
   close = plugins.fold(
     close,
     (previousClose, plugin) => () => plugin.doClose(client, previousClose),
   );
   return close();
-}
-
-@internal
-extension InternalReady on Nyxx {
-  /// A future that completes when this client is initialized and can be passed to user defined callbacks.
-  @internal
-  Future<void> get initialized => _initializedCompleter.future;
 }
 
 /// The base class for clients interacting with the Discord API.
@@ -72,12 +63,13 @@ abstract class Nyxx {
   ClientOptions get options;
 
   /// The logger for this client.
-  Logger get logger;
+  Logger get logger => options.logger;
 
   /// The cache manager for this client.
-  CacheManager get cache;
+  late final CacheManager cache = CacheManager(this);
 
-  Completer<void> get _initializedCompleter;
+  final Completer<void> _doneCompleter = Completer();
+  bool _isClosed = false;
 
   /// Create an instance of [NyxxRest] that can perform requests to the HTTP API and is
   /// authenticated with a bot token.
@@ -86,7 +78,7 @@ abstract class Nyxx {
 
   /// Create an instance of [NyxxRest] using the provided options.
   static Future<NyxxRest> connectRestWithOptions(RestApiOptions apiOptions, [RestClientOptions clientOptions = const RestClientOptions()]) async {
-    return _doConnect(apiOptions, clientOptions, () async {
+    return _pluginConnect(apiOptions, clientOptions, () async {
       clientOptions.logger
         ..info('Connecting to the REST API')
         ..fine('Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent}')
@@ -94,9 +86,23 @@ abstract class Nyxx {
 
       final client = NyxxRest._(apiOptions, clientOptions);
 
-      return client
+      client
         .._application = await client.applications.fetchCurrentApplication()
         .._user = await client.users.fetchCurrentUser();
+
+      client.httpHandler.done.then((_) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(NyxxException('HTTP handler was closed'), StackTrace.current);
+        client.close();
+      }, onError: (e, s) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(e, s);
+        client.close();
+      });
+
+      return client;
     }, clientOptions.plugins);
   }
 
@@ -111,7 +117,7 @@ abstract class Nyxx {
   ///
   /// Note that `client.user.id` will contain [Snowflake.zero] if there no `identify` scope.
   static Future<NyxxOAuth2> connectOAuth2WithOptions(OAuth2ApiOptions apiOptions, [RestClientOptions clientOptions = const RestClientOptions()]) async {
-    return _doConnect(apiOptions, clientOptions, () async {
+    return _pluginConnect(apiOptions, clientOptions, () async {
       clientOptions.logger
         ..info('Connecting to the REST API via OAuth2')
         ..fine('Token: ${apiOptions.token}, Authorization: ${apiOptions.authorizationHeader}, User-Agent: ${apiOptions.userAgent}')
@@ -120,9 +126,23 @@ abstract class Nyxx {
       final client = NyxxOAuth2._(apiOptions, clientOptions);
       final information = await client.users.fetchCurrentOAuth2Information();
 
-      return client
+      client
         .._application = information.application
         .._user = information.user ?? PartialUser(id: Snowflake.zero, manager: client.users);
+
+      client.httpHandler.done.then((_) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(NyxxException('HTTP handler was closed'), StackTrace.current);
+        client.close();
+      }, onError: (e, s) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(e, s);
+        client.close();
+      });
+
+      return client;
     }, clientOptions.plugins);
   }
 
@@ -136,7 +156,7 @@ abstract class Nyxx {
     GatewayApiOptions apiOptions, [
     GatewayClientOptions clientOptions = const GatewayClientOptions(),
   ]) async {
-    return _doConnect(apiOptions, clientOptions, () async {
+    return _pluginConnect(apiOptions, clientOptions, () async {
       clientOptions.logger
         ..info('Connecting to the Gateway API')
         ..fine(
@@ -156,18 +176,69 @@ abstract class Nyxx {
       final gatewayManager = GatewayManager(client);
 
       final gatewayBot = await gatewayManager.fetchGatewayBot();
-      return client..gateway = await Gateway.connect(client, gatewayBot);
+      client.gateway = await Gateway.connect(client, gatewayBot);
+
+      client.httpHandler.done.then((_) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(NyxxException('HTTP handler was closed'), StackTrace.current);
+        client.close();
+      }, onError: (e, s) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(e, s);
+        client.close();
+      });
+
+      client.gateway.done.then((_) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(NyxxException('Gateway was closed'), StackTrace.current);
+        client.close();
+      }, onError: (e, s) {
+        if (client._doneCompleter.isCompleted) return;
+
+        client._doneCompleter.completeError(e, s);
+        client.close();
+      });
+
+      return client;
     }, clientOptions.plugins);
   }
+
+  /// A future that completes when this client closes.
+  ///
+  /// If this client closes because of an error, this future will complete with that error.
+  Future<void> get done => _doneCompleter.future;
 
   /// Close this client and any underlying resources.
   ///
   /// The client should not be used after this is called and unexpected behavior may occur.
-  Future<void> close();
+  ///
+  /// Returns the same future as [done].
+  Future<void> close() {
+    logger.info('Closing client');
+
+    if (!_isClosed) {
+      _isClosed = true;
+      final closeFuture = _pluginClose(this, _doClose, options.plugins);
+
+      if (!_doneCompleter.isCompleted) {
+        _doneCompleter.complete(closeFuture);
+      } else {
+        closeFuture.ignore();
+      }
+    }
+
+    assert(_doneCompleter.isCompleted);
+    return _doneCompleter.future;
+  }
+
+  Future<void> _doClose();
 }
 
 /// A client that can make requests to the HTTP API and is authenticated with a bot token.
-class NyxxRest with ManagerMixin implements Nyxx {
+class NyxxRest extends Nyxx with ManagerMixin {
   @override
   final RestApiOptions apiOptions;
 
@@ -184,15 +255,6 @@ class NyxxRest with ManagerMixin implements Nyxx {
   /// The user associated with this client.
   PartialUser get user => _user;
   late final PartialUser _user;
-
-  @override
-  Logger get logger => options.logger;
-
-  @override
-  final Completer<void> _initializedCompleter = Completer();
-
-  @override
-  late final CacheManager cache = CacheManager(this);
 
   NyxxRest._(this.apiOptions, this.options);
 
@@ -215,13 +277,10 @@ class NyxxRest with ManagerMixin implements Nyxx {
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   @override
-  Future<void> close() {
-    logger.info('Closing client');
-    return _doClose(this, () async => httpHandler.close(), options.plugins);
-  }
+  Future<void> _doClose() => httpHandler.close();
 }
 
-class NyxxOAuth2 with ManagerMixin implements NyxxRest {
+class NyxxOAuth2 extends Nyxx with ManagerMixin implements NyxxRest {
   @override
   final OAuth2ApiOptions apiOptions;
 
@@ -230,9 +289,6 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
 
   @override
   late final HttpHandler httpHandler = Oauth2HttpHandler(this);
-
-  @override
-  Logger get logger => options.logger;
 
   @override
   PartialApplication get application => _application;
@@ -245,12 +301,6 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
 
   @override
   late final PartialUser _user;
-
-  @override
-  final Completer<void> _initializedCompleter = Completer();
-
-  @override
-  late final CacheManager cache = CacheManager(this);
 
   NyxxOAuth2._(this.apiOptions, this.options);
 
@@ -265,14 +315,11 @@ class NyxxOAuth2 with ManagerMixin implements NyxxRest {
       users.listCurrentUserGuilds(before: before, after: after, limit: limit);
 
   @override
-  Future<void> close() {
-    logger.info('Closing client');
-    return _doClose(this, () async => httpHandler.close(), options.plugins);
-  }
+  Future<void> _doClose() => httpHandler.close();
 }
 
 /// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
-class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
+class NyxxGateway extends Nyxx with ManagerMixin, EventMixin implements NyxxRest {
   @override
   final GatewayApiOptions apiOptions;
 
@@ -299,15 +346,6 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   @override
   late final Gateway gateway;
 
-  @override
-  Logger get logger => options.logger;
-
-  @override
-  final Completer<void> _initializedCompleter = Completer();
-
-  @override
-  late final CacheManager cache = CacheManager(this);
-
   NyxxGateway._(this.apiOptions, this.options);
 
   @override
@@ -327,11 +365,10 @@ class NyxxGateway with ManagerMixin, EventMixin implements NyxxRest {
   void updatePresence(PresenceBuilder builder) => gateway.updatePresence(builder);
 
   @override
-  Future<void> close() {
-    logger.info('Closing client');
-    return _doClose(this, () async {
-      await gateway.close();
-      httpHandler.close();
-    }, options.plugins);
+  Future<void> _doClose() async {
+    await [
+      gateway.close(),
+      httpHandler.close(),
+    ].wait;
   }
 }

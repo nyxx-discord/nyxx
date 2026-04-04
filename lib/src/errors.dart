@@ -94,29 +94,35 @@ class SkuNotFoundException extends NyxxException {
 }
 
 /// An error thrown when a shard disconnects unexpectedly.
-class ShardDisconnectedError extends Error {
+class ShardDisconnectedError extends Error implements NyxxException {
   /// The shard that was disconnected.
   final Shard shard;
+
+  @override
+  String get message => 'Shard ${shard.id} disconnected unexpectedly';
 
   /// Create a new [ShardDisconnectedError].
   ShardDisconnectedError(this.shard);
 
   @override
-  String toString() => 'Shard ${shard.id} disconnected unexpectedly';
+  String toString() => message;
 }
 
 /// An error thrown when the number of remaining sessions becomes too low.
 ///
 /// The threshold for this can be configured in [GatewayClientOptions.minimumSessionStarts].
-class OutOfRemainingSessionsError extends Error {
+class OutOfRemainingSessionsError extends Error implements NyxxException {
   /// The [GatewayBot] containing the information that triggered the error.
   final GatewayBot gatewayBot;
+
+  @override
+  String get message => 'Out of remaining session starts (${gatewayBot.sessionStartLimit.remaining} left)';
 
   /// Create a new [OutOfRemainingSessionsError].
   OutOfRemainingSessionsError(this.gatewayBot);
 
   @override
-  String toString() => 'Out of remaining session starts (${gatewayBot.sessionStartLimit.remaining} left)';
+  String toString() => message;
 }
 
 /// An error thrown when [MessageResponse.acknowledge] is called on an already acknowledged interaction.

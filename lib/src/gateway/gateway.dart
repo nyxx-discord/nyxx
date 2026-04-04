@@ -71,6 +71,10 @@ class Gateway extends GatewayManager with EventParser {
 
   final StreamController<ShardMessage> _messagesController = StreamController();
 
+  final Completer<void> _connectedCompleter = Completer();
+  final Completer<void> _doneCompleter = Completer();
+  bool _isClosed = false;
+
   /// A stream of dispatch events received from all shards.
   // Make this late instead of a getter so only a single subscription is made, which prevents events from being parsed multiple times.
   late final Stream<DispatchEvent> events = messages.transform(StreamTransformer.fromBind((messages) async* {
@@ -86,8 +90,6 @@ class Gateway extends GatewayManager with EventParser {
       yield parsedEvent;
     }
   })).asBroadcastStream();
-
-  bool _closing = false;
 
   /// The average latency across all shards in this [Gateway].
   ///
@@ -108,13 +110,11 @@ class Gateway extends GatewayManager with EventParser {
     // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
     final identifyLocks = <int, Future<void>>{};
 
-    client.initialized.then((_) {
-      _startOrIdentifyTimers.add(Timer(Duration(seconds: 10), () {
-        // Drain events so we parse and cache gateway events.
-        // Don't drain immediately so users can install their own event handlers and receive buffered events.
-        events.drain().ignore();
-      }));
-    });
+    _startOrIdentifyTimers.add(Timer(Duration(seconds: 10), () {
+      // Drain events so we parse and cache gateway events.
+      // Don't drain immediately so users can install their own event handlers and receive buffered events.
+      events.drain().ignore();
+    }));
 
     // Handle messages from the shards and start them according to their rate limit key.
     for (final shard in shards) {
@@ -131,49 +131,64 @@ class Gateway extends GatewayManager with EventParser {
       });
       _startOrIdentifyTimers.add(startTimer);
 
-      shard.listen(
-        (event) {
-          _messagesController.add(event);
+      void handleError(Object error, StackTrace stackTrace) {
+        if (!_doneCompleter.isCompleted) {
+          _doneCompleter.completeError(error, stackTrace);
+          close();
+        }
+      }
 
-          if (event is RequestingIdentify) {
-            final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
-            identifyLocks[rateLimitKey] = currentLock.then((_) async {
-              if (_closing) return;
+      runZonedGuarded(
+        () {
+          shard.listen(
+            (event) {
+              _messagesController.add(event);
 
-              if (remainingIdentifyRequests < client.options.minimumSessionStarts * 5) {
-                logger.warning('$remainingIdentifyRequests session starts remaining');
+              if (event is RequestingIdentify) {
+                final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
+                identifyLocks[rateLimitKey] = currentLock.then((_) async {
+                  if (_isClosed) return;
+
+                  if (remainingIdentifyRequests < client.options.minimumSessionStarts * 5) {
+                    logger.warning('$remainingIdentifyRequests session starts remaining');
+                  }
+
+                  if (remainingIdentifyRequests < client.options.minimumSessionStarts) {
+                    throw OutOfRemainingSessionsError(gatewayBot);
+                  }
+
+                  remainingIdentifyRequests--;
+                  shard.add(Identify());
+
+                  // Don't use Future.delayed so that we can exit early if close() is called.
+                  // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+                  // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
+                  final delayCompleter = Completer<void>();
+                  final delayTimer = Timer(identifyDelay, delayCompleter.complete);
+                  _startOrIdentifyTimers.add(delayTimer);
+                  await delayCompleter.future;
+                  _startOrIdentifyTimers.remove(delayTimer);
+                });
+              } else if (event case EventReceived(event: RawDispatchEvent(name: 'READY'))) {
+                if (!_connectedCompleter.isCompleted) {
+                  _connectedCompleter.complete();
+                }
               }
+            },
+            onError: _messagesController.addError,
+            cancelOnError: false,
+          );
+        },
+        handleError,
+      );
 
-              if (remainingIdentifyRequests < client.options.minimumSessionStarts) {
-                await client.close();
-                throw OutOfRemainingSessionsError(gatewayBot);
-              }
-
-              remainingIdentifyRequests--;
-              shard.add(Identify());
-
-              // Don't use Future.delayed so that we can exit early if close() is called.
-              // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
-              // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
-              final delayCompleter = Completer<void>();
-              final delayTimer = Timer(identifyDelay, delayCompleter.complete);
-              _startOrIdentifyTimers.add(delayTimer);
-              await delayCompleter.future;
-              _startOrIdentifyTimers.remove(delayTimer);
-            });
+      shard.done.then(
+        (_) {
+          if (!_isClosed) {
+            handleError(ShardDisconnectedError(shard), StackTrace.current);
           }
         },
-        onError: _messagesController.addError,
-        onDone: () async {
-          if (_closing) {
-            return;
-          }
-
-          await client.close();
-
-          throw ShardDisconnectedError(shard);
-        },
-        cancelOnError: false,
+        onError: handleError,
       );
     }
   }
@@ -214,18 +229,50 @@ class Gateway extends GatewayManager with EventParser {
     );
 
     final shards = shardIds.map((id) => Shard.connect(id, totalShards, client.apiOptions, gatewayBot.url, client));
-    return Gateway(client, gatewayBot, await Future.wait(shards), totalShards, shardIds);
+    final gateway = Gateway(client, gatewayBot, await Future.wait(shards), totalShards, shardIds);
+    await gateway._connectedCompleter.future;
+    return gateway;
   }
 
+  /// A future that completes when this [Gateway] instance closes.
+  ///
+  /// If this [Gateway] closes because of an error, this future will complete with that error.
+  Future<void> get done => _doneCompleter.future;
+
   /// Close this [Gateway] instance, disconnecting all shards and closing the event streams.
+  ///
+  /// Returns the same future as [done].
   Future<void> close() async {
-    _closing = true;
-    // Make sure we don't start any shards after we have closed.
-    for (final timer in _startOrIdentifyTimers) {
-      timer.cancel();
+    Future<void> doClose() async {
+      _isClosed = true;
+
+      if (!_connectedCompleter.isCompleted) {
+        _connectedCompleter.complete(_doneCompleter.future);
+      }
+
+      // Make sure we don't start any shards after we have closed.
+      for (final timer in _startOrIdentifyTimers) {
+        timer.cancel();
+      }
+
+      try {
+        await Future.wait(shards.map((shard) => shard.close()));
+      } finally {
+        _messagesController.close();
+      }
     }
-    await Future.wait(shards.map((shard) => shard.close()));
-    _messagesController.close();
+
+    if (!_isClosed) {
+      final closeFuture = doClose();
+      if (!_doneCompleter.isCompleted) {
+        _doneCompleter.complete(closeFuture);
+      } else {
+        closeFuture.ignore();
+      }
+    }
+
+    assert(_doneCompleter.isCompleted);
+    return _doneCompleter.future;
   }
 
   /// Compute the ID of the shard that handles events for [guildId].

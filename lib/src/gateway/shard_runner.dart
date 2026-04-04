@@ -84,9 +84,17 @@ class ShardRunner {
     })
       ..pause();
 
-    // identifyController serves as a notification system for Identify messages.
-    // Any Identify messages received are added to this stream.
-    final identifyController = StreamController<Identify>.broadcast();
+    Completer<Identify?>? pendingIdentify;
+    Future<Identify?> requestIdentify() async {
+      if (pendingIdentify case final identify?) {
+        return identify.future;
+      }
+
+      controller.add(RequestingIdentify());
+      pendingIdentify = Completer();
+
+      return pendingIdentify!.future;
+    }
 
     // startCompleter is completed when the Gateway instance is ready for this shard to start.
     final startCompleter = Completer<StartShard>();
@@ -95,17 +103,11 @@ class ShardRunner {
       if (message is Send) {
         sendController.add(message);
       } else if (message is Identify) {
-        identifyController.add(message);
+        pendingIdentify?.complete(message);
       } else if (message is Dispose) {
         disposing = true;
         connection?.close();
-
-        // We might get a dispose request while we are waiting to identify.
-        // Add an error to the identify stream so we break out of the wait.
-        identifyController.addError(
-          Exception('Out of remaining session starts'),
-          StackTrace.current,
-        );
+        pendingIdentify?.complete(null);
 
         // We need to start the shard to jump ahead to the check for exiting the shard.
         if (!startCompleter.isCompleted) {
@@ -121,6 +123,15 @@ class ShardRunner {
         }
 
         startCompleter.complete(message);
+      } else if (message is Reconnect) {
+        canResume = canResume && message.allowResume;
+        connection?.close();
+
+        // i.e we have a pending request and it has not been fulfilled yet.
+        if (pendingIdentify?.isCompleted == false) {
+          pendingIdentify!.complete(null);
+          pendingIdentify = Completer();
+        }
       }
     });
 
@@ -141,6 +152,14 @@ class ShardRunner {
           // Initialize lastHeartbeatAcked to `true` so we don't immediately disconnect in heartbeat().
           lastHeartbeatAcked = true;
 
+          final goingToResume = canResume && seq != null && sessionId != null;
+          if (!goingToResume) {
+            final identify = await requestIdentify();
+            if (identify == null) {
+              continue;
+            }
+          }
+
           // Open the websocket connection.
           connection = await ShardConnection.connect(gatewayUri.toString(), this);
           connection!.onSent.listen(controller.add);
@@ -155,14 +174,16 @@ class ShardRunner {
           heartbeatInterval = hello.heartbeatInterval;
           startHeartbeat();
 
+          connection!.done.then((_) {
+            heartbeatTimer?.cancel();
+          });
+
           // If we can resume (the connection loop was restarted) and we have the information needed, try to resume.
           // Otherwise, identify.
-          if (canResume && seq != null && sessionId != null) {
+          if (goingToResume) {
             await sendResume();
           } else {
-            // Request to identify and wait for the confirmation.
-            controller.add(RequestingIdentify());
-            await identifyController.stream.first;
+            pendingIdentify = null;
 
             await sendIdentify();
           }
@@ -241,7 +262,9 @@ class ShardRunner {
           // Prevents the while-true loop from looping too often when no internet is available.
           await Future.delayed(Duration(milliseconds: 100));
 
-          controller.add(Reconnecting(reason: 'Error on Gateway connection'));
+          if (!disposing) {
+            controller.add(Reconnecting(reason: 'Error on Gateway connection'));
+          }
         } finally {
           // Pause the send subscription until we are connected again.
           // The handler may already be paused if the error occurred before we had identified.
@@ -264,7 +287,6 @@ class ShardRunner {
     asyncRun().then((_) {
       controller.close();
       sendController.close();
-      identifyController.close();
       messageHandler.cancel();
     });
 

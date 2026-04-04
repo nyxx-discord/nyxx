@@ -9,7 +9,7 @@ void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
   final testGuild = Platform.environment['TEST_GUILD'];
 
-  group('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', () {
+  group('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', timeout: Timeout.parse('2m'), () {
     Future<void> testClient(GatewayApiOptions options) async {
       late NyxxGateway client;
 
@@ -55,6 +55,13 @@ void main() {
         await expectLater(client.onEvent, emits(isA<ReadyEvent>()));
       }
       await expectLater(client.close(), completes);
+    });
+
+    test('Fails without enough session starts', () async {
+      expect(
+        Nyxx.connectGateway(testToken!, GatewayIntents.none, options: GatewayClientOptions(minimumSessionStarts: 1000000)),
+        throwsA(isA<OutOfRemainingSessionsError>()),
+      );
     });
   });
 
