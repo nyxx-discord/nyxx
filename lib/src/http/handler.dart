@@ -341,6 +341,8 @@ class HttpHandler {
   Future<void> get done => _doneCompleter.future;
 
   /// Close this HTTP handler.
+  ///
+  /// Returns the same future as [done].
   Future<void> close() {
     Future<void> doClose() async {
       _isClosed = true;

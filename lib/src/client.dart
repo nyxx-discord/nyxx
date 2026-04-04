@@ -216,9 +216,16 @@ abstract class Nyxx {
     }, clientOptions.plugins);
   }
 
+  /// A future that completes when this client closes.
+  ///
+  /// If this client closes because of an error, this future will complete with that error.
+  Future<void> get done => _doneCompleter.future;
+
   /// Close this client and any underlying resources.
   ///
   /// The client should not be used after this is called and unexpected behavior may occur.
+  ///
+  /// Returns the same future as [done].
   Future<void> close() {
     logger.info('Closing client');
 

@@ -229,7 +229,14 @@ class Gateway extends GatewayManager with EventParser {
     return gateway;
   }
 
+  /// A future that completes when this [Gateway] instance closes.
+  ///
+  /// If this [Gateway] closes because of an error, this future will complete with that error.
+  Future<void> get done => _doneCompleter.future;
+
   /// Close this [Gateway] instance, disconnecting all shards and closing the event streams.
+  ///
+  /// Returns the same future as [done].
   Future<void> close() async {
     Future<void> doClose() async {
       _isClosed = true;
@@ -260,11 +267,6 @@ class Gateway extends GatewayManager with EventParser {
     assert(_doneCompleter.isCompleted);
     return _doneCompleter.future;
   }
-
-  /// A future that completes when this [Gateway] instance closes.
-  ///
-  /// If this [Gateway] closes because of an error, this future will complete with that error.
-  Future<void> get done => _doneCompleter.future;
 
   /// Compute the ID of the shard that handles events for [guildId].
   int shardIdFor(Snowflake guildId) => (guildId.value >> 22) % totalShards;
