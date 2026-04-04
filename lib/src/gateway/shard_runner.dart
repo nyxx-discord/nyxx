@@ -118,6 +118,9 @@ class ShardRunner {
         }
 
         startCompleter.complete(message);
+      } else if (message is Reconnect) {
+        canResume = canResume && message.allowResume;
+        connection?.close();
       }
     });
 

@@ -178,6 +178,11 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
     }));
   }
 
+  /// End the current connection and create a new one.
+  ///
+  /// Cannot be used to restart this shard if it has disconnected.
+  void reconnect({bool allowResume = true}) => add(Reconnect(allowResume: allowResume));
+
   @override
   void add(GatewayMessage event) {
     if (event is Send) {

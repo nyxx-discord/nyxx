@@ -105,3 +105,12 @@ class Identify extends GatewayMessage {}
 ///
 /// The shard can no longer be used after this is sent.
 class Dispose extends GatewayMessage {}
+
+/// A gateway message sent to instruct the shard to end its current connection and create a new one.
+///
+/// Cannot be used to restart a disconnected shard.
+class Reconnect extends GatewayMessage {
+  final bool allowResume;
+
+  Reconnect({this.allowResume = true});
+}
