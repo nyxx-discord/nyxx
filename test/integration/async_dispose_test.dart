@@ -84,6 +84,9 @@ void main() {
         assetRequest,
         ...shardsDone,
         rateLimitedRequest,
+        client.done,
+        client.httpHandler.done,
+        client.gateway.done,
       ]);
 
       await client.close();
