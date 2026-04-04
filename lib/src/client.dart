@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/cache/cache.dart';
@@ -36,8 +35,7 @@ Future<T> _pluginConnect<T extends Nyxx>(ApiOptions apiOptions, ClientOptions cl
   final originalConnect = connect;
 
   connect = plugins.fold(
-    () async => await originalConnect()
-      .._initializedCompleter.complete(),
+    originalConnect,
     (previousConnect, plugin) => () async => actualClientType.castInstance(await plugin.doConnect(apiOptions, clientOptions, previousConnect)),
   );
 
@@ -51,13 +49,6 @@ Future<void> _pluginClose(Nyxx client, Future<void> Function() close, List<NyxxP
     (previousClose, plugin) => () => plugin.doClose(client, previousClose),
   );
   return close();
-}
-
-@internal
-extension InternalReady on Nyxx {
-  /// A future that completes when this client is initialized and can be passed to user defined callbacks.
-  @internal
-  Future<void> get initialized => _initializedCompleter.future;
 }
 
 /// The base class for clients interacting with the Discord API.
@@ -77,7 +68,6 @@ abstract class Nyxx {
   /// The cache manager for this client.
   late final CacheManager cache = CacheManager(this);
 
-  final Completer<void> _initializedCompleter = Completer();
   final Completer<void> _doneCompleter = Completer();
   bool _isClosed = false;
 

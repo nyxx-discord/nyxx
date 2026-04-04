@@ -51,19 +51,22 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
   /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
-    client.initialized.then((_) {
-      final sendStream = client.options.plugins.fold(
-        _sendController.stream,
-        (previousValue, plugin) => plugin.interceptGatewayMessages(this, previousValue),
-      );
-      sendStream.listen(sendPort.send, cancelOnError: false, onDone: close);
+    // Technically this code is unsafe as plugins may be given a client that does not yet have a Gateway assigned.
+    // We have the choice between doing this _or_ returning a client with no connected shards from Nyxx.connectGateway.
+    // We prefer to wait for a shard to finish connecting before returning the client from Nyxx.connectGateway to ensure
+    // that any connection issues (notably lack of session starts) causes the Nyxx.connectGateway call itself to fail, and
+    // not just the NyxxGateway.done future.
+    final sendStream = client.options.plugins.fold(
+      _sendController.stream,
+      (previousValue, plugin) => plugin.interceptGatewayMessages(this, previousValue),
+    );
+    sendStream.listen(sendPort.send, cancelOnError: false, onDone: close);
 
-      final transformedReceiveStream = client.options.plugins.fold(
-        _rawReceiveController.stream,
-        (previousValue, plugin) => plugin.interceptShardMessages(this, previousValue),
-      );
-      transformedReceiveStream.pipe(_transformedReceiveController);
-    });
+    final transformedReceiveStream = client.options.plugins.fold(
+      _rawReceiveController.stream,
+      (previousValue, plugin) => plugin.interceptShardMessages(this, previousValue),
+    );
+    transformedReceiveStream.pipe(_transformedReceiveController);
 
     receiveStream.cast<ShardMessage>().pipe(_rawReceiveController);
 
