@@ -219,6 +219,7 @@ class ShardRunner {
 
           // Wait for the current connection to end, either due to a remote close or due to us disconnecting.
           await subscription.asFuture();
+          heartbeatTimer?.cancel();
 
           // Check if we can resume based on close code if the connection was closed by Discord.
           if (connection!.localCloseCode == null) {
