@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
 
-  test('client.close() disposes all async resources', skip: testToken != null ? false : 'No test token provided', () async {
+  test('client.close() disposes all async resources', skip: testToken != null ? false : 'No test token provided', timeout: Timeout.parse('2m'), () async {
     final receivePort = ReceivePort();
 
     Future<void> createAndDisposeClient(SendPort sendPort) async {

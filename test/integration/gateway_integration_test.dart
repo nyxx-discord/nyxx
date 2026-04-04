@@ -9,7 +9,7 @@ void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
   final testGuild = Platform.environment['TEST_GUILD'];
 
-  group('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', () {
+  group('Nyxx.connectGateway', skip: testToken != null ? false : 'No test token provided', timeout: Timeout.parse('2m'), () {
     Future<void> testClient(GatewayApiOptions options) async {
       late NyxxGateway client;
 
