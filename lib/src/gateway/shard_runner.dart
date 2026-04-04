@@ -539,13 +539,13 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
           }
 
           // Copy contents out of buffer that will be reused.
-          if (outputPtr.ref.pos > 0) {
-            result.add(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos));
-          }
+          result.add(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos));
         }
       }
 
-      output.add(result.toBytes());
+      if (result.isNotEmpty) {
+        output.add(result.takeBytes());
+      }
     },
     handleDone: (output) {
       zstd.ZSTD_freeDCtx(dctx);
