@@ -248,9 +248,11 @@ class Gateway extends GatewayManager with EventParser {
         timer.cancel();
       }
 
-      await Future.wait(shards.map((shard) => shard.close()));
-
-      _messagesController.close();
+      try {
+        await Future.wait(shards.map((shard) => shard.close()));
+      } finally {
+        _messagesController.close();
+      }
     }
 
     if (!_isClosed) {
