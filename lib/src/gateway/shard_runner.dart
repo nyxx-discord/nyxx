@@ -86,7 +86,7 @@ class ShardRunner {
 
     // identifyController serves as a notification system for Identify messages.
     // Any Identify messages received are added to this stream.
-    final identifyController = StreamController<Identify>.broadcast();
+    final identifyController = StreamController<Identify?>.broadcast();
 
     // startCompleter is completed when the Gateway instance is ready for this shard to start.
     final startCompleter = Completer<StartShard>();
@@ -101,11 +101,8 @@ class ShardRunner {
         connection?.close();
 
         // We might get a dispose request while we are waiting to identify.
-        // Add an error to the identify stream so we break out of the wait.
-        identifyController.addError(
-          Exception('Out of remaining session starts'),
-          StackTrace.current,
-        );
+        // Add an event to the identify stream so we break out of the wait.
+        identifyController.add(null);
 
         // We need to start the shard to jump ahead to the check for exiting the shard.
         if (!startCompleter.isCompleted) {
@@ -162,7 +159,10 @@ class ShardRunner {
           } else {
             // Request to identify and wait for the confirmation.
             controller.add(RequestingIdentify());
-            await identifyController.stream.first;
+            final identify = await identifyController.stream.first;
+            if (identify == null) {
+              continue;
+            }
 
             await sendIdentify();
           }
@@ -241,7 +241,9 @@ class ShardRunner {
           // Prevents the while-true loop from looping too often when no internet is available.
           await Future.delayed(Duration(milliseconds: 100));
 
-          controller.add(Reconnecting(reason: 'Error on Gateway connection'));
+          if (!disposing) {
+            controller.add(Reconnecting(reason: 'Error on Gateway connection'));
+          }
         } finally {
           // Pause the send subscription until we are connected again.
           // The handler may already be paused if the error occurred before we had identified.
