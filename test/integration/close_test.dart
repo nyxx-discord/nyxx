@@ -7,14 +7,14 @@ import 'package:test/test.dart';
 void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
   group('close and error handling', timeout: Timeout.parse('2m'), skip: testToken != null, () {
-    Future<NyxxGateway> createClient({List<NyxxPlugin>? plugins}) async {
+    Future<NyxxGateway> createClient([GatewayClientOptions? options]) async {
       return await Nyxx.connectGatewayWithOptions(
         GatewayApiOptions(
           token: testToken!,
           intents: GatewayIntents.allUnprivileged,
           totalShards: 2,
         ),
-        GatewayClientOptions(plugins: plugins ?? []),
+        options ?? GatewayClientOptions(),
       );
     }
 
@@ -79,13 +79,28 @@ void main() {
     });
 
     test('Shard disconnection error', () async {
-      final client = await createClient(plugins: [FakeDisconnectPlugin()]);
+      final client = await createClient(GatewayClientOptions(plugins: [FakeDisconnectPlugin()]));
 
       expect(client.done, throwsA(isA<NyxxException>()));
       expect(client.httpHandler.done, completes);
       expect(client.gateway.done, throwsA(isA<NyxxException>()));
       expect(client.gateway.shards[0].done, throwsA(isA<NyxxException>()));
       expect(client.gateway.shards[1].done, completes);
+    });
+
+    test('Shard reconnection error', () async {
+      final options = ModifiableGatewayOptions();
+
+      final client = await createClient(options);
+
+      expect(client.done, throwsA(isA<NyxxException>()));
+      expect(client.httpHandler.done, completes);
+      expect(client.gateway.done, throwsA(isA<NyxxException>()));
+      expect(client.gateway.shards[0].done, completes);
+      expect(client.gateway.shards[1].done, completes);
+
+      options.minimumSessionStarts = 1000000;
+      client.gateway.shards[0].reconnect(allowResume: false);
     });
   });
 }
@@ -105,4 +120,10 @@ class FakeDisconnectPlugin extends NyxxPlugin<NyxxGateway> {
 
     return controller.stream;
   }
+}
+
+class ModifiableGatewayOptions extends GatewayClientOptions {
+  @override
+  // ignore: overridden_fields
+  int minimumSessionStarts = 10;
 }
