@@ -131,58 +131,65 @@ class Gateway extends GatewayManager with EventParser {
       });
       _startOrIdentifyTimers.add(startTimer);
 
-      runZonedGuarded(() {
-        shard.listen(
-          (event) {
-            _messagesController.add(event);
-
-            if (event is RequestingIdentify) {
-              final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
-              identifyLocks[rateLimitKey] = currentLock.then((_) async {
-                if (_isClosed) return;
-
-                if (remainingIdentifyRequests < client.options.minimumSessionStarts * 5) {
-                  logger.warning('$remainingIdentifyRequests session starts remaining');
-                }
-
-                if (remainingIdentifyRequests < client.options.minimumSessionStarts) {
-                  throw OutOfRemainingSessionsError(gatewayBot);
-                }
-
-                remainingIdentifyRequests--;
-                shard.add(Identify());
-
-                // Don't use Future.delayed so that we can exit early if close() is called.
-                // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
-                // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
-                final delayCompleter = Completer<void>();
-                final delayTimer = Timer(identifyDelay, delayCompleter.complete);
-                _startOrIdentifyTimers.add(delayTimer);
-                await delayCompleter.future;
-                _startOrIdentifyTimers.remove(delayTimer);
-              });
-            } else if (event case EventReceived(event: RawDispatchEvent(name: 'READY'))) {
-              if (!_connectedCompleter.isCompleted) {
-                _connectedCompleter.complete();
-              }
-            }
-          },
-          onError: _messagesController.addError,
-          cancelOnError: false,
-        );
-
-        // Error completions here will be caught by the zone handler.
-        shard.done.then((_) {
-          if (!_isClosed) {
-            throw ShardDisconnectedError(shard);
-          }
-        });
-      }, (e, s) {
+      void handleError(Object error, StackTrace stackTrace) {
         if (!_doneCompleter.isCompleted) {
-          _doneCompleter.completeError(e, s);
+          _doneCompleter.completeError(error, stackTrace);
           close();
         }
-      });
+      }
+
+      runZonedGuarded(
+        () {
+          shard.listen(
+            (event) {
+              _messagesController.add(event);
+
+              if (event is RequestingIdentify) {
+                final currentLock = identifyLocks[rateLimitKey] ?? Future.value();
+                identifyLocks[rateLimitKey] = currentLock.then((_) async {
+                  if (_isClosed) return;
+
+                  if (remainingIdentifyRequests < client.options.minimumSessionStarts * 5) {
+                    logger.warning('$remainingIdentifyRequests session starts remaining');
+                  }
+
+                  if (remainingIdentifyRequests < client.options.minimumSessionStarts) {
+                    throw OutOfRemainingSessionsError(gatewayBot);
+                  }
+
+                  remainingIdentifyRequests--;
+                  shard.add(Identify());
+
+                  // Don't use Future.delayed so that we can exit early if close() is called.
+                  // If we use Future.delayed, the program will remain alive until it is complete, even if nothing is waiting on it.
+                  // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
+                  final delayCompleter = Completer<void>();
+                  final delayTimer = Timer(identifyDelay, delayCompleter.complete);
+                  _startOrIdentifyTimers.add(delayTimer);
+                  await delayCompleter.future;
+                  _startOrIdentifyTimers.remove(delayTimer);
+                });
+              } else if (event case EventReceived(event: RawDispatchEvent(name: 'READY'))) {
+                if (!_connectedCompleter.isCompleted) {
+                  _connectedCompleter.complete();
+                }
+              }
+            },
+            onError: _messagesController.addError,
+            cancelOnError: false,
+          );
+        },
+        handleError,
+      );
+
+      shard.done.then(
+        (_) {
+          if (!_isClosed) {
+            handleError(ShardDisconnectedError(shard), StackTrace.current);
+          }
+        },
+        onError: handleError,
+      );
     }
   }
 
