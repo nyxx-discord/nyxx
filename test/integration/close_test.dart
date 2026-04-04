@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 void main() {
   final testToken = Platform.environment['TEST_TOKEN'];
-  group('close and error handling', timeout: Timeout.parse('2m'), skip: testToken != null, () {
+  group('close and error handling', timeout: Timeout.parse('2m'), skip: testToken != null ? false : 'No test token provided', () {
     Future<NyxxGateway> createClient([GatewayClientOptions? options]) async {
       return await Nyxx.connectGatewayWithOptions(
         GatewayApiOptions(
