@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/client.dart';
+import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/gateway/shard_runner.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
@@ -39,6 +40,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   Logger get logger => Logger('${client.options.loggerName}.Shards[$id]');
 
   final Completer<void> _doneCompleter = Completer();
+  bool _isClosed = false;
 
   Duration _latency = Duration.zero;
 
@@ -65,7 +67,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
     receiveStream.cast<ShardMessage>().pipe(_rawReceiveController);
 
-    final subscription = listen((message) {
+    listen((message) {
       if (message is Sent) {
         logger
           ..fine('Sent payload: ${message.payload.opcode.name}')
@@ -74,6 +76,11 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
         logger.warning('Error: ${message.error}', message.error, message.stackTrace);
       } else if (message is Disconnecting) {
         logger.info('Disconnecting: ${message.reason}');
+
+        if (!_doneCompleter.isCompleted) {
+          _doneCompleter.completeError(NyxxException('Shard is disconnecting: ${message.reason}'), StackTrace.current);
+          close();
+        }
       } else if (message is Reconnecting) {
         logger.info('Reconnecting: ${message.reason}');
       } else if (message is EventReceived) {
@@ -110,13 +117,15 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       } else if (message is RequestingIdentify) {
         logger.fine('Ready to identify');
       }
-    });
-
-    subscription.asFuture().then((value) {
-      // Can happen if the shard closes unexpectedly.
-      // Prevents further calls to close() from attempting to add events.
+    }, onError: (e, s) {
       if (!_doneCompleter.isCompleted) {
-        _doneCompleter.complete(value);
+        _doneCompleter.completeError(e, s);
+        close();
+      }
+    }, onDone: () {
+      if (!_doneCompleter.isCompleted) {
+        _doneCompleter.completeError(NyxxException('Shard closed unexpectedly'), StackTrace.current);
+        close();
       }
     });
   }
@@ -193,11 +202,9 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
 
   @override
   Future<void> close() {
-    if (_doneCompleter.isCompleted) {
-      return _doneCompleter.future;
-    }
-
     Future<void> doClose() async {
+      _isClosed = true;
+
       add(Dispose());
 
       _sendController.close();
@@ -214,7 +221,17 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       }
     }
 
-    _doneCompleter.complete(doClose());
+    if (!_isClosed) {
+      final closeFuture = doClose();
+
+      if (!_doneCompleter.isCompleted) {
+        _doneCompleter.complete(closeFuture);
+      } else {
+        closeFuture.ignore();
+      }
+    }
+
+    assert(_doneCompleter.isCompleted);
     return _doneCompleter.future;
   }
 
