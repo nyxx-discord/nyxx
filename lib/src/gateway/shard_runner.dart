@@ -545,9 +545,7 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
         }
       }
 
-      if (result.isNotEmpty) {
-        output.add(result.takeBytes());
-      }
+      output.add(result.takeBytes());
     },
     handleDone: (output) {
       zstd.ZSTD_freeDCtx(dctx);
