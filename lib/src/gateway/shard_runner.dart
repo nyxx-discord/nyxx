@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
-import 'package:es_compression/zstd.dart';
 import 'package:eterl/eterl.dart';
+import 'package:ffi/ffi.dart';
 import 'package:nyxx/src/api_options.dart';
 import 'package:nyxx/src/errors.dart';
 import 'package:nyxx/src/gateway/event_parser.dart';
 import 'package:nyxx/src/gateway/message.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/opcode.dart';
+import 'package:zstd_ffi/_zstd.dart';
 
 /// An internal class that contains the logic for running a shard.
 ///
@@ -476,8 +479,78 @@ Stream<dynamic> decompressZLibTransport(Stream<List<int>> raw) {
   });
 }
 
-// See https://github.com/instantiations/es_compression/issues/52 for why the isNotEmpty check is needed.
-Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) => raw.transform(zstd.decoder).where((message) => message.isNotEmpty);
+Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
+  final String libraryName;
+  if (Platform.isLinux) {
+    libraryName = 'libzstd.so';
+  } else if (Platform.isWindows) {
+    libraryName = 'zstd.dll';
+  } else if (Platform.isMacOS) {
+    libraryName = 'libzstd.dylib';
+  } else {
+    libraryName = 'libzstd.so';
+    print('Unknown operating system: falling back to libzstd.so');
+  }
+
+  final library = DynamicLibrary.open(libraryName);
+  final zstd = ZStd(library);
+
+  final inputSize = zstd.ZSTD_DStreamInSize();
+  final inputPtr = malloc<ZSTD_inBuffer>();
+  inputPtr.ref.src = malloc<Uint8>(inputSize).cast<Void>();
+
+  final outputSize = zstd.ZSTD_DStreamOutSize();
+  final outputPtr = malloc<ZSTD_outBuffer>();
+  outputPtr.ref.dst = malloc<Uint8>(outputSize).cast<Void>();
+
+  final dctx = zstd.ZSTD_createDCtx();
+  if (dctx == nullptr) {
+    malloc.free(inputPtr.ref.src);
+    malloc.free(inputPtr);
+    malloc.free(outputPtr.ref.dst);
+    malloc.free(outputPtr);
+
+    throw NyxxException('Unable to initialise Zstd dctx');
+  }
+
+  var lastRet = 0;
+
+  return raw.transform(StreamTransformer.fromHandlers(
+    handleData: (chunk, output) {
+      if (chunk is! Uint8List) {
+        chunk = Uint8List.fromList(chunk);
+      }
+
+      for (int i = 0; i * inputSize < chunk.length; i++) {
+        final currentSlice = Uint8List.sublistView(chunk, i * inputSize, min(i * inputSize + inputSize, chunk.length));
+        inputPtr.ref
+          ..src.cast<Uint8>().asTypedList(inputSize).setAll(0, currentSlice)
+          ..size = currentSlice.length
+          ..pos = 0;
+
+        while (inputPtr.ref.pos < inputPtr.ref.size) {
+          outputPtr.ref.pos = 0;
+
+          lastRet = zstd.ZSTD_decompressStream(dctx, outputPtr, inputPtr);
+          if (zstd.ZSTD_isError(lastRet) != 0) {
+            throw NyxxException('Error decoding zstd stream: $lastRet');
+          }
+
+          // Copy contents out of buffer that will be reused.
+          output.add(Uint8List.fromList(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos)));
+        }
+      }
+    },
+    handleDone: (output) {
+      zstd.ZSTD_freeDCtx(dctx);
+      malloc.free(inputPtr.ref.src);
+      malloc.free(inputPtr);
+      malloc.free(outputPtr.ref.dst);
+      malloc.free(outputPtr);
+      output.close();
+    },
+  ));
+}
 
 Stream<dynamic> decompressPayloads(Stream<dynamic> raw) => raw.map((message) {
       if (message is String) {
