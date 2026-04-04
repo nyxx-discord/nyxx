@@ -521,6 +521,8 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
         chunk = Uint8List.fromList(chunk);
       }
 
+      final result = BytesBuilder(copy: true);
+
       for (int i = 0; i * inputSize < chunk.length; i++) {
         final currentSlice = Uint8List.sublistView(chunk, i * inputSize, min(i * inputSize + inputSize, chunk.length));
         inputPtr.ref
@@ -538,10 +540,12 @@ Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
 
           // Copy contents out of buffer that will be reused.
           if (outputPtr.ref.pos > 0) {
-            output.add(Uint8List.fromList(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos)));
+            result.add(outputPtr.ref.dst.cast<Uint8>().asTypedList(outputPtr.ref.pos));
           }
         }
       }
+
+      output.add(result.toBytes());
     },
     handleDone: (output) {
       zstd.ZSTD_freeDCtx(dctx);
