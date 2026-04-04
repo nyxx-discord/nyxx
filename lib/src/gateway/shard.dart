@@ -49,6 +49,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// This is updated for each [HeartbeatAckEvent] received. If no [HeartbeatAckEvent] has been received, this will be [Duration.zero].
   Duration get latency => _latency;
 
+  final Stopwatch _disconnectedStopwatch = Stopwatch();
+
   /// Create a new [Shard].
   Shard(this.id, this.isolate, this.receiveStream, this.sendPort, this.client) {
     // Technically this code is unsafe as plugins may be given a client that does not yet have a Gateway assigned.
@@ -86,6 +88,7 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
         }
       } else if (message is Reconnecting) {
         logger.info('Reconnecting: ${message.reason}');
+        _disconnectedStopwatch.start();
       } else if (message is EventReceived) {
         final event = message.event;
 
@@ -111,11 +114,19 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
             ..fine('Receive event: ${event.name}')
             ..finer('Seq: ${event.seq}, Data: ${event.payload}');
 
-          if (event.name == 'READY') {
-            logger.info('Connected to Gateway');
-          } else if (event.name == 'RESUMED') {
-            logger.info('Reconnected to Gateway');
+          var timerSuffix = '';
+          if (_disconnectedStopwatch.elapsed > Duration(seconds: 5)) {
+            timerSuffix = ' (after ${_disconnectedStopwatch.elapsed} spent disconnected)';
           }
+
+          if (event.name == 'READY') {
+            logger.info('Connected to Gateway$timerSuffix');
+          } else if (event.name == 'RESUMED') {
+            logger.info('Reconnected to Gateway$timerSuffix');
+          }
+
+          _disconnectedStopwatch.stop();
+          _disconnectedStopwatch.reset();
         }
       } else if (message is RequestingIdentify) {
         logger.fine('Ready to identify');
@@ -193,6 +204,8 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       logger.info('Disposing');
     } else if (event is Identify) {
       logger.info('Connecting to Gateway');
+    } else if (event is StartShard) {
+      _disconnectedStopwatch.start();
     }
 
     _sendController.add(event);
@@ -219,13 +232,15 @@ class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
       // _rawReceiveController and _transformedReceiveController are closed by the piped
       // receive port stream being closed.
 
-      // Give the isolate time to shut down cleanly, but kill it if it takes too long.
-      try {
-        // Wait for disconnection confirmation.
-        await firstWhere((message) => message is Disconnecting).then(drain).timeout(const Duration(seconds: 5));
-      } on TimeoutException {
-        logger.warning('Isolate took too long to shut down, killing it');
-        isolate.kill(priority: Isolate.immediate);
+      if (!_rawReceiveController.isClosed) {
+        // Give the isolate time to shut down cleanly, but kill it if it takes too long.
+        try {
+          // Wait for disconnection confirmation.
+          await firstWhere((message) => message is Disconnecting).then(drain).timeout(const Duration(seconds: 5));
+        } on TimeoutException {
+          logger.warning('Isolate took too long to shut down, killing it');
+          isolate.kill(priority: Isolate.immediate);
+        }
       }
     }
 
