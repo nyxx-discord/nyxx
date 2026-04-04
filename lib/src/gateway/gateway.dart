@@ -161,7 +161,7 @@ class Gateway extends GatewayManager with EventParser {
                 await delayCompleter.future;
                 _startOrIdentifyTimers.remove(delayTimer);
               });
-            } else if (event case EventReceived(event: ReadyEvent())) {
+            } else if (event case EventReceived(event: RawDispatchEvent(name: 'READY'))) {
               if (!_connectedCompleter.isCompleted) {
                 _connectedCompleter.complete();
               }
