@@ -25,6 +25,8 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [User]s.
+///
+/// {@category managers}
 class UserManager extends ReadOnlyManager<User> {
   /// Create a new [UserManager].
   UserManager(super.config, super.client) : super(identifier: 'users');

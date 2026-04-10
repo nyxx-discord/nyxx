@@ -5,6 +5,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@category entities}
 class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
   @override
   final GuildStickerManager manager;
@@ -32,6 +33,9 @@ class PartialGuildSticker extends WritableSnowflakeEntity<GuildSticker> {
 /// {@template guild_sticker}
 /// A sticker that can be sent in messages. Represent stickers added to guild
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GuildSticker extends PartialGuildSticker with Sticker {
   /// Name of the sticker
   @override

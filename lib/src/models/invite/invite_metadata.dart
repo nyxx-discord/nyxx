@@ -1,5 +1,6 @@
 import 'invite.dart';
 
+/// {@category models}
 class InviteWithMetadata extends Invite {
   /// The number of times this invite has been used.
   final int uses;

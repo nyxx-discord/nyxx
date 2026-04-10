@@ -5,9 +5,13 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [IgnoreExceptions] plugin.
+///
+/// {@category plugins}
 final ignoreExceptions = IgnoreExceptions();
 
 /// A plugin that prevents errors from crashing the program, instead logging them to the console.
+///
+/// {@category plugins}
 class IgnoreExceptions extends NyxxPlugin {
   @override
   String get name => 'IgnoreExceptions';

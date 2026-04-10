@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/channel/types/forum.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/building_helpers.dart';
 
+/// {@category builders}
 class ForumTagBuilder extends CreateBuilder<ForumTag> {
   /// The name of the tag. (0-20 characters)
   String name;

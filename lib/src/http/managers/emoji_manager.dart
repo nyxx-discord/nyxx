@@ -12,6 +12,7 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 import 'manager.dart';
 
+/// {@category managers}
 abstract class EmojiManager extends Manager<Emoji> {
   EmojiManager(super.config, super.client, {required super.identifier});
 
@@ -37,6 +38,7 @@ abstract class EmojiManager extends Manager<Emoji> {
   Future<List<Emoji>> list();
 }
 
+/// {@category managers}
 class ApplicationEmojiManager extends EmojiManager {
   final Snowflake applicationId;
 
@@ -139,6 +141,7 @@ class ApplicationEmojiManager extends EmojiManager {
   }
 }
 
+/// {@category managers}
 class GuildEmojiManager extends EmojiManager {
   final Snowflake guildId;
 

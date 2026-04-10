@@ -6,6 +6,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template welcome_screen}
 /// The configuration for the welcome screen in a guild.
 /// {@endtemplate}
+///
+/// {@category models}
 class WelcomeScreen with ToStringHelper {
   /// The description shown in this welcome screen.
   final String? description;
@@ -21,6 +23,8 @@ class WelcomeScreen with ToStringHelper {
 /// {@template welcome_screen_channel}
 /// A channel shown in a [WelcomeScreen].
 /// {@endtemplate}
+///
+/// {@category models}
 class WelcomeScreenChannel with ToStringHelper {
   /// The manager for this [WelcomeScreenChannel].
   final GuildManager manager;

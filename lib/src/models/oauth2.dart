@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@category models}
 class OAuth2Information {
   /// The current application.
   final PartialApplication application;

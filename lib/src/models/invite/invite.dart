@@ -11,6 +11,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// An invite to a [Guild] or [Channel].
 /// If the invite is to a [Channel], this will be a [GroupDmChannel].
 /// {@endtemplate}
+///
+/// {@category models}
 class Invite with ToStringHelper {
   /// The type of this invite.
   final InviteType type;

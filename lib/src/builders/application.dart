@@ -4,6 +4,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class ApplicationIntegrationTypeConfigurationBuilder extends CreateBuilder<ApplicationIntegrationTypeConfiguration> {
   /// Install params for each installation context's default in-app authorization link.
   final InstallationParameters? oauth2InstallParameters;
@@ -20,6 +21,7 @@ class ApplicationIntegrationTypeConfigurationBuilder extends CreateBuilder<Appli
       };
 }
 
+/// {@category builders}
 class ApplicationUpdateBuilder extends UpdateBuilder<Application> {
   Uri? customInstallUrl;
 

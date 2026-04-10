@@ -12,6 +12,8 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Role]s.
+///
+/// {@category managers}
 class RoleManager extends Manager<Role> {
   /// The ID of the guild this manager is for.
   final Snowflake guildId;

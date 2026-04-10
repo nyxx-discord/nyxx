@@ -8,6 +8,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#reaction-object
 /// {@endtemplate}
+///
+/// {@category models}
 class Reaction with ToStringHelper {
   /// The number of times this emoji has been used to react.
   final int count;
@@ -42,6 +44,8 @@ class Reaction with ToStringHelper {
 /// {@template reaction_count_details}
 /// Details about a [Reaction]'s [Reaction.count].
 /// {@endtemplate}
+///
+/// {@category models}
 class ReactionCountDetails with ToStringHelper {
   /// The number of burst reactions.
   final int burst;

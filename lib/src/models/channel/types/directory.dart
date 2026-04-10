@@ -3,6 +3,9 @@ import 'package:nyxx/src/models/channel/channel.dart';
 /// {@template directory_channel}
 /// A directory channel.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class DirectoryChannel extends Channel {
   @override
   ChannelType get type => ChannelType.guildDirectory;

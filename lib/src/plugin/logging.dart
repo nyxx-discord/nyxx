@@ -8,9 +8,13 @@ import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [Logging] plugin.
+///
+/// {@category plugins}
 final logging = Logging();
 
 /// A plugin that outputs a client's logs to [stdout] and [stderr].
+///
+/// {@category plugins}
 class Logging extends NyxxPlugin {
   @override
   String get name => 'Logging';

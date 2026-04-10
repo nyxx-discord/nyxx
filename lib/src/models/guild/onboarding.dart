@@ -9,6 +9,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template onboarding}
 /// The configuration for a [Guild]'s onboarding process.
 /// {@endtemplate}
+///
+/// {@category models}
 class Onboarding with ToStringHelper {
   /// The manager for this [Onboarding].
   final GuildManager manager;
@@ -49,6 +51,8 @@ class Onboarding with ToStringHelper {
 /// {@template onboarding_prompt}
 /// A prompt in an [Onboarding] flow.
 /// {@endtemplate}
+///
+/// {@category models}
 class OnboardingPrompt with ToStringHelper {
   /// The ID of this prompt.
   final Snowflake id;
@@ -101,6 +105,8 @@ final class OnboardingPromptType extends EnumLike<int, OnboardingPromptType> {
 /// {@template onboarding_prompt_option}
 /// An option in an [OnboardingPrompt].
 /// {@endtemplate}
+///
+/// {@category models}
 class OnboardingPromptOption with ToStringHelper {
   /// The manager for this [OnboardingPromptOption].
   final GuildManager manager;

@@ -11,6 +11,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [AuditLogEntry].
+///
+/// {@category entities}
 class PartialAuditLogEntry extends ManagedSnowflakeEntity<AuditLogEntry> {
   @override
   final AuditLogManager manager;
@@ -23,6 +25,9 @@ class PartialAuditLogEntry extends ManagedSnowflakeEntity<AuditLogEntry> {
 /// {@template audit_log_entry}
 /// An entry in a [Guild]'s audit log.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class AuditLogEntry extends PartialAuditLogEntry {
   /// The ID of the targeted entity.
   final Snowflake? targetId;
@@ -62,6 +67,8 @@ class AuditLogEntry extends PartialAuditLogEntry {
 /// {@template audit_log_change}
 /// A change to an object's field in an [AuditLogEntry].
 /// {@endtemplate}
+///
+/// {@category models}
 class AuditLogChange with ToStringHelper {
   /// The old, unparsed value of the field.
   final dynamic oldValue;
@@ -157,6 +164,8 @@ final class AuditLogEvent extends EnumLike<int, AuditLogEvent> {
 /// {@template audit_log_entry_info}
 /// Extra information associated with an [AuditLogEntry].
 /// {@endtemplate}
+///
+/// {@category models}
 class AuditLogEntryInfo with ToStringHelper {
   /// The manager for this [AuditLogEntryInfo].
   final AuditLogManager manager;

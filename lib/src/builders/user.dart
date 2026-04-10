@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@category builders}
 class UserUpdateBuilder extends UpdateBuilder<User> {
   /// New user's username.
   String? username;

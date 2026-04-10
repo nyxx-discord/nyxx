@@ -45,6 +45,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-reference-object
 /// {@endtemplate}
+///
+/// {@category models}
 class MessageReference with ToStringHelper {
   /// The manager for this [MessageReference].
   final MessageManager manager;

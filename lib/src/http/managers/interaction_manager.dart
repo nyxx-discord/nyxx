@@ -22,6 +22,8 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [Interaction]s.
+///
+/// {@category managers}
 class InteractionManager {
   /// The client for this [InteractionManager].
   final NyxxRest client;

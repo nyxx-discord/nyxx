@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/guild/auto_moderation.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
   /// {@template auto_moderation_rule_name}
   /// The rule name.
@@ -139,6 +140,7 @@ class AutoModerationRuleBuilder extends CreateBuilder<AutoModerationRule> {
       };
 }
 
+/// {@category builders}
 class AutoModerationRuleUpdateBuilder extends UpdateBuilder<AutoModerationRule> {
   /// {@macro auto_moderation_rule_name}
   String? name;
@@ -183,6 +185,7 @@ class AutoModerationRuleUpdateBuilder extends UpdateBuilder<AutoModerationRule> 
       };
 }
 
+/// {@category builders}
 class TriggerMetadataBuilder extends CreateBuilder<TriggerMetadata> {
   /// A list of words that trigger the rule.
   final List<String>? keywordFilter;
@@ -222,6 +225,7 @@ class TriggerMetadataBuilder extends CreateBuilder<TriggerMetadata> {
       };
 }
 
+/// {@category builders}
 class AutoModerationActionBuilder extends CreateBuilder<AutoModerationAction> {
   /// The type of action to perform.
   final ActionType type;
@@ -250,6 +254,7 @@ class AutoModerationActionBuilder extends CreateBuilder<AutoModerationAction> {
       };
 }
 
+/// {@category builders}
 class ActionMetadataBuilder extends CreateBuilder<ActionMetadata> {
   /// The ID of the channel to send the alert message to.
   final Snowflake? channelId;

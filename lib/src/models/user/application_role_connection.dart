@@ -6,6 +6,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#application-role-connection-object
 /// {@endtemplate}
+///
+/// {@category models}
 class ApplicationRoleConnection with ToStringHelper {
   /// The vanity name of the platform a bot has connected.
   final String? platformName;

@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/user/application_role_connection.dart';
 
+/// {@category builders}
 class ApplicationRoleConnectionUpdateBuilder extends UpdateBuilder<ApplicationRoleConnection> {
   String? platformName;
 

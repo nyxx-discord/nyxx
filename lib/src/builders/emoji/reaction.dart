@@ -1,6 +1,7 @@
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class ReactionBuilder {
   String name;
 

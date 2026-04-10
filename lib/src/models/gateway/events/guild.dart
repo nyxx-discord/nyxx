@@ -17,6 +17,8 @@ import 'package:nyxx/src/models/voice/voice_state.dart';
 /// {@template unavailable_guild_create_event}
 /// Emitted when the client is added to an unavailable guild, or when initially receiving guilds over the Gateway.
 /// {@endtemplate}
+///
+/// {@category events}
 class UnavailableGuildCreateEvent extends DispatchEvent {
   /// The guild the client was added to.
   final PartialGuild guild;
@@ -29,6 +31,8 @@ class UnavailableGuildCreateEvent extends DispatchEvent {
 /// {@template guild_create_event}
 /// Emitted when a client is added to a guild or when initially receiving guilds over the Gateway.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEvent {
   @override
   final Guild guild;
@@ -84,6 +88,8 @@ class GuildCreateEvent extends DispatchEvent implements UnavailableGuildCreateEv
 /// {@template guild_update_event}
 /// Emitted when a guild is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildUpdateEvent extends DispatchEvent {
   /// The guild as it was cached before the update.
   final Guild? oldGuild;
@@ -99,6 +105,8 @@ class GuildUpdateEvent extends DispatchEvent {
 /// {@template guild_delete_event}
 /// Emitted when the client is removed from a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildDeleteEvent extends DispatchEvent {
   /// The guild the client was removed from.
   final PartialGuild guild;
@@ -117,6 +125,8 @@ class GuildDeleteEvent extends DispatchEvent {
 /// {@template guild_audit_log_create_event}
 /// Emitted when an audit log entry is created in a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildAuditLogCreateEvent extends DispatchEvent {
   /// The entry that was created.
   final AuditLogEntry entry;
@@ -135,6 +145,8 @@ class GuildAuditLogCreateEvent extends DispatchEvent {
 /// {@template guild_ban_add_event}
 /// Emitted when a user is banned in a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildBanAddEvent extends DispatchEvent {
   /// The ID of the guild the user was banned in.
   final Snowflake guildId;
@@ -153,6 +165,8 @@ class GuildBanAddEvent extends DispatchEvent {
 /// {@template guild_ban_remove_event}
 /// Emitted when a user is unbanned in a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildBanRemoveEvent extends DispatchEvent {
   /// The ID of the guild the user was unbanned from.
   final Snowflake guildId;
@@ -171,6 +185,8 @@ class GuildBanRemoveEvent extends DispatchEvent {
 /// {@template guild_emojis_update_event}
 /// Emitted when a guild's emojis are updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildEmojisUpdateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -189,6 +205,8 @@ class GuildEmojisUpdateEvent extends DispatchEvent {
 /// {@template guild_stickers_update_event}
 /// Emitted when a guild's stickers are updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildStickersUpdateEvent extends DispatchEvent {
   /// The ID ot the guild.
   final Snowflake guildId;
@@ -207,6 +225,8 @@ class GuildStickersUpdateEvent extends DispatchEvent {
 /// {@template guild_integrations_update_event}
 /// Emitted when a guild's integrations are updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildIntegrationsUpdateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -222,6 +242,8 @@ class GuildIntegrationsUpdateEvent extends DispatchEvent {
 /// {@template guild_member_add_event}
 /// Emitted when a member joins a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildMemberAddEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -240,6 +262,8 @@ class GuildMemberAddEvent extends DispatchEvent {
 /// {@template guild_member_remove_event}
 /// Emitted when a member is removed from a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildMemberRemoveEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -261,6 +285,8 @@ class GuildMemberRemoveEvent extends DispatchEvent {
 /// {@template guild_member_update_event}
 /// Emitted when a guild member is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildMemberUpdateEvent extends DispatchEvent {
   /// The member as it was cached before the update.
   final Member? oldMember;
@@ -282,6 +308,8 @@ class GuildMemberUpdateEvent extends DispatchEvent {
 /// {@template guild_members_chunk_event}
 /// Emitted as a response to [Gateway.listGuildMembers].
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildMembersChunkEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -324,6 +352,8 @@ class GuildMembersChunkEvent extends DispatchEvent {
 /// {@template guild_role_create_event}
 /// Emitted when a role is created in a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildRoleCreateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -342,6 +372,8 @@ class GuildRoleCreateEvent extends DispatchEvent {
 /// {@template guild_role_update_event}
 /// Emitted when a role is updated in a guild
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildRoleUpdateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -363,6 +395,8 @@ class GuildRoleUpdateEvent extends DispatchEvent {
 /// {@template guild_role_delete_event}
 /// Emitted when a role is deleted in a guild.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildRoleDeleteEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -384,6 +418,8 @@ class GuildRoleDeleteEvent extends DispatchEvent {
 /// {@template guild_scheduled_event_create_event}
 /// Emitted when a scheduled event is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildScheduledEventCreateEvent extends DispatchEvent {
   /// The event that was created.
   final ScheduledEvent event;
@@ -396,6 +432,8 @@ class GuildScheduledEventCreateEvent extends DispatchEvent {
 /// {@template guild_scheduled_event_update_event}
 /// Emitted when a scheduled event is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildScheduledEventUpdateEvent extends DispatchEvent {
   /// The event as it was in the cache before it was updated.
   final ScheduledEvent? oldEvent;
@@ -411,6 +449,8 @@ class GuildScheduledEventUpdateEvent extends DispatchEvent {
 /// {@template guild_scheduled_event_delete_event}
 /// Emitted when a scheduled event is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildScheduledEventDeleteEvent extends DispatchEvent {
   /// The event that was deleted.
   final ScheduledEvent event;
@@ -423,6 +463,8 @@ class GuildScheduledEventDeleteEvent extends DispatchEvent {
 /// {@template guild_scheduled_event_user_add_event}
 /// Emitted when a user is added to a scheduled event.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildScheduledEventUserAddEvent extends DispatchEvent {
   /// The ID of the scheduled event.
   final Snowflake scheduledEventId;
@@ -453,6 +495,8 @@ class GuildScheduledEventUserAddEvent extends DispatchEvent {
 /// {@template guild_scheduled_event_user_remove_event}
 /// Emitted when a user is removed from a scheduled event.
 /// {@endtemplate}
+///
+/// {@category events}
 class GuildScheduledEventUserRemoveEvent extends DispatchEvent {
   /// The ID of the scheduled event.
   final Snowflake scheduledEventId;

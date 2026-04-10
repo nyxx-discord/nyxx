@@ -11,6 +11,8 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [ApplicationCommand].
+///
+/// {@category entities}
 class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationCommand> {
   @override
   final ApplicationCommandManager manager;
@@ -28,6 +30,9 @@ class PartialApplicationCommand extends WritableSnowflakeEntity<ApplicationComma
 ///
 /// Also known as "Slash commands".
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class ApplicationCommand extends PartialApplicationCommand {
   /// The type of this command.
   final ApplicationCommandType type;

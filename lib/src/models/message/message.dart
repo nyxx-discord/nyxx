@@ -28,6 +28,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template partial_message}
 /// A partial [Message] object.
 /// {@endtemplate}
+///
+/// {@category entities}
 class PartialMessage extends WritableSnowflakeEntity<Message> {
   @override
   final MessageManager manager;
@@ -96,6 +98,9 @@ class PartialMessage extends WritableSnowflakeEntity<Message> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Message extends PartialMessage implements MessageSnapshot {
   /// The author of this message.
   ///
@@ -392,6 +397,8 @@ class MessageFlags extends Flags<MessageFlags> {
 /// {@template message_interaction}
 /// Information about an interaction associated with a message.
 /// {@endtemplate}
+///
+/// {@category models}
 class MessageInteraction with ToStringHelper {
   /// The ID of the interaction.
   final Snowflake id;
@@ -422,6 +429,8 @@ class MessageInteraction with ToStringHelper {
 /// {@template message_interaction_metadata}
 /// Metadata about the interaction, including the source of the interaction and relevant server and user IDs.
 /// {@endtemplate}
+///
+/// {@category models}
 class MessageInteractionMetadata with ToStringHelper {
   /// The ID of the interaction.
   final Snowflake id;
@@ -468,6 +477,8 @@ class MessageInteractionMetadata with ToStringHelper {
 // object. Since this object would then be useless as it cannot contain any
 // useful data using existing nyxx types, we instead forward the field of the
 // nested object into this type.
+///
+/// {@category models}
 class MessageSnapshot with ToStringHelper {
   /// The time when this message was sent.
   final DateTime timestamp;
@@ -527,6 +538,8 @@ class MessageSnapshot with ToStringHelper {
 }
 
 /// Information about a call in a private channel.
+///
+/// {@category models}
 class MessageCall with ToStringHelper {
   /// The manager for this [MessageCall].
   final MessageManager manager;
@@ -559,6 +572,8 @@ class MessageCall with ToStringHelper {
 /// External references:
 /// * https://discord.dev/resources/message#message-pin-object
 /// {@endtemplate}
+///
+/// {@category models}
 class MessagePin with ToStringHelper {
   /// The time the message was pinned.
   final DateTime pinnedAt;
@@ -574,6 +589,8 @@ class MessagePin with ToStringHelper {
 /// {@template pin_list}
 /// A list of [MessagePin]s.
 /// {@endtemplate}
+///
+/// {@category models}
 class PinList {
   /// The pins this channel has.
   final List<MessagePin> items;

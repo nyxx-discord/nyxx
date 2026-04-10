@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+/// {@category builders}
 class ImageBuilder {
   List<int> data;
   String format;

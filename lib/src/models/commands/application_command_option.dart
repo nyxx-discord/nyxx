@@ -7,6 +7,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template command_option}
 /// An option in an [ApplicationCommand] with a type of [ApplicationCommandType.chatInput].
 /// {@endtemplate}
+///
+/// {@category models}
 class CommandOption with ToStringHelper {
   /// The type of this option.
   final CommandOptionType type;
@@ -94,6 +96,8 @@ final class CommandOptionType extends EnumLike<int, CommandOptionType> {
 /// {@template command_option_choice}
 /// A choice for a [CommandOption].
 /// {@endtemplate}
+///
+/// {@category models}
 class CommandOptionChoice {
   /// The name of this choice.
   final String name;
@@ -112,4 +116,6 @@ class CommandOptionChoice {
 /// A common superclass for entities that can be passed in options of type [CommandOptionType.mentionable].
 ///
 /// The only subtypes are [User] and [Role].
+///
+/// {@category entities}
 abstract interface class CommandOptionMentionable<T extends CommandOptionMentionable<T>> implements SnowflakeEntity<T> {}

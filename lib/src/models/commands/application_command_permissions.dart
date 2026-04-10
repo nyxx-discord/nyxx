@@ -10,6 +10,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template command_permissions}
 /// The permissions for an [ApplicationCommand] in a guild.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class CommandPermissions extends SnowflakeEntity<CommandPermissions> {
   /// The manager for this [CommandPermissions].
   final GuildApplicationCommandManager manager;
@@ -59,6 +62,8 @@ class CommandPermissions extends SnowflakeEntity<CommandPermissions> {
 /// {@template command_permission}
 /// The permission for a role, user or channel to use an [ApplicationCommand].
 /// {@endtemplate}
+///
+/// {@category models}
 class CommandPermission with ToStringHelper {
   /// The ID of the target entity.
   final Snowflake id;

@@ -35,6 +35,8 @@ import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Guild]s.
+///
+/// {@category managers}
 class GuildManager extends Manager<Guild> {
   /// Create a new [GuildManager].
   GuildManager(super.config, super.client) : super(identifier: 'guilds');

@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 
+/// {@category builders}
 class GuildTemplateBuilder extends CreateBuilder<GuildTemplate> {
   String name;
 
@@ -16,6 +17,7 @@ class GuildTemplateBuilder extends CreateBuilder<GuildTemplate> {
       };
 }
 
+/// {@category builders}
 class GuildTemplateUpdateBuilder extends UpdateBuilder<GuildTemplate> {
   String? name;
 

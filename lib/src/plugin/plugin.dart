@@ -13,6 +13,9 @@ import 'package:nyxx/src/http/response.dart';
 import 'package:runtime_type/runtime_type.dart';
 
 /// Provides access to the connection and closing process for implementing plugins.
+///
+/// {@category plugins}
+/// {@category core}
 abstract class NyxxPlugin<ClientType extends Nyxx> {
   /// The name of this plugin.
   String get name => runtimeType.toString();
@@ -107,6 +110,9 @@ abstract class NyxxPlugin<ClientType extends Nyxx> {
 }
 
 /// Holds the state of a plugin added to a client.
+///
+/// {@category plugins}
+/// {@category core}
 class NyxxPluginState<ClientType extends Nyxx, PluginType extends NyxxPlugin<ClientType>> {
   /// The plugin this state belongs to.
   final PluginType plugin;

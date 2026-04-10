@@ -4,6 +4,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
 
+/// {@category builders}
 class WebhookBuilder extends CreateBuilder<Webhook> {
   String name;
 
@@ -21,6 +22,7 @@ class WebhookBuilder extends CreateBuilder<Webhook> {
       };
 }
 
+/// {@category builders}
 class WebhookUpdateBuilder extends UpdateBuilder<Webhook> {
   String? name;
 

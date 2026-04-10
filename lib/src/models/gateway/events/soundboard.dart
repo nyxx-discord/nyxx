@@ -6,6 +6,8 @@ import 'package:nyxx/src/models/soundboard/soundboard.dart';
 /// {@template soundboard_sound_create_event}
 /// Emitted when a guild soundboard sound is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class SoundboardSoundCreateEvent extends DispatchEvent {
   /// The sound that was created.
   final SoundboardSound sound;
@@ -18,6 +20,8 @@ class SoundboardSoundCreateEvent extends DispatchEvent {
 /// {@template soundboard_sound_update_event}
 /// Emitted when a guild soundboard sound is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class SoundboardSoundUpdateEvent extends DispatchEvent {
   /// The sound that was updated.
   final SoundboardSound sound;
@@ -33,6 +37,8 @@ class SoundboardSoundUpdateEvent extends DispatchEvent {
 /// {@template soundboard_sound_delete_event}
 /// Emitted when a guild soundboard sound is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class SoundboardSoundDeleteEvent extends DispatchEvent {
   /// The sound that was deleted.
   final SoundboardSound? sound;
@@ -53,6 +59,8 @@ class SoundboardSoundDeleteEvent extends DispatchEvent {
 /// {@template soundboard_sounds_update_event}
 /// Emitted when multiple guild soundboard sounds are updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class SoundboardSoundsUpdateEvent extends DispatchEvent {
   /// The ID of the guild where the sounds were updated.
   final Snowflake guildId;

@@ -5,6 +5,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template gateway_event}
 /// The base class for all events received from the Gateway.
 /// {@endtemplate}
+///
+/// {@category events}
+/// {@category gateway}
 abstract class GatewayEvent with ToStringHelper {
   /// The opcode of this event.
   final Opcode opcode;
@@ -17,6 +20,8 @@ abstract class GatewayEvent with ToStringHelper {
 /// {@template raw_dispatch_event}
 /// An unparsed dispatch event.
 /// {@endtemplate}
+///
+/// {@category events}
 class RawDispatchEvent extends GatewayEvent {
   /// The sequence number for this event.
   final int seq;
@@ -35,6 +40,9 @@ class RawDispatchEvent extends GatewayEvent {
 /// {@template dispatch_event}
 /// The base class for all events sent by dispatch.
 /// {@endtemplate}
+///
+/// {@category events}
+/// {@category gateway}
 abstract class DispatchEvent extends GatewayEvent {
   /// The gateway that handled this event.
   final Gateway gateway;
@@ -49,6 +57,8 @@ abstract class DispatchEvent extends GatewayEvent {
 ///
 /// This either means the event is internal and not documented, or that nyxx has not yet updated to support it.
 /// {@endtemplate}
+///
+/// {@category events}
 class UnknownDispatchEvent extends DispatchEvent {
   /// The [RawDispatchEvent] that couldn't be parsed.
   final RawDispatchEvent raw;
@@ -61,6 +71,8 @@ class UnknownDispatchEvent extends DispatchEvent {
 /// {@template heartbeat_event}
 /// Emitted when the client receives a request to heartbeat.
 /// {@endtemplate}
+///
+/// {@category events}
 class HeartbeatEvent extends GatewayEvent {
   /// {@macro heartbeat_event}
   HeartbeatEvent() : super(opcode: Opcode.heartbeat);
@@ -69,6 +81,8 @@ class HeartbeatEvent extends GatewayEvent {
 /// {@template reconnect_event}
 /// Emitted when the client receives a request to reconnect.
 /// {@endtemplate}
+///
+/// {@category events}
 class ReconnectEvent extends GatewayEvent {
   /// {@macro reconnect_event}
   ReconnectEvent() : super(opcode: Opcode.reconnect);
@@ -77,6 +91,8 @@ class ReconnectEvent extends GatewayEvent {
 /// {@template invalid_session_event}
 /// Emitted when the client's session is invalid.
 /// {@endtemplate}
+///
+/// {@category events}
 class InvalidSessionEvent extends GatewayEvent {
   /// Whether the client can resume the session on a new connection.
   final bool isResumable;
@@ -89,6 +105,8 @@ class InvalidSessionEvent extends GatewayEvent {
 /// {@template hello_event}
 /// Emitted when the client first establishes a connection to the gateway.
 /// {@endtemplate}
+///
+/// {@category events}
 class HelloEvent extends GatewayEvent {
   /// The interval at which the client should heartbeat.
   final Duration heartbeatInterval;
@@ -101,6 +119,8 @@ class HelloEvent extends GatewayEvent {
 /// {@template heartbeat_ack_event}
 /// Emitted when the server acknowledges the client's heartbeat.
 /// {@endtemplate}
+///
+/// {@category events}
 class HeartbeatAckEvent extends GatewayEvent {
   /// The time taken for this event to be sent in response to the last [Opcode.heartbeat] message.
   final Duration latency;

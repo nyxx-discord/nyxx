@@ -11,6 +11,8 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 /// identifier. Also provides utilities to inspect all the caches in a client.
 ///
 /// Empty caches are automatically discarded.
+///
+/// {@category core}
 class CacheManager {
   /// The client this [CacheManager] is for.
   final Nyxx client;
@@ -68,6 +70,8 @@ class CacheManager {
 }
 
 /// The configuration for a [Cache] instance.
+///
+/// {@category core}
 class CacheConfig<T> {
   /// The maximum amount of items allowed in the cache.
   final int? maxSize;
@@ -106,6 +110,8 @@ final class _CacheEntry<T> extends LinkedListEntry<_CacheEntry<T>> {
 ///
 /// The underlying implementation is subject to change in future versions and
 /// should not be relied on.
+///
+/// {@category core}
 class Cache<T> extends MapBase<Snowflake, T> {
   /// Return a mapping of identifier to cache contents for all caches associated with [client].
   @Deprecated('Use client.cache.caches')

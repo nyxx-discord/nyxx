@@ -15,6 +15,8 @@ import 'package:nyxx/src/http/request.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/topics/rate-limits#rate-limits
 /// {@endtemplate}
+///
+/// {@category http}
 class HttpBucket {
   /// The name of the header containing the rate limit bucket id.
   static const xRateLimitBucket = "x-ratelimit-bucket";

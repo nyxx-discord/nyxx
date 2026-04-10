@@ -12,6 +12,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [ScheduledEvent].
+///
+/// {@category entities}
 class PartialScheduledEvent extends WritableSnowflakeEntity<ScheduledEvent> {
   @override
   final ScheduledEventManager manager;
@@ -28,6 +30,9 @@ class PartialScheduledEvent extends WritableSnowflakeEntity<ScheduledEvent> {
 /// {@template scheduled_event}
 /// A scheduled event in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class ScheduledEvent extends PartialScheduledEvent {
   /// The ID of the guild this event is in.
   final Snowflake guildId;
@@ -151,6 +156,8 @@ final class ScheduledEntityType extends EnumLike<int, ScheduledEntityType> {
 /// {@template entity_metadata}
 /// Additional metadata associated with a [ScheduledEvent].
 /// {@endtemplate}
+///
+/// {@category models}
 class EntityMetadata with ToStringHelper {
   /// The location the event will take place in.
   final String? location;
@@ -163,6 +170,8 @@ class EntityMetadata with ToStringHelper {
 /// {@template scheduled_event_user}
 /// A user that has followed a [ScheduledEvent].
 /// {@endtemplate}
+///
+/// {@category models}
 class ScheduledEventUser with ToStringHelper {
   final ScheduledEventManager manager;
 
@@ -192,6 +201,8 @@ class ScheduledEventUser with ToStringHelper {
 ///
 /// See also:
 /// * https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object
+///
+/// {@category models}
 class RecurrenceRule with ToStringHelper {
   /// The start of the interval within which the event recurs.
   final DateTime start;
@@ -271,6 +282,8 @@ final class RecurrenceRuleWeekday extends EnumLike<int, RecurrenceRuleWeekday> {
 }
 
 /// The week and weekday on which a [ScheduledEvent] recurs.
+///
+/// {@category models}
 class RecurrenceRuleNWeekday with ToStringHelper {
   /// The index of the week in which the event recurs.
   ///

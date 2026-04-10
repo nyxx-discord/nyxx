@@ -7,6 +7,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template client_status}
 /// The status of a client on multiple platforms.
 /// {@endtemplate}
+///
+/// {@category models}
 class ClientStatus with ToStringHelper {
   /// The client's status on a desktop session.
   final UserStatus? desktop;
@@ -39,6 +41,8 @@ final class UserStatus extends EnumLike<String, UserStatus> {
 /// {@template activity}
 /// A Rich Presence activity.
 /// {@endtemplate}
+///
+/// {@category models}
 class Activity with ToStringHelper {
   /// The name of this activity.
   final String name;
@@ -124,6 +128,8 @@ final class ActivityType extends EnumLike<int, ActivityType> {
 /// {@template activity_timestamps}
 /// Information about an [Activity]'s timings.
 /// {@endtemplate}
+///
+/// {@category models}
 class ActivityTimestamps with ToStringHelper {
   /// The time at which the activity starts.
   final DateTime? start;
@@ -139,6 +145,8 @@ class ActivityTimestamps with ToStringHelper {
 /// {@template activity_party}
 /// Information about an [Activity]'s party.
 /// {@endtemplate}
+///
+/// {@category models}
 class ActivityParty with ToStringHelper {
   /// The ID of the party.
   final String? id;
@@ -157,6 +165,8 @@ class ActivityParty with ToStringHelper {
 /// {@template activity_assets}
 /// Information about an [Activity]'s displayed assets.
 /// {@endtemplate}
+///
+/// {@category models}
 class ActivityAssets with ToStringHelper {
   /// The activity's large image.
   // TODO: Make a proper class for this, or parse it to e.g a Uri
@@ -185,6 +195,8 @@ class ActivityAssets with ToStringHelper {
 /// {@template activity_secrets}
 /// Information about an [Activity]'s secrets.
 /// {@endtemplate}
+///
+/// {@category models}
 class ActivitySecrets with ToStringHelper {
   /// The join secret.
   final String? join;
@@ -253,6 +265,8 @@ class ActivityFlags extends Flags<ActivityFlags> {
 /// {@template activity_button}
 /// A button displayed in an activity.
 /// {@endtemplate}
+///
+/// {@category models}
 class ActivityButton with ToStringHelper {
   /// This button's label.
   final String label;

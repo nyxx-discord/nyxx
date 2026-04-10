@@ -94,6 +94,8 @@ class SkuNotFoundException extends NyxxException {
 }
 
 /// An error thrown when a shard disconnects unexpectedly.
+///
+/// {@category gateway}
 class ShardDisconnectedError extends Error implements NyxxException {
   /// The shard that was disconnected.
   final Shard shard;
@@ -111,6 +113,8 @@ class ShardDisconnectedError extends Error implements NyxxException {
 /// An error thrown when the number of remaining sessions becomes too low.
 ///
 /// The threshold for this can be configured in [GatewayClientOptions.minimumSessionStarts].
+///
+/// {@category core}
 class OutOfRemainingSessionsError extends Error implements NyxxException {
   /// The [GatewayBot] containing the information that triggered the error.
   final GatewayBot gatewayBot;
@@ -147,6 +151,8 @@ class AlreadyRespondedError extends AlreadyAcknowledgedError {
 }
 
 /// An error thrown when an issue with a client's plugin is encountered.
+///
+/// {@category plugins}
 class PluginError extends Error {
   /// The message for this [PluginError].
   final String message;

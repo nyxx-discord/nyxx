@@ -46,6 +46,9 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
+///
+/// {@category gateway}
+/// {@category core}
 class Gateway extends GatewayManager with EventParser {
   @override
   final NyxxGateway client;

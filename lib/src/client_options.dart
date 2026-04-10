@@ -56,6 +56,8 @@ const _defaultCacheConfig = CacheConfig<Never>(maxSize: 2500);
 const _smallCacheConfig = CacheConfig<Never>(maxSize: 100);
 
 /// Options for controlling the behavior of a [Nyxx] client.
+///
+/// {@category core}
 abstract class ClientOptions {
   /// The plugins to use for this client.
   final List<NyxxPlugin> plugins;
@@ -83,6 +85,8 @@ abstract class ClientOptions {
 }
 
 /// Options for controlling the behavior of a [NyxxRest] client.
+///
+/// {@category core}
 class RestClientOptions extends ClientOptions {
   /// The [CacheConfig] to use for the cache of the [NyxxRest.users] manager.
   final CacheConfig<User> userCacheConfig;
@@ -200,6 +204,8 @@ class RestClientOptions extends ClientOptions {
 }
 
 /// Options for controlling the behavior of a [NyxxGateway] client.
+///
+/// {@category core}
 class GatewayClientOptions extends RestClientOptions {
   /// The minimum number of session starts this client needs to connect.
   ///

@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class RoleColorsBuilder extends CreateBuilder<RoleColors> {
   DiscordColor primary;
 
@@ -27,6 +28,7 @@ class RoleColorsBuilder extends CreateBuilder<RoleColors> {
       };
 }
 
+/// {@category builders}
 // TODO(lexedia): Remove color.
 class RoleBuilder extends CreateBuilder<Role> {
   String? name;
@@ -83,6 +85,7 @@ class RoleBuilder extends CreateBuilder<Role> {
       };
 }
 
+/// {@category builders}
 class RoleUpdateBuilder extends UpdateBuilder<Role> {
   String? name;
 

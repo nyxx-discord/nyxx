@@ -39,7 +39,6 @@ coverage/
 
 local/
 index.html
-docs/
 .buildlog
 .project
 .pub

@@ -14,6 +14,8 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Webhook].
+///
+/// {@category entities}
 class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
   @override
   final WebhookManager manager;
@@ -85,6 +87,8 @@ class PartialWebhook extends WritableSnowflakeEntity<Webhook> {
 }
 
 /// A partial [Webhook] sent as part of a [Message].
+///
+/// {@category models}
 class WebhookAuthor extends PartialWebhook implements MessageAuthor {
   @override
   final String? avatarHash;
@@ -112,6 +116,9 @@ class WebhookAuthor extends PartialWebhook implements MessageAuthor {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/webhook#webhook-resource
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Webhook extends PartialWebhook {
   /// The type of this webhook.
   final WebhookType type;

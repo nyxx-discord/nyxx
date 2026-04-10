@@ -19,6 +19,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// A partial [Application] object.
 // We intentionally do not use SnowflakeEntity as applications do not have the same access in the API as other entities with IDs, so they cannot be thought of
 // as being in a "group".
+///
+/// {@category entities}
 class PartialApplication with ToStringHelper {
   /// The ID of this application.
   final Snowflake id;
@@ -50,6 +52,7 @@ class PartialApplication with ToStringHelper {
   Future<List<Sku>> listSkus() => manager.listSkus(id);
 }
 
+/// {@category models}
 class ApplicationIntegrationTypeConfiguration {
   /// Install params for each installation context's default in-app authorization link.
   final InstallationParameters? oauth2InstallParameters;
@@ -61,6 +64,9 @@ class ApplicationIntegrationTypeConfiguration {
 /// {@template application}
 /// An OAuth2 application.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Application extends PartialApplication {
   /// The name of this application.
   final String name;
@@ -281,6 +287,8 @@ class ApplicationFlags extends Flags<ApplicationFlags> {
 /// {@template installation_parameters}
 /// Configuration for an [Application]'s authorization link.
 /// {@endtemplate}
+///
+/// {@category models}
 class InstallationParameters with ToStringHelper {
   /// The OAuth2 scopes to add the application to the guild with.
   final List<String> scopes;
@@ -299,6 +307,8 @@ class InstallationParameters with ToStringHelper {
 /// {@template application_role_connection_metadata}
 /// Metadata for an app's role connections.
 /// {@endtemplate}
+///
+/// {@category models}
 class ApplicationRoleConnectionMetadata with ToStringHelper {
   /// The type of connection.
   final ConnectionMetadataType type;

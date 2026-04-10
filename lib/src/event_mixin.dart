@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:meta/meta.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
@@ -21,6 +22,7 @@ import 'package:nyxx/src/models/interaction.dart';
 import 'package:nyxx/src/utils/iterable_extension.dart';
 
 /// An internal mixin to add event streams to a NyxxGateway client.
+@internal
 mixin EventMixin implements Nyxx {
   /// A [Stream] of gateway dispatch events received by this client.
   Stream<DispatchEvent> get onEvent => (this as NyxxGateway).gateway.events;

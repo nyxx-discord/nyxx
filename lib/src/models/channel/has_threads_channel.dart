@@ -8,6 +8,9 @@ import 'package:nyxx/src/models/snowflake.dart';
 ///
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/topics/threads
+///
+/// {@category models}
+/// {@category entities}
 abstract class HasThreadsChannel implements GuildChannel {
   /// The default [Thread.autoArchiveDuration] for [Thread]s created in this channel.
   ///

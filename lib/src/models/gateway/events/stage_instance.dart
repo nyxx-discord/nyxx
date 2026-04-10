@@ -4,6 +4,8 @@ import 'package:nyxx/src/models/gateway/event.dart';
 /// {@template stage_instance_create_event}
 /// Emitted when a stage instance is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class StageInstanceCreateEvent extends DispatchEvent {
   /// The updated stage instance.
   final StageInstance instance;
@@ -16,6 +18,8 @@ class StageInstanceCreateEvent extends DispatchEvent {
 /// {@template stage_instance_update_event}
 /// Emitted when a stage instance is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class StageInstanceUpdateEvent extends DispatchEvent {
   /// The stage instance as it was cached before the update.
   final StageInstance? oldInstance;
@@ -31,6 +35,8 @@ class StageInstanceUpdateEvent extends DispatchEvent {
 /// {@template stage_instance_delete_event}
 /// Emitted when a stage instance is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class StageInstanceDeleteEvent extends DispatchEvent {
   /// The stage instance that was deleted.
   final StageInstance instance;

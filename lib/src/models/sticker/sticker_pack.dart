@@ -8,6 +8,9 @@ import 'package:nyxx/src/models/sticker/global_sticker.dart';
 /// {@template sticker_pack}
 /// A Sticker Pack -- group of stickers that are gated behind Nitro.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class StickerPack extends SnowflakeEntity<StickerPack> {
   /// Global sticker manager
   final GlobalStickerManager manager;

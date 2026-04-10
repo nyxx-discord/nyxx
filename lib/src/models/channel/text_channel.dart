@@ -5,6 +5,8 @@ import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// A partial [TextChannel].
+///
+/// {@category entities}
 class PartialTextChannel extends PartialChannel {
   /// A [Manager] for the [Message]s of this channel.
   MessageManager get messages => MessageManager(manager.client.options.messageCacheConfig, manager.client, channelId: id);
@@ -37,6 +39,9 @@ class PartialTextChannel extends PartialChannel {
 }
 
 //// A text channel
+///
+/// {@category models}
+/// {@category entities}
 abstract class TextChannel extends PartialTextChannel implements Channel {
   /// The ID of the last [Message] sent in this channel, or `null` if no messages have been sent.
   Snowflake? get lastMessageId;

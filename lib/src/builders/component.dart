@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@category builders}
 abstract class ComponentBuilder<T extends Component> extends CreateBuilder<T> {
   ComponentType type;
 
@@ -27,6 +28,7 @@ abstract class ComponentBuilder<T extends Component> extends CreateBuilder<T> {
 @Deprecated('Use ComponentBuilder instead')
 typedef MessageComponentBuilder = ComponentBuilder;
 
+/// {@category builders}
 class ActionRowBuilder extends ComponentBuilder<ActionRowComponent> {
   List<ComponentBuilder> components;
 
@@ -39,6 +41,7 @@ class ActionRowBuilder extends ComponentBuilder<ActionRowComponent> {
       };
 }
 
+/// {@category builders}
 class ButtonBuilder extends ComponentBuilder<ButtonComponent> {
   ButtonStyle style;
 
@@ -135,6 +138,7 @@ class ButtonBuilder extends ComponentBuilder<ButtonComponent> {
       };
 }
 
+/// {@category builders}
 class SelectMenuBuilder extends ComponentBuilder<SelectMenuComponent> {
   String customId;
 
@@ -238,6 +242,7 @@ class SelectMenuBuilder extends ComponentBuilder<SelectMenuComponent> {
       };
 }
 
+/// {@category builders}
 class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
   String label;
 
@@ -272,6 +277,7 @@ class SelectMenuOptionBuilder extends CreateBuilder<SelectMenuOption> {
       };
 }
 
+/// {@category builders}
 class DefaultValue<T extends SnowflakeEntity<T>> extends CreateBuilder<DefaultValue<T>> {
   Snowflake id;
 
@@ -295,6 +301,7 @@ class DefaultValue<T extends SnowflakeEntity<T>> extends CreateBuilder<DefaultVa
       };
 }
 
+/// {@category builders}
 class TextInputBuilder extends ComponentBuilder<SubmittedTextInputComponent> {
   String customId;
 
@@ -341,6 +348,7 @@ class TextInputBuilder extends ComponentBuilder<SubmittedTextInputComponent> {
       };
 }
 
+/// {@category builders}
 class SectionComponentBuilder extends ComponentBuilder<SectionComponent> {
   List<TextDisplayComponentBuilder> components;
 
@@ -356,6 +364,7 @@ class SectionComponentBuilder extends ComponentBuilder<SectionComponent> {
       };
 }
 
+/// {@category builders}
 class TextDisplayComponentBuilder extends ComponentBuilder<TextDisplayComponent> {
   final String content;
 
@@ -368,6 +377,7 @@ class TextDisplayComponentBuilder extends ComponentBuilder<TextDisplayComponent>
       };
 }
 
+/// {@category builders}
 class UnfurledMediaItemBuilder extends CreateBuilder<UnfurledMediaItem> {
   Uri url;
 
@@ -377,6 +387,7 @@ class UnfurledMediaItemBuilder extends CreateBuilder<UnfurledMediaItem> {
   Map<String, Object?> build() => {'url': url.toString()};
 }
 
+/// {@category builders}
 class ThumbnailComponentBuilder extends ComponentBuilder<ThumbnailComponent> {
   UnfurledMediaItemBuilder media;
 
@@ -395,6 +406,7 @@ class ThumbnailComponentBuilder extends ComponentBuilder<ThumbnailComponent> {
       };
 }
 
+/// {@category builders}
 class MediaGalleryItemBuilder extends CreateBuilder<MediaGalleryItem> {
   UnfurledMediaItemBuilder media;
 
@@ -412,6 +424,7 @@ class MediaGalleryItemBuilder extends CreateBuilder<MediaGalleryItem> {
       };
 }
 
+/// {@category builders}
 class MediaGalleryComponentBuilder extends ComponentBuilder<MediaGalleryComponent> {
   List<MediaGalleryItemBuilder> items;
 
@@ -424,6 +437,7 @@ class MediaGalleryComponentBuilder extends ComponentBuilder<MediaGalleryComponen
       };
 }
 
+/// {@category builders}
 class SeparatorComponentBuilder extends ComponentBuilder<SeparatorComponent> {
   bool? isDivider;
 
@@ -439,6 +453,7 @@ class SeparatorComponentBuilder extends ComponentBuilder<SeparatorComponent> {
       };
 }
 
+/// {@category builders}
 class FileComponentBuilder extends ComponentBuilder<FileComponent> {
   UnfurledMediaItemBuilder file;
 
@@ -454,6 +469,7 @@ class FileComponentBuilder extends ComponentBuilder<FileComponent> {
       };
 }
 
+/// {@category builders}
 class ContainerComponentBuilder extends ComponentBuilder<ContainerComponent> {
   DiscordColor? accentColor;
 
@@ -472,6 +488,7 @@ class ContainerComponentBuilder extends ComponentBuilder<ContainerComponent> {
       };
 }
 
+/// {@category builders}
 class LabelComponentBuilder extends ComponentBuilder<SubmittedLabelComponent> {
   String label;
 
@@ -495,6 +512,7 @@ class LabelComponentBuilder extends ComponentBuilder<SubmittedLabelComponent> {
       };
 }
 
+/// {@category builders}
 class FileUploadComponentBuilder extends ComponentBuilder<FileUploadComponent> {
   String customId;
 
@@ -516,6 +534,7 @@ class FileUploadComponentBuilder extends ComponentBuilder<FileUploadComponent> {
       };
 }
 
+/// {@category builders}
 class RadioGroupComponentBuilder extends ComponentBuilder<SubmittedRadioGroupComponent> {
   String customId;
 
@@ -534,6 +553,7 @@ class RadioGroupComponentBuilder extends ComponentBuilder<SubmittedRadioGroupCom
       };
 }
 
+/// {@category builders}
 class RadioGroupOptionBuilder extends CreateBuilder<RadioGroupOptionBuilder> {
   String value;
   String label;
@@ -551,6 +571,7 @@ class RadioGroupOptionBuilder extends CreateBuilder<RadioGroupOptionBuilder> {
       };
 }
 
+/// {@category builders}
 class CheckboxGroupComponentBuilder extends ComponentBuilder<SubmittedCheckboxGroupComponent> {
   String customId;
   List<CheckboxGroupOptionBuilder> options;
@@ -572,6 +593,7 @@ class CheckboxGroupComponentBuilder extends ComponentBuilder<SubmittedCheckboxGr
       };
 }
 
+/// {@category builders}
 class CheckboxGroupOptionBuilder extends CreateBuilder<CheckboxGroupOptionBuilder> {
   String value;
   String label;
@@ -589,6 +611,7 @@ class CheckboxGroupOptionBuilder extends CreateBuilder<CheckboxGroupOptionBuilde
       };
 }
 
+/// {@category builders}
 class CheckboxComponentBuilder extends ComponentBuilder<SubmittedCheckboxComponent> {
   String customId;
   bool? defaultValue;

@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class ChannelPositionBuilder extends UpdateBuilder<GuildChannel> {
   /// The channel id to update.
   Snowflake channelId;

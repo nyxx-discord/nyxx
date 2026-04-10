@@ -9,6 +9,8 @@ import 'package:nyxx/src/http/route.dart';
 /// This class is a wrapper around the [BaseRequest] class from `package:http`, providing rate
 /// limit, audit log and authentication support.
 /// {@endtemplate}
+///
+/// {@category http}
 abstract class HttpRequest {
   /// The name of the header containing the audit log reason for a request.
   static const xAuditLogReason = 'X-Audit-Log-Reason';
@@ -84,6 +86,8 @@ abstract class HttpRequest {
 }
 
 /// An [HttpRequest] with a JSON body.
+///
+/// {@category http}
 class BasicRequest extends HttpRequest {
   /// The `Content-Type` header for JSON requests.
   static const jsonContentTypeHeader = {'Content-Type': 'application/json'};
@@ -119,6 +123,7 @@ class BasicRequest extends HttpRequest {
   }
 }
 
+/// {@category http}
 class FormDataRequest extends HttpRequest {
   /// A list of files to be sent in this request.
   final List<MultipartFile> files;
@@ -152,6 +157,8 @@ class FormDataRequest extends HttpRequest {
 }
 
 /// An [HttpRequest] with files & a JSON payload.
+///
+/// {@category http}
 class MultipartRequest extends FormDataRequest {
   /// Create a new [MultipartRequest].
   MultipartRequest(

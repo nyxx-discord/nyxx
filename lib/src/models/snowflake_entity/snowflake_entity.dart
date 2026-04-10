@@ -6,6 +6,9 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// The base class for all entities in the API identified by a [Snowflake].
+///
+/// {@category core}
+/// {@category entities}
 abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper {
   /// The id of this entity.
   final Snowflake id;
@@ -32,6 +35,9 @@ abstract class SnowflakeEntity<T extends SnowflakeEntity<T>> with ToStringHelper
 }
 
 /// The base class for all [SnowflakeEntity]'s that have a dedicated [ReadOnlyManager].
+///
+/// {@category core}
+/// {@category entities}
 abstract class ManagedSnowflakeEntity<T extends ManagedSnowflakeEntity<T>> extends SnowflakeEntity<T> {
   /// The manager for this entity.
   ReadOnlyManager<T> get manager;
@@ -48,6 +54,9 @@ abstract class ManagedSnowflakeEntity<T extends ManagedSnowflakeEntity<T>> exten
 }
 
 /// The base class for all [SnowflakeEntity]'s that have a dedicated [Manager].
+///
+/// {@category core}
+/// {@category entities}
 abstract class WritableSnowflakeEntity<T extends WritableSnowflakeEntity<T>> extends ManagedSnowflakeEntity<T> {
   @override
   Manager<T> get manager;

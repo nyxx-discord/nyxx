@@ -10,6 +10,7 @@ import 'package:nyxx/src/models/message/reference.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 // TODO(abitofevrything): Remove replyId, requireReplyToExist, suppressEmbeds and suppressNotifications.
 class MessageBuilder extends CreateBuilder<Message> {
   String? content;
@@ -140,6 +141,7 @@ class MessageBuilder extends CreateBuilder<Message> {
       };
 }
 
+/// {@category builders}
 class MessageUpdateBuilder extends UpdateBuilder<Message> {
   String? content;
 
@@ -178,6 +180,7 @@ class MessageUpdateBuilder extends UpdateBuilder<Message> {
       };
 }
 
+/// {@category builders}
 class MessageReferenceBuilder extends CreateBuilder<MessageReference> {
   MessageReferenceType type;
 

@@ -13,6 +13,9 @@
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/reference#snowflakes
 /// {@endtemplate}
+///
+/// {@category core}
+/// {@category models}
 class Snowflake implements Comparable<Snowflake> {
   /// A [DateTime] representing the start of the Discord epoch.
   ///

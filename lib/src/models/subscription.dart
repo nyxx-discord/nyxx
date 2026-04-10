@@ -7,6 +7,8 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Subscription].
+///
+/// {@category entities}
 class PartialSubscription extends ManagedSnowflakeEntity<Subscription> {
   @override
   final SubscriptionManager manager;
@@ -16,6 +18,9 @@ class PartialSubscription extends ManagedSnowflakeEntity<Subscription> {
 }
 
 /// A subscription to an [Sku].
+///
+/// {@category models}
+/// {@category entities}
 class Subscription extends PartialSubscription {
   /// The ID of the user this subscription is for.
   final Snowflake userId;

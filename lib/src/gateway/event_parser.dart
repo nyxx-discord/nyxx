@@ -3,6 +3,8 @@ import 'package:nyxx/src/models/gateway/opcode.dart';
 
 /// An internal class which allows the shard runner to parse gateway events
 /// without having a reference to the client's [GatewayManager].
+///
+/// {@category gateway}
 mixin class EventParser {
   GatewayEvent parseGatewayEvent(Map<String, Object?> raw, {Duration? heartbeatLatency}) {
     final mapping = {

@@ -9,6 +9,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template guild_template}
 /// A snapshot of a [Guild] that can be used to create a new guild.
 /// {@endtemplate}
+///
+/// {@category models}
 class GuildTemplate with ToStringHelper {
   /// The code of this template.
   final String code;

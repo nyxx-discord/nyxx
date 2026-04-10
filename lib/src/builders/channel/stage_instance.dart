@@ -3,6 +3,8 @@ import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// A Stage Instance holds information about a live stage.
+///
+/// {@category builders}
 class StageInstanceBuilder extends CreateBuilder<StageInstance> {
   /// {@template stage_instance_topic}
   /// The topic of the Stage instance (1-120 characters).
@@ -36,6 +38,7 @@ class StageInstanceBuilder extends CreateBuilder<StageInstance> {
       };
 }
 
+/// {@category builders}
 class StageInstanceUpdateBuilder extends UpdateBuilder<StageInstance> {
   /// {@macro stage_instance_topic}
   String? topic;

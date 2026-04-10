@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/sticker/sticker.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@category entities}
 class PartialGlobalSticker extends ManagedSnowflakeEntity<GlobalSticker> {
   @override
   final GlobalStickerManager manager;
@@ -15,6 +16,9 @@ class PartialGlobalSticker extends ManagedSnowflakeEntity<GlobalSticker> {
 /// {@template global_sticker}
 /// A sticker that can be sent in messages. Represents global stickers (default stickers)
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GlobalSticker extends PartialGlobalSticker with Sticker {
   /// Name of the sticker
   @override

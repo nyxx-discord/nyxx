@@ -1,4 +1,6 @@
 /// A 24-bit RGB color.
+///
+/// {@category models}
 class DiscordColor {
   /// The 24 bit encoding of this color.
   final int value;

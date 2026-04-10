@@ -5,6 +5,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/utils/building_helpers.dart';
 
+/// {@category builders}
 class SoundboardSoundBuilder extends CreateBuilder<SoundboardSound> {
   String name;
 
@@ -27,6 +28,7 @@ class SoundboardSoundBuilder extends CreateBuilder<SoundboardSound> {
       };
 }
 
+/// {@category builders}
 class SoundboardSoundUpdateBuilder extends UpdateBuilder<SoundboardSound> {
   String name;
 

@@ -9,6 +9,8 @@ import 'dart:collection';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/topics/rate-limits#rate-limits
 /// {@endtemplate}
+///
+/// {@category http}
 class HttpRoute {
   final List<HttpRoutePart> _parts = [];
 
@@ -47,6 +49,8 @@ class HttpRoute {
 /// HTTP route parts are made up of an identifier (such as `/users`) and, optionally, one or more
 /// parameters (such as the id of a user).
 /// {@endtemplate}
+///
+/// {@category http}
 class HttpRoutePart {
   /// The name of this part.
   final String name;
@@ -71,6 +75,8 @@ class HttpRoutePart {
 /// This is not a query parameter, it is a parameter encoded in the path of the request itself, such
 /// as the id of a guild in `/guilds/0123456789`.
 /// {@endtemplate}
+///
+/// {@category http}
 class HttpRouteParam {
   /// The value of this parameter.
   final String value;
@@ -88,6 +94,8 @@ class HttpRouteParam {
 }
 
 /// Helper methods for constructing [HttpRoute]s.
+///
+/// {@category http}
 extension RouteHelpers on HttpRoute {
   /// Adds the [`guilds`](https://discord.com/developers/docs/resources/guild#get-guild) part to this [HttpRoute].
   void guilds({String? id}) => add(HttpRoutePart("guilds", [if (id != null) HttpRouteParam(id, isMajor: true)]));

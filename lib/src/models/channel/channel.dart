@@ -6,6 +6,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Channel] object.
+///
+/// {@category entities}
 class PartialChannel extends ManagedSnowflakeEntity<Channel> {
   @override
   final ChannelManager manager;
@@ -39,6 +41,9 @@ class PartialChannel extends ManagedSnowflakeEntity<Channel> {
 /// {@template channel}
 /// A channel of any type.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 abstract class Channel extends PartialChannel {
   /// The type of this channel.
   ChannelType get type;

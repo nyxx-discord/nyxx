@@ -7,6 +7,9 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template dm_channel}
 /// A DM channel.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class DmChannel extends TextChannel {
   /// The recipient of this channel.
   final User recipient;

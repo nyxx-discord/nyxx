@@ -9,6 +9,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// {@category managers}
 class AutoModerationManager extends Manager<AutoModerationRule> {
   final Snowflake guildId;
 

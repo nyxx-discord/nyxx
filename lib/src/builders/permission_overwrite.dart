@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class PermissionOverwriteBuilder extends CreateBuilder<PermissionOverwrite> {
   Snowflake id;
 

@@ -6,6 +6,8 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template ready_event}
 /// Emitted when the client's Gateway session is established.
 /// {@endtemplate}
+///
+/// {@category events}
 class ReadyEvent extends DispatchEvent {
   /// The version of the API being used.
   final int version;
@@ -47,8 +49,10 @@ class ReadyEvent extends DispatchEvent {
 }
 
 /// {@template resumed_event}
-/// Emitted when
+/// Emitted when the client resumes a Gateway session.
 /// {@endtemplate}
+///
+/// {@category events}
 class ResumedEvent extends DispatchEvent {
   /// {@macro resumed_event}
   /// @nodoc

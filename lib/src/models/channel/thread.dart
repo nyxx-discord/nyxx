@@ -8,6 +8,9 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A thread channel.
+///
+/// {@category models}
+/// {@category entities}
 abstract class Thread implements TextChannel, GuildChannel {
   /// The ID of the user that created this thread.
   Snowflake get ownerId;
@@ -84,6 +87,8 @@ abstract class Thread implements TextChannel, GuildChannel {
 /// {@template partial_thread_member}
 /// A partial [ThreadMember].
 /// {@endtemplate}
+///
+/// {@category models}
 class PartialThreadMember {
   /// The time at which this member joined the thread.
   final DateTime joinTimestamp;
@@ -99,6 +104,8 @@ class PartialThreadMember {
 /// {@template thread_member}
 /// Additional information associated with a [Member] in a [Thread].
 /// {@endtemplate}
+///
+/// {@category models}
 class ThreadMember extends PartialThreadMember {
   /// The manager for this [ThreadMember].
   final ChannelManager manager;

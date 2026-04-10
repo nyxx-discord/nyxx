@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class AllowedMentions {
   List<String>? parse;
 

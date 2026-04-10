@@ -2,6 +2,9 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A voice channel.
+///
+/// {@category models}
+/// {@category entities}
 abstract class VoiceChannel implements Channel {
   /// The bitrate of the channel in bits/s.
   int get bitrate;

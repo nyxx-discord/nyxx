@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class ThreadFromMessageBuilder extends CreateBuilder<Thread> {
   /// {@template thread_name}
   /// The name of the thread.
@@ -28,6 +29,7 @@ class ThreadFromMessageBuilder extends CreateBuilder<Thread> {
       };
 }
 
+/// {@category builders}
 class ThreadBuilder extends CreateBuilder<Thread> {
   static const archiveOneHour = Duration(minutes: 60);
   static const archiveOneDay = Duration(minutes: 1440);
@@ -66,6 +68,7 @@ class ThreadBuilder extends CreateBuilder<Thread> {
       };
 }
 
+/// {@category builders}
 class ForumThreadBuilder extends CreateBuilder<Thread> {
   /// {@macro thread_name}
   String name;
@@ -96,6 +99,7 @@ class ForumThreadBuilder extends CreateBuilder<Thread> {
       };
 }
 
+/// {@category builders}
 class ThreadUpdateBuilder extends UpdateBuilder<Thread> {
   /// {@macro thread_name}
   String? name;

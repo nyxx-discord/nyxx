@@ -7,6 +7,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// {@template integration_create_event}
 /// Emitted when an integration is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class IntegrationCreateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;
@@ -25,6 +27,8 @@ class IntegrationCreateEvent extends DispatchEvent {
 /// {@template integration_update_event}
 /// Emitted when an integration is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class IntegrationUpdateEvent extends DispatchEvent {
   /// The ID of the guild
   final Snowflake guildId;
@@ -46,6 +50,8 @@ class IntegrationUpdateEvent extends DispatchEvent {
 /// {@template integration_delete_event}
 /// Emitted when an integration is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class IntegrationDeleteEvent extends DispatchEvent {
   /// The ID of the deleted integration.
   final Snowflake id;

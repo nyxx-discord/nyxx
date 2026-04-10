@@ -15,6 +15,9 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_stage_channel}
 /// A stage channel.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GuildStageChannel extends TextChannel implements VoiceChannel, GuildChannel {
   @override
   final int bitrate;

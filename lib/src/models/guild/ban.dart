@@ -5,6 +5,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template ban}
 /// A ban in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
 class Ban with ToStringHelper {
   /// The reason for the ban.
   final String? reason;
@@ -17,6 +19,7 @@ class Ban with ToStringHelper {
   Ban({required this.reason, required this.user});
 }
 
+/// {@category models}
 class BulkBanResponse with ToStringHelper {
   /// A list of user IDs, that were succesfully banned.
   final List<Snowflake> bannedUsers;

@@ -5,6 +5,7 @@ import 'package:nyxx/src/models/channel/stage_instance.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
   Snowflake? channelId;
 
@@ -88,6 +89,7 @@ class ScheduledEventBuilder extends CreateBuilder<ScheduledEvent> {
       };
 }
 
+/// {@category builders}
 class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
   Snowflake? channelId;
 
@@ -141,6 +143,7 @@ class ScheduledEventUpdateBuilder extends UpdateBuilder<ScheduledEvent> {
       };
 }
 
+/// {@category builders}
 class RecurrenceRuleBuilder extends CreateBuilder<RecurrenceRule> {
   DateTime start;
   RecurrenceRuleFrequency frequency;

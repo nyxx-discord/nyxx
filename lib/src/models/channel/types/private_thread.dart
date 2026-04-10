@@ -16,6 +16,9 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template private_thread}
 /// A private [Thread] channel.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class PrivateThread extends TextChannel implements Thread {
   final bool isInvitable;
 

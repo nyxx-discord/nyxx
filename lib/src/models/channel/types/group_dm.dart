@@ -8,6 +8,9 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template group_dm_channel}
 /// A DM channel with multiple recipients.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GroupDmChannel extends TextChannel {
   /// The name of this channel.
   final String name;

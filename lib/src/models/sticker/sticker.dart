@@ -26,6 +26,8 @@ final class StickerFormatType extends EnumLike<int, StickerFormatType> {
 }
 
 /// Mixin with shared properties with stickers
+///
+/// {@category models}
 mixin Sticker {
   /// Name of the sticker
   String get name;
@@ -58,6 +60,9 @@ mixin Sticker {
 /// {@template sticker_item}
 /// A representation of a sticker with minimal information
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class StickerItem extends SnowflakeEntity<StickerItem> {
   /// Name of sticker
   final String name;
