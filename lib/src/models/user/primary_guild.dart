@@ -5,6 +5,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
+/// {@category models}
 class UserPrimaryGuild with ToStringHelper {
   final UserManager manager;
 

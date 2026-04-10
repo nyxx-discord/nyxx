@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/models/message/embed.dart';
 
+/// {@category builders}
 class EmbedBuilder extends CreateBuilder<Embed> {
   String? title;
 
@@ -51,6 +52,7 @@ class EmbedBuilder extends CreateBuilder<Embed> {
       };
 }
 
+/// {@category builders}
 class EmbedFooterBuilder extends CreateBuilder<EmbedFooter> {
   String text;
 
@@ -65,6 +67,7 @@ class EmbedFooterBuilder extends CreateBuilder<EmbedFooter> {
       };
 }
 
+/// {@category builders}
 class EmbedImageBuilder extends CreateBuilder<EmbedImage> {
   Uri url;
 
@@ -76,6 +79,7 @@ class EmbedImageBuilder extends CreateBuilder<EmbedImage> {
       };
 }
 
+/// {@category builders}
 class EmbedThumbnailBuilder extends CreateBuilder<EmbedThumbnail> {
   Uri url;
 
@@ -87,6 +91,7 @@ class EmbedThumbnailBuilder extends CreateBuilder<EmbedThumbnail> {
       };
 }
 
+/// {@category builders}
 class EmbedAuthorBuilder extends CreateBuilder<EmbedAuthor> {
   String name;
 
@@ -104,6 +109,7 @@ class EmbedAuthorBuilder extends CreateBuilder<EmbedAuthor> {
       };
 }
 
+/// {@category builders}
 class EmbedFieldBuilder extends CreateBuilder<EmbedField> {
   String name;
 

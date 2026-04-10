@@ -11,6 +11,8 @@ import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Role].
+///
+/// {@category entities}
 class PartialRole extends WritableSnowflakeEntity<Role> {
   @override
   final RoleManager manager;
@@ -42,6 +44,9 @@ class PartialRole extends WritableSnowflakeEntity<Role> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/topics/permissions#role-object
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Role extends PartialRole implements CommandOptionMentionable<Role> {
   /// The name of this role.
   final String name;
@@ -110,6 +115,8 @@ class Role extends PartialRole implements CommandOptionMentionable<Role> {
 /// {@template role_tags}
 /// Additional metadata associated with a role.
 /// {@endtemplate}
+///
+/// {@category models}
 class RoleTags with ToStringHelper {
   /// The ID of the bot this role belongs to.
   final Snowflake? botId;
@@ -154,6 +161,8 @@ class RoleFlags extends Flags<RoleFlags> {
 }
 
 /// The colors for the [Role].
+///
+/// {@category models}
 class RoleColors {
   /// The primary color for the role.
   final DiscordColor primary;

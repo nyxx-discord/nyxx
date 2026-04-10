@@ -8,6 +8,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object
 /// {@endtemplate}
+///
+/// {@category models}
 class Embed {
   /// The title of this embed.
   final String? title;
@@ -86,6 +88,8 @@ final class EmbedType extends EnumLike<String, EmbedType> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-footer-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedFooter with ToStringHelper {
   /// This footer's text.
   final String text;
@@ -111,6 +115,8 @@ class EmbedFooter with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedImage with ToStringHelper {
   /// The URL of this image.
   final Uri url;
@@ -140,6 +146,8 @@ class EmbedImage with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedThumbnail with ToStringHelper {
   /// The URL of this footer's image.
   final Uri url;
@@ -169,6 +177,8 @@ class EmbedThumbnail with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-video-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedVideo with ToStringHelper {
   /// The URL of this video.
   final Uri? url;
@@ -198,6 +208,8 @@ class EmbedVideo with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-provider-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedProvider with ToStringHelper {
   /// The name of this provider.
   final String? name;
@@ -219,6 +231,8 @@ class EmbedProvider with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-author-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedAuthor with ToStringHelper {
   /// The name of this author.
   final String name;
@@ -248,6 +262,8 @@ class EmbedAuthor with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class EmbedField with ToStringHelper {
   /// The name of this field.
   final String name;

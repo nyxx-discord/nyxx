@@ -1,5 +1,7 @@
 import 'package:nyxx/nyxx.dart';
 
+/// {@category models}
+/// {@category entities}
 abstract class ThreadsOnlyChannel implements HasThreadsChannel {
   /// The topic of this channel.
   String? get topic;

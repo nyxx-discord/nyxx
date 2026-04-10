@@ -6,6 +6,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// {@template webhooks_update_event}
 /// Emitted when the webhooks in a channel are updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class WebhooksUpdateEvent extends DispatchEvent {
   /// The ID of the guild.
   final Snowflake guildId;

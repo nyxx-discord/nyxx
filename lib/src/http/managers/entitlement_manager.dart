@@ -11,6 +11,8 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for [Entitlement]s.
+///
+/// {@category managers}
 class EntitlementManager extends ReadOnlyManager<Entitlement> {
   /// The ID of the application this manager is for.
   final Snowflake applicationId;

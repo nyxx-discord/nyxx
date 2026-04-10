@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/voice/voice_state.dart';
 
+/// {@category builders}
 class VoiceStateUpdateBuilder extends UpdateBuilder<VoiceState> {
   Snowflake? channelId;
 
@@ -17,6 +18,7 @@ class VoiceStateUpdateBuilder extends UpdateBuilder<VoiceState> {
       };
 }
 
+/// {@category builders}
 class CurrentUserVoiceStateUpdateBuilder extends VoiceStateUpdateBuilder {
   DateTime? requestToSpeakTimeStamp;
 
@@ -29,6 +31,7 @@ class CurrentUserVoiceStateUpdateBuilder extends VoiceStateUpdateBuilder {
       };
 }
 
+/// {@category builders}
 class GatewayVoiceStateBuilder extends CreateBuilder<VoiceState> {
   Snowflake? channelId;
 

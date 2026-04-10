@@ -52,6 +52,7 @@ final class ComponentType extends EnumLike<int, ComponentType> {
 @Deprecated('Use ComponentType instead')
 typedef MessageComponentType = ComponentType;
 
+/// {@category models}
 class UnfurledMediaItem with ToStringHelper implements CdnAsset {
   /// The manager for this [UnfurledMediaItem].
   final MessageManager manager;
@@ -118,6 +119,8 @@ class UnfurledMediaItem with ToStringHelper implements CdnAsset {
 ///
 /// Components sent in modals can never be fetched by the client. Instead, see
 /// [SubmittedComponent] for obtaining the values submitted by the user.
+///
+/// {@category models}
 abstract class Component with ToStringHelper {
   /// The type of this component.
   ComponentType get type;
@@ -134,6 +137,8 @@ abstract class Component with ToStringHelper {
 typedef MessageComponent = Component;
 
 /// A [Component] that contains multiple child [Component]s.
+///
+/// {@category models}
 class ActionRowComponent extends Component {
   @override
   ComponentType get type => ComponentType.actionRow;
@@ -147,6 +152,8 @@ class ActionRowComponent extends Component {
 }
 
 /// A clickable button.
+///
+/// {@category models}
 class ButtonComponent extends Component {
   @override
   ComponentType get type => ComponentType.button;
@@ -203,6 +210,8 @@ final class ButtonStyle extends EnumLike<int, ButtonStyle> {
 }
 
 /// A dropdown menu in which users can select from on or more choices.
+///
+/// {@category models}
 class SelectMenuComponent extends Component {
   @override
   final ComponentType type;
@@ -271,6 +280,8 @@ final class SelectMenuDefaultValueType extends EnumLike<String, SelectMenuDefaul
 }
 
 /// A default value in a [SelectMenuComponent].
+///
+/// {@category models}
 class SelectMenuDefaultValue {
   /// The ID of this entity.
   final Snowflake id;
@@ -284,6 +295,8 @@ class SelectMenuDefaultValue {
 }
 
 /// An option in a [SelectMenuComponent].
+///
+/// {@category models}
 class SelectMenuOption with ToStringHelper {
   /// The label shown to the user.
   final String label;
@@ -312,6 +325,8 @@ class SelectMenuOption with ToStringHelper {
 }
 
 /// A text field in a modal.
+///
+/// {@category models}
 @Deprecated('Use SubmittedTextInputComponent instead. The fields on this class are never populated.')
 class TextInputComponent extends Component implements SubmittedTextInputComponent {
   @override
@@ -378,6 +393,8 @@ final class TextInputStyle extends EnumLike<int, TextInputStyle> {
 }
 
 /// An unknown component.
+///
+/// {@category models}
 class UnknownComponent extends Component implements SubmittedComponent {
   @override
   final ComponentType type;
@@ -387,6 +404,8 @@ class UnknownComponent extends Component implements SubmittedComponent {
 }
 
 /// A section in a message, with small accessory component.
+///
+/// {@category models}
 class SectionComponent extends Component {
   @override
   ComponentType get type => ComponentType.section;
@@ -402,6 +421,8 @@ class SectionComponent extends Component {
 }
 
 /// A component that displays text.
+///
+/// {@category models}
 class TextDisplayComponent extends Component {
   @override
   ComponentType get type => ComponentType.textDisplay;
@@ -414,6 +435,8 @@ class TextDisplayComponent extends Component {
 }
 
 /// A component that shows a small image.
+///
+/// {@category models}
 class ThumbnailComponent extends Component {
   @override
   ComponentType get type => ComponentType.thumbnail;
@@ -432,6 +455,8 @@ class ThumbnailComponent extends Component {
 }
 
 /// An item in a [MediaGalleryComponent].
+///
+/// {@category models}
 class MediaGalleryItem with ToStringHelper {
   /// The item to display.
   final UnfurledMediaItem media;
@@ -447,6 +472,8 @@ class MediaGalleryItem with ToStringHelper {
 }
 
 /// A component that displays several child media items.
+///
+/// {@category models}
 class MediaGalleryComponent extends Component {
   @override
   ComponentType get type => ComponentType.mediaGallery;
@@ -468,6 +495,8 @@ final class SeparatorSpacingSize extends EnumLike<int, SeparatorSpacingSize> {
 }
 
 /// A component that introduces space between two other components.
+///
+/// {@category models}
 class SeparatorComponent extends Component {
   @override
   ComponentType get type => ComponentType.separator;
@@ -483,6 +512,8 @@ class SeparatorComponent extends Component {
 }
 
 /// A component that displays a downloadable file.
+///
+/// {@category models}
 class FileComponent extends Component {
   @override
   ComponentType get type => ComponentType.file;
@@ -498,6 +529,8 @@ class FileComponent extends Component {
 }
 
 /// A component that contains several other components.
+///
+/// {@category models}
 class ContainerComponent extends Component {
   @override
   ComponentType get type => ComponentType.container;
@@ -515,6 +548,7 @@ class ContainerComponent extends Component {
   ContainerComponent({required super.id, required this.accentColor, required this.isSpoiler, required this.components});
 }
 
+/// {@category models}
 class FileUploadComponent extends Component {
   @override
   ComponentType get type => ComponentType.fileUpload;
@@ -536,12 +570,16 @@ class FileUploadComponent extends Component {
 }
 
 /// A component received as part of an [Interaction].
+///
+/// {@category models}
 abstract class SubmittedComponent extends Component {
   /// @nodoc
   SubmittedComponent({required super.id});
 }
 
 /// An [ActionRowComponent] received in an [Interaction].
+///
+/// {@category models}
 class SubmittedActionRowComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.actionRow;
@@ -554,6 +592,8 @@ class SubmittedActionRowComponent extends SubmittedComponent {
 }
 
 /// A text input received in an [Interaction].
+///
+/// {@category models}
 class SubmittedTextInputComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.textInput;
@@ -569,6 +609,8 @@ class SubmittedTextInputComponent extends SubmittedComponent {
 }
 
 /// A label received in an [Interaction].
+///
+/// {@category models}
 class SubmittedLabelComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.label;
@@ -581,6 +623,8 @@ class SubmittedLabelComponent extends SubmittedComponent {
 }
 
 /// A [SelectMenuComponent] received in an [Interaction].
+///
+/// {@category models}
 class SubmittedSelectMenuComponent extends SubmittedComponent {
   final MessageManager manager;
   // For the [roles] getter.
@@ -643,6 +687,8 @@ class SubmittedSelectMenuComponent extends SubmittedComponent {
 }
 
 /// A [TextDisplayComponent] received in an [Interaction].
+///
+/// {@category models}
 class SubmittedTextDisplayComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.textDisplay;
@@ -651,6 +697,7 @@ class SubmittedTextDisplayComponent extends SubmittedComponent {
   SubmittedTextDisplayComponent({required super.id});
 }
 
+/// {@category models}
 class SubmittedFileUploadComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.fileUpload;
@@ -665,6 +712,7 @@ class SubmittedFileUploadComponent extends SubmittedComponent {
   SubmittedFileUploadComponent({required super.id, required this.customId, required this.values});
 }
 
+/// {@category models}
 class SubmittedRadioGroupComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.radioGroup;
@@ -679,6 +727,7 @@ class SubmittedRadioGroupComponent extends SubmittedComponent {
   SubmittedRadioGroupComponent({required super.id, required this.customId, required this.value});
 }
 
+/// {@category models}
 class SubmittedCheckboxGroupComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.checkboxGroup;
@@ -693,6 +742,7 @@ class SubmittedCheckboxGroupComponent extends SubmittedComponent {
   SubmittedCheckboxGroupComponent({required super.id, required this.customId, required this.values});
 }
 
+/// {@category models}
 class SubmittedCheckboxComponent extends SubmittedComponent {
   @override
   ComponentType get type => ComponentType.checkbox;

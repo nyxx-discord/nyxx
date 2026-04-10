@@ -4,6 +4,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// An author of a message.
 ///
 /// Will normally be a [User] or a [WebhookAuthor].
+///
+/// {@category models}
 abstract class MessageAuthor {
   /// The ID of this entity.
   Snowflake get id;

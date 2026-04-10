@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/channel/types/group_dm.dart';
 
+/// {@category builders}
 class GroupDmUpdateBuilder extends UpdateBuilder<GroupDmChannel> {
   /// The name of the group DM, if changed.
   String? name;
@@ -19,6 +20,7 @@ class GroupDmUpdateBuilder extends UpdateBuilder<GroupDmChannel> {
       };
 }
 
+/// {@category builders}
 class DmRecipientBuilder extends CreateBuilder<DmRecipientBuilder> {
   String accessToken;
 

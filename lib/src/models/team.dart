@@ -12,6 +12,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/topics/teams#data-models-team-object
 /// {@endtemplate}
+///
+/// {@category models}
 class Team with ToStringHelper {
   /// The manager for this team.
   final ApplicationManager manager;
@@ -58,6 +60,8 @@ class Team with ToStringHelper {
 /// {@template team_member}
 /// A member of a [Team].
 /// {@endtemplate}
+///
+/// {@category models}
 class TeamMember with ToStringHelper {
   /// This team member's membership status.
   final TeamMembershipState membershipState;

@@ -1,4 +1,36 @@
 dartdoc:
   linkToSource:
     root: .
-    uriTemplate: 'https://github.com/nyxx-discord/nyxx/blob/main/%f%#L%l%'
+    uriTemplate: "https://github.com/nyxx-discord/nyxx/blob/main/%f%#L%l%"
+
+  categories:
+    core:
+      markdown: docs/core.md
+      displayName: Core
+    http:
+      markdown: docs/http.md
+      displayName: HTTP
+    gateway:
+      markdown: docs/gateway.md
+      displayName: Gateway
+    managers:
+      markdown: docs/managers.md
+      displayName: Managers
+    entities:
+      markdown: docs/entities.md
+      displayName: Entities
+    models:
+      markdown: docs/models.md
+      displayName: Models
+    events:
+      markdown: docs/events.md
+      displayName: Events
+    builders:
+      markdown: docs/builders.md
+      displayName: Builders
+    plugins:
+      markdown: docs/plugins.md
+      displayName: Plugins
+
+  categoryOrder:
+    [core, http, gateway, managers, plugins, entities, events, models, builders]

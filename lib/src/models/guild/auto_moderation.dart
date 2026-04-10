@@ -12,6 +12,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [AutoModerationRule].
+///
+/// {@category entities}
 class PartialAutoModerationRule extends WritableSnowflakeEntity<AutoModerationRule> {
   @override
   final AutoModerationManager manager;
@@ -24,6 +26,9 @@ class PartialAutoModerationRule extends WritableSnowflakeEntity<AutoModerationRu
 /// {@template auto_moderation_rule}
 /// A rule use for auto-moderation in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class AutoModerationRule extends PartialAutoModerationRule {
   /// The ID of the guild this rule is in.
   final Snowflake guildId;
@@ -126,6 +131,8 @@ final class TriggerType extends EnumLike<int, TriggerType> {
 /// Additional metadata associated with the trigger for an [AutoModerationRule].
 /// {@endtemplate}
 // TODO(abitofevrything): Remove `implements TriggerMetadataBuilder`
+///
+/// {@category models}
 class TriggerMetadata with ToStringHelper implements TriggerMetadataBuilder {
   @override
   final List<String>? keywordFilter;
@@ -186,6 +193,8 @@ final class KeywordPresetType extends EnumLike<int, KeywordPresetType> {
 /// Describes an action to take when an [AutoModerationRule] is triggered.
 /// {@endtemplate}
 // TODO(abitofevrything): Remove `implements AutoModerationActionBuilder`
+///
+/// {@category models}
 class AutoModerationAction with ToStringHelper implements AutoModerationActionBuilder {
   @override
   final ActionType type;
@@ -226,6 +235,8 @@ final class ActionType extends EnumLike<int, ActionType> {
 /// Additional metadata associated with an [AutoModerationAction].
 /// {@endtemplate}
 // TODO(abitofevrything): Remove `implements ActionMetadataBuilder`
+///
+/// {@category models}
 class ActionMetadata with ToStringHelper implements ActionMetadataBuilder {
   final AutoModerationManager manager;
 

@@ -6,6 +6,8 @@ import 'package:nyxx/src/http/response.dart';
 import 'package:nyxx/src/http/route.dart';
 
 /// Available formats for CDN endpoints.
+///
+/// {@category http}
 enum CdnFormat {
   /// The PNG format.
   png._('png'),
@@ -43,6 +45,8 @@ enum CdnFormat {
 /// {@template cdn_asset}
 /// An asset, most commonly an image, on Discord's CDN.
 /// {@endtemplate}
+///
+/// {@category http}
 class CdnAsset {
   /// The client this asset is associated with.
   final Nyxx client;

@@ -4,6 +4,7 @@ import 'package:nyxx/src/models/guild/member.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class MemberBuilder extends CreateBuilder<Member> {
   String accessToken;
 
@@ -36,6 +37,7 @@ class MemberBuilder extends CreateBuilder<Member> {
       };
 }
 
+/// {@category builders}
 class MemberUpdateBuilder extends UpdateBuilder<Member> {
   String? nick;
 
@@ -73,6 +75,7 @@ class MemberUpdateBuilder extends UpdateBuilder<Member> {
       };
 }
 
+/// {@category builders}
 class CurrentMemberUpdateBuilder extends UpdateBuilder<Member> {
   String? nick;
 

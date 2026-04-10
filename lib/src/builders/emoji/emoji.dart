@@ -4,6 +4,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class EmojiBuilder implements CreateBuilder<GuildEmoji> {
   /// The name of the emoji.
   String name;
@@ -28,6 +29,7 @@ class EmojiBuilder implements CreateBuilder<GuildEmoji> {
       };
 }
 
+/// {@category builders}
 class EmojiUpdateBuilder implements UpdateBuilder<GuildEmoji> {
   /// The name of the emoji.
   String? name;
@@ -47,6 +49,7 @@ class EmojiUpdateBuilder implements UpdateBuilder<GuildEmoji> {
       };
 }
 
+/// {@category builders}
 class ApplicationEmojiBuilder implements CreateBuilder<ApplicationEmoji> {
   /// The name of the emoji.
   String name;
@@ -66,6 +69,7 @@ class ApplicationEmojiBuilder implements CreateBuilder<ApplicationEmoji> {
       };
 }
 
+/// {@category builders}
 class ApplicationEmojiUpdateBuilder implements UpdateBuilder<ApplicationEmoji> {
   /// The name of the emoji.
   String? name;

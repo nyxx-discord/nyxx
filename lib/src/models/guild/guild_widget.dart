@@ -8,6 +8,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template guild_widget}
 /// A [Guild]'s widget.
 /// {@endtemplate}
+///
+/// {@category models}
 class GuildWidget with ToStringHelper {
   /// The manager for this [GuildWidget].
   final GuildManager manager;
@@ -49,6 +51,8 @@ class GuildWidget with ToStringHelper {
 /// {@template widget_settings}
 /// The settings for a [Guild]'s widget.
 /// {@endtemplate}
+///
+/// {@category models}
 class WidgetSettings with ToStringHelper {
   /// The manager for this [WidgetSettings].
   final GuildManager manager;

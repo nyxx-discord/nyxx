@@ -11,6 +11,9 @@ import 'package:nyxx/src/utils/enum_like.dart';
 /// {@template stage_instance}
 /// Information about a live stage.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class StageInstance extends SnowflakeEntity<StageInstance> {
   /// The manager this [StageInstance] is associated with.
   final ChannelManager manager;

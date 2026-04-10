@@ -4,6 +4,8 @@ import 'package:nyxx/src/utils/flags.dart';
 import 'package:oauth2/oauth2.dart';
 
 /// Options for connecting to the Discord API.
+///
+/// {@category core}
 abstract class ApiOptions {
   /// The version of nyxx used in [defaultUserAgent].
   static const nyxxVersion = '6.8.1';
@@ -41,6 +43,8 @@ abstract class ApiOptions {
 }
 
 /// Options for connecting to the Discord API to make HTTP requests with a bot token.
+///
+/// {@category core}
 class RestApiOptions extends ApiOptions {
   /// The token to use.
   final String token;
@@ -53,6 +57,8 @@ class RestApiOptions extends ApiOptions {
 }
 
 /// Options for connecting the the Discord API using credentials from an OAuth2 flow.
+///
+/// {@category core}
 class OAuth2ApiOptions extends ApiOptions implements RestApiOptions {
   /// The credentials to use when connecting to the API.
   Credentials credentials;
@@ -69,6 +75,9 @@ class OAuth2ApiOptions extends ApiOptions implements RestApiOptions {
 
 /// Options for connecting to the Discord API for making HTTP requests and connecting to the Gateway
 /// with a bot token.
+///
+/// {@category gateway}
+/// {@category core}
 class GatewayApiOptions extends RestApiOptions {
   /// The intents to use.
   final Flags<GatewayIntents> intents;

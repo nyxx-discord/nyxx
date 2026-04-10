@@ -16,6 +16,9 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template public_thread}
 /// A public [Thread] channel.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class PublicThread extends TextChannel implements Thread {
   @override
   final List<Snowflake>? appliedTags;

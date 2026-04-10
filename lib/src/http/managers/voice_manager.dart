@@ -9,6 +9,8 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [VoiceState]s.
+///
+/// {@category managers}
 class VoiceManager {
   /// The client this manager belongs to.
   final NyxxRest client;

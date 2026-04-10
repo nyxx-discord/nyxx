@@ -3,6 +3,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template gateway_configuration}
 /// Information about how to connect to the Gateway.
 /// {@endtemplate}
+///
+/// {@category models}
 class GatewayConfiguration with ToStringHelper {
   /// The URL to connect to.
   final Uri url;
@@ -15,6 +17,9 @@ class GatewayConfiguration with ToStringHelper {
 /// {@template gateway_bot}
 /// Information about how to connect to the Gateway, with client-specific information.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category gateway}
 class GatewayBot extends GatewayConfiguration {
   /// The recommended number of shards to use.
   final int shards;
@@ -34,6 +39,8 @@ class GatewayBot extends GatewayConfiguration {
 /// {@template session_start_limit}
 /// Information about a client's session start limits.
 /// {@endtemplate}
+///
+/// {@category models}
 class SessionStartLimit with ToStringHelper {
   /// The total number of sessions that can be opened.
   final int total;

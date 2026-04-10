@@ -13,6 +13,7 @@ import 'package:nyxx/src/models/sticker/sticker_pack.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// {@category managers}
 class GuildStickerManager extends Manager<GuildSticker> {
   final Snowflake guildId;
 
@@ -111,6 +112,7 @@ class GuildStickerManager extends Manager<GuildSticker> {
   }
 }
 
+/// {@category managers}
 class GlobalStickerManager extends ReadOnlyManager<GlobalSticker> {
   GlobalStickerManager(super.config, super.client) : super(identifier: 'stickers');
 

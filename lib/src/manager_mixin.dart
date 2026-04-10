@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/client_options.dart';
 import 'package:nyxx/src/http/managers/application_command_manager.dart';
@@ -14,6 +15,7 @@ import 'package:nyxx/src/http/managers/application_manager.dart';
 import 'package:nyxx/src/http/managers/voice_manager.dart';
 
 /// An internal mixin to add managers to a [Nyxx] instance.
+@internal
 mixin ManagerMixin implements Nyxx {
   @override
   RestClientOptions get options;

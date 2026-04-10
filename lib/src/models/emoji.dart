@@ -7,6 +7,8 @@ import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
 /// A partial [Emoji] object.
+///
+/// {@category entities}
 class PartialEmoji extends WritableSnowflakeEntity<Emoji> {
   @override
   final EmojiManager manager;
@@ -17,6 +19,9 @@ class PartialEmoji extends WritableSnowflakeEntity<Emoji> {
 }
 
 /// An emoji. Either a [TextEmoji], an [ApplicationEmoji] or a [GuildEmoji].
+///
+/// {@category models}
+/// {@category entities}
 abstract class Emoji extends PartialEmoji {
   /// The emoji's name. Can be `dartlang` for a custom emoji, or `❤️` for a text emoji.
   String? get name;
@@ -29,6 +34,9 @@ abstract class Emoji extends PartialEmoji {
 }
 
 /// A text emoji, such as `❤️`.
+///
+/// {@category models}
+/// {@category entities}
 class TextEmoji extends Emoji {
   @override
   final String name;
@@ -54,6 +62,9 @@ class TextEmoji extends Emoji {
 
 // Apparently an ApplicationEmoji contains a `roles` field, but it's always an empty list, so we don't include it here.
 /// A custom emoji created on the application's emoji tab.
+///
+/// {@category models}
+/// {@category entities}
 class ApplicationEmoji extends Emoji {
   @override
   final String name;
@@ -95,6 +106,9 @@ class ApplicationEmoji extends Emoji {
 }
 
 /// A custom guild emoji.
+///
+/// {@category models}
+/// {@category entities}
 class GuildEmoji extends Emoji {
   @override
   final String? name;

@@ -7,6 +7,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/snowflake_entity/snowflake_entity.dart';
 import 'package:nyxx/src/models/user/user.dart';
 
+/// {@category entities}
 class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
   @override
   final SoundboardManager manager;
@@ -23,6 +24,8 @@ class PartialSoundboardSound extends WritableSnowflakeEntity<SoundboardSound> {
       );
 }
 
+/// {@category models}
+/// {@category entities}
 class SoundboardSound extends PartialSoundboardSound {
   /// The name of this sound.
   final String name;

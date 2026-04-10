@@ -4,6 +4,8 @@ import 'package:nyxx/src/models/gateway/event.dart';
 /// {@template application_command_permissions_update_event}
 /// Emitted when the permissions for an application command are updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class ApplicationCommandPermissionsUpdateEvent extends DispatchEvent {
   /// The permissions that were updated.
   final CommandPermissions permissions;

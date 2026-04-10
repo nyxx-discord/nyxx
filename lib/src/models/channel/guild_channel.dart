@@ -9,6 +9,9 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/webhook.dart';
 
 /// A channel in a [Guild].
+///
+/// {@category models}
+/// {@category entities}
 abstract class GuildChannel implements Channel {
   /// The ID of the [Guild] this channel is in.
   Snowflake get guildId;

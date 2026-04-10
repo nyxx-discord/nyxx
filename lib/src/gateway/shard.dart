@@ -15,6 +15,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// {@template shard}
 /// A single connection to Discord's Gateway.
 /// {@endtemplate}
+///
+/// {@category gateway}
 class Shard extends Stream<ShardMessage> implements StreamSink<GatewayMessage> {
   /// The ID of this shard.
   final int id;

@@ -11,6 +11,8 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Member].
+///
+/// {@category entities}
 class PartialMember extends WritableSnowflakeEntity<Member> {
   @override
   final MemberManager manager;
@@ -52,6 +54,9 @@ class PartialMember extends WritableSnowflakeEntity<Member> {
 /// {@template member}
 /// The representation of a [User] in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Member extends PartialMember {
   /// The [User] this member represents.
   final User? user;

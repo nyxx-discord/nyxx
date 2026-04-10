@@ -7,6 +7,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Integration].
+///
+/// {@category entities}
 class PartialIntegration extends ManagedSnowflakeEntity<Integration> {
   @override
   final IntegrationManager manager;
@@ -22,6 +24,9 @@ class PartialIntegration extends ManagedSnowflakeEntity<Integration> {
 /// {@template integration}
 /// An integration in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Integration extends PartialIntegration {
   /// The name of this integration.
   final String name;
@@ -109,6 +114,8 @@ final class IntegrationExpireBehavior extends EnumLike<int, IntegrationExpireBeh
 /// {@template integration_account}
 /// Information about an integration's account.
 /// {@endtemplate}
+///
+/// {@category models}
 class IntegrationAccount with ToStringHelper {
   /// The ID of this account.
   final Snowflake id;
@@ -124,6 +131,8 @@ class IntegrationAccount with ToStringHelper {
 /// {@template integration_application}
 /// Information about an integration's application.
 /// {@endtemplate}
+///
+/// {@category models}
 class IntegrationApplication with ToStringHelper {
   /// The ID of this application.
   final Snowflake id;

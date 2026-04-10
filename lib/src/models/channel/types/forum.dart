@@ -18,6 +18,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template forum_channel}
 /// A forum channel.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class ForumChannel extends Channel implements GuildChannel, ThreadsOnlyChannel {
   /// The default layout in this channel
   final ForumLayout? defaultLayout;
@@ -143,6 +146,8 @@ class ForumChannel extends Channel implements GuildChannel, ThreadsOnlyChannel {
 /// {@template forum_tag}
 /// A tag in a forum channel.
 /// {@endtemplate}
+///
+/// {@category models}
 class ForumTag with ToStringHelper {
   /// The ID of this tag.
   final Snowflake id;
@@ -173,6 +178,8 @@ class ForumTag with ToStringHelper {
 /// {@template default_reaction}
 /// A default reaction in a [ForumChannel].
 /// {@endtemplate}
+///
+/// {@category models}
 class DefaultReaction with ToStringHelper {
   /// The ID of the emoji.
   final Snowflake? emojiId;

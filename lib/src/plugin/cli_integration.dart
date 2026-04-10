@@ -5,9 +5,13 @@ import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/plugin/plugin.dart';
 
 /// A global instance of the [CliIntegration] plugin.
+///
+/// {@category plugins}
 final cliIntegration = CliIntegration();
 
 /// A plugin that lets clients close their session gracefully when the process is terminated.
+///
+/// {@category plugins}
 class CliIntegration extends NyxxPlugin {
   @override
   String get name => 'CliIntegration';

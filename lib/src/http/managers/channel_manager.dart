@@ -41,6 +41,8 @@ import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Channel]s.
+///
+/// {@category managers}
 class ChannelManager extends ReadOnlyManager<Channel> {
   final Cache<StageInstance> stageInstanceCache;
 

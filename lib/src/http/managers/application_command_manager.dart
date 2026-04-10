@@ -21,6 +21,8 @@ import 'package:nyxx/src/utils/parsing_helpers.dart';
 /// A [Manager] for [ApplicationCommand]s.
 ///
 /// [GlobalApplicationCommandManager] or [GuildApplicationCommandManager] will be used as concrete classes instead of this one depending on the circumstances.
+///
+/// {@category managers}
 abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
   Snowflake? get _guildId;
 
@@ -199,6 +201,8 @@ abstract class ApplicationCommandManager extends Manager<ApplicationCommand> {
 }
 
 /// An [ApplicationCommandManager] for the commands in a guild.
+///
+/// {@category managers}
 class GuildApplicationCommandManager extends ApplicationCommandManager {
   /// The ID of the guild this manager is for.
   final Snowflake guildId;
@@ -285,6 +289,8 @@ class GuildApplicationCommandManager extends ApplicationCommandManager {
 }
 
 /// An [ApplicationCommandManager] for an application's global commands.
+///
+/// {@category managers}
 class GlobalApplicationCommandManager extends ApplicationCommandManager {
   @override
   Null get _guildId => null;

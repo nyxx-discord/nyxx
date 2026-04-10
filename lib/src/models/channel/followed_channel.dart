@@ -7,6 +7,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template followed_channel}
 /// Information about a channel which has been followed.
 /// {@endtemplate}
+///
+/// {@category models}
 class FollowedChannel with ToStringHelper {
   /// The manager for this [FollowedChannel].
   final ChannelManager manager;

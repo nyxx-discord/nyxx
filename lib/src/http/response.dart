@@ -11,6 +11,8 @@ import 'package:nyxx/src/http/request.dart';
 /// This class is a wrapper around [BaseResponse] from `package:http` providing support for errors
 /// and for parsing the received body.
 /// {@endtemplate}
+///
+/// {@category http}
 abstract class HttpResponse {
   /// The status code of the response.
   final int statusCode;
@@ -71,6 +73,8 @@ abstract class HttpResponse {
 }
 
 /// A successful [HttpResponse].
+///
+/// {@category http}
 class HttpResponseSuccess extends HttpResponse {
   /// Create a new [HttpResponseSuccess].
   HttpResponseSuccess({required super.response, required super.request, required super.body});
@@ -88,6 +92,8 @@ class HttpResponseSuccess extends HttpResponse {
 }
 
 /// An [HttpResponse] which represents an error from the API.
+///
+/// {@category http}
 class HttpResponseError extends HttpResponse implements NyxxException {
   /// A message containing details about why the request failed.
   @override
@@ -149,6 +155,8 @@ class HttpResponseError extends HttpResponse implements NyxxException {
 }
 
 /// Information about an error from the API.
+///
+/// {@category http}
 class HttpErrorData {
   /// The error code.
   ///
@@ -202,6 +210,8 @@ class HttpErrorData {
 }
 
 /// Information about an error associated with a specific field in a request.
+///
+/// {@category http}
 class FieldError {
   /// A human-readable name of this field.
   final String name;

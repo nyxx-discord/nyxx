@@ -4,6 +4,8 @@ import 'package:nyxx/src/models/interaction.dart';
 /// {@template interaction_create_event}
 /// Emitted when an interaction is received by the client.
 /// {@endtemplate}
+///
+/// {@category events}
 class InteractionCreateEvent<T extends Interaction<dynamic>> extends DispatchEvent {
   // The created interaction.
   final T interaction;

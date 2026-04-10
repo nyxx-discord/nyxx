@@ -25,6 +25,8 @@ final class PollLayoutType extends EnumLike<int, PollLayoutType> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#poll-media-object
 /// {@endtemplate}
+///
+/// {@category models}
 class PollMedia with ToStringHelper {
   /// The text of the field.
   String? text;
@@ -45,6 +47,8 @@ class PollMedia with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#poll-answer-object
 /// {@endtemplate}
+///
+/// {@category models}
 class PollAnswer with ToStringHelper {
   /// The ID of the answer.
   final int id;
@@ -57,6 +61,7 @@ class PollAnswer with ToStringHelper {
   PollAnswer({required this.id, required this.pollMedia});
 }
 
+/// {@category models}
 class PollAnswerCount with ToStringHelper {
   /// The ID of the answer.
   final int answerId;
@@ -82,6 +87,8 @@ class PollAnswerCount with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#poll-results-object
 /// {@endtemplate}
+///
+/// {@category models}
 class PollResults with ToStringHelper {
   /// Whether the votes have been precisely counted.
   final bool isFinalized;
@@ -102,6 +109,8 @@ class PollResults with ToStringHelper {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#poll-object
 /// {@endtemplate}
+///
+/// {@category models}
 class Poll with ToStringHelper {
   /// The question of the poll.
   final PollMedia question;

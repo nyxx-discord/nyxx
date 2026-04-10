@@ -7,6 +7,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#message-object-message-activity-structure
 /// {@endtemplate}
+///
+/// {@category models}
 class MessageActivity with ToStringHelper {
   /// The type of this activity.
   final MessageActivityType type;

@@ -12,6 +12,9 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_category}
 /// A category for organizing other [Channel]s in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GuildCategory extends Channel implements GuildChannel {
   @override
   final Snowflake guildId;

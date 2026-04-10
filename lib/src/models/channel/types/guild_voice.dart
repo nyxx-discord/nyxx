@@ -15,6 +15,9 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_voice_channel}
 /// A [VoiceChannel] in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GuildVoiceChannel extends TextChannel implements GuildChannel, VoiceChannel {
   @override
   final int bitrate;

@@ -9,6 +9,8 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template presence_update_event}
 /// Emitted when a user updates their presence.
 /// {@endtemplate}
+///
+/// {@category events}
 class PresenceUpdateEvent extends DispatchEvent {
   /// The user that updated their presence.
   final PartialUser? user;
@@ -43,6 +45,8 @@ class PresenceUpdateEvent extends DispatchEvent {
 /// {@template typing_start_event}
 /// Emitted when a user starts typing in a channel.
 /// {@endtemplate}
+///
+/// {@category events}
 class TypingStartEvent extends DispatchEvent {
   /// The ID of the channel.
   final Snowflake channelId;
@@ -83,6 +87,8 @@ class TypingStartEvent extends DispatchEvent {
 /// {@template user_update_event}
 /// Emitted when a user is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class UserUpdateEvent extends DispatchEvent {
   /// The user as it was cached before it was updated.
   final User? oldUser;

@@ -9,6 +9,7 @@ import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/permissions.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
   String name;
 
@@ -106,6 +107,7 @@ class ApplicationCommandBuilder extends CreateBuilder<ApplicationCommand> {
       };
 }
 
+/// {@category builders}
 class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> {
   String? name;
 
@@ -197,6 +199,7 @@ class ApplicationCommandUpdateBuilder extends UpdateBuilder<ApplicationCommand> 
       };
 }
 
+/// {@category builders}
 class CommandOptionBuilder extends CreateBuilder<CommandOption> {
   CommandOptionType type;
 
@@ -439,6 +442,7 @@ class CommandOptionBuilder extends CreateBuilder<CommandOption> {
       };
 }
 
+/// {@category builders}
 class CommandOptionChoiceBuilder<T> extends CreateBuilder<CommandOptionChoice> {
   String name;
 

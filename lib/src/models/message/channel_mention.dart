@@ -8,6 +8,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#channel-mention-object
 /// {@endtemplate}
+///
+/// {@category models}
 class ChannelMention extends PartialChannel {
   /// The ID of the [Guild] containing the mentioned channel.
   final Snowflake guildId;

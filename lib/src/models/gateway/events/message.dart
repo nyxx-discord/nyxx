@@ -10,6 +10,8 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template message_create_event}
 /// Emitted when a message is sent.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageCreateEvent extends DispatchEvent {
   /// The ID of the guild the message was sent in.
   final Snowflake? guildId;
@@ -34,6 +36,8 @@ class MessageCreateEvent extends DispatchEvent {
 /// {@template message_update_event}
 /// Emitted when a message is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageUpdateEvent extends DispatchEvent {
   /// The ID of the guild the message was in.
   final Snowflake? guildId;
@@ -68,6 +72,8 @@ class MessageUpdateEvent extends DispatchEvent {
 /// {@template message_delete_event}
 /// Emitted when a message is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageDeleteEvent extends DispatchEvent {
   /// The ID of the deleted message.
   final Snowflake id;
@@ -95,6 +101,8 @@ class MessageDeleteEvent extends DispatchEvent {
 /// {@template message_bulk_delete_event}
 /// Emitted when multiple messages are bulk deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageBulkDeleteEvent extends DispatchEvent {
   /// A list of the IDs of the deleted messages.
   final List<Snowflake> ids;
@@ -122,6 +130,8 @@ class MessageBulkDeleteEvent extends DispatchEvent {
 /// {@template message_reaction_add_event}
 /// Emitted when a reaction is added to a message.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageReactionAddEvent extends DispatchEvent {
   /// The ID of the user that added the reaction.
   final Snowflake userId;
@@ -176,6 +186,8 @@ class MessageReactionAddEvent extends DispatchEvent {
 /// {@template message_reaction_remove_event}
 /// Emitted when a reaction is removed from a message.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageReactionRemoveEvent extends DispatchEvent {
   /// The ID of the user that removed their reaction.
   final Snowflake userId;
@@ -222,6 +234,8 @@ class MessageReactionRemoveEvent extends DispatchEvent {
 /// {@template message_reaction_remove_all_event}
 /// Emitted when all reactions are removed from a message.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageReactionRemoveAllEvent extends DispatchEvent {
   /// The ID of the channel the message is in.
   final Snowflake channelId;
@@ -254,6 +268,8 @@ class MessageReactionRemoveAllEvent extends DispatchEvent {
 /// {@template message_reaction_remove_emoji_event}
 /// Emitted when all reactions of a specific emoji are removed from a message.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessageReactionRemoveEmojiEvent extends DispatchEvent {
   /// The ID of the channel the message is in.
   final Snowflake channelId;
@@ -289,6 +305,8 @@ class MessageReactionRemoveEmojiEvent extends DispatchEvent {
 /// {@template message_poll_vote_add_event}
 /// Emitted when user votes on a poll. If the poll allows multiple selection, one event will be sent per answer.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessagePollVoteAddEvent extends DispatchEvent {
   /// The ID of the user that voted on a poll.
   final Snowflake userId;
@@ -335,6 +353,8 @@ class MessagePollVoteAddEvent extends DispatchEvent {
 /// {@template message_poll_vote_remove_event}
 /// Emitted when user removes their vote on a poll. If the poll allows for multiple selections, one event will be sent per answer.
 /// {@endtemplate}
+///
+/// {@category events}
 class MessagePollVoteRemoveEvent extends DispatchEvent {
   /// The ID of the user that removed their vote from a poll.
   final Snowflake userId;

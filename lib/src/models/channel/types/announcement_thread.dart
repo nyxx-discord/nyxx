@@ -13,6 +13,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/models/webhook.dart';
 
+/// {@category models}
+/// {@category entities}
 class AnnouncementThread extends TextChannel implements Thread {
   @override
   final List<Snowflake>? appliedTags;

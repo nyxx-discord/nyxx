@@ -21,6 +21,8 @@ extension on HttpRequest {
 /// [isGlobal] indicates if the delay applied is due to the global rate limit.
 /// [isAnticipated] will be true if the request was delayed before it was sent. If [isAnticipated] is `false`,
 /// a response with the status code 429 was received from the API.
+///
+/// {@category http}
 typedef RateLimitInfo = ({HttpRequest request, Duration delay, bool isGlobal, bool isAnticipated});
 
 /// A handler for making HTTP requests to the Discord API.
@@ -30,6 +32,9 @@ typedef RateLimitInfo = ({HttpRequest request, Duration delay, bool isGlobal, bo
 /// will not be sent if their bucket is out of remaining requests or if the global rate limit was
 /// exceeded.
 /// {@endtemplate}
+///
+/// {@category http}
+/// {@category core}
 class HttpHandler {
   /// The client this handler is attached to.
   final Nyxx client;
@@ -311,7 +316,7 @@ class HttpHandler {
         _pendingRateLimits.add(completer);
         try {
           await completer.future;
-          return execute(request);
+          return _execute(request);
         } finally {
           _pendingRateLimits.remove(completer);
           timer.cancel();
@@ -374,6 +379,8 @@ class HttpHandler {
 }
 
 /// An [HttpHandler] that refreshes the OAuth2 access token if needed.
+///
+/// {@category http}
 class Oauth2HttpHandler extends HttpHandler {
   /// The options containing the credentials that may be refreshed.
   final OAuth2ApiOptions apiOptions;

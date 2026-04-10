@@ -4,6 +4,8 @@ import 'package:nyxx/src/models/gateway/event.dart';
 /// {@template entitlement_create_event}
 /// Emitted when an entitlement is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class EntitlementCreateEvent extends DispatchEvent {
   /// The entitlement that was created,
   final Entitlement entitlement;
@@ -16,6 +18,8 @@ class EntitlementCreateEvent extends DispatchEvent {
 /// {@template entitlement_update_event}
 /// Emitted when an entitlement is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class EntitlementUpdateEvent extends DispatchEvent {
   /// The updated entitlement.
   final Entitlement entitlement;
@@ -31,6 +35,8 @@ class EntitlementUpdateEvent extends DispatchEvent {
 /// {@template entitlement_delete_event}
 /// Emitted when an entitlement is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class EntitlementDeleteEvent extends DispatchEvent {
   /// The entitlement that was deleted.
   final Entitlement entitlement;

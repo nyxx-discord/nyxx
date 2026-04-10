@@ -15,6 +15,8 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Application]s.
+///
+/// {@category managers}
 // See the comment on PartialApplication for why we do not implement Manager.
 class ApplicationManager {
   /// The client this manager belongs to.

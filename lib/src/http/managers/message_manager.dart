@@ -32,6 +32,8 @@ import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A manager for [Message]s in a [TextChannel].
+///
+/// {@category managers}
 class MessageManager extends Manager<Message> {
   /// The ID of the [TextChannel] this manager is attached to.
   final Snowflake channelId;

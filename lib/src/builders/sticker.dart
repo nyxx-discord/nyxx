@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 
+/// {@category builders}
 class StickerBuilder implements CreateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
   String name;
@@ -26,6 +27,7 @@ class StickerBuilder implements CreateBuilder<GuildSticker> {
       };
 }
 
+/// {@category builders}
 class StickerUpdateBuilder implements UpdateBuilder<GuildSticker> {
   /// Name of the sticker (2-30 characters)
   String? name;

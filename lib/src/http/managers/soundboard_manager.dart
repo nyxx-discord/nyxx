@@ -11,6 +11,7 @@ import 'package:nyxx/src/models/soundboard/soundboard.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
+/// {@category managers}
 abstract class SoundboardManager extends Manager<SoundboardSound> {
   SoundboardManager(super.config, super.client, {required super.identifier});
 
@@ -41,7 +42,9 @@ abstract class SoundboardManager extends Manager<SoundboardSound> {
   Future<List<SoundboardSound>> list();
 }
 
-/// A [Manager] for guild [SoundboardSound]s
+/// A [Manager] for guild [SoundboardSound]s.
+///
+/// {@category managers}
 class GuildSoundboardManager extends SoundboardManager {
   /// The guild this manager is for.
   final Snowflake guildId;
@@ -146,6 +149,7 @@ class GuildSoundboardManager extends SoundboardManager {
   }
 }
 
+/// {@category managers}
 class GlobalSoundboardManager extends SoundboardManager implements ReadOnlyManager<SoundboardSound> {
   GlobalSoundboardManager(super.config, super.client) : super(identifier: 'soundboard');
 

@@ -7,6 +7,10 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// A [Manager] for gateway information.
+///
+///
+/// {@category gateway}
+/// {@category managers}
 // Use an abstract class so the client getter can be abstract,
 // allowing us to override it in Gateway to have a more specific type.
 abstract class GatewayManager {

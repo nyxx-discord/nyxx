@@ -9,6 +9,7 @@ import 'package:nyxx/src/models/locale.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class GuildBuilder extends CreateBuilder<Guild> {
   /// {@template guild_name}
   /// The name of the guild. (2-100 characters)
@@ -93,6 +94,7 @@ class GuildBuilder extends CreateBuilder<Guild> {
       };
 }
 
+/// {@category builders}
 class GuildUpdateBuilder extends UpdateBuilder<Guild> {
   /// {@macro guild_name}
   String? name;
@@ -201,6 +203,7 @@ class GuildUpdateBuilder extends UpdateBuilder<Guild> {
       };
 }
 
+/// {@category builders}
 class GuildIncidentsUpdateBuilder extends UpdateBuilder<IncidentsData> {
   /// When invites will be enabled again
   DateTime? invitesDisabledUntil;

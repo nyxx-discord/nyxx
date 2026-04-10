@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
 import 'package:nyxx/src/utils/building_helpers.dart';
 
+/// {@category builders}
 class WelcomeScreenUpdateBuilder extends UpdateBuilder<WelcomeScreen> {
   bool? isEnabled;
 

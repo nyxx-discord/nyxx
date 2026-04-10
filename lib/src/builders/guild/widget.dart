@@ -3,6 +3,7 @@ import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class WidgetSettingsUpdateBuilder extends UpdateBuilder<WidgetSettings> {
   bool? isEnabled;
 

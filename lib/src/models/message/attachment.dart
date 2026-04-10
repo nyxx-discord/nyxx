@@ -17,6 +17,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#attachment-object
 /// {@endtemplate}
+///
+/// {@category models}
 class Attachment with ToStringHelper implements CdnAsset {
   /// The manager for this [Attachment].
   final MessageManager manager;

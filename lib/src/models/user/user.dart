@@ -12,6 +12,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [User] object.
+///
+/// {@category entities}
 class PartialUser extends ManagedSnowflakeEntity<User> {
   @override
   final UserManager manager;
@@ -30,6 +32,9 @@ class PartialUser extends ManagedSnowflakeEntity<User> {
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/user#users-resource
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class User extends PartialUser implements MessageAuthor, CommandOptionMentionable<User> {
   /// The user's username.
   @override

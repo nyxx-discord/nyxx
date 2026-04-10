@@ -4,6 +4,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// {@template thread_list}
 /// A list of threads and thread members.
 /// {@endtemplate}
+///
+/// {@category models}
 class ThreadList with ToStringHelper {
   /// A list of threads.
   final List<Thread> threads;

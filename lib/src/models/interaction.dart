@@ -47,6 +47,8 @@ final class InteractionContextType extends EnumLike<int, InteractionContextType>
 /// An interaction sent by Discord when a user interacts with an [ApplicationCommand], a [Component]
 /// or a [ModalBuilder].
 /// {@endtemplate}
+///
+/// {@category models}
 abstract class Interaction<T> with ToStringHelper {
   /// The manager for this interaction.
   final InteractionManager manager;
@@ -222,6 +224,8 @@ mixin ModalResponse<T> on Interaction<T> {
 /// {@template ping_interaction}
 /// A ping interaction.
 /// {@endtemplate}
+///
+/// {@category models}
 class PingInteraction extends Interaction<void> {
   /// {@macro ping_interaction}
   /// @nodoc
@@ -254,6 +258,8 @@ class PingInteraction extends Interaction<void> {
 /// {@template application_command_interaction}
 /// An application command interaction.
 /// {@endtemplate}
+///
+/// {@category models}
 class ApplicationCommandInteraction extends Interaction<ApplicationCommandInteractionData>
     with MessageResponse<ApplicationCommandInteractionData>, ModalResponse<ApplicationCommandInteractionData> {
   /// {@macro application_command_interaction}
@@ -285,6 +291,8 @@ class ApplicationCommandInteraction extends Interaction<ApplicationCommandIntera
 /// {@template message_component_interaction}
 /// A message component interaction.
 /// {@endtemplate}
+///
+/// {@category models}
 class MessageComponentInteraction extends Interaction<MessageComponentInteractionData>
     with MessageResponse<MessageComponentInteractionData>, ModalResponse<MessageComponentInteractionData> {
   /// {@macro message_component_interaction}
@@ -381,6 +389,8 @@ class MessageComponentInteraction extends Interaction<MessageComponentInteractio
 /// {@template modal_submit_interaction}
 /// A modal submit interaction.
 /// {@endtemplate}
+///
+/// {@category models}
 class ModalSubmitInteraction extends Interaction<ModalSubmitInteractionData> with MessageResponse<ModalSubmitInteractionData> {
   /// {@macro modal_submit_interaction}
   /// @nodoc
@@ -460,6 +470,8 @@ final class InteractionType extends EnumLike<int, InteractionType> {
 /// {@template application_command_interaction_data}
 /// The data sent in an [ApplicationCommandInteraction] or an [ApplicationCommandAutocompleteInteraction].
 /// {@endtemplate}
+///
+/// {@category models}
 class ApplicationCommandInteractionData with ToStringHelper {
   /// The ID of the command.
   final Snowflake id;
@@ -498,6 +510,8 @@ class ApplicationCommandInteractionData with ToStringHelper {
 /// {@template resolved_data}
 /// A mapping of IDs to entities.
 /// {@endtemplate}
+///
+/// {@category models}
 class ResolvedData with ToStringHelper {
   /// A mapping of user ID to [User].
   final Map<Snowflake, User>? users;
@@ -532,6 +546,8 @@ class ResolvedData with ToStringHelper {
 /// {@template interaction_option}
 /// The value of a command option passed in an [ApplicationCommandInteraction].
 /// {@endtemplate}
+///
+/// {@category models}
 class InteractionOption with ToStringHelper {
   /// The name of the option.
   final String name;
@@ -562,6 +578,8 @@ class InteractionOption with ToStringHelper {
 /// {@template message_component_interaction_data}
 /// The data sent in a [MessageComponentInteraction].
 /// {@endtemplate}
+///
+/// {@category models}
 class MessageComponentInteractionData with ToStringHelper {
   /// The custom ID of the component that was used.
   final String customId;
@@ -583,6 +601,8 @@ class MessageComponentInteractionData with ToStringHelper {
 /// {@template modal_submit_interaction_data}
 /// The data sent in a [ModalSubmitInteraction].
 /// {@endtemplate}
+///
+/// {@category models}
 class ModalSubmitInteractionData with ToStringHelper {
   /// The custom ID of the modal.
   final String customId;
@@ -596,6 +616,8 @@ class ModalSubmitInteractionData with ToStringHelper {
 }
 
 /// An unknown interaction.
+///
+/// {@category models}
 class UnknownInteraction extends Interaction<void> {
   /// @nodoc
   UnknownInteraction({
@@ -622,6 +644,8 @@ class UnknownInteraction extends Interaction<void> {
 }
 
 /// An interaction callback response.
+///
+/// {@category models}
 class InteractionCallbackResponse with ToStringHelper {
   /// The interaction object associated with the interaction response.
   final InteractionCallback interaction;
@@ -637,6 +661,8 @@ class InteractionCallbackResponse with ToStringHelper {
 }
 
 /// An interaction callback.
+///
+/// {@category models}
 class InteractionCallback with ToStringHelper {
   /// The id of the interaction.
   final Snowflake id;
@@ -668,6 +694,8 @@ class InteractionCallback with ToStringHelper {
 }
 
 /// An interaction resource.
+///
+/// {@category models}
 class InteractionResource with ToStringHelper {
   /// The interaction callback type.
   final InteractionCallbackType type;
@@ -690,6 +718,8 @@ class InteractionResource with ToStringHelper {
   });
 }
 
+///
+/// {@category models}
 class InteractionCallbackActivityInstanceResource with ToStringHelper {
   /// The instance id of the Activity if one was launched or joined.
   final String id;

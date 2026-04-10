@@ -7,6 +7,8 @@ import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
 /// A partial [Entitlement].
+///
+/// {@category entities}
 class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
   @override
   final EntitlementManager manager;
@@ -22,6 +24,9 @@ class PartialEntitlement extends ManagedSnowflakeEntity<Entitlement> {
 /// {@template entitlement}
 /// Premium access a user or guild has for an application.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Entitlement extends PartialEntitlement {
   /// The ID of the SKU.
   final Snowflake skuId;

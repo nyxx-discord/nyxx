@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/entitlement.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class TestEntitlementBuilder extends CreateBuilder<Entitlement> {
   Snowflake skuId;
 

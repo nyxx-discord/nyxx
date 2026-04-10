@@ -52,6 +52,8 @@ Future<void> _pluginClose(Nyxx client, Future<void> Function() close, List<NyxxP
 }
 
 /// The base class for clients interacting with the Discord API.
+///
+/// {@category core}
 abstract class Nyxx {
   /// The options this client will use when connecting to the API.
   ApiOptions get apiOptions;
@@ -238,6 +240,8 @@ abstract class Nyxx {
 }
 
 /// A client that can make requests to the HTTP API and is authenticated with a bot token.
+///
+/// {@category core}
 class NyxxRest extends Nyxx with ManagerMixin {
   @override
   final RestApiOptions apiOptions;
@@ -280,6 +284,7 @@ class NyxxRest extends Nyxx with ManagerMixin {
   Future<void> _doClose() => httpHandler.close();
 }
 
+/// {@category core}
 class NyxxOAuth2 extends Nyxx with ManagerMixin implements NyxxRest {
   @override
   final OAuth2ApiOptions apiOptions;
@@ -319,6 +324,8 @@ class NyxxOAuth2 extends Nyxx with ManagerMixin implements NyxxRest {
 }
 
 /// A client that can make requests to the HTTP API, connects to the Gateway and is authenticated with a bot token.
+///
+/// {@category core}
 class NyxxGateway extends Nyxx with ManagerMixin, EventMixin implements NyxxRest {
   @override
   final GatewayApiOptions apiOptions;

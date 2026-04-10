@@ -5,6 +5,9 @@ import 'package:nyxx/src/models/sticker/guild_sticker.dart';
 /// {@template guild_preview}
 /// A preview of a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GuildPreview extends PartialGuild {
   /// The name of the guild.
   final String name;

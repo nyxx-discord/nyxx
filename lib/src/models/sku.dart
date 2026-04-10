@@ -7,6 +7,8 @@ import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
 /// A partial [Sku].
+///
+/// {@category entities}
 class PartialSku extends ManagedSnowflakeEntity<Sku> {
   @override
   final SkuManager manager;
@@ -22,6 +24,9 @@ class PartialSku extends ManagedSnowflakeEntity<Sku> {
 /// {@template sku}
 /// A premium offering that can be made available to your application's users or guilds.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Sku extends PartialSku {
   /// This SKU's type.
   final SkuType type;

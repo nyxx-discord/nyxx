@@ -49,6 +49,8 @@ import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// A partial [Guild].
+///
+/// {@category entities}
 class PartialGuild extends WritableSnowflakeEntity<Guild> {
   @override
   final GuildManager manager;
@@ -213,6 +215,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 }
 
 /// {@macro guild}
+///
+/// {@category models}
+/// {@category entities}
 class UserGuild extends PartialGuild {
   /// This guild's name.
   final String name;
@@ -283,6 +288,9 @@ class UserGuild extends PartialGuild {
 ///
 /// Guilds are often referred to as servers.
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class Guild extends UserGuild {
   /// The hash of this guild's splash image.
   final String? splashHash;
@@ -784,6 +792,7 @@ final class NsfwLevel extends EnumLike<int, NsfwLevel> {
   NsfwLevel.parse(int value) : this(value);
 }
 
+/// {@category models}
 class IncidentsData with ToStringHelper {
   /// When [Invite]s get enabled again.
   final DateTime? invitesDisabledUntil;

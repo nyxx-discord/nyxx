@@ -2,6 +2,7 @@ import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
 import 'package:nyxx/src/models/presence.dart';
 
+/// {@category builders}
 class PresenceBuilder extends CreateBuilder<PresenceUpdateEvent> {
   DateTime? since;
 
@@ -37,6 +38,7 @@ enum CurrentUserStatus {
   String toString() => 'CurrentUserStatus($value)';
 }
 
+/// {@category builders}
 class ActivityBuilder extends CreateBuilder<Activity> {
   String name;
 

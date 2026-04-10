@@ -4,6 +4,8 @@ import 'package:nyxx/src/models/message/poll.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
 /// {@macro poll_media}
+///
+/// {@category builders}
 class PollMediaBuilder extends CreateBuilder<PollMedia> {
   /// The text of the field.
   String? text;
@@ -26,6 +28,8 @@ class PollMediaBuilder extends CreateBuilder<PollMedia> {
 
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/poll#poll-answer-object
+///
+/// {@category builders}
 class PollAnswerBuilder extends CreateBuilder<PollAnswer> {
   /// The data of the answer.
   PollMediaBuilder pollMedia;
@@ -39,6 +43,8 @@ class PollAnswerBuilder extends CreateBuilder<PollAnswer> {
 }
 
 /// {@macro poll}
+///
+/// {@category builders}
 class PollBuilder extends CreateBuilder<Poll> {
   /// The question of the poll. Only [PollMediaBuilder.text] is supported.
   PollMediaBuilder question;

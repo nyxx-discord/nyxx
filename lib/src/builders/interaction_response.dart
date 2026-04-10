@@ -5,6 +5,7 @@ import 'package:nyxx/src/builders/message/message.dart';
 import 'package:nyxx/src/models/message/message.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 
+/// {@category builders}
 class InteractionResponseBuilder extends CreateBuilder<InteractionResponseBuilder> {
   InteractionCallbackType type;
 
@@ -98,6 +99,7 @@ final class InteractionCallbackType extends EnumLike<int, InteractionCallbackTyp
   const InteractionCallbackType(super.value);
 }
 
+/// {@category builders}
 class ModalBuilder extends CreateBuilder<ModalBuilder> {
   String customId;
 

@@ -11,6 +11,8 @@ import 'package:nyxx/src/models/user/user.dart';
 /// {@template auto_moderation_rule_create_event}
 /// Emitted when an auto moderation rule is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class AutoModerationRuleCreateEvent extends DispatchEvent {
   /// The rule that was created.
   final AutoModerationRule rule;
@@ -23,6 +25,8 @@ class AutoModerationRuleCreateEvent extends DispatchEvent {
 /// {@template auto_moderation_rule_update_event}
 /// Emitted when an auto moderation rule is updated.
 /// {@endtemplate}
+///
+/// {@category events}
 class AutoModerationRuleUpdateEvent extends DispatchEvent {
   /// The rule as it was cached before it was updated.
   final AutoModerationRule? oldRule;
@@ -38,6 +42,8 @@ class AutoModerationRuleUpdateEvent extends DispatchEvent {
 /// {@template auto_moderation_rule_delete_event}
 /// Emitted when an auto moderation rule is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class AutoModerationRuleDeleteEvent extends DispatchEvent {
   /// The rule that was deleted.
   final AutoModerationRule rule;
@@ -50,6 +56,8 @@ class AutoModerationRuleDeleteEvent extends DispatchEvent {
 /// {@template auto_moderation_action_execution_event}
 /// Emitted when an auto moderation action is taken.
 /// {@endtemplate}
+///
+/// {@category events}
 class AutoModerationActionExecutionEvent extends DispatchEvent {
   /// The ID of the guild the event was triggered in.
   final Snowflake guildId;

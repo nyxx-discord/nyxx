@@ -3,6 +3,7 @@ import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 
+/// {@category builders}
 class OnboardingUpdateBuilder extends UpdateBuilder<Onboarding> {
   List<OnboardingPromptBuilder> prompts;
 
@@ -28,6 +29,7 @@ class OnboardingUpdateBuilder extends UpdateBuilder<Onboarding> {
       };
 }
 
+/// {@category builders}
 class OnboardingPromptBuilder extends CreateBuilder<OnboardingPrompt> {
   OnboardingPromptType type;
 
@@ -61,6 +63,7 @@ class OnboardingPromptBuilder extends CreateBuilder<OnboardingPrompt> {
       };
 }
 
+/// {@category builders}
 class OnboardingPromptOptionBuilder extends CreateBuilder<OnboardingPromptOption> {
   List<Snowflake> channelIds;
 

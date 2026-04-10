@@ -6,6 +6,7 @@ import 'package:nyxx/src/models/subscription.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
 
+/// {@category managers}
 class SubscriptionManager extends ReadOnlyManager<Subscription> {
   final Snowflake applicationId;
   final Snowflake skuId;

@@ -17,6 +17,7 @@ import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/utils/building_helpers.dart';
 import 'package:nyxx/src/utils/flags.dart';
 
+/// {@category builders}
 class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
   /// {@template channel_name}
   /// The name of the channel (1-100 characters)
@@ -54,6 +55,7 @@ class GuildChannelBuilder<T extends GuildChannel> extends CreateBuilder<T> {
       };
 }
 
+/// {@category builders}
 class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T> {
   /// {@macro channel_name}
   String? name;
@@ -74,6 +76,7 @@ class GuildChannelUpdateBuilder<T extends GuildChannel> extends UpdateBuilder<T>
       };
 }
 
+/// {@category builders}
 class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
   /// {@template channel_topic}
   /// The channel topic (0-4096 characters for [ChannelType.guildForum] and [ChannelType.guildMedia] channels, 0-1024 characters for all others)
@@ -123,6 +126,7 @@ class GuildTextChannelBuilder extends GuildChannelBuilder<GuildTextChannel> {
       };
 }
 
+/// {@category builders}
 class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextChannel> {
   /// {@macro channel_type}
   ChannelType? type;
@@ -174,6 +178,7 @@ class GuildTextChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildTextC
       };
 }
 
+/// {@category builders}
 class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncementChannel> {
   /// {@macro channel_topic}
   String? topic;
@@ -207,6 +212,7 @@ class GuildAnnouncementChannelBuilder extends GuildChannelBuilder<GuildAnnouncem
       };
 }
 
+/// {@category builders}
 class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<GuildAnnouncementChannel> {
   /// {@macro channel_type}
   ChannelType? type;
@@ -245,6 +251,7 @@ class GuildAnnouncementChannelUpdateBuilder extends GuildChannelUpdateBuilder<Gu
       };
 }
 
+/// {@category builders}
 class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
   /// {@macro channel_topic}
   String? topic;
@@ -306,6 +313,7 @@ class ForumChannelBuilder extends GuildChannelBuilder<ForumChannel> {
       };
 }
 
+/// {@category builders}
 class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> {
   /// {@macro channel_type}
   String? topic;
@@ -378,6 +386,7 @@ class ForumChannelUpdateBuilder extends GuildChannelUpdateBuilder<ForumChannel> 
       };
 }
 
+/// {@category builders}
 abstract class _GuildVoiceOrStageChannelBuilder<T extends GuildChannel> extends GuildChannelBuilder<T> {
   /// {@template channel_bitrate}
   /// The bitrate (in bits) of the voice or stage channel; min 8000.
@@ -432,6 +441,7 @@ abstract class _GuildVoiceOrStageChannelBuilder<T extends GuildChannel> extends 
       };
 }
 
+/// {@category builders}
 class GuildVoiceChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildVoiceChannel> {
   GuildVoiceChannelBuilder({
     required super.name,
@@ -446,6 +456,7 @@ class GuildVoiceChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildVoi
   }) : super(type: ChannelType.guildVoice);
 }
 
+/// {@category builders}
 class GuildStageChannelBuilder extends _GuildVoiceOrStageChannelBuilder<GuildStageChannel> {
   GuildStageChannelBuilder({
     required super.name,
@@ -503,6 +514,7 @@ class _GuildVoiceOrStageChannelUpdateBuilder<T extends GuildChannel> extends Gui
       };
 }
 
+/// {@category builders}
 class GuildVoiceChannelUpdateBuilder extends _GuildVoiceOrStageChannelUpdateBuilder<GuildVoiceChannel> {
   GuildVoiceChannelUpdateBuilder({
     super.name,
@@ -517,6 +529,7 @@ class GuildVoiceChannelUpdateBuilder extends _GuildVoiceOrStageChannelUpdateBuil
   });
 }
 
+/// {@category builders}
 class GuildStageChannelUpdateBuilder extends _GuildVoiceOrStageChannelUpdateBuilder<GuildStageChannel> {
   GuildStageChannelUpdateBuilder({
     super.name,
@@ -531,6 +544,7 @@ class GuildStageChannelUpdateBuilder extends _GuildVoiceOrStageChannelUpdateBuil
   });
 }
 
+/// {@category builders}
 class GuildCategoryBuilder extends GuildChannelBuilder<GuildCategory> {
   GuildCategoryBuilder({
     required super.name,
@@ -539,6 +553,7 @@ class GuildCategoryBuilder extends GuildChannelBuilder<GuildCategory> {
   }) : super(type: ChannelType.guildCategory);
 }
 
+/// {@category builders}
 class GuildCategoryUpdateBuilder extends GuildChannelUpdateBuilder<GuildCategory> {
   GuildCategoryUpdateBuilder({super.name, super.position, super.permissionOverwrites});
 }

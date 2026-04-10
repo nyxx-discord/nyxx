@@ -6,6 +6,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/voice#voice-region-object
 /// {@endtemplate}
+///
+/// {@category models}
 class VoiceRegion with ToStringHelper {
   /// This region's ID.
   final String id;

@@ -18,6 +18,9 @@ import 'package:nyxx/src/models/webhook.dart';
 /// {@template guild_text_channel}
 /// A [TextChannel] in a [Guild].
 /// {@endtemplate}
+///
+/// {@category models}
+/// {@category entities}
 class GuildTextChannel extends TextChannel implements GuildChannel, HasThreadsChannel {
   /// The topic of this channel.
   final String? topic;

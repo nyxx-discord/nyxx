@@ -9,6 +9,8 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 /// External references:
 /// * Discord API Reference: https://discord.com/developers/docs/resources/channel#overwrite-object
 /// {@endtemplate}
+///
+/// {@category models}
 class PermissionOverwrite with ToStringHelper {
   /// The id of the entity the permission changes will apply to.
   ///

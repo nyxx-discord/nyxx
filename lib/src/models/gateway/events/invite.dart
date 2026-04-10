@@ -7,6 +7,8 @@ import 'package:nyxx/src/models/snowflake.dart';
 /// {@template invite_create_event}
 /// Emitted when an invite is created.
 /// {@endtemplate}
+///
+/// {@category events}
 class InviteCreateEvent extends DispatchEvent {
   /// The invite that was created.
   final InviteWithMetadata invite;
@@ -19,6 +21,8 @@ class InviteCreateEvent extends DispatchEvent {
 /// {@template invite_delete_event}
 /// Emitted when an invite is deleted.
 /// {@endtemplate}
+///
+/// {@category events}
 class InviteDeleteEvent extends DispatchEvent {
   /// The ID of the channel the invite was for.
   final Snowflake channelId;
