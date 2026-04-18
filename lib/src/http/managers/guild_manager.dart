@@ -363,6 +363,7 @@ class GuildManager extends Manager<Guild> {
   }
 
   @override
+  @Deprecated('Applications cannot create their own guilds.')
   Future<Guild> create(GuildBuilder builder) async {
     final route = HttpRoute()..guilds();
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
