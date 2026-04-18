@@ -404,6 +404,7 @@ void main() {
       final guildId = Snowflake.parse(testGuild!);
 
       await expectLater(client.guilds[guildId].roles.list(), completes);
+      await expectLater(client.guilds[guildId].roles.fetchMemberCounts(), completes);
     });
 
     test('gateway', () async {

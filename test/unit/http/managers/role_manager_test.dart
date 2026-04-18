@@ -8,11 +8,7 @@ final sampleRole = {
   "id": "1",
   "name": "WE DEM BOYZZ!!!!!!",
   "color": 3447003,
-  "colors": {
-    "primary_color": 3447003,
-    "secondary_color": null,
-    "tertiary_color": null
-  },
+  "colors": {"primary_color": 3447003, "secondary_color": null, "tertiary_color": null},
   "hoist": true,
   "icon": "cf3ced8600b777c9486c6d8d84fb4327",
   "unicode_emoji": null,
@@ -36,6 +32,15 @@ void checkRole(Role role) {
   expect(role.isMentionable, isFalse);
   expect(role.tags, isNull);
   expect(role.colors.primary, equals(DiscordColor(3447003)));
+}
+
+final sampleRoleCounts = {"613425648685547541": 1337, "1409696176629878905": 2, "697138785317814292": 67};
+
+void checkRoleCounts(Map<PartialRole, int> counts) {
+  expect(counts.length, equals(sampleRoleCounts.length));
+  for (final MapEntry(:key, :value) in counts.entries) {
+    expect(value, equals(sampleRoleCounts[key.id.toString()]));
+  }
 }
 
 void main() {
@@ -70,6 +75,13 @@ void main() {
 
           checkRole(list.first);
         },
+      ),
+      EndpointTest<RoleManager, Map<PartialRole, int>, Map<String, Object?>>(
+        name: 'fetchRoleCounts',
+        source: sampleRoleCounts,
+        urlMatcher: '/guilds/0/roles/member-counts',
+        execute: (manager) => manager.fetchMemberCounts(),
+        check: checkRoleCounts,
       ),
     ],
     createBuilder: RoleBuilder(),
