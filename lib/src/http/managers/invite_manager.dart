@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' hide MultipartRequest;
 import 'package:nyxx/src/client.dart';
 import 'package:nyxx/src/http/request.dart';
 import 'package:nyxx/src/http/route.dart';
@@ -6,7 +9,9 @@ import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/invite/invite.dart';
 import 'package:nyxx/src/models/invite/invite_metadata.dart';
+import 'package:nyxx/src/models/invite/job_status.dart';
 import 'package:nyxx/src/models/snowflake.dart';
+import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
@@ -28,6 +33,7 @@ class InviteManager {
     );
 
     return Invite(
+      manager: this,
       type: InviteType(raw['type'] as int),
       code: raw['code'] as String,
       guild: guild,
@@ -42,9 +48,10 @@ class InviteManager {
       approximatePresenceCount: raw['approximate_presence_count'] as int?,
       approximateMemberCount: raw['approximate_member_count'] as int?,
       expiresAt: maybeParse(raw['expires_at'], DateTime.parse),
-      // Don't use a tearoff so we don't evaluate `guild!.id` unless guild_scheduled_event is set.
-      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], (Map<String, Object?> raw) => client.guilds[guild!.id].scheduledEvents.parse(raw)),
+      // Don't use a tearoff so we don't evaluate `guild!` unless guild_scheduled_event is set.
+      guildScheduledEvent: maybeParse(raw['guild_scheduled_event'], (Map<String, Object?> raw) => guild!.scheduledEvents.parse(raw)),
       flags: maybeParse(raw['flags'], GuildInviteFlags.new),
+      roles: maybeParseMany(raw['roles'], (Map<String, Object?> raw) => guild!.roles[Snowflake.parse(raw['id']!)]),
     );
   }
 
@@ -53,6 +60,7 @@ class InviteManager {
     final invite = parse(raw);
 
     return InviteWithMetadata(
+      manager: this,
       type: invite.type,
       code: invite.code,
       guild: invite.guild,
@@ -66,11 +74,23 @@ class InviteManager {
       expiresAt: invite.expiresAt,
       guildScheduledEvent: invite.guildScheduledEvent,
       flags: invite.flags,
+      roles: invite.roles,
       uses: raw['uses'] as int,
       maxUses: raw['max_uses'] as int,
       maxAge: Duration(seconds: raw['max_age'] as int),
       isTemporary: raw['temporary'] as bool,
       createdAt: DateTime.parse(raw['created_at'] as String),
+    );
+  }
+
+  InviteTargetsJobStatus parseInviteTargetsJobStatus(Map<String, Object?> raw) {
+    return InviteTargetsJobStatus(
+      status: InviteTargetsJobStatusType(raw['status'] as int),
+      totalUsers: raw['total_users'] as int,
+      processedUsers: raw['processed_users'] as int,
+      createdAt: DateTime.parse(raw['created_at'] as String),
+      completedAt: maybeParse(raw['created_at'], DateTime.parse),
+      errorMessage: raw['error_message'] as String?,
     );
   }
 
@@ -100,5 +120,41 @@ class InviteManager {
     // Invites aren't cached, so we don't need to remove it, but it still contains nested objects we can cache.
     client.updateCacheWith(invite);
     return invite;
+  }
+
+  /// Fetch the users the specified invite is for.
+  Future<List<PartialUser>> fetchTargetUsers(String code) async {
+    final route = HttpRoute()
+      ..invites(id: code)
+      ..targetUsers();
+    final request = BasicRequest(route, method: 'GET');
+
+    final response = await client.httpHandler.executeSafe(request);
+    return LineSplitter().convert(response.textBody!).skip(1).map(Snowflake.parse).map((id) => client.users[id]).toList();
+  }
+
+  /// Update the users targeted by the specified invite.
+  Future<void> updateTargetUsers(String code, List<Snowflake> userIds) async {
+    final route = HttpRoute()
+      ..invites(id: code)
+      ..targetUsers();
+    final request = MultipartRequest(
+      route,
+      method: 'PUT',
+      files: [MultipartFile.fromString('target_users_file', filename: 'target_users.csv', userIds.join('\n'))],
+    );
+
+    await client.httpHandler.executeSafe(request);
+  }
+
+  Future<InviteTargetsJobStatus> fetchTargetUsersJobStatus(String code) async {
+    final route = HttpRoute()
+      ..invites(id: code)
+      ..targetUsers()
+      ..jobStatus();
+    final request = BasicRequest(route, method: 'GET');
+
+    final response = await client.httpHandler.executeSafe(request);
+    return parseInviteTargetsJobStatus(response.jsonBody as Map<String, Object?>);
   }
 }

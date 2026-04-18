@@ -361,4 +361,10 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`member-counts`](https://docs.discord.com/developers/resources/guild#get-guild-role-member-counts) part to this [HttpRoute].
   void memberCounts() => add(HttpRoutePart('member-counts'));
+
+  /// Adds the [`target-users`](https://docs.discord.com/developers/resources/invite#get-target-users) part to this [HttpRoute].
+  void targetUsers() => add(HttpRoutePart('target-users'));
+
+  /// Adds the [`job-status`](https://docs.discord.com/developers/resources/invite#get-target-users-job-status) part to this [HttpRoute].
+  void jobStatus() => add(HttpRoutePart('job-status'));
 }

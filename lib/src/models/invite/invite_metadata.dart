@@ -19,6 +19,7 @@ class InviteWithMetadata extends Invite {
 
   /// @nodoc
   InviteWithMetadata({
+    required super.manager,
     required super.type,
     required super.code,
     required super.guild,
@@ -37,5 +38,6 @@ class InviteWithMetadata extends Invite {
     required this.maxAge,
     required this.isTemporary,
     required this.createdAt,
+    required super.roles,
   });
 }

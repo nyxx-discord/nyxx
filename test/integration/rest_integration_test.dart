@@ -520,5 +520,25 @@ void main() {
       await expectLater(sound.update(SoundboardSoundUpdateBuilder(name: 'New name')), completes);
       await expectLater(sound.delete(), completes);
     });
+
+    test('invite', skip: testTextChannel != null ? false : 'No test channel provided', () async {
+      final channelId = Snowflake.parse(testTextChannel!);
+
+      late Invite invite;
+      await expectLater(
+        () async => invite = await client.channels.createInvite(
+          channelId,
+          InviteBuilder(
+            targetUserIds: [client.user.id],
+          ),
+        ),
+        completes,
+      );
+
+      await expectLater(invite.fetchTargetUsersJobStatus(), completes);
+      await expectLater(invite.fetchTargetUsers(), completes);
+      await expectLater(invite.updateTargetUsers([client.user.id]), completes);
+      await expectLater(invite.delete(), completes);
+    });
   });
 }

@@ -527,7 +527,26 @@ class ChannelManager extends ReadOnlyManager<Channel> {
     final route = HttpRoute()
       ..channels(id: id.toString())
       ..invites();
-    final request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
+
+    final HttpRequest request;
+    if (builder.targetUserIds == null) {
+      request = BasicRequest(route, method: 'POST', auditLogReason: auditLogReason, body: jsonEncode(builder.build()));
+    } else {
+      request = MultipartRequest(
+        route,
+        method: 'POST',
+        auditLogReason: auditLogReason,
+        jsonPayload: jsonEncode(builder.build()),
+        files: [
+          MultipartFile.fromString(
+            'target_users_file',
+            // Discord requires a filename to be provided.
+            filename: 'target_users.csv',
+            builder.targetUserIds!.map((id) => id.toString()).join('\n'),
+          )
+        ],
+      );
+    }
 
     final response = await client.httpHandler.executeSafe(request);
     final invite = client.invites.parse(response.jsonBody as Map<String, Object?>);

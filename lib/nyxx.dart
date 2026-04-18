@@ -254,6 +254,7 @@ export 'src/models/component.dart'
 
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType, GuildInviteFlags;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
+export 'src/models/invite/job_status.dart' show InviteTargetsJobStatus, InviteTargetsJobStatusType;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban, BulkBanResponse;
 export 'src/models/guild/guild_preview.dart' show GuildPreview;

@@ -1,7 +1,11 @@
+import 'package:nyxx/src/http/managers/invite_manager.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
+import 'package:nyxx/src/models/invite/job_status.dart';
+import 'package:nyxx/src/models/role.dart';
+import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -14,6 +18,9 @@ import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 ///
 /// {@category models}
 class Invite with ToStringHelper {
+  /// The manager for this [Invite].
+  final InviteManager manager;
+
   /// The type of this invite.
   final InviteType type;
 
@@ -61,9 +68,13 @@ class Invite with ToStringHelper {
   /// The flags for this invite.
   final GuildInviteFlags? flags;
 
+  /// The roles assigned to users joining using this invite.
+  final List<PartialRole>? roles;
+
   /// {@macro invite}
   /// @nodoc
   Invite({
+    required this.manager,
     required this.type,
     required this.code,
     required this.guild,
@@ -77,7 +88,20 @@ class Invite with ToStringHelper {
     required this.expiresAt,
     required this.guildScheduledEvent,
     required this.flags,
+    required this.roles,
   });
+
+  /// Delete this invite.
+  Future<void> delete() => manager.delete(code);
+
+  /// Fetch the users this invite is for.
+  Future<List<PartialUser>> fetchTargetUsers() => manager.fetchTargetUsers(code);
+
+  /// Update the users targeted by this invite.
+  Future<void> updateTargetUsers(List<Snowflake> userIds) => manager.updateTargetUsers(code, userIds);
+
+  /// Fetch the status of processing the target users for this invite.
+  Future<InviteTargetsJobStatus> fetchTargetUsersJobStatus() => manager.fetchTargetUsersJobStatus(code);
 }
 
 /// The type of an [Invite]'s target.
