@@ -161,8 +161,14 @@ class Permissions extends Flags<Permissions> {
   /// This only applies to apps not also installed to the server.
   static const useExternalApps = Flag<Permissions>.fromOffset(50);
 
+  /// Allows pinning messages.
+  static const pinMessages = Flag<Permissions>.fromOffset(51);
+
+  /// Allows bypassing the channel slowmode.
+  static const bypassSlowmode = Flag<Permissions>.fromOffset(52);
+
   /// A [Permissions] with all permissions enabled.
-  static const allPermissions = Permissions(1829587348619263);
+  static const allPermissions = Permissions(8584986789675007);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
@@ -318,6 +324,12 @@ class Permissions extends Flags<Permissions> {
 
   /// Whether this set of permissions has the [useExternalApps] permission.
   bool get canUseExternalApps => has(useExternalApps);
+
+  /// Whether this set of permissions has the [pinMessages] permission.
+  bool get canPinMessages => has(pinMessages);
+
+  /// Whether this set of permissions has the [bypassSlowmode] permission.
+  bool get canBypassSlowmode => has(bypassSlowmode);
 
   /// Create a new [Permissions] from a permissions value.
   const Permissions(super.value);
