@@ -1,5 +1,5 @@
 import 'package:nyxx/nyxx.dart';
-import 'package:nyxx/src/utils/to_string_helper/mirrors_impl.dart';
+import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// An event emitted when a Gateway request encounters a rate limit.
 ///
