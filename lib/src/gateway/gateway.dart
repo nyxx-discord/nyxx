@@ -18,6 +18,7 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/events/entitlement.dart';
+import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
@@ -99,7 +100,7 @@ class Gateway extends GatewayManager with EventParser {
   /// See [Shard.latency] for details on how the latency is calculated.
   Duration get latency => shards.fold(Duration.zero, (previousValue, element) => previousValue + (element.latency ~/ shards.length));
 
-  final Set<Timer> _startOrIdentifyTimers = {};
+  final Set<Timer> _pendingTimers = {};
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
@@ -113,7 +114,7 @@ class Gateway extends GatewayManager with EventParser {
     // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
     final identifyLocks = <int, Future<void>>{};
 
-    _startOrIdentifyTimers.add(Timer(Duration(seconds: 10), () {
+    _pendingTimers.add(Timer(Duration(seconds: 10), () {
       // Drain events so we parse and cache gateway events.
       // Don't drain immediately so users can install their own event handlers and receive buffered events.
       events.drain().ignore();
@@ -130,9 +131,9 @@ class Gateway extends GatewayManager with EventParser {
       startTimer = Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
         logger.fine('Starting shard ${shard.id}');
         shard.add(StartShard());
-        _startOrIdentifyTimers.remove(startTimer);
+        _pendingTimers.remove(startTimer);
       });
-      _startOrIdentifyTimers.add(startTimer);
+      _pendingTimers.add(startTimer);
 
       void handleError(Object error, StackTrace stackTrace) {
         if (!_doneCompleter.isCompleted) {
@@ -168,9 +169,9 @@ class Gateway extends GatewayManager with EventParser {
                   // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
                   final delayCompleter = Completer<void>();
                   final delayTimer = Timer(identifyDelay, delayCompleter.complete);
-                  _startOrIdentifyTimers.add(delayTimer);
+                  _pendingTimers.add(delayTimer);
                   await delayCompleter.future;
-                  _startOrIdentifyTimers.remove(delayTimer);
+                  _pendingTimers.remove(delayTimer);
                 });
               } else if (event case EventReceived(event: RawDispatchEvent(name: 'READY'))) {
                 if (!_connectedCompleter.isCompleted) {
@@ -254,7 +255,7 @@ class Gateway extends GatewayManager with EventParser {
       }
 
       // Make sure we don't start any shards after we have closed.
-      for (final timer in _startOrIdentifyTimers) {
+      for (final timer in _pendingTimers) {
         timer.cancel();
       }
 
@@ -360,6 +361,7 @@ class Gateway extends GatewayManager with EventParser {
       'GUILD_SOUNDBOARD_SOUND_UPDATE': parseSoundboardSoundUpdate,
       'GUILD_SOUNDBOARD_SOUND_DELETE': parseSoundboardSoundDelete,
       'GUILD_SOUNDBOARD_SOUNDS_UPDATE': parseSoundboardSoundsUpdate,
+      'RATE_LIMITED': parseRateLimitedEvent,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -1230,6 +1232,18 @@ class Gateway extends GatewayManager with EventParser {
     int chunksReceived = 0;
 
     await for (final event in events) {
+      if (event case RateLimitedEvent(:final retryAfter, meta: RequestGuildMemberRateLimitedMetadata(nonce: final rateLimitedNonce))
+          when rateLimitedNonce == nonce) {
+        final completer = Completer<void>();
+        final timer = Timer(retryAfter, completer.complete);
+        _pendingTimers.add(timer);
+        await completer.future;
+        _pendingTimers.remove(timer);
+
+        yield* listGuildMembers(guildId, query: query, limit: limit, userIds: userIds, includePresences: includePresences, nonce: nonce);
+        return;
+      }
+
       if (event is! GuildMembersChunkEvent || event.nonce != nonce) {
         continue;
       }
@@ -1286,6 +1300,34 @@ class Gateway extends GatewayManager with EventParser {
       guildId: guildId,
       sounds: sounds,
       oldSounds: oldSounds,
+    );
+  }
+
+  RateLimitedEvent parseRateLimitedEvent(Map<String, Object?> raw) {
+    final opcode = Opcode.values.firstWhere((opcode) => opcode.value == raw['opcode']);
+
+    final parseMeta = switch (opcode) {
+      Opcode.requestGuildMembers => parseRequestGuildMemberRateLimitedMetadata,
+      _ => parseUnknownRateLimitedMetadata,
+    };
+
+    return RateLimitedEvent(
+      gateway: this,
+      rateLimitedOpcode: opcode,
+      retryAfter: Duration(microseconds: ((raw['retry_after'] as double) * Duration.microsecondsPerSecond).round()),
+      meta: parseMeta(raw['meta'] as Map<String, Object?>),
+    );
+  }
+
+  UnknownRateLimitedMetadata parseUnknownRateLimitedMetadata(Map<String, Object?> raw) {
+    return UnknownRateLimitedMetadata(raw: raw);
+  }
+
+  RequestGuildMemberRateLimitedMetadata parseRequestGuildMemberRateLimitedMetadata(Map<String, Object?> raw) {
+    return RequestGuildMemberRateLimitedMetadata(
+      gateway: this,
+      guildId: Snowflake.parse(raw['guild_id']!),
+      nonce: raw['nonce'] as String?,
     );
   }
 

@@ -13,6 +13,7 @@ import 'package:nyxx/src/models/gateway/events/interaction.dart';
 import 'package:nyxx/src/models/gateway/events/invite.dart';
 import 'package:nyxx/src/models/gateway/events/message.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
+import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
@@ -279,4 +280,7 @@ mixin EventMixin implements Nyxx {
 
   /// A [Stream] of [VoiceChannelEffectSendEvent]s received by this client.
   Stream<VoiceChannelEffectSendEvent> get onVoiceChannelEffectSend => onEvent.whereType<VoiceChannelEffectSendEvent>();
+
+  /// A [Stream] of [RateLimitedEvent]s received by this client.
+  Stream<RateLimitedEvent> get onRateLimited => onEvent.whereType<RateLimitedEvent>();
 }

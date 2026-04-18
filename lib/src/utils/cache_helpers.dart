@@ -20,6 +20,7 @@ import 'package:nyxx/src/models/gateway/events/interaction.dart';
 import 'package:nyxx/src/models/gateway/events/invite.dart';
 import 'package:nyxx/src/models/gateway/events/message.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
+import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
@@ -304,6 +305,7 @@ extension CacheUpdates on NyxxRest {
         SoundboardSoundsUpdateEvent(:final sounds) => sounds.forEach(updateCacheWith),
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
+        RateLimitedEvent() => null,
 
         // null and unhandled entity types
         WebhookAuthor() => null,

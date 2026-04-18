@@ -392,6 +392,8 @@ export 'src/models/gateway/events/soundboard.dart'
     show SoundboardSoundCreateEvent, SoundboardSoundDeleteEvent, SoundboardSoundUpdateEvent, SoundboardSoundsUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
+export 'src/models/gateway/events/rate_limit.dart'
+    show RateLimitedEvent, RateLimitedMetadata, RequestGuildMemberRateLimitedMetadata, UnknownRateLimitedMetadata;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
