@@ -92,7 +92,7 @@ class Invite with ToStringHelper {
   });
 
   /// Delete this invite.
-  Future<void> delete() => manager.delete(code);
+  Future<Invite> delete({String? auditLogReason}) => manager.delete(code, auditLogReason: auditLogReason);
 
   /// Fetch the users this invite is for.
   Future<List<PartialUser>> fetchTargetUsers() => manager.fetchTargetUsers(code);
