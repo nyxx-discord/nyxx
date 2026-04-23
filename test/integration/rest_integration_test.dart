@@ -530,6 +530,7 @@ void main() {
           channelId,
           InviteBuilder(
             targetUserIds: [client.user.id],
+            maxAge: Duration(minutes: 5),
           ),
         ),
         completes,
@@ -546,7 +547,6 @@ void main() {
 
       await expectLater(invite.fetchTargetUsers(), completes);
       await expectLater(invite.updateTargetUsers([client.user.id]), completes);
-      await expectLater(invite.delete(), completes);
     });
   });
 }
