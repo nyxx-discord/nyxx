@@ -873,4 +873,21 @@ class ChannelManager extends ReadOnlyManager<Channel> {
 
     await client.httpHandler.executeSafe(request);
   }
+
+  /// Update the status of a [VoiceChannel].
+  Future<void> updateVoiceChannelStatus(Snowflake channelId, String? status, {String? auditLogReason}) async {
+    final route = HttpRoute()
+      ..channels(id: channelId.toString())
+      ..voiceStatus();
+    final request = BasicRequest(
+      route,
+      method: 'PUT',
+      auditLogReason: auditLogReason,
+      body: jsonEncode({
+        'status': status,
+      }),
+    );
+
+    await client.httpHandler.executeSafe(request);
+  }
 }

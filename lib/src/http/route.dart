@@ -367,4 +367,7 @@ extension RouteHelpers on HttpRoute {
 
   /// Adds the [`job-status`](https://docs.discord.com/developers/resources/invite#get-target-users-job-status) part to this [HttpRoute].
   void jobStatus() => add(HttpRoutePart('job-status'));
+
+  /// Adds the [`voice-status`](https://docs.discord.com/developers/resources/channel#set-voice-channel-status) part to this [HttpRoute].
+  void voiceStatus() => add(HttpRoutePart('voice-status'));
 }

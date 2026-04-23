@@ -154,6 +154,9 @@ class Permissions extends Flags<Permissions> {
   /// Allows sending voice messages.
   static const sendVoiceMessages = Flag<Permissions>.fromOffset(46);
 
+  /// Allows users to set the status of a voice channel.
+  static const setVoiceChannelStatus = Flag<Permissions>.fromOffset(48);
+
   /// Allows sending polls.
   static const sendPolls = Flag<Permissions>.fromOffset(49);
 
@@ -168,7 +171,7 @@ class Permissions extends Flags<Permissions> {
   static const bypassSlowmode = Flag<Permissions>.fromOffset(52);
 
   /// A [Permissions] with all permissions enabled.
-  static const allPermissions = Permissions(8584986789675007);
+  static const allPermissions = Permissions(8866461766385663);
 
   /// Whether this set of permissions has the [createInstantInvite] permission.
   bool get canCreateInstantInvite => has(createInstantInvite);
@@ -318,6 +321,9 @@ class Permissions extends Flags<Permissions> {
 
   /// Whether this set of permissions has the [sendVoiceMessages] permission.
   bool get canSendVoiceMessages => has(sendVoiceMessages);
+
+  /// Whether this set of permissions has the [setVoiceChannelStatus] permission.
+  bool get canSetVoiceChannelStatus => has(setVoiceChannelStatus);
 
   /// Whether this set of permissions has the [sendPolls] permission.
   bool get canSendPolls => has(sendPolls);

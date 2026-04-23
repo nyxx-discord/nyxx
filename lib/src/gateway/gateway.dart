@@ -44,6 +44,7 @@ import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
+import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
@@ -362,6 +363,9 @@ class Gateway extends GatewayManager with EventParser {
       'GUILD_SOUNDBOARD_SOUND_DELETE': parseSoundboardSoundDelete,
       'GUILD_SOUNDBOARD_SOUNDS_UPDATE': parseSoundboardSoundsUpdate,
       'RATE_LIMITED': parseRateLimitedEvent,
+      'VOICE_CHANNEL_STATUS_UPDATE': parseVoiceChannelStatusUpdateEvent,
+      'VOICE_CHANNEL_START_TIME_UPDATE': parseVoiceChannelStartTimeUpdate,
+      'CHANNEL_INFO': parseChannelInfoEvent,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -1331,6 +1335,47 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
+  VoiceChannelStatusUpdateEvent parseVoiceChannelStatusUpdateEvent(Map<String, Object?> raw) {
+    return VoiceChannelStatusUpdateEvent(
+      gateway: this,
+      channelId: Snowflake.parse(raw['id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      status: raw['status'] as String?,
+    );
+  }
+
+  VoiceChannelStartTimeUpdate parseVoiceChannelStartTimeUpdate(Map<String, Object?> raw) {
+    return VoiceChannelStartTimeUpdate(
+      gateway: this,
+      channelId: Snowflake.parse(raw['id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      startTime: maybeParse(
+        raw['voice_start_time'],
+        (int timestamp) => DateTime.fromMillisecondsSinceEpoch(timestamp * Duration.millisecondsPerSecond, isUtc: true),
+      ),
+    );
+  }
+
+  ChannelInfoEvent parseChannelInfoEvent(Map<String, Object?> raw) {
+    return ChannelInfoEvent(
+      gateway: this,
+      guildId: Snowflake.parse(raw['guild_id']!),
+      channels: parseMany(raw['channels'] as List, parseChannelInfo),
+    );
+  }
+
+  ChannelInfo parseChannelInfo(Map<String, Object?> raw) {
+    return ChannelInfo(
+      id: Snowflake.parse(raw['id']!),
+      manager: client.channels,
+      status: raw['status'] as String?,
+      voiceStartTime: maybeParse(
+        raw['voice_start_time'],
+        (int timestamp) => DateTime.fromMillisecondsSinceEpoch(timestamp * Duration.millisecondsPerSecond, isUtc: true),
+      ),
+    );
+  }
+
   /// Update the client's voice state in the guild with ID [guildId].
   void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => shardFor(guildId).updateVoiceState(guildId, builder);
 
@@ -1339,5 +1384,15 @@ class Gateway extends GatewayManager with EventParser {
     for (final shard in shards) {
       shard.add(Send(opcode: Opcode.presenceUpdate, data: builder.build()));
     }
+  }
+
+  /// Request ephemeral channel information for the provided guild.
+  Future<ChannelInfoEvent> requestChannelInfo(Snowflake guildId, {List<String> fields = const ['status', 'voice_start_time']}) async {
+    shardFor(guildId).add(Send(opcode: Opcode.requestChannelInfo, data: {
+      'guild_id': guildId,
+      'fields': fields,
+    }));
+
+    return events.whereType<ChannelInfoEvent>().firstWhere((e) => e.guildId == guildId);
   }
 }

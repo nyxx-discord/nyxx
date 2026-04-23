@@ -153,6 +153,8 @@ final class AuditLogEvent extends EnumLike<int, AuditLogEvent> {
   static const onboardingUpdate = AuditLogEvent(167);
   static const homeSettingsCreate = AuditLogEvent(190);
   static const homeSettingsUpdate = AuditLogEvent(191);
+  static const voiceChannelStatusUpdate = AuditLogEvent(192);
+  static const voiceChannelStatusDelete = AuditLogEvent(193);
 
   /// @nodoc
   const AuditLogEvent(super.value);

@@ -346,7 +346,9 @@ export 'src/models/gateway/events/channel.dart'
         ThreadListSyncEvent,
         ThreadMemberUpdateEvent,
         ThreadMembersUpdateEvent,
-        ThreadUpdateEvent;
+        ThreadUpdateEvent,
+        ChannelInfo,
+        ChannelInfoEvent;
 export 'src/models/gateway/events/guild.dart'
     show
         GuildBanAddEvent,
@@ -389,7 +391,8 @@ export 'src/models/gateway/events/message.dart'
 export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
 export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
-export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent, VoiceChannelEffectSendEvent, AnimationType;
+export 'src/models/gateway/events/voice.dart'
+    show VoiceServerUpdateEvent, VoiceStateUpdateEvent, VoiceChannelEffectSendEvent, AnimationType, VoiceChannelStartTimeUpdate, VoiceChannelStatusUpdateEvent;
 export 'src/models/gateway/events/soundboard.dart'
     show SoundboardSoundCreateEvent, SoundboardSoundDeleteEvent, SoundboardSoundUpdateEvent, SoundboardSoundsUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
