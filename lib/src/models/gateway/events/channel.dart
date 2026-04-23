@@ -219,6 +219,8 @@ class ChannelPinsUpdateEvent extends DispatchEvent {
 }
 
 /// Sent in response to a request channel info event.
+///
+/// {@category events}
 class ChannelInfoEvent extends DispatchEvent {
   /// The ID of the [Guild] the channels are in.
   final Snowflake guildId;
@@ -234,6 +236,8 @@ class ChannelInfoEvent extends DispatchEvent {
 }
 
 /// Ephemeral information about channels in a [Guild].
+///
+/// {@category events}
 class ChannelInfo extends PartialChannel {
   /// The voice status of this channel.
   final String? status;

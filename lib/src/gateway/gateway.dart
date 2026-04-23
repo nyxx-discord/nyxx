@@ -366,6 +366,7 @@ class Gateway extends GatewayManager with EventParser {
       'VOICE_CHANNEL_STATUS_UPDATE': parseVoiceChannelStatusUpdateEvent,
       'VOICE_CHANNEL_START_TIME_UPDATE': parseVoiceChannelStartTimeUpdate,
       'CHANNEL_INFO': parseChannelInfoEvent,
+      'SOUNDBOARD_SOUNDS': parseSoundboardSoundsEvent,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -1320,6 +1321,16 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
+  SoundboardSoundsEvent parseSoundboardSoundsEvent(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
+    return SoundboardSoundsEvent(
+      gateway: this,
+      guildId: guildId,
+      sounds: parseMany(raw['soundboard_sounds'] as List, client.guilds[guildId].soundboard.parse),
+    );
+  }
+
   /// Stream all members in a guild that match [query] or [userIds].
   ///
   /// If neither is provided, all members in the guild are returned.
@@ -1394,5 +1405,36 @@ class Gateway extends GatewayManager with EventParser {
     }));
 
     return events.whereType<ChannelInfoEvent>().firstWhere((e) => e.guildId == guildId);
+  }
+
+  /// Request soundboard sounds in the specified guilds.
+  Stream<SoundboardSoundsEvent> requestSoundboardSounds(List<Snowflake> guildIds) {
+    final requestsByShard = <Shard, List<String>>{};
+
+    for (final id in guildIds) {
+      (requestsByShard[shardFor(id)] ??= []).add(id.toString());
+    }
+
+    for (final MapEntry(:key, :value) in requestsByShard.entries) {
+      key.add(Send(opcode: Opcode.requestSoundboardSounds, data: {
+        'guild_ids': value,
+      }));
+    }
+
+    final remaining = guildIds.toSet();
+
+    final controller = StreamController<SoundboardSoundsEvent>();
+
+    events
+        .whereType<SoundboardSoundsEvent>()
+        .where((e) => remaining.contains(e.guildId))
+        .map((e) {
+          remaining.remove(e);
+          return e;
+        })
+        .takeWhile((_) => remaining.isNotEmpty)
+        .pipe(controller);
+
+    return controller.stream;
   }
 }

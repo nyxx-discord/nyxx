@@ -74,4 +74,24 @@ class SoundboardSoundsUpdateEvent extends DispatchEvent {
   /// {@macro soundboard_sounds_update_event}
   /// @nodoc
   SoundboardSoundsUpdateEvent({required super.gateway, required this.guildId, required this.sounds, required this.oldSounds});
+
+  /// The guild the sounds are for.
+  PartialGuild get guild => gateway.client.guilds[guildId];
+}
+
+/// Sent in response to a soundboard sounds request.
+///
+/// {@category events}
+class SoundboardSoundsEvent extends DispatchEvent {
+  /// The ID of the [Guild] these sounds are for.
+  final Snowflake guildId;
+
+  /// The sounds in the specified guild.
+  final List<SoundboardSound> sounds;
+
+  /// @nodoc
+  SoundboardSoundsEvent({required super.gateway, required this.guildId, required this.sounds});
+
+  /// The guild the sounds are for.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }
