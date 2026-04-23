@@ -28,7 +28,6 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Check if version is already published
-        if: version-exists
         env:
           VERSION: ${{ steps.extract-version.outputs.version }}
         run: |
