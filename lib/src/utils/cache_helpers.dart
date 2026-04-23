@@ -24,6 +24,7 @@ import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
+import 'package:nyxx/src/models/gateway/events/subscription.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
@@ -313,9 +314,12 @@ extension CacheUpdates on NyxxRest {
         MessagePollVoteRemoveEvent() => null,
         RateLimitedEvent() => null,
         VoiceChannelStatusUpdateEvent() => null,
-        VoiceChannelStartTimeUpdate() => null,
+        VoiceChannelStartTimeUpdateEvent() => null,
         SoundboardSoundsEvent(:final sounds) => sounds.forEach(updateCacheWith),
         ChannelInfoEvent() => null,
+        SubscriptionCreateEvent(:final subscription) => updateCacheWith(subscription),
+        SubscriptionUpdateEvent(:final subscription) => updateCacheWith(subscription),
+        SubscriptionDeleteEvent(:final subscription) => subscription.manager.cache.remove(subscription.id),
 
         // null and unhandled entity types
         WebhookAuthor() => null,

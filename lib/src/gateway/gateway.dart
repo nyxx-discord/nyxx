@@ -20,6 +20,7 @@ import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/events/entitlement.dart';
 import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
+import 'package:nyxx/src/models/gateway/events/subscription.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
@@ -367,6 +368,9 @@ class Gateway extends GatewayManager with EventParser {
       'VOICE_CHANNEL_START_TIME_UPDATE': parseVoiceChannelStartTimeUpdate,
       'CHANNEL_INFO': parseChannelInfoEvent,
       'SOUNDBOARD_SOUNDS': parseSoundboardSoundsEvent,
+      'SUBSCRIPTION_CREATE': parseSubscriptionCreateEvent,
+      'SUBSCRIPTION_UPDATE': parseSubscriptionUpdateEvent,
+      'SUBSCRIPTION_DELETE': parseSubscriptionDeleteEvent,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -1289,8 +1293,8 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
-  VoiceChannelStartTimeUpdate parseVoiceChannelStartTimeUpdate(Map<String, Object?> raw) {
-    return VoiceChannelStartTimeUpdate(
+  VoiceChannelStartTimeUpdateEvent parseVoiceChannelStartTimeUpdate(Map<String, Object?> raw) {
+    return VoiceChannelStartTimeUpdateEvent(
       gateway: this,
       channelId: Snowflake.parse(raw['id']!),
       guildId: Snowflake.parse(raw['guild_id']!),
@@ -1328,6 +1332,35 @@ class Gateway extends GatewayManager with EventParser {
       gateway: this,
       guildId: guildId,
       sounds: parseMany(raw['soundboard_sounds'] as List, client.guilds[guildId].soundboard.parse),
+    );
+  }
+
+  SubscriptionCreateEvent parseSubscriptionCreateEvent(Map<String, Object?> raw) {
+    final skuId = Snowflake.parse((raw['sku_ids'] as List).first);
+
+    return SubscriptionCreateEvent(
+      gateway: this,
+      subscription: client.application.skus[skuId].subscriptions.parse(raw),
+    );
+  }
+
+  SubscriptionUpdateEvent parseSubscriptionUpdateEvent(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id']!);
+    final skuId = Snowflake.parse((raw['sku_ids'] as List).first);
+
+    return SubscriptionUpdateEvent(
+      gateway: this,
+      oldSubscription: client.application.skus[skuId].subscriptions.cache[id],
+      subscription: client.application.skus[skuId].subscriptions.parse(raw),
+    );
+  }
+
+  SubscriptionDeleteEvent parseSubscriptionDeleteEvent(Map<String, Object?> raw) {
+    final skuId = Snowflake.parse((raw['sku_ids'] as List).first);
+
+    return SubscriptionDeleteEvent(
+      gateway: this,
+      subscription: client.application.skus[skuId].subscriptions.parse(raw),
     );
   }
 
