@@ -312,6 +312,10 @@ extension CacheUpdates on NyxxRest {
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
         RateLimitedEvent() => null,
+        VoiceChannelStatusUpdateEvent() => null,
+        VoiceChannelStartTimeUpdate() => null,
+        SoundboardSoundsEvent(:final sounds) => sounds.forEach(updateCacheWith),
+        ChannelInfoEvent() => null,
 
         // null and unhandled entity types
         WebhookAuthor() => null,
