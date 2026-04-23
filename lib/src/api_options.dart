@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'dart:io';
+
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/intents.dart';
 import 'package:nyxx/src/utils/flags.dart';
@@ -73,12 +76,31 @@ class OAuth2ApiOptions extends ApiOptions implements RestApiOptions {
   OAuth2ApiOptions({required this.credentials, super.userAgent});
 }
 
+final zstdLibraryName = Platform.isWindows
+    ? 'zstd.dll'
+    : Platform.isMacOS
+        ? 'libzstd.dylib'
+        : 'libzstd.so';
+
 /// Options for connecting to the Discord API for making HTTP requests and connecting to the Gateway
 /// with a bot token.
 ///
 /// {@category gateway}
 /// {@category core}
 class GatewayApiOptions extends RestApiOptions {
+  static GatewayCompression _selectDefaultCompression() {
+    try {
+      final library = DynamicLibrary.open(zstdLibraryName);
+      library.close();
+      return GatewayCompression.transportZStd;
+    } catch (_) {
+      return GatewayCompression.transportZLib;
+    }
+  }
+
+  /// The default [GatewayCompression] used if none is specified.
+  static final GatewayCompression defaultCompression = _selectDefaultCompression();
+
   /// The intents to use.
   final Flags<GatewayIntents> intents;
 
@@ -118,12 +140,12 @@ class GatewayApiOptions extends RestApiOptions {
     super.userAgent,
     required this.intents,
     this.payloadFormat = GatewayPayloadFormat.etf,
-    this.compression = GatewayCompression.transportZStd,
+    GatewayCompression? compression,
     this.shards,
     this.totalShards,
     this.largeThreshold,
     this.initialPresence,
-  });
+  }) : compression = compression ?? defaultCompression;
 }
 
 /// The format of Gateway payloads.

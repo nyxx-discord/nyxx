@@ -502,19 +502,7 @@ Stream<dynamic> decompressZLibTransport(Stream<List<int>> raw) {
 }
 
 Stream<dynamic> decompressZStdTransport(Stream<List<int>> raw) {
-  final String libraryName;
-  if (Platform.isLinux) {
-    libraryName = 'libzstd.so';
-  } else if (Platform.isWindows) {
-    libraryName = 'zstd.dll';
-  } else if (Platform.isMacOS) {
-    libraryName = 'libzstd.dylib';
-  } else {
-    libraryName = 'libzstd.so';
-    print('Unknown operating system: falling back to libzstd.so');
-  }
-
-  final library = DynamicLibrary.open(libraryName);
+  final library = DynamicLibrary.open(zstdLibraryName);
   final zstd = ZStd(library);
 
   final inputSize = zstd.ZSTD_DStreamInSize();
