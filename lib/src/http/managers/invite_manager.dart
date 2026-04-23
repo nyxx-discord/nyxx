@@ -89,7 +89,7 @@ class InviteManager {
       totalUsers: raw['total_users'] as int,
       processedUsers: raw['processed_users'] as int,
       createdAt: DateTime.parse(raw['created_at'] as String),
-      completedAt: maybeParse(raw['created_at'], DateTime.parse),
+      completedAt: maybeParse(raw['completed_at'], DateTime.parse),
       errorMessage: raw['error_message'] as String?,
     );
   }

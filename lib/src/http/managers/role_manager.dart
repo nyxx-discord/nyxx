@@ -162,7 +162,7 @@ class RoleManager extends Manager<Role> {
 
     final request = BasicRequest(route, method: 'GET');
 
-    final response = await client.httpHandler.execute(request);
+    final response = await client.httpHandler.executeSafe(request);
 
     return (response.jsonBody as Map).cast<String, int>().map((id, count) => MapEntry(this[Snowflake.parse(id)], count));
   }
