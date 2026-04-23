@@ -140,7 +140,10 @@ class VoiceChannelStatusUpdateEvent extends DispatchEvent {
   PartialGuild get guild => gateway.client.guilds[guildId];
 }
 
-class VoiceChannelStartTimeUpdate extends DispatchEvent {
+/// Emitted when a [VoiceChannel] updates its start time.
+///
+/// {@category events}
+class VoiceChannelStartTimeUpdateEvent extends DispatchEvent {
   /// The ID of the affected [VoiceChannel].
   final Snowflake channelId;
 
@@ -151,7 +154,7 @@ class VoiceChannelStartTimeUpdate extends DispatchEvent {
   final DateTime? startTime;
 
   /// @nodoc
-  VoiceChannelStartTimeUpdate({
+  VoiceChannelStartTimeUpdateEvent({
     required super.gateway,
     required this.channelId,
     required this.guildId,

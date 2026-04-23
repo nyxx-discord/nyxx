@@ -17,6 +17,7 @@ import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
+import 'package:nyxx/src/models/gateway/events/subscription.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
 import 'package:nyxx/src/models/interaction.dart';
@@ -283,4 +284,25 @@ mixin EventMixin implements Nyxx {
 
   /// A [Stream] of [RateLimitedEvent]s received by this client.
   Stream<RateLimitedEvent> get onRateLimited => onEvent.whereType<RateLimitedEvent>();
+
+  /// A [Stream] of [VoiceChannelStatusUpdateEvent]s received by this client.
+  Stream<VoiceChannelStatusUpdateEvent> get onVoiceChannelStatusUpdate => onEvent.whereType<VoiceChannelStatusUpdateEvent>();
+
+  /// A [Stream] of [VoiceChannelStartTimeUpdateEvent]s received by this client.
+  Stream<VoiceChannelStartTimeUpdateEvent> get onVoiceChannelStartTimeUpdate => onEvent.whereType<VoiceChannelStartTimeUpdateEvent>();
+
+  /// A [Stream] of [SoundboardSoundsEvent]s received by this client.
+  Stream<SoundboardSoundsEvent> get onSoundboardSounds => onEvent.whereType<SoundboardSoundsEvent>();
+
+  /// A [Stream] of [SubscriptionCreateEvent]s received by this client.
+  Stream<SubscriptionCreateEvent> get onSubscriptionCreate => onEvent.whereType<SubscriptionCreateEvent>();
+
+  /// A [Stream] of [SubscriptionUpdateEvent]s received by this client.
+  Stream<SubscriptionUpdateEvent> get onSubscriptionUpdate => onEvent.whereType<SubscriptionUpdateEvent>();
+
+  /// A [Stream] of [SubscriptionDeleteEvent]s received by this client.
+  Stream<SubscriptionDeleteEvent> get onSubscriptionDelete => onEvent.whereType<SubscriptionDeleteEvent>();
+
+  /// A [Stream] of [ChannelInfoEvent]s received by this client.
+  Stream<ChannelInfoEvent> get onChannelInfo => onEvent.whereType<ChannelInfoEvent>();
 }

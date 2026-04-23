@@ -332,7 +332,7 @@ export 'src/models/gateway/event.dart'
 export 'src/models/gateway/opcode.dart' show Opcode;
 export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
 export 'src/models/gateway/events/soundboard.dart'
-    show SoundboardSoundCreateEvent, SoundboardSoundUpdateEvent, SoundboardSoundDeleteEvent, SoundboardSoundsUpdateEvent;
+    show SoundboardSoundCreateEvent, SoundboardSoundUpdateEvent, SoundboardSoundDeleteEvent, SoundboardSoundsUpdateEvent, SoundboardSoundsEvent;
 export 'src/models/gateway/events/auto_moderation.dart'
     show AutoModerationActionExecutionEvent, AutoModerationRuleCreateEvent, AutoModerationRuleDeleteEvent, AutoModerationRuleUpdateEvent;
 export 'src/models/gateway/events/channel.dart'
@@ -392,13 +392,20 @@ export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, Typin
 export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
 export 'src/models/gateway/events/voice.dart'
-    show VoiceServerUpdateEvent, VoiceStateUpdateEvent, VoiceChannelEffectSendEvent, AnimationType, VoiceChannelStartTimeUpdate, VoiceChannelStatusUpdateEvent;
+    show
+        VoiceServerUpdateEvent,
+        VoiceStateUpdateEvent,
+        VoiceChannelEffectSendEvent,
+        AnimationType,
+        VoiceChannelStartTimeUpdateEvent,
+        VoiceChannelStatusUpdateEvent;
 export 'src/models/gateway/events/soundboard.dart'
     show SoundboardSoundCreateEvent, SoundboardSoundDeleteEvent, SoundboardSoundUpdateEvent, SoundboardSoundsUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
 export 'src/models/gateway/events/rate_limit.dart'
     show RateLimitedEvent, RateLimitedMetadata, RequestGuildMemberRateLimitedMetadata, UnknownRateLimitedMetadata;
+export 'src/models/gateway/events/subscription.dart' show SubscriptionCreateEvent, SubscriptionDeleteEvent, SubscriptionUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;
