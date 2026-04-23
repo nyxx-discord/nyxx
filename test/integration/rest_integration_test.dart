@@ -535,7 +535,15 @@ void main() {
         completes,
       );
 
-      await expectLater(invite.fetchTargetUsersJobStatus(), completes);
+      late InviteTargetsJobStatus jobStatus;
+
+      await expectLater(() async => jobStatus = await invite.fetchTargetUsersJobStatus(), completes);
+
+      while (jobStatus.status == InviteTargetsJobStatusType.processing) {
+        await Future.delayed(Duration(seconds: 5));
+        jobStatus = await invite.fetchTargetUsersJobStatus();
+      }
+
       await expectLater(invite.fetchTargetUsers(), completes);
       await expectLater(invite.updateTargetUsers([client.user.id]), completes);
       await expectLater(invite.delete(), completes);
