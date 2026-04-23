@@ -1205,62 +1205,6 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
-  /// Stream all members in a guild that match [query] or [userIds].
-  ///
-  /// If neither is provided, all members in the guild are returned.
-  Stream<Member> listGuildMembers(
-    Snowflake guildId, {
-    String? query,
-    int? limit,
-    List<Snowflake>? userIds,
-    bool? includePresences,
-    String? nonce,
-  }) async* {
-    if (userIds == null) {
-      query ??= '';
-    }
-
-    limit ??= 0;
-    nonce ??= '${Snowflake.now().value.toRadixString(36)}${guildId.value.toRadixString(36)}';
-
-    final shard = shardFor(guildId);
-    shard.add(Send(opcode: Opcode.requestGuildMembers, data: {
-      'guild_id': guildId.toString(),
-      if (query != null) 'query': query,
-      'limit': limit,
-      if (includePresences != null) 'presences': includePresences,
-      if (userIds != null) 'user_ids': userIds.map((e) => e.toString()).toList(),
-      'nonce': nonce,
-    }));
-
-    int chunksReceived = 0;
-
-    await for (final event in events) {
-      if (event case RateLimitedEvent(:final retryAfter, meta: RequestGuildMemberRateLimitedMetadata(nonce: final rateLimitedNonce))
-          when rateLimitedNonce == nonce) {
-        final completer = Completer<void>();
-        final timer = Timer(retryAfter, completer.complete);
-        _pendingTimers.add(timer);
-        await completer.future;
-        _pendingTimers.remove(timer);
-
-        yield* listGuildMembers(guildId, query: query, limit: limit, userIds: userIds, includePresences: includePresences, nonce: nonce);
-        return;
-      }
-
-      if (event is! GuildMembersChunkEvent || event.nonce != nonce) {
-        continue;
-      }
-
-      yield* Stream.fromIterable(event.members);
-
-      chunksReceived++;
-      if (chunksReceived == event.chunkCount) {
-        break;
-      }
-    }
-  }
-
   SoundboardSoundCreateEvent parseSoundboardSoundCreate(Map<String, Object?> raw) {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
 
@@ -1374,6 +1318,62 @@ class Gateway extends GatewayManager with EventParser {
         (int timestamp) => DateTime.fromMillisecondsSinceEpoch(timestamp * Duration.millisecondsPerSecond, isUtc: true),
       ),
     );
+  }
+
+  /// Stream all members in a guild that match [query] or [userIds].
+  ///
+  /// If neither is provided, all members in the guild are returned.
+  Stream<Member> listGuildMembers(
+    Snowflake guildId, {
+    String? query,
+    int? limit,
+    List<Snowflake>? userIds,
+    bool? includePresences,
+    String? nonce,
+  }) async* {
+    if (userIds == null) {
+      query ??= '';
+    }
+
+    limit ??= 0;
+    nonce ??= '${Snowflake.now().value.toRadixString(36)}${guildId.value.toRadixString(36)}';
+
+    final shard = shardFor(guildId);
+    shard.add(Send(opcode: Opcode.requestGuildMembers, data: {
+      'guild_id': guildId.toString(),
+      if (query != null) 'query': query,
+      'limit': limit,
+      if (includePresences != null) 'presences': includePresences,
+      if (userIds != null) 'user_ids': userIds.map((e) => e.toString()).toList(),
+      'nonce': nonce,
+    }));
+
+    int chunksReceived = 0;
+
+    await for (final event in events) {
+      if (event case RateLimitedEvent(:final retryAfter, meta: RequestGuildMemberRateLimitedMetadata(nonce: final rateLimitedNonce))
+          when rateLimitedNonce == nonce) {
+        final completer = Completer<void>();
+        final timer = Timer(retryAfter, completer.complete);
+        _pendingTimers.add(timer);
+        await completer.future;
+        _pendingTimers.remove(timer);
+
+        yield* listGuildMembers(guildId, query: query, limit: limit, userIds: userIds, includePresences: includePresences, nonce: nonce);
+        return;
+      }
+
+      if (event is! GuildMembersChunkEvent || event.nonce != nonce) {
+        continue;
+      }
+
+      yield* Stream.fromIterable(event.members);
+
+      chunksReceived++;
+      if (chunksReceived == event.chunkCount) {
+        break;
+      }
+    }
   }
 
   /// Update the client's voice state in the guild with ID [guildId].
