@@ -138,12 +138,16 @@ final class AuditLogEvent extends EnumLike<int, AuditLogEvent> {
   static const threadUpdate = AuditLogEvent(111);
   static const threadDelete = AuditLogEvent(112);
   static const applicationCommandPermissionUpdate = AuditLogEvent(121);
+  static const soundboardSoundCreate = AuditLogEvent(130);
+  static const soundboardSoundUpdate = AuditLogEvent(131);
+  static const soundboardSoundDelete = AuditLogEvent(132);
   static const autoModerationRuleCreate = AuditLogEvent(140);
   static const autoModerationRuleUpdate = AuditLogEvent(141);
   static const autoModerationRuleDelete = AuditLogEvent(142);
   static const autoModerationBlockMessage = AuditLogEvent(143);
   static const autoModerationFlagToChannel = AuditLogEvent(144);
   static const autoModerationUserCommunicationDisabled = AuditLogEvent(145);
+  static const autoModerationQuarantineUser = AuditLogEvent(146);
   static const creatorMonetizationRequestCreated = AuditLogEvent(150);
   static const creatorMonetizationTermsAccepted = AuditLogEvent(151);
   static const onboardingPromptCreate = AuditLogEvent(163);
