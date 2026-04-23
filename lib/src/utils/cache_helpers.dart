@@ -33,6 +33,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/guild/message_search.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/interaction.dart';
@@ -179,6 +180,11 @@ extension CacheUpdates on NyxxRest {
         InteractionCallbackResponse(:final resource) => updateCacheWith(resource),
         InteractionResource(:final message?) => updateCacheWith(message),
         MessagePin(:final message) => updateCacheWith(message),
+        MessageSearchResult(:final messages, :final threads, :final threadMembers) => () {
+            messages.forEach(updateCacheWith);
+            threads.forEach(updateCacheWith);
+            threadMembers.forEach(updateCacheWith);
+          }(),
 
         // Events
 
