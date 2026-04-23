@@ -313,6 +313,7 @@ export 'src/models/guild/auto_moderation.dart'
         AutoModerationEventType,
         KeywordPresetType,
         TriggerType;
+export 'src/models/guild/message_search.dart' show MessageSearchResult, SearchEmbedType, MessageAuthorType, MessageContentType, MessageSearchOrder;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags, RoleColors;

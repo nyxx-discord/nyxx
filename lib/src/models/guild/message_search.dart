@@ -65,8 +65,8 @@ enum MessageContentType {
   const MessageContentType._(this.type);
 }
 
-/// The type of an [Embed].
-enum EmbedType {
+/// The type of an [Embed] in a message search.
+enum SearchEmbedType {
   image._('image'),
   video._('video'),
   gif._('gif'),
@@ -75,7 +75,7 @@ enum EmbedType {
 
   final String type;
 
-  const EmbedType._(this.type);
+  const SearchEmbedType._(this.type);
 }
 
 /// The order in which messages are returned by a message search operation.

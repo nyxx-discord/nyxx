@@ -908,7 +908,7 @@ class GuildManager extends Manager<Guild> {
     bool? isPinned,
     List<MessageContentType>? includeMessagesWith,
     List<MessageContentType>? excludeMessagesWith,
-    List<EmbedType>? hasEmbeds,
+    List<SearchEmbedType>? hasEmbeds,
     List<String>? embedProviders,
     List<String>? linkHostnames,
     List<String>? attachmentFilenames,

@@ -19,6 +19,7 @@ import 'package:nyxx/src/http/managers/member_manager.dart';
 import 'package:nyxx/src/http/managers/role_manager.dart';
 import 'package:nyxx/src/http/managers/scheduled_event_manager.dart';
 import 'package:nyxx/src/http/managers/soundboard_manager.dart';
+import 'package:nyxx/src/http/response.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/application.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
@@ -31,6 +32,7 @@ import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/guild/message_search.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
@@ -212,6 +214,73 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Fetch this guild's vanity invite code.
   Future<String?> fetchVanityCode() => manager.fetchVanityCode(id);
+
+  /// Search for messages within this guild.
+  ///
+  /// See [the Discord docs](https://docs.discord.com/developers/resources/message#search-guild-messages) for information on the possible parameters.
+  ///
+  /// Discord may return a response indicating the guild needs to be indexed before messages can be searched.
+  /// If [retryIfIndexing] is `true` (the default), the request will automatically be retried after an appropriate delay.
+  /// If it is `false`, an [HttpResponseError] will be thrown, even if the status code (202) would usually indicate success.
+  Future<MessageSearchResult> searchMessages({
+    int? limit,
+    int? offset,
+    Snowflake? maxId,
+    Snowflake? minId,
+    int? slop,
+    String? content,
+    List<Snowflake>? channelIds,
+    List<MessageAuthorType>? includeAuthorTypes,
+    List<MessageAuthorType>? excludeAuthorTypes,
+    List<Snowflake>? authorIds,
+    List<Snowflake>? mentionIds,
+    List<Snowflake>? mentionRoleIds,
+    bool? mentionsEveryone,
+    List<Snowflake>? repliedToUserIds,
+    List<Snowflake>? repliedToMessageIds,
+    bool? isPinned,
+    List<MessageContentType>? includeMessagesWith,
+    List<MessageContentType>? excludeMessagesWith,
+    List<SearchEmbedType>? hasEmbeds,
+    List<String>? embedProviders,
+    List<String>? linkHostnames,
+    List<String>? attachmentFilenames,
+    List<String>? attachmentExtensions,
+    MessageSearchOrder? sortBy,
+    bool? ascending,
+    bool? includeNsfw,
+    bool retryIfIndexing = true,
+  }) =>
+      manager.searchMessages(
+        id,
+        limit: limit,
+        offset: offset,
+        maxId: maxId,
+        minId: minId,
+        slop: slop,
+        content: content,
+        channelIds: channelIds,
+        includeAuthorTypes: includeAuthorTypes,
+        excludeAuthorTypes: excludeAuthorTypes,
+        authorIds: authorIds,
+        mentionIds: mentionIds,
+        mentionRoleIds: mentionRoleIds,
+        mentionsEveryone: mentionsEveryone,
+        repliedToUserIds: repliedToUserIds,
+        repliedToMessageIds: repliedToMessageIds,
+        isPinned: isPinned,
+        includeMessagesWith: includeMessagesWith,
+        excludeMessagesWith: excludeMessagesWith,
+        hasEmbeds: hasEmbeds,
+        embedProviders: embedProviders,
+        linkHostnames: linkHostnames,
+        attachmentFilenames: attachmentFilenames,
+        attachmentExtensions: attachmentExtensions,
+        sortBy: sortBy,
+        ascending: ascending,
+        includeNsfw: includeNsfw,
+        retryIfIndexing: retryIfIndexing,
+      );
 }
 
 /// {@macro guild}
