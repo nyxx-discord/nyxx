@@ -17,6 +17,9 @@ abstract class VoiceChannel implements Channel {
 
   /// The [VideoQualityMode] for cameras in this channel.
   VideoQualityMode get videoQualityMode;
+
+  /// Update the voice status of this channel.
+  Future<void> updateVoiceStatus(String? status);
 }
 
 /// The quality mode of cameras in a [VoiceChannel].

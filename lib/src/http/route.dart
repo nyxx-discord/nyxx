@@ -356,6 +356,18 @@ extension RouteHelpers on HttpRoute {
   /// Adds the [`incident-actions`](https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions) part to this [HttpRoute].
   void incidentActions() => add(HttpRoutePart('incident-actions'));
 
-  /// Adds the [`guild-tag-badges`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints)
+  /// Adds the [`guild-tag-badges`](https://discord.com/developers/docs/reference#image-formatting-cdn-endpoints) part to this [HttpRoute].
   void guildTagBadges({String? id}) => add(HttpRoutePart('guild-tag-badges', [if (id != null) HttpRouteParam(id)]));
+
+  /// Adds the [`member-counts`](https://docs.discord.com/developers/resources/guild#get-guild-role-member-counts) part to this [HttpRoute].
+  void memberCounts() => add(HttpRoutePart('member-counts'));
+
+  /// Adds the [`target-users`](https://docs.discord.com/developers/resources/invite#get-target-users) part to this [HttpRoute].
+  void targetUsers() => add(HttpRoutePart('target-users'));
+
+  /// Adds the [`job-status`](https://docs.discord.com/developers/resources/invite#get-target-users-job-status) part to this [HttpRoute].
+  void jobStatus() => add(HttpRoutePart('job-status'));
+
+  /// Adds the [`voice-status`](https://docs.discord.com/developers/resources/channel#set-voice-channel-status) part to this [HttpRoute].
+  void voiceStatus() => add(HttpRoutePart('voice-status'));
 }

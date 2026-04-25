@@ -104,4 +104,7 @@ class GuildVoiceChannel extends TextChannel implements GuildChannel, VoiceChanne
 
   @override
   Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
+
+  @override
+  Future<void> updateVoiceStatus(String? status) => manager.updateVoiceChannelStatus(id, status);
 }

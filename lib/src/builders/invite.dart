@@ -19,6 +19,10 @@ class InviteBuilder extends CreateBuilder<Invite> {
 
   Snowflake? targetApplicationId;
 
+  List<Snowflake>? targetUserIds;
+
+  List<Snowflake>? roleIds;
+
   InviteBuilder({
     this.maxAge = sentinelDuration,
     this.maxUses,
@@ -27,6 +31,8 @@ class InviteBuilder extends CreateBuilder<Invite> {
     this.targetType,
     this.targetUserId,
     this.targetApplicationId,
+    this.targetUserIds,
+    this.roleIds,
   });
 
   @override
@@ -38,5 +44,6 @@ class InviteBuilder extends CreateBuilder<Invite> {
         if (targetType != null) 'target_type': targetType!.value,
         if (targetUserId != null) 'target_user_id': targetUserId!.toString(),
         if (targetApplicationId != null) 'target_application_id': targetApplicationId!.toString(),
+        if (roleIds != null) 'role_ids': roleIds!.map((id) => id.toString()).toList(),
       };
 }

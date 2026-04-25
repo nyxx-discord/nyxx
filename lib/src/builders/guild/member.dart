@@ -1,3 +1,4 @@
+import 'package:nyxx/nyxx.dart';
 import 'package:nyxx/src/builders/builder.dart';
 import 'package:nyxx/src/builders/sentinels.dart';
 import 'package:nyxx/src/models/guild/member.dart';
@@ -79,10 +80,24 @@ class MemberUpdateBuilder extends UpdateBuilder<Member> {
 class CurrentMemberUpdateBuilder extends UpdateBuilder<Member> {
   String? nick;
 
-  CurrentMemberUpdateBuilder({this.nick = sentinelString});
+  ImageBuilder? banner;
+
+  ImageBuilder? avatar;
+
+  String? bio;
+
+  CurrentMemberUpdateBuilder({
+    this.nick = sentinelString,
+    this.banner = sentinelImageBuilder,
+    this.avatar = sentinelImageBuilder,
+    this.bio = sentinelString,
+  });
 
   @override
   Map<String, Object?> build() => {
         if (!identical(nick, sentinelString)) 'nick': nick,
+        if (!identical(banner, sentinelImageBuilder)) 'banner': banner?.buildDataString(),
+        if (!identical(avatar, sentinelImageBuilder)) 'avatar': avatar?.buildDataString(),
+        if (!identical(bio, sentinelString)) 'bio': bio,
       };
 }

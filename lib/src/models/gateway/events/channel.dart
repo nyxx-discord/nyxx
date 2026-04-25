@@ -217,3 +217,39 @@ class ChannelPinsUpdateEvent extends DispatchEvent {
   /// The channel the pins were updated in.
   PartialTextChannel get channel => gateway.client.channels[channelId] as PartialTextChannel;
 }
+
+/// Sent in response to a request channel info event.
+///
+/// {@category events}
+class ChannelInfoEvent extends DispatchEvent {
+  /// The ID of the [Guild] the channels are in.
+  final Snowflake guildId;
+
+  /// Information about the channels in the guild.
+  final List<ChannelInfo> channels;
+
+  /// @nodoc
+  ChannelInfoEvent({required super.gateway, required this.guildId, required this.channels});
+
+  /// The [Guild] the channels are in.
+  PartialGuild get guild => gateway.client.guilds[guildId];
+}
+
+/// Ephemeral information about channels in a [Guild].
+///
+/// {@category events}
+class ChannelInfo extends PartialChannel {
+  /// The voice status of this channel.
+  final String? status;
+
+  /// The time at which this channel's voice session started.
+  final DateTime? voiceStartTime;
+
+  /// @nodoc
+  ChannelInfo({
+    required super.id,
+    required super.manager,
+    required this.status,
+    required this.voiceStartTime,
+  });
+}

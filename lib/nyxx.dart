@@ -254,6 +254,7 @@ export 'src/models/component.dart'
 
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType, GuildInviteFlags;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
+export 'src/models/invite/job_status.dart' show InviteTargetsJobStatus, InviteTargetsJobStatusType;
 export 'src/models/webhook.dart' show PartialWebhook, Webhook, WebhookType, WebhookAuthor;
 export 'src/models/guild/ban.dart' show Ban, BulkBanResponse;
 export 'src/models/guild/guild_preview.dart' show GuildPreview;
@@ -312,6 +313,7 @@ export 'src/models/guild/auto_moderation.dart'
         AutoModerationEventType,
         KeywordPresetType,
         TriggerType;
+export 'src/models/guild/message_search.dart' show MessageSearchResult, SearchEmbedType, MessageAuthorType, MessageContentType, MessageSearchOrder;
 export 'src/models/voice/voice_state.dart' show VoiceState;
 export 'src/models/voice/voice_region.dart' show VoiceRegion;
 export 'src/models/role.dart' show PartialRole, Role, RoleTags, RoleFlags, RoleColors;
@@ -330,7 +332,7 @@ export 'src/models/gateway/event.dart'
 export 'src/models/gateway/opcode.dart' show Opcode;
 export 'src/models/gateway/events/application_command.dart' show ApplicationCommandPermissionsUpdateEvent;
 export 'src/models/gateway/events/soundboard.dart'
-    show SoundboardSoundCreateEvent, SoundboardSoundUpdateEvent, SoundboardSoundDeleteEvent, SoundboardSoundsUpdateEvent;
+    show SoundboardSoundCreateEvent, SoundboardSoundUpdateEvent, SoundboardSoundDeleteEvent, SoundboardSoundsUpdateEvent, SoundboardSoundsEvent;
 export 'src/models/gateway/events/auto_moderation.dart'
     show AutoModerationActionExecutionEvent, AutoModerationRuleCreateEvent, AutoModerationRuleDeleteEvent, AutoModerationRuleUpdateEvent;
 export 'src/models/gateway/events/channel.dart'
@@ -344,7 +346,9 @@ export 'src/models/gateway/events/channel.dart'
         ThreadListSyncEvent,
         ThreadMemberUpdateEvent,
         ThreadMembersUpdateEvent,
-        ThreadUpdateEvent;
+        ThreadUpdateEvent,
+        ChannelInfo,
+        ChannelInfoEvent;
 export 'src/models/gateway/events/guild.dart'
     show
         GuildBanAddEvent,
@@ -387,11 +391,21 @@ export 'src/models/gateway/events/message.dart'
 export 'src/models/gateway/events/presence.dart' show PresenceUpdateEvent, TypingStartEvent, UserUpdateEvent;
 export 'src/models/gateway/events/ready.dart' show ReadyEvent, ResumedEvent;
 export 'src/models/gateway/events/stage_instance.dart' show StageInstanceCreateEvent, StageInstanceDeleteEvent, StageInstanceUpdateEvent;
-export 'src/models/gateway/events/voice.dart' show VoiceServerUpdateEvent, VoiceStateUpdateEvent, VoiceChannelEffectSendEvent, AnimationType;
+export 'src/models/gateway/events/voice.dart'
+    show
+        VoiceServerUpdateEvent,
+        VoiceStateUpdateEvent,
+        VoiceChannelEffectSendEvent,
+        AnimationType,
+        VoiceChannelStartTimeUpdateEvent,
+        VoiceChannelStatusUpdateEvent;
 export 'src/models/gateway/events/soundboard.dart'
     show SoundboardSoundCreateEvent, SoundboardSoundDeleteEvent, SoundboardSoundUpdateEvent, SoundboardSoundsUpdateEvent;
 export 'src/models/gateway/events/webhook.dart' show WebhooksUpdateEvent;
 export 'src/models/gateway/events/entitlement.dart' show EntitlementCreateEvent, EntitlementDeleteEvent, EntitlementUpdateEvent;
+export 'src/models/gateway/events/rate_limit.dart'
+    show RateLimitedEvent, RateLimitedMetadata, RequestGuildMemberRateLimitedMetadata, UnknownRateLimitedMetadata;
+export 'src/models/gateway/events/subscription.dart' show SubscriptionCreateEvent, SubscriptionDeleteEvent, SubscriptionUpdateEvent;
 export 'src/models/presence.dart'
     show Activity, ActivityAssets, ActivityButton, ActivityFlags, ActivityParty, ActivitySecrets, ActivityTimestamps, ClientStatus, ActivityType, UserStatus;
 export 'src/models/emoji.dart' show Emoji, GuildEmoji, PartialEmoji, TextEmoji;

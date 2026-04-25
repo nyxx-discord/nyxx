@@ -31,7 +31,13 @@ enum Opcode {
   hello._(10),
 
   /// Received when the server receives the client's heartbeat.
-  heartbeatAck._(11);
+  heartbeatAck._(11),
+
+  /// Sent to request information about soundboard sounds.
+  requestSoundboardSounds._(31),
+
+  /// Sent to request ephemeral channel information.
+  requestChannelInfo._(43);
 
   /// The value of this [Opcode].
   final int value;

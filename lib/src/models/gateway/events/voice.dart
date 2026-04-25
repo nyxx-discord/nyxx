@@ -1,3 +1,6 @@
+/// @docImport 'package:nyxx/nyxx.dart';
+library;
+
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
@@ -107,4 +110,60 @@ final class AnimationType extends EnumLike<int, AnimationType> {
 
   /// @nodoc
   const AnimationType(super.value);
+}
+
+/// Emitted when a [VoiceChannel] updates its status.
+///
+/// {@category events}
+class VoiceChannelStatusUpdateEvent extends DispatchEvent {
+  /// The ID of the affected [VoiceChannel].
+  final Snowflake channelId;
+
+  /// The ID of the [Guild] containing the channel.
+  final Snowflake guildId;
+
+  /// The new channel status.
+  final String? status;
+
+  /// @nodoc
+  VoiceChannelStatusUpdateEvent({
+    required super.gateway,
+    required this.channelId,
+    required this.guildId,
+    required this.status,
+  });
+
+  /// The affected [VoiceChannel].
+  PartialChannel get channel => gateway.client.channels[channelId];
+
+  /// The [Guild] containing the channel.
+  PartialGuild get guild => gateway.client.guilds[guildId];
+}
+
+/// Emitted when a [VoiceChannel] updates its start time.
+///
+/// {@category events}
+class VoiceChannelStartTimeUpdateEvent extends DispatchEvent {
+  /// The ID of the affected [VoiceChannel].
+  final Snowflake channelId;
+
+  /// The ID of the [Guild] containing the channel.
+  final Snowflake guildId;
+
+  /// The time at which the voice session started.
+  final DateTime? startTime;
+
+  /// @nodoc
+  VoiceChannelStartTimeUpdateEvent({
+    required super.gateway,
+    required this.channelId,
+    required this.guildId,
+    required this.startTime,
+  });
+
+  /// The affected [VoiceChannel].
+  PartialChannel get channel => gateway.client.channels[channelId];
+
+  /// The [Guild] containing the channel.
+  PartialGuild get guild => gateway.client.guilds[guildId];
 }

@@ -12,15 +12,18 @@ import 'package:nyxx/src/builders/image.dart';
 import 'package:nyxx/src/builders/voice.dart';
 import 'package:nyxx/src/http/managers/manager.dart';
 import 'package:nyxx/src/http/request.dart';
+import 'package:nyxx/src/http/response.dart';
 import 'package:nyxx/src/http/route.dart';
 import 'package:nyxx/src/models/channel/channel.dart';
 import 'package:nyxx/src/models/channel/guild_channel.dart';
+import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread_list.dart';
 import 'package:nyxx/src/models/emoji.dart';
 import 'package:nyxx/src/models/guild/ban.dart';
 import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/guild_widget.dart';
+import 'package:nyxx/src/models/guild/message_search.dart';
 import 'package:nyxx/src/models/guild/onboarding.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/guild/welcome_screen.dart';
@@ -350,6 +353,24 @@ class GuildManager extends Manager<Guild> {
     );
   }
 
+  /// Parse a [MessageSearchResult] from [raw].
+  MessageSearchResult parseMessageSearchResult(Map<String, Object?> raw) {
+    final rawMessages = (raw['messages'] as List).expand((sublist) => sublist as List).toList();
+
+    return MessageSearchResult(
+      doingDeepHistoricalIndex: raw['doing_deep_historical_index'] as bool,
+      indexedDocumentCount: raw['documents_indexed'] as int?,
+      totalResults: raw['total_results'] as int,
+      messages: parseMany(rawMessages, (Map<String, Object?> rawMessage) {
+        final channelId = Snowflake.parse(rawMessage['channel_id']!);
+
+        return (client.channels[channelId] as PartialTextChannel).messages.parse(rawMessage);
+      }),
+      threads: maybeParseMany(raw['threads'], client.channels.parse)?.cast() ?? [],
+      threadMembers: maybeParseMany(raw['members'], client.channels.parseThreadMember) ?? [],
+    );
+  }
+
   @override
   Future<Guild> fetch(Snowflake id, {bool? withCounts}) async {
     final route = HttpRoute()..guilds(id: id.toString());
@@ -363,6 +384,7 @@ class GuildManager extends Manager<Guild> {
   }
 
   @override
+  @Deprecated('Applications cannot create their own guilds.')
   Future<Guild> create(GuildBuilder builder) async {
     final route = HttpRoute()..guilds();
     final request = BasicRequest(route, method: 'POST', body: jsonEncode(builder.build()));
@@ -857,5 +879,101 @@ class GuildManager extends Manager<Guild> {
     final response = await client.httpHandler.executeSafe(request);
 
     return parseIncidentsData(response.jsonBody as Map<String, Object?>);
+  }
+
+  /// Search for messages within a guild.
+  ///
+  /// See [the Discord docs](https://docs.discord.com/developers/resources/message#search-guild-messages) for information on the possible parameters.
+  ///
+  /// Discord may return a response indicating the guild needs to be indexed before messages can be searched.
+  /// If [retryIfIndexing] is `true` (the default), the request will automatically be retried after an appropriate delay.
+  /// If it is `false`, an [HttpResponseError] will be thrown, even if the status code (202) would usually indicate success.
+  Future<MessageSearchResult> searchMessages(
+    Snowflake guildId, {
+    int? limit,
+    int? offset,
+    Snowflake? maxId,
+    Snowflake? minId,
+    int? slop,
+    String? content,
+    List<Snowflake>? channelIds,
+    List<MessageAuthorType>? includeAuthorTypes,
+    List<MessageAuthorType>? excludeAuthorTypes,
+    List<Snowflake>? authorIds,
+    List<Snowflake>? mentionIds,
+    List<Snowflake>? mentionRoleIds,
+    bool? mentionsEveryone,
+    List<Snowflake>? repliedToUserIds,
+    List<Snowflake>? repliedToMessageIds,
+    bool? isPinned,
+    List<MessageContentType>? includeMessagesWith,
+    List<MessageContentType>? excludeMessagesWith,
+    List<SearchEmbedType>? hasEmbeds,
+    List<String>? embedProviders,
+    List<String>? linkHostnames,
+    List<String>? attachmentFilenames,
+    List<String>? attachmentExtensions,
+    MessageSearchOrder? sortBy,
+    bool? ascending,
+    bool? includeNsfw,
+    bool retryIfIndexing = true,
+  }) async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..messages()
+      ..search();
+    final request = BasicRequest(
+      route,
+      method: 'GET',
+      queryParameters: {
+        if (limit != null) 'limit': limit.toString(),
+        if (offset != null) 'offset': offset.toString(),
+        if (maxId != null) 'max_id': maxId.toString(),
+        if (minId != null) 'min_id': minId.toString(),
+        if (slop != null) 'slop': slop.toString(),
+        if (content != null) 'content': content,
+        if (mentionsEveryone != null) 'mention_everyone': mentionsEveryone.toString(),
+        if (isPinned != null) 'pinned': isPinned.toString(),
+        if (sortBy != null) 'sort_by': sortBy.order,
+        if (ascending != null) 'sort_order': ascending ? 'asc' : 'desc',
+        if (includeNsfw != null) 'include_nsfw': includeNsfw.toString(),
+      },
+      arrayQueryParameters: {
+        if (channelIds != null) 'channel_id': channelIds.map((s) => s.toString()).toList(),
+        if (includeAuthorTypes != null || excludeAuthorTypes != null)
+          'author_type': [...?includeAuthorTypes?.map((t) => t.type), ...?excludeAuthorTypes?.map((t) => '-${t.type}')],
+        if (authorIds != null) 'author_id': authorIds.map((s) => s.toString()).toList(),
+        if (mentionIds != null) 'mentions': mentionIds.map((s) => s.toString()).toList(),
+        if (mentionRoleIds != null) 'mentions_role_id': mentionRoleIds.map((s) => s.toString()).toList(),
+        if (repliedToUserIds != null) 'replied_to_user_id': repliedToUserIds.map((s) => s.toString()).toList(),
+        if (repliedToMessageIds != null) 'replied_to_message_id': repliedToMessageIds.map((s) => s.toString()).toList(),
+        if (includeMessagesWith != null || excludeMessagesWith != null)
+          'has': [...?includeMessagesWith?.map((c) => c.type), ...?excludeAuthorTypes?.map((c) => '-${c.type}')],
+        if (hasEmbeds != null) 'embed_type': hasEmbeds.map((t) => t.type).toList(),
+        if (embedProviders != null) 'embed_provider': embedProviders,
+        if (linkHostnames != null) 'link_hostname': linkHostnames,
+        if (attachmentFilenames != null) 'attachment_filename': attachmentFilenames,
+        if (attachmentExtensions != null) 'attachment_extension': attachmentExtensions,
+      },
+    );
+
+    while (true) {
+      final response = await client.httpHandler.executeSafe(request);
+
+      if (response.statusCode == 202) {
+        if (!retryIfIndexing) {
+          throw HttpResponseError(response: response.response, request: request, body: response.body);
+        } else {
+          final retryAfter = Duration(microseconds: (((response.jsonBody['retry_after'] ?? 5) as num) * Duration.microsecondsPerSecond).ceil());
+          await Future.delayed(retryAfter);
+          continue;
+        }
+      }
+
+      final result = parseMessageSearchResult(response.jsonBody as Map<String, Object?>);
+
+      client.updateCacheWith(result);
+      return result;
+    }
   }
 }

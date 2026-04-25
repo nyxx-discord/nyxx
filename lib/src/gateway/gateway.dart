@@ -18,7 +18,9 @@ import 'package:nyxx/src/models/channel/guild_channel.dart';
 import 'package:nyxx/src/models/channel/text_channel.dart';
 import 'package:nyxx/src/models/channel/thread.dart';
 import 'package:nyxx/src/models/gateway/events/entitlement.dart';
+import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
+import 'package:nyxx/src/models/gateway/events/subscription.dart';
 import 'package:nyxx/src/models/gateway/gateway.dart';
 import 'package:nyxx/src/models/gateway/event.dart';
 import 'package:nyxx/src/models/gateway/events/application_command.dart';
@@ -43,6 +45,7 @@ import 'package:nyxx/src/models/presence.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/cache_helpers.dart';
+import 'package:nyxx/src/utils/iterable_extension.dart';
 import 'package:nyxx/src/utils/parsing_helpers.dart';
 
 /// Handles the connection to Discord's Gateway with shards, manages the client's cache based on Gateway events and provides an interface to the Gateway.
@@ -99,7 +102,7 @@ class Gateway extends GatewayManager with EventParser {
   /// See [Shard.latency] for details on how the latency is calculated.
   Duration get latency => shards.fold(Duration.zero, (previousValue, element) => previousValue + (element.latency ~/ shards.length));
 
-  final Set<Timer> _startOrIdentifyTimers = {};
+  final Set<Timer> _pendingTimers = {};
 
   /// Create a new [Gateway].
   Gateway(this.client, this.gatewayBot, this.shards, this.totalShards, this.shardIds) : super.create() {
@@ -113,7 +116,7 @@ class Gateway extends GatewayManager with EventParser {
     // A mapping of rateLimitId (shard.id % maxConcurrency) to Futures that complete when the identify lock for that rate_limit_key is no longer used.
     final identifyLocks = <int, Future<void>>{};
 
-    _startOrIdentifyTimers.add(Timer(Duration(seconds: 10), () {
+    _pendingTimers.add(Timer(Duration(seconds: 10), () {
       // Drain events so we parse and cache gateway events.
       // Don't drain immediately so users can install their own event handlers and receive buffered events.
       events.drain().ignore();
@@ -130,9 +133,9 @@ class Gateway extends GatewayManager with EventParser {
       startTimer = Timer(identifyDelay * (shard.id ~/ maxConcurrency), () {
         logger.fine('Starting shard ${shard.id}');
         shard.add(StartShard());
-        _startOrIdentifyTimers.remove(startTimer);
+        _pendingTimers.remove(startTimer);
       });
-      _startOrIdentifyTimers.add(startTimer);
+      _pendingTimers.add(startTimer);
 
       void handleError(Object error, StackTrace stackTrace) {
         if (!_doneCompleter.isCompleted) {
@@ -168,9 +171,9 @@ class Gateway extends GatewayManager with EventParser {
                   // This code is roughly equivalent to `await Future.delayed(identifyDelay)`
                   final delayCompleter = Completer<void>();
                   final delayTimer = Timer(identifyDelay, delayCompleter.complete);
-                  _startOrIdentifyTimers.add(delayTimer);
+                  _pendingTimers.add(delayTimer);
                   await delayCompleter.future;
-                  _startOrIdentifyTimers.remove(delayTimer);
+                  _pendingTimers.remove(delayTimer);
                 });
               } else if (event case EventReceived(event: RawDispatchEvent(name: 'READY'))) {
                 if (!_connectedCompleter.isCompleted) {
@@ -254,7 +257,7 @@ class Gateway extends GatewayManager with EventParser {
       }
 
       // Make sure we don't start any shards after we have closed.
-      for (final timer in _startOrIdentifyTimers) {
+      for (final timer in _pendingTimers) {
         timer.cancel();
       }
 
@@ -360,6 +363,14 @@ class Gateway extends GatewayManager with EventParser {
       'GUILD_SOUNDBOARD_SOUND_UPDATE': parseSoundboardSoundUpdate,
       'GUILD_SOUNDBOARD_SOUND_DELETE': parseSoundboardSoundDelete,
       'GUILD_SOUNDBOARD_SOUNDS_UPDATE': parseSoundboardSoundsUpdate,
+      'RATE_LIMITED': parseRateLimitedEvent,
+      'VOICE_CHANNEL_STATUS_UPDATE': parseVoiceChannelStatusUpdateEvent,
+      'VOICE_CHANNEL_START_TIME_UPDATE': parseVoiceChannelStartTimeUpdate,
+      'CHANNEL_INFO': parseChannelInfoEvent,
+      'SOUNDBOARD_SOUNDS': parseSoundboardSoundsEvent,
+      'SUBSCRIPTION_CREATE': parseSubscriptionCreateEvent,
+      'SUBSCRIPTION_UPDATE': parseSubscriptionUpdateEvent,
+      'SUBSCRIPTION_DELETE': parseSubscriptionDeleteEvent,
     };
 
     return mapping[raw.name]?.call(raw.payload) ?? UnknownDispatchEvent(gateway: this, raw: raw);
@@ -1199,50 +1210,6 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
-  /// Stream all members in a guild that match [query] or [userIds].
-  ///
-  /// If neither is provided, all members in the guild are returned.
-  Stream<Member> listGuildMembers(
-    Snowflake guildId, {
-    String? query,
-    int? limit,
-    List<Snowflake>? userIds,
-    bool? includePresences,
-    String? nonce,
-  }) async* {
-    if (userIds == null) {
-      query ??= '';
-    }
-
-    limit ??= 0;
-    nonce ??= '${Snowflake.now().value.toRadixString(36)}${guildId.value.toRadixString(36)}';
-
-    final shard = shardFor(guildId);
-    shard.add(Send(opcode: Opcode.requestGuildMembers, data: {
-      'guild_id': guildId.toString(),
-      if (query != null) 'query': query,
-      'limit': limit,
-      if (includePresences != null) 'presences': includePresences,
-      if (userIds != null) 'user_ids': userIds.map((e) => e.toString()).toList(),
-      'nonce': nonce,
-    }));
-
-    int chunksReceived = 0;
-
-    await for (final event in events) {
-      if (event is! GuildMembersChunkEvent || event.nonce != nonce) {
-        continue;
-      }
-
-      yield* Stream.fromIterable(event.members);
-
-      chunksReceived++;
-      if (chunksReceived == event.chunkCount) {
-        break;
-      }
-    }
-  }
-
   SoundboardSoundCreateEvent parseSoundboardSoundCreate(Map<String, Object?> raw) {
     final guildId = maybeParse(raw['guild_id'], Snowflake.parse);
 
@@ -1289,6 +1256,170 @@ class Gateway extends GatewayManager with EventParser {
     );
   }
 
+  RateLimitedEvent parseRateLimitedEvent(Map<String, Object?> raw) {
+    final opcode = Opcode.values.firstWhere((opcode) => opcode.value == raw['opcode']);
+
+    final parseMeta = switch (opcode) {
+      Opcode.requestGuildMembers => parseRequestGuildMemberRateLimitedMetadata,
+      _ => parseUnknownRateLimitedMetadata,
+    };
+
+    return RateLimitedEvent(
+      gateway: this,
+      rateLimitedOpcode: opcode,
+      retryAfter: Duration(microseconds: ((raw['retry_after'] as double) * Duration.microsecondsPerSecond).round()),
+      meta: parseMeta(raw['meta'] as Map<String, Object?>),
+    );
+  }
+
+  UnknownRateLimitedMetadata parseUnknownRateLimitedMetadata(Map<String, Object?> raw) {
+    return UnknownRateLimitedMetadata(raw: raw);
+  }
+
+  RequestGuildMemberRateLimitedMetadata parseRequestGuildMemberRateLimitedMetadata(Map<String, Object?> raw) {
+    return RequestGuildMemberRateLimitedMetadata(
+      gateway: this,
+      guildId: Snowflake.parse(raw['guild_id']!),
+      nonce: raw['nonce'] as String?,
+    );
+  }
+
+  VoiceChannelStatusUpdateEvent parseVoiceChannelStatusUpdateEvent(Map<String, Object?> raw) {
+    return VoiceChannelStatusUpdateEvent(
+      gateway: this,
+      channelId: Snowflake.parse(raw['id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      status: raw['status'] as String?,
+    );
+  }
+
+  VoiceChannelStartTimeUpdateEvent parseVoiceChannelStartTimeUpdate(Map<String, Object?> raw) {
+    return VoiceChannelStartTimeUpdateEvent(
+      gateway: this,
+      channelId: Snowflake.parse(raw['id']!),
+      guildId: Snowflake.parse(raw['guild_id']!),
+      startTime: maybeParse(
+        raw['voice_start_time'],
+        (int timestamp) => DateTime.fromMillisecondsSinceEpoch(timestamp * Duration.millisecondsPerSecond, isUtc: true),
+      ),
+    );
+  }
+
+  ChannelInfoEvent parseChannelInfoEvent(Map<String, Object?> raw) {
+    return ChannelInfoEvent(
+      gateway: this,
+      guildId: Snowflake.parse(raw['guild_id']!),
+      channels: parseMany(raw['channels'] as List, parseChannelInfo),
+    );
+  }
+
+  ChannelInfo parseChannelInfo(Map<String, Object?> raw) {
+    return ChannelInfo(
+      id: Snowflake.parse(raw['id']!),
+      manager: client.channels,
+      status: raw['status'] as String?,
+      voiceStartTime: maybeParse(
+        raw['voice_start_time'],
+        (int timestamp) => DateTime.fromMillisecondsSinceEpoch(timestamp * Duration.millisecondsPerSecond, isUtc: true),
+      ),
+    );
+  }
+
+  SoundboardSoundsEvent parseSoundboardSoundsEvent(Map<String, Object?> raw) {
+    final guildId = Snowflake.parse(raw['guild_id']!);
+
+    return SoundboardSoundsEvent(
+      gateway: this,
+      guildId: guildId,
+      sounds: parseMany(raw['soundboard_sounds'] as List, client.guilds[guildId].soundboard.parse),
+    );
+  }
+
+  SubscriptionCreateEvent parseSubscriptionCreateEvent(Map<String, Object?> raw) {
+    final skuId = Snowflake.parse((raw['sku_ids'] as List).first);
+
+    return SubscriptionCreateEvent(
+      gateway: this,
+      subscription: client.application.skus[skuId].subscriptions.parse(raw),
+    );
+  }
+
+  SubscriptionUpdateEvent parseSubscriptionUpdateEvent(Map<String, Object?> raw) {
+    final id = Snowflake.parse(raw['id']!);
+    final skuId = Snowflake.parse((raw['sku_ids'] as List).first);
+
+    return SubscriptionUpdateEvent(
+      gateway: this,
+      oldSubscription: client.application.skus[skuId].subscriptions.cache[id],
+      subscription: client.application.skus[skuId].subscriptions.parse(raw),
+    );
+  }
+
+  SubscriptionDeleteEvent parseSubscriptionDeleteEvent(Map<String, Object?> raw) {
+    final skuId = Snowflake.parse((raw['sku_ids'] as List).first);
+
+    return SubscriptionDeleteEvent(
+      gateway: this,
+      subscription: client.application.skus[skuId].subscriptions.parse(raw),
+    );
+  }
+
+  /// Stream all members in a guild that match [query] or [userIds].
+  ///
+  /// If neither is provided, all members in the guild are returned.
+  Stream<Member> listGuildMembers(
+    Snowflake guildId, {
+    String? query,
+    int? limit,
+    List<Snowflake>? userIds,
+    bool? includePresences,
+    String? nonce,
+  }) async* {
+    if (userIds == null) {
+      query ??= '';
+    }
+
+    limit ??= 0;
+    nonce ??= '${Snowflake.now().value.toRadixString(36)}${guildId.value.toRadixString(36)}';
+
+    final shard = shardFor(guildId);
+    shard.add(Send(opcode: Opcode.requestGuildMembers, data: {
+      'guild_id': guildId.toString(),
+      if (query != null) 'query': query,
+      'limit': limit,
+      if (includePresences != null) 'presences': includePresences,
+      if (userIds != null) 'user_ids': userIds.map((e) => e.toString()).toList(),
+      'nonce': nonce,
+    }));
+
+    int chunksReceived = 0;
+
+    await for (final event in events) {
+      if (event case RateLimitedEvent(:final retryAfter, meta: RequestGuildMemberRateLimitedMetadata(nonce: final rateLimitedNonce))
+          when rateLimitedNonce == nonce) {
+        final completer = Completer<void>();
+        final timer = Timer(retryAfter, completer.complete);
+        _pendingTimers.add(timer);
+        await completer.future;
+        _pendingTimers.remove(timer);
+
+        yield* listGuildMembers(guildId, query: query, limit: limit, userIds: userIds, includePresences: includePresences, nonce: nonce);
+        return;
+      }
+
+      if (event is! GuildMembersChunkEvent || event.nonce != nonce) {
+        continue;
+      }
+
+      yield* Stream.fromIterable(event.members);
+
+      chunksReceived++;
+      if (chunksReceived == event.chunkCount) {
+        break;
+      }
+    }
+  }
+
   /// Update the client's voice state in the guild with ID [guildId].
   void updateVoiceState(Snowflake guildId, GatewayVoiceStateBuilder builder) => shardFor(guildId).updateVoiceState(guildId, builder);
 
@@ -1297,5 +1428,46 @@ class Gateway extends GatewayManager with EventParser {
     for (final shard in shards) {
       shard.add(Send(opcode: Opcode.presenceUpdate, data: builder.build()));
     }
+  }
+
+  /// Request ephemeral channel information for the provided guild.
+  Future<ChannelInfoEvent> requestChannelInfo(Snowflake guildId, {List<String> fields = const ['status', 'voice_start_time']}) async {
+    shardFor(guildId).add(Send(opcode: Opcode.requestChannelInfo, data: {
+      'guild_id': guildId,
+      'fields': fields,
+    }));
+
+    return events.whereType<ChannelInfoEvent>().firstWhere((e) => e.guildId == guildId);
+  }
+
+  /// Request soundboard sounds in the specified guilds.
+  Stream<SoundboardSoundsEvent> requestSoundboardSounds(List<Snowflake> guildIds) {
+    final requestsByShard = <Shard, List<String>>{};
+
+    for (final id in guildIds) {
+      (requestsByShard[shardFor(id)] ??= []).add(id.toString());
+    }
+
+    for (final MapEntry(:key, :value) in requestsByShard.entries) {
+      key.add(Send(opcode: Opcode.requestSoundboardSounds, data: {
+        'guild_ids': value,
+      }));
+    }
+
+    final remaining = guildIds.toSet();
+
+    final controller = StreamController<SoundboardSoundsEvent>();
+
+    events
+        .whereType<SoundboardSoundsEvent>()
+        .where((e) => remaining.contains(e.guildId))
+        .map((e) {
+          remaining.remove(e);
+          return e;
+        })
+        .takeWhile((_) => remaining.isNotEmpty)
+        .pipe(controller);
+
+    return controller.stream;
   }
 }

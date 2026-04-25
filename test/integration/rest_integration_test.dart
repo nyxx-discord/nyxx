@@ -404,6 +404,7 @@ void main() {
       final guildId = Snowflake.parse(testGuild!);
 
       await expectLater(client.guilds[guildId].roles.list(), completes);
+      await expectLater(client.guilds[guildId].roles.fetchMemberCounts(), completes);
     });
 
     test('gateway', () async {
@@ -518,6 +519,34 @@ void main() {
 
       await expectLater(sound.update(SoundboardSoundUpdateBuilder(name: 'New name')), completes);
       await expectLater(sound.delete(), completes);
+    });
+
+    test('invite', skip: testTextChannel != null ? false : 'No test channel provided', () async {
+      final channelId = Snowflake.parse(testTextChannel!);
+
+      late Invite invite;
+      await expectLater(
+        () async => invite = await client.channels.createInvite(
+          channelId,
+          InviteBuilder(
+            targetUserIds: [client.user.id],
+            maxAge: Duration(minutes: 5),
+          ),
+        ),
+        completes,
+      );
+
+      late InviteTargetsJobStatus jobStatus;
+
+      await expectLater(() async => jobStatus = await invite.fetchTargetUsersJobStatus(), completes);
+
+      while (jobStatus.status == InviteTargetsJobStatusType.processing) {
+        await Future.delayed(Duration(seconds: 5));
+        jobStatus = await invite.fetchTargetUsersJobStatus();
+      }
+
+      await expectLater(invite.fetchTargetUsers(), completes);
+      await expectLater(invite.updateTargetUsers([client.user.id]), completes);
     });
   });
 }

@@ -152,4 +152,18 @@ class RoleManager extends Manager<Role> {
     roles.forEach(client.updateCacheWith);
     return roles;
   }
+
+  /// Fetch a map of roles to the number of members with that role.
+  Future<Map<PartialRole, int>> fetchMemberCounts() async {
+    final route = HttpRoute()
+      ..guilds(id: guildId.toString())
+      ..roles()
+      ..memberCounts();
+
+    final request = BasicRequest(route, method: 'GET');
+
+    final response = await client.httpHandler.executeSafe(request);
+
+    return (response.jsonBody as Map).cast<String, int>().map((id, count) => MapEntry(this[Snowflake.parse(id)], count));
+  }
 }

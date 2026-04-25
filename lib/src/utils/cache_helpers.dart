@@ -20,9 +20,11 @@ import 'package:nyxx/src/models/gateway/events/interaction.dart';
 import 'package:nyxx/src/models/gateway/events/invite.dart';
 import 'package:nyxx/src/models/gateway/events/message.dart';
 import 'package:nyxx/src/models/gateway/events/presence.dart';
+import 'package:nyxx/src/models/gateway/events/rate_limit.dart';
 import 'package:nyxx/src/models/gateway/events/ready.dart';
 import 'package:nyxx/src/models/gateway/events/soundboard.dart';
 import 'package:nyxx/src/models/gateway/events/stage_instance.dart';
+import 'package:nyxx/src/models/gateway/events/subscription.dart';
 import 'package:nyxx/src/models/gateway/events/voice.dart';
 import 'package:nyxx/src/models/gateway/events/webhook.dart';
 import 'package:nyxx/src/models/guild/audit_log.dart';
@@ -32,6 +34,7 @@ import 'package:nyxx/src/models/guild/guild.dart';
 import 'package:nyxx/src/models/guild/guild_preview.dart';
 import 'package:nyxx/src/models/guild/integration.dart';
 import 'package:nyxx/src/models/guild/member.dart';
+import 'package:nyxx/src/models/guild/message_search.dart';
 import 'package:nyxx/src/models/guild/scheduled_event.dart';
 import 'package:nyxx/src/models/guild/template.dart';
 import 'package:nyxx/src/models/interaction.dart';
@@ -178,6 +181,11 @@ extension CacheUpdates on NyxxRest {
         InteractionCallbackResponse(:final resource) => updateCacheWith(resource),
         InteractionResource(:final message?) => updateCacheWith(message),
         MessagePin(:final message) => updateCacheWith(message),
+        MessageSearchResult(:final messages, :final threads, :final threadMembers) => () {
+            messages.forEach(updateCacheWith);
+            threads.forEach(updateCacheWith);
+            threadMembers.forEach(updateCacheWith);
+          }(),
 
         // Events
 
@@ -304,6 +312,14 @@ extension CacheUpdates on NyxxRest {
         SoundboardSoundsUpdateEvent(:final sounds) => sounds.forEach(updateCacheWith),
         MessagePollVoteAddEvent() => null,
         MessagePollVoteRemoveEvent() => null,
+        RateLimitedEvent() => null,
+        VoiceChannelStatusUpdateEvent() => null,
+        VoiceChannelStartTimeUpdateEvent() => null,
+        SoundboardSoundsEvent(:final sounds) => sounds.forEach(updateCacheWith),
+        ChannelInfoEvent() => null,
+        SubscriptionCreateEvent(:final subscription) => updateCacheWith(subscription),
+        SubscriptionUpdateEvent(:final subscription) => updateCacheWith(subscription),
+        SubscriptionDeleteEvent(:final subscription) => subscription.manager.cache.remove(subscription.id),
 
         // null and unhandled entity types
         WebhookAuthor() => null,
