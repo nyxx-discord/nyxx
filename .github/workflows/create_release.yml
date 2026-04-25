@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch_tags: true
 
       - name: Extract version from pubspec.yaml
         id: extract-version
