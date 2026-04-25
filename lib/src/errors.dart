@@ -34,6 +34,7 @@ class MemberAlreadyExistsException extends NyxxException {
 }
 
 /// An exception thrown when a role is not found in a guild.
+@Deprecated('RoleManager.fetch now throws a HttpResponseError')
 class RoleNotFoundException extends NyxxException {
   /// The ID of the guild.
   final Snowflake guildId;
