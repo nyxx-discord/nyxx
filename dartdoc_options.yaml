@@ -5,32 +5,42 @@ dartdoc:
 
   categories:
     core:
-      markdown: docs/core.md
+      markdown: doc/core.md
       displayName: Core
     http:
-      markdown: docs/http.md
+      markdown: doc/http.md
       displayName: HTTP
     gateway:
-      markdown: docs/gateway.md
+      markdown: doc/gateway.md
       displayName: Gateway
     managers:
-      markdown: docs/managers.md
+      markdown: doc/managers.md
       displayName: Managers
     entities:
-      markdown: docs/entities.md
+      markdown: doc/entities.md
       displayName: Entities
     models:
-      markdown: docs/models.md
+      markdown: doc/models.md
       displayName: Models
     events:
-      markdown: docs/events.md
+      markdown: doc/events.md
       displayName: Events
     builders:
-      markdown: docs/builders.md
+      markdown: doc/builders.md
       displayName: Builders
     plugins:
-      markdown: docs/plugins.md
+      markdown: doc/plugins.md
       displayName: Plugins
 
   categoryOrder:
-    [core, http, gateway, managers, plugins, entities, events, models, builders]
+    [
+      core,
+      http,
+      gateway,
+      managers,
+      plugins,
+      entities,
+      events,
+      models,
+      builders,
+    ]
