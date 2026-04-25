@@ -31,7 +31,7 @@ jobs:
         env:
           VERSION: ${{ steps.extract-version.outputs.version }}
         run: |
-          if git rev-parse "v$VERSION" >/dev/null 2>&1 then
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
             echo "exists=1" >> "$GITHUB_OUTPUT"
           else
             echo "exists=0" >> "$GITHUB_OUTPUT"
