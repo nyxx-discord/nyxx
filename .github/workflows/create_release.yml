@@ -1,0 +1,63 @@
+name: Create release
+
+on:
+  workflow_run:
+    workflows: [ Test ]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+      version-exists: ${{ steps.version-check.outputs.exists }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Extract version from pubspec.yaml
+        id: extract-version
+        run: |
+          version=$(grep -Po "(?<=version: ).+" pubspec.yaml)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version is already published
+        env:
+          VERSION: ${{ steps.extract-version.outputs.version }}
+        run: |
+          if git rev-parse "v$VERSION" >/dev/null 2>&1 then
+            echo "exists=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=0" >> "$GITHUB_OUTPUT"
+          fi
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs:
+      - version-check
+    if: ${{ needs.version-check.outputs.version-exists == '0' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ needs.version-check.outputs.version }}
+          tag_name: v${{ needs.version-check.outputs.version }}
+          generate_release_notes: true
+
+      - name: Upload to pub.dev
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: publish.yml
+          ref: v${{ needs.version-check.outputs.version }}
+          wait-for-completion: true
+          sync-status: true
