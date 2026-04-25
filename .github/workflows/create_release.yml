@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          fetch_tags: true
+          fetch-tags: true
 
       - name: Extract version from pubspec.yaml
         id: extract-version
