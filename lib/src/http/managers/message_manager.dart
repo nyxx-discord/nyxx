@@ -136,6 +136,9 @@ class MessageManager extends Manager<Message> {
       application: maybeParse(raw['application'], client.applications.parse),
       clipCreatedAt: maybeParse(raw['clip_created_at'], DateTime.parse),
       clipParticipants: maybeParseMany(raw['clip_participants'], client.users.parse),
+      title: raw['title'] as String?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
     );
   }
 

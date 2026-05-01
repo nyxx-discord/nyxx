@@ -31,6 +31,9 @@ class Attachment with ToStringHelper implements CdnAsset {
   /// The name of the attached file.
   final String fileName;
 
+  /// The title of the attached file.
+  final String? title;
+
   /// A description of the attached file.
   final String? description;
 
@@ -52,6 +55,12 @@ class Attachment with ToStringHelper implements CdnAsset {
 
   /// If the file is an image, the width of the image in pixels.
   final int? width;
+
+  /// A [Thumbhash](https://evanw.github.io/thumbhash/) placeholder for this file.
+  final String? placeholder;
+
+  /// The version of the placeholder.
+  final int? placeholderVersion;
 
   /// Whether this attachment is ephemeral.
   final bool isEphemeral;
@@ -109,6 +118,9 @@ class Attachment with ToStringHelper implements CdnAsset {
     required this.application,
     required this.clipCreatedAt,
     required this.clipParticipants,
+    required this.title,
+    required this.placeholder,
+    required this.placeholderVersion,
   });
 
   @override
