@@ -339,6 +339,11 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
+      contentType: raw['content_type'] as String?,
+      flags: maybeParse(raw['flags'], UnfurledMediaItemFlags.new),
+      attachmentId: maybeParse(raw['attachment_id'], Snowflake.parse),
     );
   }
 
