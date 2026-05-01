@@ -173,6 +173,10 @@ class MessageManager extends Manager<Message> {
       height: raw['height'] as int?,
       width: raw['width'] as int?,
       flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
+      contentType: raw['content_type'] as String?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
+      description: raw['description'] as String?,
     );
   }
 
@@ -192,6 +196,11 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      contentType: raw['content_type'] as String?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
+      description: raw['description'] as String?,
+      flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
     );
   }
 

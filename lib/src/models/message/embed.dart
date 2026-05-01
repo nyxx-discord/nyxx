@@ -135,6 +135,18 @@ class EmbedImage with ToStringHelper {
   /// The width of the image in pixels.
   final int? width;
 
+  /// The content type (MIME type) of this image.
+  final String? contentType;
+
+  /// A [Thumbhash](https://evanw.github.io/thumbhash/) placeholder for this image.
+  final String? placeholder;
+
+  /// The version of the placeholder.
+  final int? placeholderVersion;
+
+  /// A description of this image.
+  final String? description;
+
   /// The flags this media holds.
   final EmbedMediaFlags? flags;
 
@@ -146,6 +158,10 @@ class EmbedImage with ToStringHelper {
     required this.height,
     required this.width,
     required this.flags,
+    required this.contentType,
+    required this.placeholder,
+    required this.placeholderVersion,
+    required this.description,
   });
 }
 
@@ -205,6 +221,21 @@ class EmbedVideo with ToStringHelper {
   /// The width of the video in pixels.
   final int? width;
 
+  /// The content type (MIME type) of this video.
+  final String? contentType;
+
+  /// A [Thumbhash](https://evanw.github.io/thumbhash/) placeholder for this video.
+  final String? placeholder;
+
+  /// The version of the placeholder.
+  final int? placeholderVersion;
+
+  /// A description of the video.
+  final String? description;
+
+  /// Flags applied to this video.
+  final EmbedMediaFlags? flags;
+
   /// {@macro embed_video}
   /// @nodoc
   EmbedVideo({
@@ -212,6 +243,11 @@ class EmbedVideo with ToStringHelper {
     required this.proxiedUrl,
     required this.height,
     required this.width,
+    required this.contentType,
+    required this.placeholder,
+    required this.placeholderVersion,
+    required this.description,
+    required this.flags,
   });
 }
 
@@ -301,14 +337,8 @@ class EmbedField with ToStringHelper {
 /// External references:
 ///  * Discord API Reference: https://discord.com/developers/docs/resources/message#embed-object-embed-flags
 class EmbedFlags extends Flags<EmbedFlags> {
-  /// This embed was flagged as [sensitive content](https://support.discord.com/hc/en-us/articles/18210995019671).
-  static const containsSensitiveMedia = Flag<EmbedFlags>.fromOffset(4);
-
   /// This embed is a reply to an activity card and is no longer displayed.
   static const isContentInventoryEntry = Flag<EmbedFlags>.fromOffset(5);
-
-  /// Whether this set of flags has the [containsSentitiveMedia] flag set.
-  bool get hasContainsSensitiveMedia => has(containsSensitiveMedia);
 
   /// Whether this set of flags has the [isContentInventoryEntry] flag set.
   bool get isAContentInventoryEntry => has(isContentInventoryEntry);
