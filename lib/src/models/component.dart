@@ -16,6 +16,7 @@ import 'package:nyxx/src/models/role.dart';
 import 'package:nyxx/src/models/snowflake.dart';
 import 'package:nyxx/src/models/user/user.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// The type of a [Component].
@@ -73,6 +74,22 @@ class UnfurledMediaItem with ToStringHelper implements CdnAsset {
   /// The width of this media item if it is an image.
   final int? width;
 
+  /// A [Thumbhash](https://evanw.github.io/thumbhash/) placeholder for this media item.
+  final String? placeholder;
+
+  /// The version of the placeholder.
+  final int? placeholderVersion;
+
+  /// The media type (MIME type) of this media item.
+  final String? contentType;
+
+  /// Flags for this media item.
+  // TODO(abitofevrything): It's unclear whether this field is _always_ sent in responses or not.
+  final UnfurledMediaItemFlags? flags;
+
+  /// The id of the uploaded attachment.
+  final Snowflake? attachmentId;
+
   /// @nodoc
   UnfurledMediaItem({
     required this.manager,
@@ -80,6 +97,11 @@ class UnfurledMediaItem with ToStringHelper implements CdnAsset {
     required this.proxiedUrl,
     required this.height,
     required this.width,
+    required this.placeholder,
+    required this.placeholderVersion,
+    required this.contentType,
+    required this.flags,
+    required this.attachmentId,
   });
 
   @override
@@ -113,6 +135,18 @@ class UnfurledMediaItem with ToStringHelper implements CdnAsset {
     final response = await client.httpHandler.httpClient.send(Request('GET', url));
     yield* response.stream;
   }
+}
+
+/// Flags that can be set on [UnfurledMediaItem]s.
+class UnfurledMediaItemFlags extends Flags<UnfurledMediaItemFlags> {
+  /// Whether the [UnfurledMediaItem] is animated
+  static const isAnimated = Flag<UnfurledMediaItemFlags>.fromOffset(0);
+
+  /// @nodoc
+  const UnfurledMediaItemFlags(super.value);
+
+  /// Whether this set of flags has the [isAnimated] flag set.
+  bool get hasIsAnimated => has(isAnimated);
 }
 
 /// A component in a [Message].

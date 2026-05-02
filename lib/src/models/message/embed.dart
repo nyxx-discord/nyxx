@@ -1,5 +1,6 @@
 import 'package:nyxx/src/models/discord_color.dart';
 import 'package:nyxx/src/utils/enum_like.dart';
+import 'package:nyxx/src/utils/flags.dart';
 import 'package:nyxx/src/utils/to_string_helper/to_string_helper.dart';
 
 /// {@template embed}
@@ -50,6 +51,9 @@ class Embed {
   /// This embed's fields information.
   final List<EmbedField>? fields;
 
+  /// Any flags applied to this embed.
+  final EmbedFlags? flags;
+
   /// {@macro embed}
   /// @nodoc
   Embed({
@@ -66,6 +70,7 @@ class Embed {
     required this.provider,
     required this.author,
     required this.fields,
+    required this.flags,
   });
 }
 
@@ -130,6 +135,21 @@ class EmbedImage with ToStringHelper {
   /// The width of the image in pixels.
   final int? width;
 
+  /// The content type (MIME type) of this image.
+  final String? contentType;
+
+  /// A [Thumbhash](https://evanw.github.io/thumbhash/) placeholder for this image.
+  final String? placeholder;
+
+  /// The version of the placeholder.
+  final int? placeholderVersion;
+
+  /// A description of this image.
+  final String? description;
+
+  /// The flags this media holds.
+  final EmbedMediaFlags? flags;
+
   /// {@macro embed_image}
   /// @nodoc
   EmbedImage({
@@ -137,6 +157,11 @@ class EmbedImage with ToStringHelper {
     required this.proxiedUrl,
     required this.height,
     required this.width,
+    required this.flags,
+    required this.contentType,
+    required this.placeholder,
+    required this.placeholderVersion,
+    required this.description,
   });
 }
 
@@ -161,6 +186,9 @@ class EmbedThumbnail with ToStringHelper {
   /// The width of this footer's image, in pixels.
   final int? width;
 
+  /// The flags this media holds.
+  final EmbedMediaFlags? flags;
+
   /// {@macro embed_thumbnail}
   /// @nodoc
   EmbedThumbnail({
@@ -168,6 +196,7 @@ class EmbedThumbnail with ToStringHelper {
     required this.proxiedUrl,
     required this.height,
     required this.width,
+    required this.flags,
   });
 }
 
@@ -192,6 +221,21 @@ class EmbedVideo with ToStringHelper {
   /// The width of the video in pixels.
   final int? width;
 
+  /// The content type (MIME type) of this video.
+  final String? contentType;
+
+  /// A [Thumbhash](https://evanw.github.io/thumbhash/) placeholder for this video.
+  final String? placeholder;
+
+  /// The version of the placeholder.
+  final int? placeholderVersion;
+
+  /// A description of the video.
+  final String? description;
+
+  /// Flags applied to this video.
+  final EmbedMediaFlags? flags;
+
   /// {@macro embed_video}
   /// @nodoc
   EmbedVideo({
@@ -199,6 +243,11 @@ class EmbedVideo with ToStringHelper {
     required this.proxiedUrl,
     required this.height,
     required this.width,
+    required this.contentType,
+    required this.placeholder,
+    required this.placeholderVersion,
+    required this.description,
+    required this.flags,
   });
 }
 
@@ -281,4 +330,34 @@ class EmbedField with ToStringHelper {
     required this.value,
     required this.inline,
   });
+}
+
+/// Flags that can be applied to an [Embed].
+///
+/// External references:
+///  * Discord API Reference: https://discord.com/developers/docs/resources/message#embed-object-embed-flags
+class EmbedFlags extends Flags<EmbedFlags> {
+  /// This embed is a reply to an activity card and is no longer displayed.
+  static const isContentInventoryEntry = Flag<EmbedFlags>.fromOffset(5);
+
+  /// Whether this set of flags has the [isContentInventoryEntry] flag set.
+  bool get isAContentInventoryEntry => has(isContentInventoryEntry);
+
+  /// Creates a new [EmbedFlags].
+  const EmbedFlags(super.value);
+}
+
+/// Flags that can be applied to an [EmbedThumbnail] or an [EmbedImage].
+///
+/// External references:
+///  * Discord API Reference: https://discord.com/developers/docs/resources/message#embed-object-embed-media-flags
+class EmbedMediaFlags extends Flags<EmbedMediaFlags> {
+  /// This image is animated.
+  static const isAnimated = Flag<EmbedMediaFlags>.fromOffset(5);
+
+  /// Whether this set of flags has the [isAnimated] flag set.
+  bool get hasIsAnimated => has(isAnimated);
+
+  /// Creates a new [EmbedMediaFlags].
+  const EmbedMediaFlags(super.value);
 }

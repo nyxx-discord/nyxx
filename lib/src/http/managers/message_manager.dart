@@ -133,6 +133,12 @@ class MessageManager extends Manager<Message> {
       duration: maybeParse(raw['duration_secs'], (double value) => Duration(microseconds: (value * Duration.microsecondsPerSecond).floor())),
       waveform: maybeParse(raw['waveform'], base64.decode),
       flags: maybeParse(raw['flags'], AttachmentFlags.new),
+      application: maybeParse(raw['application'], client.applications.parse),
+      clipCreatedAt: maybeParse(raw['clip_created_at'], DateTime.parse),
+      clipParticipants: maybeParseMany(raw['clip_participants'], client.users.parse),
+      title: raw['title'] as String?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
     );
   }
 
@@ -151,6 +157,7 @@ class MessageManager extends Manager<Message> {
       provider: maybeParse(raw['provider'], parseEmbedProvider),
       author: maybeParse(raw['author'], parseEmbedAuthor),
       fields: maybeParseMany(raw['fields'], parseEmbedField),
+      flags: maybeParse(raw['flags'], EmbedFlags.new),
     );
   }
 
@@ -168,6 +175,11 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
+      contentType: raw['content_type'] as String?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
+      description: raw['description'] as String?,
     );
   }
 
@@ -177,6 +189,7 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
     );
   }
 
@@ -186,6 +199,11 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      contentType: raw['content_type'] as String?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
+      description: raw['description'] as String?,
+      flags: maybeParse(raw['flags'], EmbedMediaFlags.new),
     );
   }
 
@@ -333,6 +351,11 @@ class MessageManager extends Manager<Message> {
       proxiedUrl: maybeParse(raw['proxy_url'], Uri.parse),
       height: raw['height'] as int?,
       width: raw['width'] as int?,
+      placeholder: raw['placeholder'] as String?,
+      placeholderVersion: raw['placeholder_version'] as int?,
+      contentType: raw['content_type'] as String?,
+      flags: maybeParse(raw['flags'], UnfurledMediaItemFlags.new),
+      attachmentId: maybeParse(raw['attachment_id'], Snowflake.parse),
     );
   }
 
