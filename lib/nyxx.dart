@@ -193,7 +193,8 @@ export 'src/models/message/activity.dart' show MessageActivity, MessageActivityT
 export 'src/models/message/attachment.dart' show Attachment, AttachmentFlags;
 export 'src/models/message/author.dart' show MessageAuthor;
 export 'src/models/message/channel_mention.dart' show ChannelMention;
-export 'src/models/message/embed.dart' show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType;
+export 'src/models/message/embed.dart'
+    show Embed, EmbedAuthor, EmbedField, EmbedFooter, EmbedImage, EmbedProvider, EmbedThumbnail, EmbedVideo, EmbedType, EmbedFlags, EmbedMediaFlags;
 export 'src/models/soundboard/soundboard.dart' show PartialSoundboardSound, SoundboardSound;
 
 export 'src/models/message/message.dart'
@@ -250,7 +251,8 @@ export 'src/models/component.dart'
         SubmittedRadioGroupComponent,
         SubmittedTextDisplayComponent,
         MessageComponent,
-        MessageComponentType;
+        MessageComponentType,
+        UnfurledMediaItemFlags;
 
 export 'src/models/invite/invite.dart' show Invite, TargetType, InviteType, GuildInviteFlags;
 export 'src/models/invite/invite_metadata.dart' show InviteWithMetadata;
