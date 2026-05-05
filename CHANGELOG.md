@@ -1,3 +1,30 @@
+## 6.9.0
+__05.02.2026__
+- feat: Implement flags for attachments and media items and add new fields.
+- feat: Deprecate `RoleNotFoundException`.
+- feat: Deprecate `GuildManager.create`.
+- feat: Add support for `RATE_LIMITED` Gateway events.
+- feat: Add missing permissions.
+- feat: Add new fields to `MemberManager.updateCurrentMember`.
+- feat: Add `RoleManager.fetchMemberCounts`.
+- feat: Add support for invite target filtering.
+- feat: Add `GuildManager.searchMessages`.
+- feat: Add support for voice channel statuses and start times.
+- feat: Add support for `SOUNDBOARD_SOUND` Gateway events.
+- feat: Add support for subscription-related Gateway events.
+- feat: Add new audit log event types.
+- feat: Add support for ZStd compression on Gateway connections.
+- feat: Change default Gateway settings from ZLib-compressed JSON to
+  ZStd-compressed ETF.
+- docs: Add topics to documentation.
+- feat: Improve error handling and client lifecycle:
+  - Expose `done` futures on `Nyxx`, `HttpHandler`, `Gateway` and `Shard`
+    instances to handle their shutdown and any associated errors. `close()`
+    methods will also throw an error if shutdown due to an error.
+  - `Nyxx.connectGateway` will only return once a shard is successfully
+    connected.
+  - Also improved recovery from some connection-related errors.
+
 ## 6.8.1
 __01.02.2026__
 - bug: fix `redirect_uris` containing null values. ([`#773`](https://github.com/nyxx-discord/nyxx/pull/773)) - ([`c24a636`](https://github.com/nyxx-discord/nyxx/pull/773/commits/c24a636124e515272c1e5e538c626e66ca4d3837))
