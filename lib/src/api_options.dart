@@ -11,7 +11,7 @@ import 'package:oauth2/oauth2.dart';
 /// {@category core}
 abstract class ApiOptions {
   /// The version of nyxx used in [defaultUserAgent].
-  static const nyxxVersion = '6.8.1';
+  static const nyxxVersion = '6.9.0';
 
   /// The URL to the nyxx repository used in [defaultUserAgent].
   static const nyxxRepositoryUrl = 'https://github.com/nyxx-discord/nyxx';
