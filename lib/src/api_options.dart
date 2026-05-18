@@ -1,5 +1,4 @@
-import 'dart:ffi';
-import 'dart:io';
+import 'ffi_stub.dart' if (dart.library.ffi) 'ffi_real.dart';
 
 import 'package:nyxx/src/builders/presence.dart';
 import 'package:nyxx/src/intents.dart';
@@ -75,12 +74,6 @@ class OAuth2ApiOptions extends ApiOptions implements RestApiOptions {
   /// Create a new [OAuth2ApiOptions].
   OAuth2ApiOptions({required this.credentials, super.userAgent});
 }
-
-final zstdLibraryName = Platform.isWindows
-    ? 'zstd.dll'
-    : Platform.isMacOS
-        ? 'libzstd.dylib'
-        : 'libzstd.so';
 
 /// Options for connecting to the Discord API for making HTTP requests and connecting to the Gateway
 /// with a bot token.
