@@ -251,7 +251,7 @@ __01.11.2023__
 __16.10.2023__
 
 - rewrite: The entire library has been rewritten from the ground up. No pre-`6.0.0` code is compatible.  - 
-  To explore the rewrite, check out [the API documentation](https://pub.dev/documentation/nyxx) or the [documentation website](https://nyxx.l7ssha.xyz).
+  To explore the rewrite, check out [the API documentation](https://pub.dev/documentation/nyxx) or the [documentation website](https://nyxx.org).
   For help migrating, use the [migration tool](https://github.com/abitofevrything/nyxx-migration-script) or join [our Discord server](https://discord.gg/nyxx) for additional help.
 
 #### Changes since 6.0.0-dev.3

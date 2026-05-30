@@ -6,7 +6,7 @@
 
 A complete, robust and efficient wrapper around Discord's API for bots & applications.
 
-To get started using nyxx, follow our [getting started guide](https://nyxx.l7ssha.xyz/docs/tutorials/writing_your_first_bot) to write your first bot.
+To get started using nyxx, follow our [getting started guide](https://nyxx.org/tutorials/writing_your_first_bot) to write your first bot.
 
 If you're already familiar with Discord's API, here's a quick example to get you started:
 ```dart
@@ -43,8 +43,8 @@ void main() async {
 
 The API documentation for the latest stable version can be found on [pub](https://pub.dev/documentation/nyxx).
 
-### [Docs and wiki](https://nyxx.l7ssha.xyz)
-Tutorials and wiki articles are hosted here, as well as API documentation for development versions from GitHub.
+### [Docs and wiki](https://nyxx.org)
+Tutorials and wiki articles are hosted here.
 
 ### [Official nyxx Discord server](https://discord.gg/nyxx)
 Our Discord server is where you can get help for any nyxx packages, as well as release announcements and discussions about the library.

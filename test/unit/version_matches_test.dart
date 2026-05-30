@@ -9,7 +9,7 @@ void main() {
 
     expect(pubspecFile.existsSync(), isTrue, reason: 'pubspec.yaml should exist');
 
-    final versionFromPubspec = RegExp(r'version: (.+)\n').firstMatch(pubspecFile.readAsStringSync())?.group(1);
+    final versionFromPubspec = RegExp(r'version: (.+?)(\+|\n)').firstMatch(pubspecFile.readAsStringSync())?.group(1);
 
     expect(versionFromPubspec, isNotNull, reason: 'version should be parsed from pubspec');
 
