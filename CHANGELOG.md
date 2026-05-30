@@ -1,3 +1,8 @@
+## 6.9.0+1
+__30.05.2026__
+
+- docs: Update references to documentation to point to https://nyxx.org
+
 ## 6.9.0
 __05.02.2026__
 - feat: Implement flags for attachments and media items and add new fields.

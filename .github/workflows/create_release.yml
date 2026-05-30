@@ -2,7 +2,7 @@ name: Create release
 
 on:
   workflow_run:
-    workflows: [ Test ]
+    workflows: [Test]
     types:
       - completed
     branches:
@@ -49,6 +49,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Install dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pubspec-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Dry run publish
+        run: dart pub publish --dry-run
 
       - name: Create release
         uses: softprops/action-gh-release@v3
