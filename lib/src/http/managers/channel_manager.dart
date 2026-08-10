@@ -332,7 +332,7 @@ class ChannelManager extends ReadOnlyManager<Channel> {
       lastThreadId: maybeParse(raw['last_message_id'], Snowflake.parse),
       lastPinTimestamp: maybeParse(raw['last_pin_timestamp'], DateTime.parse),
       flags: ChannelFlags(raw['flags'] as int),
-      availableTags: parseMany(raw['available_tags'] as List, parseForumTag),
+      availableTags: maybeParseMany(raw['available_tags'], parseForumTag) ?? [],
       defaultReaction: maybeParse(raw['default_reaction_emoji'], parseDefaultReaction),
       defaultSortOrder: maybeParse(raw['default_sort_order'], ForumSort.new),
       // Discord doesn't seem to include this field if the default 3 day expiration is used (3 days = 4320 minutes)
