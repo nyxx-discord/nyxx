@@ -15,13 +15,13 @@ import 'package:nyxx/nyxx.dart';
 void main() async {
   final client = await Nyxx.connectGateway('<TOKEN>', GatewayIntents.allUnprivileged);
 
-  final botUser = await client.users.fetchCurrentUser();
+  final botUser = await client.user.get();
 
   client.onMessageCreate.listen((event) async {
     if (event.mentions.contains(botUser)) {
       await event.message.channel.sendMessage(MessageBuilder(
         content: 'You mentioned me!',
-        referencedMessage: MessageReferenceBuilder.reply(messageId: event.message.id),
+        referencedMessage: .reply(messageId: event.message.id),
       ));
     }
   });
