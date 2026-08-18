@@ -57,6 +57,9 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
   @override
   final GuildManager manager;
 
+  /// This guild's name.
+  final String? name;
+
   /// A [MemberManager] for the members of this guild.
   MemberManager get members => MemberManager(manager.client.options.memberCacheConfig, manager.client, guildId: id);
 
@@ -98,7 +101,7 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 
   /// Create a new [PartialGuild].
   /// @nodoc
-  PartialGuild({required super.id, required this.manager});
+  PartialGuild({required super.id, required this.manager, this.name});
 
   @override
   Future<Guild> fetch({bool? withCounts}) => manager.fetch(id, withCounts: withCounts);
@@ -288,8 +291,6 @@ class PartialGuild extends WritableSnowflakeEntity<Guild> {
 /// {@category models}
 /// {@category entities}
 class UserGuild extends PartialGuild {
-  /// This guild's name.
-  final String name;
 
   /// The hash of this guild's icon.
   final String? iconHash;
@@ -323,7 +324,7 @@ class UserGuild extends PartialGuild {
   UserGuild({
     required super.id,
     required super.manager,
-    required this.name,
+    required super.name,
     required this.iconHash,
     required this.isOwnedByCurrentUser,
     required this.currentUserPermissions,
