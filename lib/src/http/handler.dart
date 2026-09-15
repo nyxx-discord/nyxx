@@ -249,6 +249,10 @@ class HttpHandler {
         _realLatencies.removeFirst();
       }
 
+      // We want to remove the in-flight request as soon as the response is received
+      // or the request encounters an error.
+      // The try-finally is intentionally shortcut by returning early.
+      // ignore: unawaited_return_in_try_block
       return _handle(request, response);
     } finally {
       bucket?.removeInflightRequest(request);
@@ -316,6 +320,9 @@ class HttpHandler {
         _pendingRateLimits.add(completer);
         try {
           await completer.future;
+          // We want to clean up our rate limit timers as soon as the completer ends.
+          // Shortcut the try-finally block by returning without await.
+          // ignore: unawaited_return_in_try_block
           return _execute(request);
         } finally {
           _pendingRateLimits.remove(completer);
