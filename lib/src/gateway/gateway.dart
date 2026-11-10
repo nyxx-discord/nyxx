@@ -291,6 +291,12 @@ class Gateway extends GatewayManager with EventParser {
 
   /// Parse a [DispatchEvent] from [raw].
   DispatchEvent parseDispatchEvent(RawDispatchEvent raw) {
+    // Events about channels of unknown types can't be parsed; surface them as unknown events instead of throwing.
+    const channelEvents = {'CHANNEL_CREATE', 'CHANNEL_UPDATE', 'CHANNEL_DELETE', 'THREAD_CREATE', 'THREAD_UPDATE', 'THREAD_DELETE'};
+    if (channelEvents.contains(raw.name) && !client.channels.isKnownChannelType(raw.payload)) {
+      return UnknownDispatchEvent(gateway: this, raw: raw);
+    }
+
     final mapping = {
       'READY': parseReady,
       'RESUMED': parseResumed,
@@ -536,10 +542,7 @@ class Gateway extends GatewayManager with EventParser {
       gateway: this,
       guildId: guildId,
       channelIds: maybeParseMany(raw['channel_ids'], Snowflake.parse),
-      threads: parseMany(
-        raw['threads'] as List<Object?>,
-        (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guildId) as Thread,
-      ),
+      threads: client.channels.parseKnown<Thread>(raw['threads'] as List<Object?>, guildId: guildId),
       members: parseMany(raw['members'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parseThreadMember(raw, guildId: guildId)),
     );
   }
@@ -598,8 +601,8 @@ class Gateway extends GatewayManager with EventParser {
         (Map<String, Object?> raw) => client.voice.parseVoiceState(raw, guildId: guild.id),
       ),
       members: parseMany(raw['members'] as List<Object?>, client.guilds[guild.id].members.parse),
-      channels: parseMany(raw['channels'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as GuildChannel),
-      threads: parseMany(raw['threads'] as List<Object?>, (Map<String, Object?> raw) => client.channels.parse(raw, guildId: guild.id) as Thread),
+      channels: client.channels.parseKnown<GuildChannel>(raw['channels'] as List<Object?>, guildId: guild.id),
+      threads: client.channels.parseKnown<Thread>(raw['threads'] as List<Object?>, guildId: guild.id),
       presences: parseMany(raw['presences'] as List<Object?>, parsePresenceUpdate),
       stageInstances: parseMany(raw['stage_instances'] as List<Object?>, client.channels.parseStageInstance),
       scheduledEvents: parseMany(raw['guild_scheduled_events'] as List<Object?>, client.guilds[guild.id].scheduledEvents.parse),

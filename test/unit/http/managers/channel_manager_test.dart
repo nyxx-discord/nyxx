@@ -714,6 +714,33 @@ void main() {
 
         expect(manager[Snowflake.zero], isA<PartialTextChannel>());
       });
+
+      group('unknown channel types', () {
+        final unknownChannel = {...sampleGuildText, 'id': '1', 'type': 20};
+
+        test('isKnownChannelType', () {
+          final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
+
+          expect(manager.isKnownChannelType(sampleGuildText), isTrue);
+          expect(manager.isKnownChannelType(unknownChannel), isFalse);
+          expect(manager.isKnownChannelType(null), isFalse);
+        });
+
+        test('parse throws a FormatException', () {
+          final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
+
+          expect(() => manager.parse(unknownChannel), throwsFormatException);
+        });
+
+        test('parseKnown skips unknown channels', () {
+          final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
+
+          final channels = manager.parseKnown<GuildChannel>([sampleGuildText, unknownChannel]);
+
+          expect(channels, hasLength(1));
+          checkGuildText(channels.single);
+        });
+      });
     },
   );
 }

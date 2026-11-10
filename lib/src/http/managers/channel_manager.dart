@@ -64,27 +64,50 @@ class ChannelManager extends ReadOnlyManager<Channel> {
   @override
   PartialChannel operator [](Snowflake id) => PartialTextChannel(id: id, manager: this);
 
+  /// The parser for each channel type this version of nyxx supports.
+  late final Map<ChannelType, Channel Function(Map<String, Object?>, {Snowflake? guildId})> _parsers = {
+    ChannelType.guildText: parseGuildTextChannel,
+    ChannelType.dm: parseDmChannel,
+    ChannelType.guildVoice: parseGuildVoiceChannel,
+    ChannelType.groupDm: parseGroupDmChannel,
+    ChannelType.guildCategory: parseGuildCategory,
+    ChannelType.guildAnnouncement: parseGuildAnnouncementChannel,
+    ChannelType.announcementThread: parseAnnouncementThread,
+    ChannelType.publicThread: parsePublicThread,
+    ChannelType.privateThread: parsePrivateThread,
+    ChannelType.guildStageVoice: parseGuildStageChannel,
+    ChannelType.guildDirectory: parseDirectoryChannel,
+    ChannelType.guildForum: parseForumChannel,
+    ChannelType.guildMedia: parseGuildMediaChannel,
+  };
+
+  /// Whether [raw] is a channel object of a type this version of nyxx knows how to parse.
+  ///
+  /// Discord may send channels of new or undocumented types (e.g. type 20, seen since November 2026),
+  /// which [parse] cannot handle.
+  bool isKnownChannelType(Object? raw) {
+    if (raw is! Map<String, Object?>) return false;
+
+    final type = raw['type'];
+    return type is int && _parsers.containsKey(ChannelType(type));
+  }
+
+  /// Parse the channels in [raw], skipping any channel of an unknown type.
+  List<T> parseKnown<T extends Channel>(List<Object?> raw, {Snowflake? guildId}) => [
+        for (final channel in raw)
+          if (isKnownChannelType(channel)) parse(channel as Map<String, Object?>, guildId: guildId) as T,
+      ];
+
   @override
   Channel parse(Map<String, Object?> raw, {Snowflake? guildId}) {
     final type = ChannelType(raw['type'] as int);
 
-    final parsers = {
-      ChannelType.guildText: parseGuildTextChannel,
-      ChannelType.dm: parseDmChannel,
-      ChannelType.guildVoice: parseGuildVoiceChannel,
-      ChannelType.groupDm: parseGroupDmChannel,
-      ChannelType.guildCategory: parseGuildCategory,
-      ChannelType.guildAnnouncement: parseGuildAnnouncementChannel,
-      ChannelType.announcementThread: parseAnnouncementThread,
-      ChannelType.publicThread: parsePublicThread,
-      ChannelType.privateThread: parsePrivateThread,
-      ChannelType.guildStageVoice: parseGuildStageChannel,
-      ChannelType.guildDirectory: parseDirectoryChannel,
-      ChannelType.guildForum: parseForumChannel,
-      ChannelType.guildMedia: parseGuildMediaChannel,
-    };
+    final parser = _parsers[type];
+    if (parser == null) {
+      throw FormatException('Unknown channel type ${raw['type']} (channel ${raw['id']})');
+    }
 
-    return parsers[type]!(raw, guildId: guildId);
+    return parser(raw, guildId: guildId);
   }
 
   GuildTextChannel parseGuildTextChannel(Map<String, Object?> raw, {Snowflake? guildId}) {
