@@ -188,6 +188,45 @@ void checkCategory(Channel channel) {
   expect(channel.position, equals(0));
 }
 
+final sampleUnknownGuildChannel = {
+  "id": "1569560784038527066",
+  "type": 20,
+  "name": "server-hub",
+  "position": 0,
+  "flags": 0,
+  "parent_id": null,
+  "guild_id": "290926798629997250",
+};
+
+void checkUnknownGuildChannel(Channel channel) {
+  expect(channel, isA<UnknownGuildChannel>());
+  expect(channel, isA<GuildChannel>());
+
+  channel as UnknownGuildChannel;
+
+  expect(channel.id, equals(Snowflake(1569560784038527066)));
+  expect(channel.type, equals(ChannelType(20)));
+  expect(channel.guildId, equals(Snowflake(290926798629997250)));
+  expect(channel.isNsfw, isFalse);
+  expect(channel.name, equals('server-hub'));
+  expect(channel.parentId, isNull);
+  expect(channel.permissionOverwrites, equals([]));
+  expect(channel.position, equals(0));
+}
+
+final sampleUnknownChannel = {
+  "id": "1569560784038527067",
+  "type": 9999,
+};
+
+void checkUnknownChannel(Channel channel) {
+  expect(channel, isA<UnknownChannel>());
+  expect(channel, isNot(isA<GuildChannel>()));
+
+  expect(channel.id, equals(Snowflake(1569560784038527067)));
+  expect(channel.type, equals(ChannelType(9999)));
+}
+
 final sampleThread = {
   "id": "41771983423143937",
   "guild_id": "41771983423143937",
@@ -458,6 +497,8 @@ void main() {
       sampleThread,
       sampleAnnouncementThread,
       samplePrivateThread,
+      sampleUnknownGuildChannel,
+      sampleUnknownChannel,
     ],
     additionalSampleMatchers: [
       checkGuildAnnouncement,
@@ -468,6 +509,8 @@ void main() {
       checkThread,
       checkAnnouncementThread,
       checkPrivateThread,
+      checkUnknownGuildChannel,
+      checkUnknownChannel,
     ],
     additionalParsingTests: [
       ParsingTest<ChannelManager, PermissionOverwrite, Map<String, Object?>>(
@@ -713,33 +756,6 @@ void main() {
         final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
 
         expect(manager[Snowflake.zero], isA<PartialTextChannel>());
-      });
-
-      group('unknown channel types', () {
-        final unknownChannel = {...sampleGuildText, 'id': '1', 'type': 20};
-
-        test('isKnownChannelType', () {
-          final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
-
-          expect(manager.isKnownChannelType(sampleGuildText), isTrue);
-          expect(manager.isKnownChannelType(unknownChannel), isFalse);
-          expect(manager.isKnownChannelType(null), isFalse);
-        });
-
-        test('parse throws a FormatException', () {
-          final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
-
-          expect(() => manager.parse(unknownChannel), throwsFormatException);
-        });
-
-        test('parseKnown skips unknown channels', () {
-          final manager = ChannelManager(const CacheConfig(), MockNyxx(), stageInstanceConfig: const CacheConfig());
-
-          final channels = manager.parseKnown<GuildChannel>([sampleGuildText, unknownChannel]);
-
-          expect(channels, hasLength(1));
-          checkGuildText(channels.single);
-        });
       });
     },
   );

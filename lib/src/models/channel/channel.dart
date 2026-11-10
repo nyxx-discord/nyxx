@@ -53,6 +53,18 @@ abstract class Channel extends PartialChannel {
   Channel({required super.id, required super.manager});
 }
 
+/// An unknown channel.
+///
+/// {@category models}
+/// {@category entities}
+class UnknownChannel extends Channel {
+  @override
+  final ChannelType type;
+
+  /// @nodoc
+  UnknownChannel({required super.id, required super.manager, required this.type});
+}
+
 /// The type of a channel.
 final class ChannelType extends EnumLike<int, ChannelType> {
   /// A text channel in a [Guild].

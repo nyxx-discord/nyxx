@@ -439,7 +439,7 @@ class GuildManager extends Manager<Guild> {
     final request = BasicRequest(route);
 
     final response = await client.httpHandler.executeSafe(request);
-    final channels = client.channels.parseKnown<GuildChannel>(response.jsonBody as List<Object?>);
+    final channels = parseMany(response.jsonBody as List, client.channels.parse).cast<GuildChannel>();
 
     channels.forEach(client.updateCacheWith);
     return channels;
