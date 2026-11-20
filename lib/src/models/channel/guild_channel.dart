@@ -62,3 +62,61 @@ abstract class GuildChannel implements Channel {
   /// Create an invite to this channel.
   Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason});
 }
+
+/// An unknown channel in a [Guild].
+///
+/// {@category models}
+/// {@category entities}
+class UnknownGuildChannel extends UnknownChannel implements GuildChannel {
+  @override
+  final Snowflake guildId;
+
+  @override
+  final bool isNsfw;
+
+  @override
+  final String name;
+
+  @override
+  final Snowflake? parentId;
+
+  @override
+  final List<PermissionOverwrite> permissionOverwrites;
+
+  @override
+  final int position;
+
+  /// @nodoc
+  UnknownGuildChannel({
+    required super.id,
+    required super.manager,
+    required super.type,
+    required this.guildId,
+    required this.isNsfw,
+    required this.name,
+    required this.parentId,
+    required this.permissionOverwrites,
+    required this.position,
+  });
+
+  @override
+  PartialGuild get guild => manager.client.guilds[guildId];
+
+  @override
+  PartialChannel? get parent => parentId == null ? null : manager.client.channels[parentId!];
+
+  @override
+  Future<void> deletePermissionOverwrite(Snowflake id) => manager.deletePermissionOverwrite(this.id, id);
+
+  @override
+  Future<void> updatePermissionOverwrite(PermissionOverwriteBuilder builder) => manager.updatePermissionOverwrite(id, builder);
+
+  @override
+  Future<List<Webhook>> fetchWebhooks() => manager.client.webhooks.fetchChannelWebhooks(id);
+
+  @override
+  Future<List<InviteWithMetadata>> listInvites() => manager.listInvites(id);
+
+  @override
+  Future<Invite> createInvite(InviteBuilder builder, {String? auditLogReason}) => manager.createInvite(id, builder, auditLogReason: auditLogReason);
+}
