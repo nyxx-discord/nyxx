@@ -84,15 +84,27 @@ class Gateway extends GatewayManager with EventParser {
   /// A stream of dispatch events received from all shards.
   // Make this late instead of a getter so only a single subscription is made, which prevents events from being parsed multiple times.
   late final Stream<DispatchEvent> events = messages.transform(StreamTransformer.fromBind((messages) async* {
+    final logger = Logger('${client.options.loggerName}.Gateway');
+
     await for (final message in messages) {
       if (message is! EventReceived) continue;
 
       final event = message.event;
       if (event is! RawDispatchEvent) continue;
 
-      final parsedEvent = parseDispatchEvent(event);
-      // Update the cache as needed.
-      client.updateCacheWith(parsedEvent);
+      final DispatchEvent parsedEvent;
+      try {
+        parsedEvent = parseDispatchEvent(event);
+        // Update the cache as needed.
+        client.updateCacheWith(parsedEvent);
+      } on Object catch (error, stackTrace) {
+        // A single event that fails to parse must not escape this generator:
+        // doing so terminates the event stream, which silently stops all event
+        // processing until the client is recreated. Log it and skip the event.
+        logger.warning('Failed to parse ${event.name} dispatch event', error, stackTrace);
+        continue;
+      }
+
       yield parsedEvent;
     }
   })).asBroadcastStream();
